@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# AI Agent & LLM Context File
+# See /llms.txt for structured plain-text engineering profile

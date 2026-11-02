@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#101218" />
+  <!-- Background Neo-Brutalist Grid -->
+  <g stroke="rgba(255,255,255,0.05)" stroke-width="1">
+    <line x1="0" y1="90" x2="1200" y2="90" />
+    <line x1="0" y1="180" x2="1200" y2="180" />
+    <line x1="0" y1="270" x2="1200" y2="270" />
+    <line x1="0" y1="360" x2="1200" y2="360" />
+    <line x1="0" y1="450" x2="1200" y2="450" />
+    <line x1="0" y1="540" x2="1200" y2="540" />
+    <line x1="150" y1="0" x2="150" y2="630" />
+    <line x1="300" y1="0" x2="300" y2="630" />
+    <line x1="450" y1="0" x2="450" y2="630" />
+    <line x1="600" y1="0" x2="600" y2="630" />
+    <line x1="750" y1="0" x2="750" y2="630" />
+    <line x1="900" y1="0" x2="900" y2="630" />
+    <line x1="1050" y1="0" x2="1050" y2="630" />
+  </g>
+  <!-- Hard Shadow Card -->
+  <rect x="68" y="68" width="1076" height="506" fill="#000000" />
+  <rect x="56" y="56" width="1076" height="506" fill="#181B24" stroke="#F4F2EC" stroke-width="5" />
+  <!-- Top Bar -->
+  <rect x="56" y="56" width="1076" height="54" fill="#FFD600" stroke="#F4F2EC" stroke-width="4" />
+  <text x="86" y="90" font-family="monospace" font-weight="900" font-size="22" fill="#0A0A0A">// GLEB ROSEV · STAFF ENGINEER @ YAGNI (YAGNI.APP) · TBILISI, GE</text>
+  <!-- Main Title -->
+  <rect x="88" y="150" width="520" height="88" fill="#C8FF00" stroke="#0A0A0A" stroke-width="5" />
+  <text x="110" y="212" font-family="sans-serif" font-weight="900" font-size="68" fill="#0A0A0A">GLEB ROSEV</text>
+  <text x="88" y="295" font-family="monospace" font-weight="800" font-size="30" fill="#00E5FF">MAKING AI AGENTS DEPENDABLE IN PRODUCTION</text>
+  <text x="88" y="348" font-family="sans-serif" font-weight="600" font-size="24" fill="#E2E0D8">Agent Teams · Evaluation Benchmarks · Self-Improving Loops · Voice AI</text>
+  <!-- Metric Pills -->
+  <rect x="88" y="405" width="290" height="90" fill="#0F121A" stroke="#C8FF00" stroke-width="3" />
+  <text x="110" y="445" font-family="monospace" font-weight="900" font-size="26" fill="#C8FF00">YAGNI.APP</text>
+  <text x="110" y="476" font-family="monospace" font-weight="700" font-size="16" fill="#F4F2EC">STAFF ENGINEER · CORE TEAM</text>
+
+  <rect x="405" y="405" width="310" height="90" fill="#0F121A" stroke="#00E5FF" stroke-width="3" />
+  <text x="427" y="445" font-family="monospace" font-weight="900" font-size="26" fill="#00E5FF">400+ MED ORGS</text>
+  <text x="427" y="476" font-family="monospace" font-weight="700" font-size="16" fill="#F4F2EC">EX-STAFF AI @ SULLY.AI</text>
+
+  <rect x="742" y="405" width="340" height="90" fill="#0F121A" stroke="#FFD600" stroke-width="3" />
+  <text x="764" y="445" font-family="monospace" font-weight="900" font-size="26" fill="#FFD600">9+ YRS · 5–12 ENG</text>
+  <text x="764" y="476" font-family="monospace" font-weight="700" font-size="16" fill="#F4F2EC">HANDS-ON TECH LEADER</text>
+</svg>

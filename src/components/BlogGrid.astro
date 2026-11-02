@@ -42,19 +42,31 @@ const { posts } = Astro.props;
         </div>
       </div>
 
-      <a
-        href={post.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="brutal-btn brutal-btn-lime"
-        style="width: 100%; justify-content: space-between; padding: 9px 14px; font-size: 0.78rem;"
-      >
-        <span>
-          <span class="lang-en">READ ON LINKEDIN</span>
-          <span class="lang-ru">ЧИТАТЬ В LINKEDIN</span>
-        </span>
-        <span>↗</span>
-      </a>
+      <div style="display: flex; gap: 8px;">
+        <button
+          type="button"
+          class="brutal-btn brutal-btn-lime"
+          style="flex: 1; justify-content: center; padding: 9px 12px; font-size: 0.75rem;"
+          hx-get={`/partials/post-${post.id}`}
+          hx-target="#post-reader-slot"
+          hx-swap="innerHTML"
+          onclick="setTimeout(() => document.getElementById('post-reader-slot')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120)"
+        >
+          <span class="lang-en">READ BRIEF</span>
+          <span class="lang-ru">ЧИТАТЬ РАЗБОР</span>
+        </button>
+
+        <a
+          href={post.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="brutal-btn brutal-btn-surface"
+          style="padding: 9px 11px; font-size: 0.75rem;"
+          title="Open on LinkedIn"
+        >
+          <span>IN ↗</span>
+        </a>
+      </div>
     </article>
   ))}
 </div>

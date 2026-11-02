@@ -1,0 +1,16 @@
+{
+  "name": "Gleb Rosev — Staff Engineer @ YAGNI (yagni.app)",
+  "short_name": "Gleb Rosev",
+  "description": "Staff Engineer at YAGNI (yagni.app) & Hands-On Technology Leader. Making AI agents dependable in production, not just impressive in a demo.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#101218",
+  "theme_color": "#C8FF00",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

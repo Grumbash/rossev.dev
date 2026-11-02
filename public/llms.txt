@@ -1,0 +1,40 @@
+# Gleb Rosev — Staff Engineer @ YAGNI (yagni.app) & Hands-On Technology Leader
+
+> Making AI agents dependable in production, not just impressive in a demo.
+
+- **Current Role**: Staff Engineer at YAGNI (`https://yagni.app`) — Oct 2026 – present (Core team, working alongside the founders)
+- **Location**: Tbilisi, Georgia (Remote with US-based engineering teams; open to relocation / remote)
+- **Experience**: 9+ years building production software systems, leading teams of 5–12 engineers
+- **Email**: gleb.rosev@gmail.com
+- **LinkedIn**: https://www.linkedin.com/in/gleb-rosev
+- **CV (PDF)**: /gleb-rosev-cv.pdf
+
+## Current Work at YAGNI (yagni.app)
+
+YAGNI builds agent teams for engineering organizations ("Agent teams, managed like your engineering team"). Named AI agents (a builder, a reviewer, a product manager and others) work like a real engineering team, taking software work from a proposal to a merged pull request under a plan that a human approves. Every important step leaves a record a person can review, and autonomy is earned through a track record. YAGNI integrates with the tools the team already uses (GitHub first) and doesn't replace them.
+
+### Focus Areas as Staff Engineer at YAGNI
+1. **Agent Quality & Evaluation**: Benchmarks of hard, realistic engineering tasks modelled on real customer work that show whether a change makes the agents better or worse.
+2. **Self-Improving Agents**: An experimental system where agents review other agents' runs, find the root causes of failures, and propose fixes for the team to decide on.
+3. **Reliability & Observability**: Monitoring of customer builds, detection of stalled or failing runs, and an early-warning "risk radar" so the team learns about a customer's problem before the customer reports it.
+4. **Core Pipeline**: Hardening the build and review agents, the sandboxed code runner, and data isolation between customer organizations.
+5. **Customer Pilots**: Technical point of contact for pilot customers in the time zone — troubleshooting, running demos, and turning customer feedback into engineering work.
+
+### How I Work
+I build with AI agents every day: I plan, delegate to agents, review their output with a second "judge" agent, and keep the human decision where it matters.
+
+## Previous Career Highlights
+
+### Sully.ai (Aug 2025 – Oct 2026) — Staff AI Engineer, Voice Agent & Platform
+- Built and evolved the core Voice AI agent harness (Twilio SIP, LiveKit WebRTC, Speechmatics ASR) on a platform trusted by 400+ healthcare organizations and 100,000+ physicians.
+- Designed deterministic state guardrails, tool-contract schemas, stress-testing suites, and runtime diagnostics that reduced production incident triage from hours to minutes.
+
+### Kingpin (Jun 2023 – Aug 2025) — Engineering Team Lead / Tech Lead
+- Led a cross-functional engineering team of 5–10 developers delivering a multi-tenant B2B wholesale SaaS platform.
+- Improved API performance by 4x (850ms to 220ms TTFB), instituted trunk-based delivery with feature flags, and built an automated LLM feedback triage pipeline cutting manual processing time by 80%.
+
+### BattlePro (Sep 2020 – May 2023) — Senior Full-Stack Engineer -> Team Lead
+- Scaled from Senior Engineer to Team Lead (up to 12 engineers), designing event-driven backends, real-time WebSocket tournament engines, and automated CI/CD pipelines.
+
+### IT-Run & Early Engineering (2017 – 2020) — Full-Stack Software Engineer
+- Built full-stack web applications and APIs with TypeScript, Node.js, React, and PostgreSQL after transitioning from a background in Medicine (First Moscow State Medical University) where high-stakes clinical systems thinking shaped my approach to software reliability.
