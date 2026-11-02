@@ -12,18 +12,21 @@ import BlogGrid from '../components/BlogGrid.astro';
 import CaseBlueprint from '../components/CaseBlueprint.astro';
 import TerminalOutput from '../components/TerminalOutput.astro';
 
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://glebrosev.dev').toString();
+const ogImageUrl = new URL('/og-card.png', Astro.site || 'https://glebrosev.dev').toString();
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Gleb Rosev',
-  jobTitle: 'Staff Engineer',
+  jobTitle: 'Founding / Staff Engineer, AI Agents',
   worksFor: {
     '@type': 'Organization',
     name: 'YAGNI',
     url: 'https://yagni.app'
   },
   description:
-    'Staff Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. Ex-Staff AI Engineer at Sully.ai (400+ healthcare orgs) and Hands-On Engineering Leader.',
+    'Founding / Staff Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. Ex-Staff AI Engineer at Sully.ai (400+ healthcare orgs) and Hands-On Engineering Leader.',
   email: 'mailto:rossevgleb@gmail.com',
   sameAs: ['https://www.linkedin.com/in/rossev/', 'https://github.com/Grumbash']
 };
@@ -34,32 +37,37 @@ const jsonLd = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gleb Rosev — Staff Engineer @ YAGNI | AI Agent Teams, Architecture & Reliability</title>
+    <title>Gleb Rosev — Founding / Staff Engineer @ YAGNI | AI Agent Teams, Architecture & Reliability</title>
     <meta
       name="description"
-      content="Gleb Rosev — Staff Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. 8+ years building distributed systems, Voice AI (Sully.ai), and leading engineering teams."
+      content="Gleb Rosev — Founding / Staff Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. 8+ years building distributed systems, Voice AI (Sully.ai), and leading engineering teams."
     />
+    <link rel="canonical" href={canonicalUrl} />
 
     <!-- Favicon, Manifest & AI Crawler Discovery -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Agent & LLM Context (/llms.txt)" />
 
-    <!-- Open Graph / Telegram / Slack / LinkedIn / X Cards -->
+    <!-- Open Graph / Telegram / Slack / LinkedIn / X Cards (Raster PNG 1200x630) -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Gleb Rosev — Staff Engineer @ YAGNI (yagni.app)" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content="Gleb Rosev — Founding / Staff Engineer @ YAGNI (yagni.app)" />
     <meta
       property="og:description"
       content="Making AI agent teams dependable in production, not just impressive in a demo. Agent benchmarks, self-improving loops, Voice AI (400+ healthcare orgs) & distributed systems."
     />
-    <meta property="og:image" content="/og-card.svg" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Gleb Rosev — Staff Engineer @ YAGNI (yagni.app)" />
+    <meta name="twitter:title" content="Gleb Rosev — Founding / Staff Engineer @ YAGNI (yagni.app)" />
     <meta
       name="twitter:description"
       content="Making AI agent teams dependable in production, not just impressive in a demo."
     />
-    <meta name="twitter:image" content="/og-card.svg" />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     <!-- Non-Blocking Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -304,7 +312,7 @@ const jsonLd = {
                 <span class="lang-en">3D SYSTEM ARCHITECTURE TOPOLOGY</span>
                 <span class="lang-ru">3D-ТОПОЛОГИЯ АРХИТЕКТУРЫ СИСТЕМ</span>
               </span>
-              <span id="iso-trace-status">8 NODES · DRAG / SCROLL / CLICK 3D</span>
+              <span id="iso-trace-status">8 NODES · DRAG / ⌘+SCROLL / CLICK</span>
             </div>
 
             <!-- Top Controls: Domain Switcher & 3D Engine Modes -->
@@ -468,10 +476,10 @@ const jsonLd = {
       <div class="marquee-bar" aria-hidden="true">
         <div class="marquee-track">
           <span>
-            // STAFF ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
+            // FOUNDING / STAFF ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
           </span>
           <span>
-            // STAFF ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
+            // FOUNDING / STAFF ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
           </span>
         </div>
       </div>
@@ -643,7 +651,7 @@ const jsonLd = {
                   hx-get={`/partials/case-${cs.id}`}
                   hx-target="#arch-blueprint-slot"
                   hx-swap="innerHTML transition:true"
-                  onclick="document.getElementById('arch-blueprint-slot')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })"
+                  onclick={`window.setUrlParam && window.setUrlParam('case', '${cs.id}'); document.getElementById('arch-blueprint-slot')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })`}
                 >
                   <span>
                     <span class="lang-en">VIEW ARCHITECTURE</span>
@@ -1055,13 +1063,16 @@ const jsonLd = {
                 </p>
                 <p style="margin-bottom: 6px;">
                   ▸ <strong><span class="lang-en">NOW:</span><span class="lang-ru">СЕЙЧАС:</span></strong>
-                  <span class="lang-en">Staff Engineer @ YAGNI (yagni.app)</span>
-                  <span class="lang-ru">Staff Engineer в YAGNI (yagni.app)</span>
+                  <span class="lang-en">Founding / Staff Engineer @ YAGNI (yagni.app)</span>
+                  <span class="lang-ru">Founding / Staff Engineer в YAGNI (yagni.app)</span>
                 </p>
                 <p style="margin-bottom: 6px;">
                   ▸ <strong><span class="lang-en">BASE:</span><span class="lang-ru">ЛОКАЦИЯ:</span></strong>
                   <span class="lang-en">Tbilisi, Georgia · Remote (US Team)</span>
                   <span class="lang-ru">Тбилиси, Грузия · Удалённо с США</span>
+                </p>
+                <p style="margin-bottom: 6px; color: #C8FF00; font-size: 0.72rem;">
+                  ▸ <strong>CV COMPILER:</strong> Auto-built from <code>profile.ts</code> (LLM Canary <code>#YAGNI-42</code>)
                 </p>
                 <p style="color: #00E5FF; margin-top: 12px;">
                   © {new Date().getFullYear()} <span class="lang-en">Gleb Rosev.</span><span class="lang-ru">Глеб Росев.</span>
@@ -1160,7 +1171,20 @@ const jsonLd = {
         }
       };
 
-      // Restore Section Hash & Experience Tab from URL on Load
+      // URL query parameter helper for deep-linking cases, posts, and tabs
+      window.setUrlParam = function (key, val) {
+        try {
+          const url = new URL(window.location.href);
+          if (val === null || val === undefined || val === '') {
+            url.searchParams.delete(key);
+          } else {
+            url.searchParams.set(key, val);
+          }
+          window.history.replaceState({}, '', url.toString());
+        } catch (e) {}
+      };
+
+      // Restore Section Hash, Experience Tab, Case Study & Blog Brief from URL on Load
       document.addEventListener('DOMContentLoaded', () => {
         try {
           const hash = window.location.hash.replace('#', '');
@@ -1172,6 +1196,24 @@ const jsonLd = {
           const expParam = params.get('exp');
           if (expParam && document.getElementById('panel-' + expParam)) {
             window.selectExperienceTab(expParam, null, false);
+          }
+          const caseParam = params.get('case');
+          if (caseParam && ['yagni', 'sully', 'kingpin', 'battlepro'].includes(caseParam) && caseParam !== 'yagni') {
+            fetch(`/partials/case-${caseParam}`)
+              .then((r) => (r.ok ? r.text() : ''))
+              .then((html) => {
+                const slot = document.getElementById('arch-blueprint-slot');
+                if (slot && html) slot.innerHTML = html;
+              });
+          }
+          const postParam = params.get('post');
+          if (postParam && /^post-[1-9]$/.test(postParam)) {
+            fetch(`/partials/post-${postParam}`)
+              .then((r) => (r.ok ? r.text() : ''))
+              .then((html) => {
+                const slot = document.getElementById('post-reader-slot');
+                if (slot && html) slot.innerHTML = html;
+              });
           }
         } catch (e) {}
       });

@@ -483,9 +483,10 @@ export function initIsoArchitectureEngine(): void {
   canvas.addEventListener(
     'wheel',
     (e) => {
-      // Only zoom when Ctrl/Meta is held or on desktop trackpad pinch / intentional wheel inside canvas
+      // Only zoom when Ctrl/Meta is held (or trackpad pinch gesture), letting normal page scroll pass through
+      if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
-      const delta = -e.deltaY * 0.0012;
+      const delta = -e.deltaY * 0.0025;
       targetZoom = Math.max(0.68, Math.min(1.6, targetZoom + delta));
       ensureLoopRunning();
     },

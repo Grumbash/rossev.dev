@@ -4,9 +4,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "generate:cv": "bun scripts/generate-cv-and-og.ts",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "start": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "build": "bun scripts/generate-cv-and-og.ts && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
   },
   "dependencies": {

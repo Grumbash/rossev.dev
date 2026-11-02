@@ -159,6 +159,11 @@ a {
   color: #0A0A0A;
 }
 
+.brutal-btn-surface {
+  background: var(--surface-alt);
+  color: var(--ink);
+}
+
 .brutal-tag {
   display: inline-block;
   font-family: var(--font-mono);
