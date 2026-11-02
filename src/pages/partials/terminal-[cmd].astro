@@ -1,0 +1,96 @@
+---
+export const partial = true;
+
+export function getStaticPaths() {
+  return [
+    { params: { cmd: 'status' } },
+    { params: { cmd: 'ai-harness' } },
+    { params: { cmd: 'leadership' } },
+    { params: { cmd: 'med-to-ai' } },
+  ];
+}
+
+const { cmd } = Astro.params;
+---
+
+{cmd === 'status' && (
+  <div>
+    <div style="color: #C8FF00; font-weight: 800; margin-bottom: 10px;">
+      <span class="lang-en">// CURRENT FOCUS // NOW</span>
+      <span class="lang-ru">// ТЕКУЩИЙ ФОКУС // СЕЙЧАС</span>
+    </div>
+    <div class="lang-en">
+      <p>▸ <strong>ROLE:</strong> Staff Engineer @ <strong>YAGNI (yagni.app)</strong> · Core Team (Oct 2026 — Present)</p>
+      <p>▸ <strong>MISSION:</strong> Making AI agent teams dependable in production, not just impressive in a demo.</p>
+      <p>▸ <strong>WORKFLOW:</strong> Named agents (Builder, Reviewer, PM) taking work from proposal to merged GitHub PR under human-approved plans.</p>
+      <p>▸ <strong>TRACK RECORD:</strong> 8+ Years across AI Systems (Sully.ai), Multi-Tenant B2B SaaS (Kingpin) & Distributed Architectures.</p>
+    </div>
+    <div class="lang-ru">
+      <p>▸ <strong>РОЛЬ:</strong> Staff Engineer в <strong>YAGNI (yagni.app)</strong> · Основная команда (Окт 2026 — наст. время)</p>
+      <p>▸ <strong>ФОКУС:</strong> Делаю команды AI-агентов надёжными в продакшене, а не только эффектными на демо.</p>
+      <p>▸ <strong>ПРОЦЕСС:</strong> Именованные агенты (Builder, Reviewer, PM) доводят задачи от идеи до смерженного PR в GitHub по утверждённому человеком плану.</p>
+      <p>▸ <strong>ОПЫТ:</strong> 8+ лет в архитектуре, голосовом AI (Sully.ai), B2B SaaS (Kingpin) и управлении командами.</p>
+    </div>
+  </div>
+)}
+
+{cmd === 'ai-harness' && (
+  <div>
+    <div style="color: #00E5FF; font-weight: 800; margin-bottom: 10px;">
+      <span class="lang-en">// AGENT TEAMS, EVALS & VOICE AI</span>
+      <span class="lang-ru">// КОМАНДЫ АГЕНТОВ, БЕНЧМАРКИ И ГОЛОСОВОЙ AI</span>
+    </div>
+    <div class="lang-en">
+      <p>▸ <strong>AGENT BENCHMARKS (YAGNI):</strong> Hard, realistic engineering tasks modeled on customer work to verify every change.</p>
+      <p>▸ <strong>SELF-IMPROVING LOOPS:</strong> Agents reviewing failed runs, isolating root causes & proposing fixes for human review.</p>
+      <p>▸ <strong>SANDBOX & RISK RADAR:</strong> Hardened code runners, strict org isolation, stalled-run detection & early-warning radar.</p>
+      <p>▸ <strong>VOICE AI (SULLY.AI):</strong> Real-time multilingual voice & telephony pipelines trusted by 400+ healthcare orgs.</p>
+    </div>
+    <div class="lang-ru">
+      <p>▸ <strong>БЕНЧМАРКИ АГЕНТОВ (YAGNI):</strong> Сложные реалистичные задачи по мотивам клиентских кейсов для проверки изменений.</p>
+      <p>▸ <strong>САМООБУЧЕНИЕ:</strong> Агенты разбирают чужие прогоны, находят первопричины сбоев и предлагают фиксы команде.</p>
+      <p>▸ <strong>ПЕСОЧНИЦА И РАДАР РИСКОВ:</strong> Изолированный запуск кода, разделение данных организаций и раннее обнаружение проблем.</p>
+      <p>▸ <strong>ГОЛОСОВОЙ AI (SULLY.AI):</strong> Мультиязычные голосовые пайплайны и телефония для 400+ медицинских организаций.</p>
+    </div>
+  </div>
+)}
+
+{cmd === 'leadership' && (
+  <div>
+    <div style="color: #FFD600; font-weight: 800; margin-bottom: 10px;">
+      <span class="lang-en">// ENGINEERING LEADERSHIP & DELIVERY</span>
+      <span class="lang-ru">// УПРАВЛЕНИЕ КОМАНДАМИ И ПОСТАВКА</span>
+    </div>
+    <div class="lang-en">
+      <p>▸ <strong>TEAM TOPOLOGY:</strong> Led cross-functional teams of 5 to 12 engineers while staying hands-on in code.</p>
+      <p>▸ <strong>CUSTOMER PILOTS:</strong> Technical point of contact for pilot customers—running demos, troubleshooting & shaping roadmap.</p>
+      <p>▸ <strong>DELIVERY CADENCE:</strong> Trunk-based development from main, feature flags, canary releases, 25 → 55 SP velocity.</p>
+      <p>▸ <strong>MENTORSHIP:</strong> 150+ advanced React/JS lectures delivered; curriculum adopted by 1,500+ students/year.</p>
+    </div>
+    <div class="lang-ru">
+      <p>▸ <strong>КОМАНДЫ:</strong> Управление кросс-функциональными командами от 5 до 12 человек, оставаясь играющим тренером в коде.</p>
+      <p>▸ <strong>ПИЛОТЫ КЛИЕНТОВ:</strong> Технический контакт для пилотных клиентов — демо, разбор проблем и перевод фидбека в код.</p>
+      <p>▸ <strong>ПРОЦЕСС ПОСТАВКИ:</strong> Trunk-based разработка из main, фича-флаги, канареечные релизы, рост велосити 25 → 55 SP.</p>
+      <p>▸ <strong>МЕНТОРСТВО:</strong> 150+ проведённых лекций и авторская программа обучения для 1 500+ студентов в год.</p>
+    </div>
+  </div>
+)}
+
+{cmd === 'med-to-ai' && (
+  <div>
+    <div style="color: #FF5500; font-weight: 800; margin-bottom: 10px;">
+      <span class="lang-en">// ORIGIN & HOW I WORK</span>
+      <span class="lang-ru">// БЭКГРАУНД И ПОДХОД К РАБОТЕ</span>
+    </div>
+    <div class="lang-en">
+      <p>▸ <strong>DAILY WORKFLOW:</strong> I plan, delegate to AI agents, review their output with a second "judge" agent, and keep the human decision where it matters.</p>
+      <p>▸ <strong>CLINICAL ROOTS:</strong> Studied Medicine at BSU (2015–2019) before spending 8+ years in distributed systems & AI.</p>
+      <p>▸ <strong>PROVEN IN PROD:</strong> From $10M+ funded architectures to 400+ healthcare orgs at Sully.ai and agent teams at YAGNI.</p>
+    </div>
+    <div class="lang-ru">
+      <p>▸ <strong>ЕЖЕДНЕВНЫЙ ПРОЦЕСС:</strong> Планирую, делегирую задачи агентам, проверяю результат вторым агентом-«судьёй» и оставляю ключевые решения за человеком.</p>
+      <p>▸ <strong>МЕДИЦИНСКИЙ БЭКГРАУНД:</strong> Учился на медицинском в БГУ (2015–2019) до перехода в распределённые системы и AI.</p>
+      <p>▸ <strong>В ПРОДАКШЕНЕ:</strong> От архитектур под $10M+ инвестиций до 400+ клиник в Sully.ai и агентских команд в YAGNI.</p>
+    </div>
+  </div>
+)}

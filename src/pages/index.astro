@@ -1,0 +1,2643 @@
+---
+import '../styles/brutalism.css';
+import {
+  PROFILE,
+  CASE_STUDIES,
+  EXPERIENCE,
+  CAPABILITIES,
+  BLOG_POSTS,
+  BLOG_MOMENTUM,
+} from '../data/profile';
+import BlogGrid from '../components/BlogGrid.astro';
+import CaseBlueprint from '../components/CaseBlueprint.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en" data-lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gleb Rosev — Staff Engineer @ YAGNI | AI Agent Teams, Architecture & Reliability</title>
+    <meta
+      name="description"
+      content="Gleb Rosev — Staff Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. 8+ years building distributed systems, Voice AI (Sully.ai), and leading engineering teams."
+    />
+    <script src="/htmx.min.js" defer></script>
+  </head>
+  <body>
+    <!-- TOP STICKY NEO-BRUTALIST NAVBAR & SECTION DECK SWITCHER -->
+    <header class="top-nav">
+      <div class="nav-inner">
+        <a href="#top" class="brand-logo" onclick="window.switchSectionDeck('all')">
+          <span class="brand-badge">GR</span>
+          <span>GLEB ROSEV</span>
+          <span class="status-dot" title="Staff Engineer @ YAGNI (yagni.app)"></span>
+        </a>
+
+        <nav class="nav-links" aria-label="Section Deck Switcher">
+          <button
+            type="button"
+            class="nav-link active-deck"
+            data-deck-btn="all"
+            onclick="window.switchSectionDeck('all', this)"
+          >
+            <span class="lang-en">ALL</span>
+            <span class="lang-ru">ВСЕ</span>
+          </button>
+          <button
+            type="button"
+            class="nav-link"
+            data-deck-btn="impact"
+            onclick="window.switchSectionDeck('impact', this)"
+          >
+            <span class="lang-en">01. NOW & IMPACT</span>
+            <span class="lang-ru">01. СЕЙЧАС И ИМПАКТ</span>
+          </button>
+          <button
+            type="button"
+            class="nav-link"
+            data-deck-btn="systems"
+            onclick="window.switchSectionDeck('systems', this)"
+          >
+            <span class="lang-en">02. SYSTEMS</span>
+            <span class="lang-ru">02. КЕЙСЫ</span>
+          </button>
+          <button
+            type="button"
+            class="nav-link"
+            data-deck-btn="experience"
+            onclick="window.switchSectionDeck('experience', this)"
+          >
+            <span class="lang-en">03. CAREER</span>
+            <span class="lang-ru">03. ОПЫТ</span>
+          </button>
+          <button
+            type="button"
+            class="nav-link"
+            data-deck-btn="capabilities"
+            onclick="window.switchSectionDeck('capabilities', this)"
+          >
+            <span class="lang-en">04. STACK</span>
+            <span class="lang-ru">04. СТЕК</span>
+          </button>
+          <button
+            type="button"
+            class="nav-link"
+            data-deck-btn="writing"
+            onclick="window.switchSectionDeck('writing', this)"
+          >
+            <span class="lang-en">05. WRITING</span>
+            <span class="lang-ru">05. БЛОГ</span>
+          </button>
+          <button
+            type="button"
+            class="nav-link"
+            data-deck-btn="contact"
+            onclick="window.switchSectionDeck('contact', this)"
+          >
+            <span class="lang-en">06. CONTACT</span>
+            <span class="lang-ru">06. КОНТАКТЫ</span>
+          </button>
+        </nav>
+
+        <div class="nav-controls">
+          <button
+            type="button"
+            class="ctrl-btn active-lang"
+            id="btn-lang-en"
+            onclick="window.setSiteLang('en')"
+            aria-label="Switch language to English"
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            class="ctrl-btn"
+            id="btn-lang-ru"
+            onclick="window.setSiteLang('ru')"
+            aria-label="Switch language to Russian"
+          >
+            RU
+          </button>
+          <button
+            type="button"
+            class="ctrl-btn"
+            id="btn-theme-toggle"
+            onclick="window.toggleSiteTheme()"
+            title="Toggle Light / Dark Mode"
+          >
+            THEME
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- HERO SECTION -->
+      <section class="hero-section container" data-deck-section="hero">
+        <div class="hero-grid">
+          <!-- Left: Concise Hero Copy & Badges -->
+          <div class="brutal-box hero-card">
+            <div>
+              <div class="sticker-row">
+                <span class="draggable-sticker" style="background: var(--lime);" title="Drag me">
+                  STAFF ENGINEER @ YAGNI.APP
+                </span>
+                <span class="draggable-sticker" style="background: var(--yellow);" title="Drag me">
+                  8+ YRS IN PROD
+                </span>
+                <span class="draggable-sticker" style="background: var(--cyan);" title="Drag me">
+                  AGENT TEAMS & EVALS
+                </span>
+                <span class="draggable-sticker" style="background: var(--orange); color: #fff;" title="Drag me">
+                  TBILISI · US TEAM
+                </span>
+              </div>
+
+              <h1 class="hero-title">
+                <span class="lang-en">GLEB <span class="hero-title-highlight">ROSEV</span></span>
+                <span class="lang-ru">ГЛЕБ <span class="hero-title-highlight">РОСЕВ</span></span>
+              </h1>
+
+              <div class="hero-role">
+                <span class="lang-en">{PROFILE.tagline.en}</span>
+                <span class="lang-ru">{PROFILE.tagline.ru}</span>
+              </div>
+
+              <p class="hero-bio">
+                <span class="lang-en">{PROFILE.bio.en}</span>
+                <span class="lang-ru">{PROFILE.bio.ru}</span>
+              </p>
+
+              <div class="med-twist-box">
+                <span class="lang-en">{PROFILE.medToAiStory.en}</span>
+                <span class="lang-ru">{PROFILE.medToAiStory.ru}</span>
+              </div>
+
+              <div class="hero-actions">
+                <button
+                  type="button"
+                  class="brutal-btn brutal-btn-lime"
+                  onclick="window.switchSectionDeck('systems')"
+                >
+                  <span class="lang-en">SYSTEMS & CASES ↘</span>
+                  <span class="lang-ru">СИСТЕМЫ И КЕЙСЫ ↘</span>
+                </button>
+                <button
+                  type="button"
+                  class="brutal-btn brutal-btn-yellow"
+                  onclick="window.switchSectionDeck('writing')"
+                >
+                  <span class="lang-en">WRITING</span>
+                  <span class="lang-ru">БЛОГ</span>
+                </button>
+                <button
+                  type="button"
+                  class="brutal-btn brutal-btn-cyan"
+                  onclick="window.copyToClipboard('rossevgleb@gmail.com', 'Email copied: rossevgleb@gmail.com')"
+                >
+                  <span>rossevgleb@gmail.com</span>
+                </button>
+                <button
+                  type="button"
+                  class="brutal-btn"
+                  onclick="window.print()"
+                >
+                  <span class="lang-en">PDF CV</span>
+                  <span class="lang-ru">CV (PDF)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4 Hero Stats -->
+            <div class="hero-stats-grid">
+              {PROFILE.heroStats.map((st) => (
+                <div class="stat-card">
+                  <span class="stat-val" style={`background: ${st.color};`}>{st.value}</span>
+                  <div class="stat-lbl">
+                    <span class="lang-en">{st.label.en}</span>
+                    <span class="lang-ru">{st.label.ru}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Right: Deep Interactive 3D System Topology & Architecture Engine -->
+          <div class="brutal-box stage-iso-card">
+            <div class="stage-header">
+              <span>
+                <span class="lang-en">3D SYSTEM ARCHITECTURE TOPOLOGY</span>
+                <span class="lang-ru">3D-ТОПОЛОГИЯ АРХИТЕКТУРЫ СИСТЕМ</span>
+              </span>
+              <span id="iso-trace-status">8 NODES · DRAG / SCROLL / CLICK 3D</span>
+            </div>
+
+            <!-- Top Controls: Domain Switcher & 3D Engine Modes -->
+            <div class="arch-tabs-bar">
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button
+                  type="button"
+                  class="mode-btn active"
+                  data-iso-domain="yagni"
+                  onclick="window.setIsoDomain('yagni', this)"
+                >
+                  <span class="lang-en">AGENT TEAMS (YAGNI)</span>
+                  <span class="lang-ru">АГЕНТЫ (YAGNI)</span>
+                </button>
+                <button
+                  type="button"
+                  class="mode-btn"
+                  data-iso-domain="voice"
+                  onclick="window.setIsoDomain('voice', this)"
+                >
+                  <span class="lang-en">VOICE AI (SULLY)</span>
+                  <span class="lang-ru">ГОЛОСОВОЙ AI</span>
+                </button>
+                <button
+                  type="button"
+                  class="mode-btn"
+                  data-iso-domain="saas"
+                  onclick="window.setIsoDomain('saas', this)"
+                >
+                  <span class="lang-en">B2B SAAS & OPS</span>
+                  <span class="lang-ru">B2B SAAS И OPS</span>
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button
+                  type="button"
+                  class="mode-btn mode-btn-fault"
+                  id="btn-iso-fault"
+                  onclick="window.triggerIsoFault()"
+                >
+                  <span class="lang-en">INJECT FAULT</span><span class="lang-ru">ТЕСТ СБОЯ</span>
+                </button>
+                <button
+                  type="button"
+                  class="mode-btn"
+                  id="btn-iso-xray"
+                  onclick="window.toggleIsoXray(this)"
+                >
+                  <span class="lang-en">CAD X-RAY</span><span class="lang-ru">РЕНТГЕН CAD</span>
+                </button>
+                <button
+                  type="button"
+                  class="mode-btn"
+                  id="btn-iso-reset"
+                  onclick="window.resetIsoCamera()"
+                >
+                  <span class="lang-en">OVERVIEW</span><span class="lang-ru">ОБЗОР</span>
+                </button>
+                <button
+                  type="button"
+                  class="mode-btn active"
+                  onclick="window.fireIsoPacket()"
+                >
+                  <span class="lang-en">TRACE</span><span class="lang-ru">ТРАССИРОВКА</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Deep 3D Spatial Canvas (3 Vertical Strata + Exploded Node Inspector) -->
+            <div class="iso-canvas-container" id="iso-canvas-wrap">
+              <canvas id="iso-arch-canvas"></canvas>
+
+              <!-- Vertical Depth Deck Slicer (Top-Right) -->
+              <div class="iso-stratum-rail">
+                <button
+                  type="button"
+                  class="iso-stratum-btn active"
+                  data-stratum-btn="all"
+                  onclick="window.setIsoStratum('all', this)"
+                >
+                  <span class="lang-en">ALL 3 DECKS</span><span class="lang-ru">ВСЕ 3 ЯРУСА</span>
+                </button>
+                <button
+                  type="button"
+                  class="iso-stratum-btn"
+                  data-stratum-btn="1"
+                  onclick="window.setIsoStratum(1, this)"
+                >
+                  <span class="lang-en">L+1 · ORBITAL RADAR</span><span class="lang-ru">L+1 · РАДАР И EVALS</span>
+                </button>
+                <button
+                  type="button"
+                  class="iso-stratum-btn"
+                  data-stratum-btn="0"
+                  onclick="window.setIsoStratum(0, this)"
+                >
+                  <span class="lang-en">L0 · CORE DECK</span><span class="lang-ru">L0 · ЯДРО СИСТЕМЫ</span>
+                </button>
+                <button
+                  type="button"
+                  class="iso-stratum-btn"
+                  data-stratum-btn="-1"
+                  onclick="window.setIsoStratum(-1, this)"
+                >
+                  <span class="lang-en">L-1 · SUB-VAULT</span><span class="lang-ru">L-1 · БУНКЕР ИЗОЛЯЦИИ</span>
+                </button>
+              </div>
+
+              <!-- Interactive Node Dossier Overlay (Appears when a 3D building is clicked/exploded) -->
+              <div class="iso-inspector-card" id="iso-inspector-card">
+                <div class="iso-insp-head">
+                  <span class="iso-insp-title" id="iso-insp-title">02 · AGENT CORE</span>
+                  <button type="button" class="iso-insp-close" onclick="window.resetIsoCamera()">×</button>
+                </div>
+                <div id="iso-insp-sub" style="font-size: 0.72rem; color: #B8C0D4; margin-bottom: 6px;"></div>
+                <div class="iso-insp-layers" id="iso-insp-layers"></div>
+                <div class="iso-insp-guard" id="iso-insp-guard"></div>
+                <div class="iso-insp-actions">
+                  <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(-1)">
+                    <span class="lang-en">‹ PREV NODE</span><span class="lang-ru">‹ ПРЕД. УЗЕЛ</span>
+                  </button>
+                  <button type="button" class="iso-insp-btn iso-insp-btn-fault" onclick="window.triggerIsoFault(true)">
+                    <span class="lang-en">BREAK & HEAL</span><span class="lang-ru">СБОЙ И ФИКС</span>
+                  </button>
+                  <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(1)">
+                    <span class="lang-en">NEXT NODE ›</span><span class="lang-ru">СЛЕД. УЗЕЛ ›</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clean Bottom Specification Bar -->
+            <div class="iso-bottom-hud">
+              <div class="iso-layer-spec">
+                <span class="iso-spec-pill" id="iso-hud-badge">02 · AGENT CORE</span>
+                <span id="iso-hud-text" style="font-weight: 700;">
+                  Named AI Agent Team (PM, Builder, Reviewer, Judge) under Human Plan
+                </span>
+              </div>
+              <button
+                type="button"
+                class="mode-btn"
+                style="padding: 3px 9px; font-size: 0.68rem;"
+                onclick="window.openDomainBlueprint()"
+              >
+                <span class="lang-en">BLUEPRINT ↘</span>
+                <span class="lang-ru">КЕЙС ↘</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KINETIC MARQUEE TICKER -->
+      <div class="marquee-bar" aria-hidden="true">
+        <div class="marquee-track">
+          <span>
+            // STAFF ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
+          </span>
+          <span>
+            // STAFF ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
+          </span>
+        </div>
+      </div>
+
+      <!-- 01. EXECUTIVE IMPACT & INTERACTIVE DOSSIER -->
+      <section id="impact" class="section-block" data-deck-section="impact">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">
+                <span class="lang-en">01 // NOW & EXECUTIVE IMPACT</span>
+                <span class="lang-ru">01 // ТЕКУЩАЯ РОЛЬ И ИМПАКТ</span>
+              </span>
+              <h2 class="section-title">
+                <span class="lang-en">DEPENDABLE AI AGENTS & PRODUCTION LEADERSHIP</span>
+                <span class="lang-ru">НАДЁЖНЫЕ AI-АГЕНТЫ И ЛИДЕРСТВО В ПРОДАКШЕНЕ</span>
+              </h2>
+            </div>
+          </div>
+
+          <div class="impact-terminal-grid">
+            <div class="impact-cards-grid">
+              {PROFILE.selectedImpact.map((item) => (
+                <div class="brutal-box brutal-box-hover impact-card" data-tilt>
+                  <div>
+                    <span class="impact-code" style={`background: ${item.color};`}>
+                      <span class="lang-en">{item.tag.en}</span>
+                      <span class="lang-ru">{item.tag.ru}</span>
+                    </span>
+                    <h3>
+                      <span class="lang-en">{item.title.en}</span>
+                      <span class="lang-ru">{item.title.ru}</span>
+                    </h3>
+                    <p style="font-size: 0.9rem; color: var(--ink-muted);">
+                      <span class="lang-en">{item.text.en}</span>
+                      <span class="lang-ru">{item.text.ru}</span>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <!-- Interactive Dossier -->
+            <div class="brutal-box htmx-terminal">
+              <div class="terminal-topbar">
+                <span>
+                  <span class="lang-en">ENGINEERING DOSSIER</span>
+                  <span class="lang-ru">ИНЖЕНЕРНОЕ ДОСЬЕ</span>
+                </span>
+                <span>GLEB ROSEV</span>
+              </div>
+
+              <div class="terminal-cmd-bar" role="group" aria-label="Profile Focus Areas">
+                <button
+                  type="button"
+                  class="cmd-btn active"
+                  hx-get="/partials/terminal-status"
+                  hx-target="#htmx-terminal-output"
+                  hx-swap="innerHTML transition:true"
+                  onclick="window.activateGroupBtn(this)"
+                >
+                  <span class="lang-en">Now @ YAGNI</span>
+                  <span class="lang-ru">Сейчас в YAGNI</span>
+                </button>
+                <button
+                  type="button"
+                  class="cmd-btn"
+                  hx-get="/partials/terminal-ai-harness"
+                  hx-target="#htmx-terminal-output"
+                  hx-swap="innerHTML transition:true"
+                  onclick="window.activateGroupBtn(this)"
+                >
+                  <span class="lang-en">Agents & Voice AI</span>
+                  <span class="lang-ru">Агенты и Voice AI</span>
+                </button>
+                <button
+                  type="button"
+                  class="cmd-btn"
+                  hx-get="/partials/terminal-leadership"
+                  hx-target="#htmx-terminal-output"
+                  hx-swap="innerHTML transition:true"
+                  onclick="window.activateGroupBtn(this)"
+                >
+                  <span class="lang-en">Leadership</span>
+                  <span class="lang-ru">Лидерство</span>
+                </button>
+                <button
+                  type="button"
+                  class="cmd-btn"
+                  hx-get="/partials/terminal-med-to-ai"
+                  hx-target="#htmx-terminal-output"
+                  hx-swap="innerHTML transition:true"
+                  onclick="window.activateGroupBtn(this)"
+                >
+                  <span class="lang-en">How I Work</span>
+                  <span class="lang-ru">Подход к работе</span>
+                </button>
+              </div>
+
+              <div id="htmx-terminal-output" class="terminal-screen" aria-live="polite">
+                <div style="color: #C8FF00; font-weight: 800; margin-bottom: 10px;">
+                  <span class="lang-en">// CURRENT FOCUS // NOW</span>
+                  <span class="lang-ru">// ТЕКУЩИЙ ФОКУС // СЕЙЧАС</span>
+                </div>
+                <div class="lang-en">
+                  <p>▸ <strong>ROLE:</strong> Staff Engineer @ <strong>YAGNI (yagni.app)</strong> · Core Team (Oct 2026 — Present)</p>
+                  <p>▸ <strong>MISSION:</strong> Making AI agent teams dependable in production, not just impressive in a demo.</p>
+                  <p>▸ <strong>WORKFLOW:</strong> Named agents (Builder, Reviewer, PM) taking work from proposal to merged GitHub PR under human-approved plans.</p>
+                  <p>▸ <strong>TRACK RECORD:</strong> 8+ Years across AI Systems (Sully.ai), Multi-Tenant B2B SaaS (Kingpin) & Distributed Architectures.</p>
+                </div>
+                <div class="lang-ru">
+                  <p>▸ <strong>РОЛЬ:</strong> Staff Engineer в <strong>YAGNI (yagni.app)</strong> · Основная команда (Окт 2026 — наст. время)</p>
+                  <p>▸ <strong>ФОКУС:</strong> Делаю команды AI-агентов надёжными в продакшене, а не только эффектными на демо.</p>
+                  <p>▸ <strong>ПРОЦЕСС:</strong> Именованные агенты (Builder, Reviewer, PM) доводят задачи от идеи до смерженного PR в GitHub по утверждённому человеком плану.</p>
+                  <p>▸ <strong>ОПЫТ:</strong> 8+ лет в архитектуре, голосовом AI (Sully.ai), B2B SaaS (Kingpin) и управлении командами.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02. PRODUCTION SYSTEMS & CASE STUDIES -->
+      <section id="systems" class="section-block" data-deck-section="systems">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker" style="background: var(--lime);">
+                <span class="lang-en">02 // PRODUCTION SYSTEMS</span>
+                <span class="lang-ru">02 // ПРОДАКШЕН-СИСТЕМЫ</span>
+              </span>
+              <h2 class="section-title">
+                <span class="lang-en">SELECTED ARCHITECTURE CASE STUDIES</span>
+                <span class="lang-ru">КЛЮЧЕВЫЕ ИНЖЕНЕРНЫЕ КЕЙСЫ</span>
+              </h2>
+            </div>
+          </div>
+
+          <div class="cases-grid">
+            {CASE_STUDIES.map((cs) => (
+              <article class="brutal-box brutal-box-hover case-card" data-tilt>
+                <div>
+                  <div class="case-meta-top">
+                    <span class="case-badge" style={`background: ${cs.color};`}>
+                      <span class="lang-en">{cs.badge.en}</span>
+                      <span class="lang-ru">{cs.badge.ru}</span>
+                    </span>
+                    <span class="case-period">{cs.company} · {cs.period}</span>
+                  </div>
+
+                  <h3 class="case-title">
+                    <span class="lang-en">{cs.title.en}</span>
+                    <span class="lang-ru">{cs.title.ru}</span>
+                  </h3>
+
+                  <p class="case-summary">
+                    <span class="lang-en">{cs.summary.en}</span>
+                    <span class="lang-ru">{cs.summary.ru}</span>
+                  </p>
+
+                  <div class="case-metrics-row">
+                    {cs.metrics.map((m) => (
+                      <div class="case-metric-box">
+                        <span class="case-metric-val">{m.value}</span>
+                        <span class="case-metric-lbl">
+                          <span class="lang-en">{m.label.en}</span>
+                          <span class="lang-ru">{m.label.ru}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div class="stack-pills">
+                    {cs.stack.map((tech) => (
+                      <span class="brutal-tag">{tech}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="brutal-btn"
+                  style={`background: ${cs.color}; color: #0A0A0A; width: 100%; justify-content: space-between;`}
+                  hx-get={`/partials/case-${cs.id}`}
+                  hx-target="#arch-blueprint-slot"
+                  hx-swap="innerHTML transition:true"
+                  onclick="document.getElementById('arch-blueprint-slot')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })"
+                >
+                  <span>
+                    <span class="lang-en">VIEW ARCHITECTURE</span>
+                    <span class="lang-ru">СХЕМА АРХИТЕКТУРЫ</span>
+                  </span>
+                  <span>↓</span>
+                </button>
+              </article>
+            ))}
+          </div>
+
+          <div id="arch-blueprint-slot" aria-live="polite">
+            <CaseBlueprint study={CASE_STUDIES[0]} />
+          </div>
+        </div>
+      </section>
+
+      <!-- 03. CONCISE INTERACTIVE CAREER DECK -->
+      <section id="experience" class="section-block" data-deck-section="experience">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker" style="background: var(--cyan);">
+                <span class="lang-en">03 // CAREER TRACK RECORD</span>
+                <span class="lang-ru">03 // КАРЬЕРНЫЙ ТРЕК</span>
+              </span>
+              <h2 class="section-title">
+                <span class="lang-en">8+ YEARS IN PRODUCTION (2018 — PRESENT)</span>
+                <span class="lang-ru">8+ ЛЕТ В ПРОДАКШЕНЕ (2018 — НАСТ. ВРЕМЯ)</span>
+              </h2>
+            </div>
+          </div>
+
+          <!-- Interactive 2-Column Career Switcher -->
+          <div class="exp-deck-grid">
+            <div class="exp-tabs-col" role="tablist" aria-label="Select Company">
+              {EXPERIENCE.map((exp, idx) => (
+                <button
+                  type="button"
+                  class={`exp-tab-btn ${idx === 0 ? 'active-exp' : ''}`}
+                  data-exp-btn={exp.id}
+                  onclick={`window.selectExperienceTab('${exp.id}', this)`}
+                >
+                  <div>
+                    <span class="exp-tab-company">{exp.company}</span>
+                    <span class="exp-tab-period">
+                      <span class="lang-en">{exp.period.en}</span>
+                      <span class="lang-ru">{exp.period.ru}</span>
+                    </span>
+                  </div>
+                  <span class="exp-tab-dot" style={`background: ${exp.color};`}></span>
+                </button>
+              ))}
+            </div>
+
+            <div>
+              {EXPERIENCE.map((exp, idx) => (
+                <article
+                  id={`panel-${exp.id}`}
+                  class={`brutal-box exp-spotlight-panel ${idx === 0 ? 'active-exp-panel' : ''}`}
+                >
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;">
+                    <div>
+                      <span
+                        style={`background: ${exp.color}; color: #0A0A0A; font-family: var(--font-mono); font-weight: 800; padding: 4px 10px; border: 2px solid #0A0A0A; display: inline-block; margin-bottom: 8px;`}
+                      >
+                        {exp.company}
+                      </span>
+                      <h3 style="font-size: 1.4rem; font-weight: 800;">
+                        <span class="lang-en">{exp.role.en}</span>
+                        <span class="lang-ru">{exp.role.ru}</span>
+                      </h3>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-size: 0.78rem; text-align: right; color: var(--ink-muted);">
+                      <div>
+                        <span class="lang-en">{exp.period.en}</span>
+                        <span class="lang-ru">{exp.period.ru}</span>
+                      </div>
+                      <div>
+                        <span class="lang-en">{exp.location.en}</span>
+                        <span class="lang-ru">{exp.location.ru}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Key Focus Strip -->
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+                    {exp.metrics.map((m) => (
+                      <span class="brutal-tag" style={`background: ${exp.color}; color: #0A0A0A;`}>
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div style="font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; padding: 8px 12px; background: var(--surface-alt); border-left: 4px solid var(--border); margin-bottom: 14px;">
+                    <span class="lang-en">{exp.domain.en}</span>
+                    <span class="lang-ru">{exp.domain.ru}</span>
+                  </div>
+
+                  <ul class="exp-bullets lang-en">
+                    {exp.highlights.en.map((bullet) => (
+                      <li>{bullet}</li>
+                    ))}
+                  </ul>
+                  <ul class="exp-bullets lang-ru">
+                    {exp.highlights.ru.map((bullet) => (
+                      <li>{bullet}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04. CORE CAPABILITIES & EDUCATION -->
+      <section id="capabilities" class="section-block" data-deck-section="capabilities">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker" style="background: var(--orange); color: #fff;">
+                <span class="lang-en">04 // TECHNICAL RADAR</span>
+                <span class="lang-ru">04 // ТЕХНИЧЕСКИЙ СТЕК</span>
+              </span>
+              <h2 class="section-title">
+                <span class="lang-en">CORE CAPABILITIES MATRIX</span>
+                <span class="lang-ru">ЯДРО ТЕХНОЛОГИЙ И ЛИДЕРСТВА</span>
+              </h2>
+            </div>
+          </div>
+
+          <div class="cap-grid">
+            {CAPABILITIES.map((cap) => (
+              <div class="brutal-box brutal-box-hover cap-card" data-tilt>
+                <span class="cap-head" style={`background: ${cap.color};`}>
+                  <span class="lang-en">{cap.title.en}</span>
+                  <span class="lang-ru">{cap.title.ru}</span>
+                </span>
+                <div class="cap-skills">
+                  {cap.skills.map((skill) => (
+                    <span class="skill-chip">{skill}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="brutal-box" style="margin-top: 22px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; background: var(--surface-alt);">
+            <div>
+              <span class="brutal-tag" style="background: var(--yellow); color: #0A0A0A; margin-bottom: 4px;">
+                <span class="lang-en">EDUCATION</span>
+                <span class="lang-ru">ОБРАЗОВАНИЕ</span>
+              </span>
+              <h3 style="font-size: 1.12rem; font-weight: 800;">
+                <span class="lang-en">Belarusian State University — Medicine (2015 — 2019)</span>
+                <span class="lang-ru">Белорусский государственный университет — Медицинское дело (2015 — 2019)</span>
+              </h3>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <div class="brutal-box" style="padding: 8px 14px; background: var(--lime); color: #0A0A0A; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 800;">
+                ENGLISH: C1
+              </div>
+              <div class="brutal-box" style="padding: 8px 14px; background: var(--cyan); color: #0A0A0A; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 800;">
+                RUSSIAN: NATIVE
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05. ENGINEERING BLOG & FIELD NOTES -->
+      <section id="writing" class="section-block" data-deck-section="writing">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker" style="background: var(--pink); color: #fff;">
+                <span class="lang-en">05 // FIELD NOTES & ESSAYS</span>
+                <span class="lang-ru">05 // ИНЖЕНЕРНЫЙ БЛОГ</span>
+              </span>
+              <h2 class="section-title">
+                <span class="lang-en">WRITING ON AI, SYSTEMS & LEADERSHIP</span>
+                <span class="lang-ru">ЗАМЕТКИ ОБ AI, СИСТЕМАХ И МЕНЕДЖМЕНТЕ</span>
+              </h2>
+            </div>
+            <a
+              href={PROFILE.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="brutal-btn brutal-btn-lime"
+            >
+              <span class="lang-en">FOLLOW ON LINKEDIN ↗</span>
+              <span class="lang-ru">ЧИТАТЬ В LINKEDIN ↗</span>
+            </a>
+          </div>
+
+          <div class="brutal-box telemetry-banner">
+            <div class="telemetry-grid">
+              <div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                  {BLOG_MOMENTUM.coreThemes.map((th) => (
+                    <div class="stat-card" style="background: var(--surface-alt);">
+                      <div style={`height: 5px; background: ${th.color}; border: 1.5px solid #0A0A0A; margin-bottom: 6px;`}></div>
+                      <div style="font-weight: 800; font-size: 0.84rem; margin-bottom: 2px;">
+                        <span class="lang-en">{th.title.en}</span>
+                        <span class="lang-ru">{th.title.ru}</span>
+                      </div>
+                      <div class="stat-lbl" style="color: var(--ink-muted);">
+                        <span class="lang-en">{th.desc.en}</span>
+                        <span class="lang-ru">{th.desc.ru}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                  {BLOG_MOMENTUM.audienceBreakdown.map((aud) => (
+                    <div style="border: 2px solid var(--border); padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.72rem;">
+                      <span>
+                        <span class="lang-en">{aud.label.en}</span>
+                        <span class="lang-ru">{aud.label.ru}</span>
+                      </span>
+                      <strong style="background: var(--yellow); color: #0A0A0A; padding: 1px 6px; border: 1.5px solid #0A0A0A; font-size: 0.66rem;">
+                        <span class="lang-en">{aud.badge.en}</span>
+                        <span class="lang-ru">{aud.badge.ru}</span>
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div style="font-family: var(--font-mono); font-size: 0.74rem; font-weight: 800; margin-bottom: 6px; display: flex; justify-content: space-between;">
+                  <span>
+                    <span class="lang-en">PUBLISHING CADENCE & MOMENTUM</span>
+                    <span class="lang-ru">ДИНАМИКА ПУБЛИКАЦИЙ И ОХВАТА</span>
+                  </span>
+                  <span style="color: var(--orange);">↗</span>
+                </div>
+                <div class="chart-bars" role="img" aria-label="Publishing momentum trend">
+                  {BLOG_MOMENTUM.pulseSeries.map((pt) => (
+                    <div class="chart-bar-col">
+                      <div class="chart-bar" style={`height: ${pt.pct}%;`}></div>
+                      <span class="chart-date">{pt.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-bar" role="group" aria-label="Filter Essays by Topic">
+            <button
+              type="button"
+              class="brutal-btn brutal-btn-lime active"
+              hx-get="/partials/posts-all"
+              hx-target="#blog-posts-container"
+              hx-swap="innerHTML transition:true"
+              onclick="window.activateFilterBtn(this)"
+            >
+              <span class="lang-en">ALL</span>
+              <span class="lang-ru">ВСЕ</span>
+            </button>
+            <button
+              type="button"
+              class="brutal-btn"
+              hx-get="/partials/posts-ai"
+              hx-target="#blog-posts-container"
+              hx-swap="innerHTML transition:true"
+              onclick="window.activateFilterBtn(this)"
+            >
+              <span class="lang-en">AI & AGENTS</span>
+              <span class="lang-ru">AI И АГЕНТЫ</span>
+            </button>
+            <button
+              type="button"
+              class="brutal-btn"
+              hx-get="/partials/posts-leadership"
+              hx-target="#blog-posts-container"
+              hx-swap="innerHTML transition:true"
+              onclick="window.activateFilterBtn(this)"
+            >
+              <span class="lang-en">LEADERSHIP</span>
+              <span class="lang-ru">ЛИДЕРСТВО</span>
+            </button>
+            <button
+              type="button"
+              class="brutal-btn"
+              hx-get="/partials/posts-systems"
+              hx-target="#blog-posts-container"
+              hx-swap="innerHTML transition:true"
+              onclick="window.activateFilterBtn(this)"
+            >
+              <span class="lang-en">RELIABILITY</span>
+              <span class="lang-ru">НАДЁЖНОСТЬ</span>
+            </button>
+            <button
+              type="button"
+              class="brutal-btn"
+              hx-get="/partials/posts-delivery"
+              hx-target="#blog-posts-container"
+              hx-swap="innerHTML transition:true"
+              onclick="window.activateFilterBtn(this)"
+            >
+              <span class="lang-en">OWNERSHIP</span>
+              <span class="lang-ru">ОУНЕРШИП</span>
+            </button>
+          </div>
+
+          <div id="blog-posts-container" aria-live="polite">
+            <BlogGrid posts={BLOG_POSTS} />
+          </div>
+        </div>
+      </section>
+
+      <!-- 06. DIRECT CONTACT & FOOTER -->
+      <footer id="contact" class="section-block" data-deck-section="contact" style="border-bottom: none; padding-bottom: 72px;">
+        <div class="container">
+          <div class="brutal-box" style="padding: 36px; background: var(--surface);">
+            <div class="contact-grid">
+              <div>
+                <span class="section-kicker" style="background: var(--lime);">
+                  <span class="lang-en">06 // DIRECT CONTACT</span>
+                  <span class="lang-ru">06 // ПРЯМАЯ СВЯЗЬ</span>
+                </span>
+                <h2 class="section-title" style="margin-bottom: 12px;">
+                  <span class="lang-en">LET’S BUILD DEPENDABLE AI & DISTRIBUTED SYSTEMS</span>
+                  <span class="lang-ru">ДАВАЙТЕ СТРОИТЬ НАДЁЖНЫЕ AI И СИСТЕМЫ</span>
+                </h2>
+                <p style="font-size: 0.98rem; color: var(--ink-muted); margin-bottom: 20px; max-width: 54ch;">
+                  <span class="lang-en">
+                    Always happy to connect with founders, engineering leaders, and builders working on production AI agents and distributed systems.
+                  </span>
+                  <span class="lang-ru">
+                    Всегда рад общению с фаундерами, техлидами и инженерами, создающими AI-агентов и сложные продакшен-системы.
+                  </span>
+                </p>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                  <button
+                    type="button"
+                    class="brutal-btn brutal-btn-lime"
+                    onclick="window.copyToClipboard('rossevgleb@gmail.com', 'Copied: rossevgleb@gmail.com')"
+                  >
+                    rossevgleb@gmail.com
+                  </button>
+                  <button
+                    type="button"
+                    class="brutal-btn brutal-btn-yellow"
+                    onclick="window.copyToClipboard('+995591908180', 'Copied: +995 591 90 81 80')"
+                  >
+                    +995 591 90 81 80
+                  </button>
+                  <a
+                    href={PROFILE.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="brutal-btn brutal-btn-cyan"
+                  >
+                    LINKEDIN.COM/IN/ROSSEV ↗
+                  </a>
+                </div>
+              </div>
+
+              <div class="brutal-box" style="padding: 22px; background: #0D0E12; color: #F4F0EA; font-family: var(--font-mono); font-size: 0.8rem;">
+                <div style="color: #C8FF00; font-weight: 800; margin-bottom: 10px;">
+                  <span class="lang-en">// LOCATION & CURRENT ROLE</span>
+                  <span class="lang-ru">// ЛОКАЦИЯ И ТЕКУЩАЯ РОЛЬ</span>
+                </div>
+                <p style="margin-bottom: 6px;">
+                  ▸ <strong><span class="lang-en">NAME:</span><span class="lang-ru">ИМЯ:</span></strong>
+                  <span class="lang-en">Gleb Rosev</span>
+                  <span class="lang-ru">Глеб Росев</span>
+                </p>
+                <p style="margin-bottom: 6px;">
+                  ▸ <strong><span class="lang-en">NOW:</span><span class="lang-ru">СЕЙЧАС:</span></strong>
+                  <span class="lang-en">Staff Engineer @ YAGNI (yagni.app)</span>
+                  <span class="lang-ru">Staff Engineer в YAGNI (yagni.app)</span>
+                </p>
+                <p style="margin-bottom: 6px;">
+                  ▸ <strong><span class="lang-en">BASE:</span><span class="lang-ru">ЛОКАЦИЯ:</span></strong>
+                  <span class="lang-en">Tbilisi, Georgia · Remote (US Team)</span>
+                  <span class="lang-ru">Тбилиси, Грузия · Удалённо с США</span>
+                </p>
+                <p style="color: #00E5FF; margin-top: 12px;">
+                  © {new Date().getFullYear()} <span class="lang-en">Gleb Rosev.</span><span class="lang-ru">Глеб Росев.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite">
+      COPIED TO CLIPBOARD
+    </div>
+
+    <script is:inline>
+      // 1. Language & Theme Switcher
+      window.setSiteLang = function (lang) {
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.setAttribute('lang', lang);
+        localStorage.setItem('rosev_lang', lang);
+        const btnEn = document.getElementById('btn-lang-en');
+        const btnRu = document.getElementById('btn-lang-ru');
+        if (btnEn && btnRu) {
+          btnEn.classList.toggle('active-lang', lang === 'en');
+          btnRu.classList.toggle('active-lang', lang === 'ru');
+        }
+        if (window.updateIsoHudText) {
+          window.updateIsoHudText();
+        }
+      };
+
+      window.toggleSiteTheme = function () {
+        const cur = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = cur === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('rosev_theme', next);
+      };
+
+      (function initPrefs() {
+        const savedLang = localStorage.getItem('rosev_lang') || 'en';
+        window.setSiteLang(savedLang);
+        const savedTheme = localStorage.getItem('rosev_theme');
+        if (savedTheme) {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+      })();
+
+      // 2. Spatial Section Deck Switcher
+      window.switchSectionDeck = function (targetSection, clickedBtn) {
+        document.querySelectorAll('[data-deck-btn]').forEach((b) => {
+          b.classList.toggle('active-deck', b.getAttribute('data-deck-btn') === targetSection);
+        });
+        const sections = document.querySelectorAll('.section-block[data-deck-section]');
+        sections.forEach((sec) => {
+          const secKey = sec.getAttribute('data-deck-section');
+          if (targetSection === 'all' || secKey === targetSection) {
+            sec.classList.remove('deck-hidden');
+          } else {
+            sec.classList.add('deck-hidden');
+          }
+        });
+        if (targetSection !== 'all') {
+          const targetEl = document.getElementById(targetSection);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      };
+
+      // 3. Interactive Experience Career Deck Switcher
+      window.selectExperienceTab = function (expId, btn) {
+        document.querySelectorAll('[data-exp-btn]').forEach((b) => b.classList.remove('active-exp'));
+        if (btn) btn.classList.add('active-exp');
+        document.querySelectorAll('.exp-spotlight-panel').forEach((p) => {
+          p.classList.toggle('active-exp-panel', p.id === 'panel-' + expId);
+        });
+      };
+
+      // 4. Clipboard & Button Helpers
+      window.copyToClipboard = function (text, msg) {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text);
+        }
+        const toast = document.getElementById('brutal-toast');
+        if (toast) {
+          toast.textContent = msg;
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2400);
+        }
+      };
+
+      window.activateGroupBtn = function (btn) {
+        const parent = btn.parentElement;
+        if (!parent) return;
+        parent.querySelectorAll('.cmd-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      };
+
+      window.activateFilterBtn = function (btn) {
+        const parent = btn.parentElement;
+        if (!parent) return;
+        parent.querySelectorAll('.brutal-btn').forEach((b) => {
+          b.classList.remove('active', 'brutal-btn-lime');
+        });
+        btn.classList.add('active', 'brutal-btn-lime');
+      };
+
+      // 5. 3D Perspective Tilt Effect on Neo-Brutalist Cards
+      function initTiltCards() {
+        const cards = document.querySelectorAll('[data-tilt]');
+        cards.forEach((card) => {
+          if (card.dataset.tiltBound) return;
+          card.dataset.tiltBound = 'true';
+          card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const xc = rect.width / 2;
+            const yc = rect.height / 2;
+            const dx = (x - xc) / xc;
+            const dy = (y - yc) / yc;
+            card.style.transform = `perspective(900px) rotateX(${(-dy * 3.5).toFixed(2)}deg) rotateY(${(dx * 3.5).toFixed(2)}deg) translate(-2px, -2px)`;
+          });
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+          });
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', initTiltCards);
+      document.body.addEventListener('htmx:afterSwap', initTiltCards);
+
+      // 6. Draggable Neo-Brutalist Stickers
+      document.addEventListener('DOMContentLoaded', () => {
+        const stickers = document.querySelectorAll('.draggable-sticker');
+        stickers.forEach((sticker) => {
+          let isDragging = false;
+          let startX = 0, startY = 0;
+          let offsetX = 0, offsetY = 0;
+
+          sticker.addEventListener('pointerdown', (e) => {
+            isDragging = true;
+            startX = e.clientX - offsetX;
+            startY = e.clientY - offsetY;
+            sticker.setPointerCapture(e.pointerId);
+            sticker.style.zIndex = '50';
+          });
+
+          sticker.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            offsetX = e.clientX - startX;
+            offsetY = e.clientY - startY;
+            sticker.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(-3deg)`;
+          });
+
+          sticker.addEventListener('pointerup', () => {
+            isDragging = false;
+          });
+        });
+      });
+
+      // 7. DEEP 3D MULTI-STRATUM ARCHITECTURE ENGINE (3 VERTICAL DECKS + EXPLODED 3D NODE SLICES + CHAOS FAULT SIMULATOR)
+      document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('iso-arch-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        // 8 Wide-Spaced Volumetric 3D Structures across 3 Vertical Strata:
+        // stratum  0 (baseY:   0) -> Core Execution Deck (Nodes 01, 02, 03, 04)
+        // stratum -1 (baseY: -68) -> Subterranean Isolation & Sandbox Vault (Nodes 05, 06)
+        // stratum +1 (baseY: +74) -> Orbital Telemetry, Evals & Self-Fix Deck (Nodes 07, 08)
+        const ISO_DOMAINS = {
+          yagni: {
+            caseId: 'yagni',
+            edges: [
+              [0, 1], [1, 2], [1, 3], [2, 4], [3, 4],
+              [4, 5], [3, 7], [6, 1], [7, 6], [5, 7]
+            ],
+            nodes: [
+              {
+                num: '01', code: '01 · PLAN & GITHUB', short: 'PLAN & PR', metric: 'HUMAN PLAN',
+                stratum: 0, baseY: 0, x: -205, z: 155, w: 18, d: 18, h: 36, type: 'monolith',
+                top: '#C8FF00', left: '#99C200', right: '#6B8700',
+                spec: { en: 'Proposal to Merged GitHub PR under a Human-Approved Plan', ru: 'От предложения до смерженного PR в GitHub по утверждённому плану' },
+                layers: [
+                  { tag: 'L3 · PR MERGE GATE', desc: { en: 'Human sign-off & GitHub review record', ru: 'Подтверждение человеком и запись в GitHub PR' } },
+                  { tag: 'L2 · PLAN COMPILER', desc: { en: 'Breaks proposal into verifiable engineering steps', ru: 'Декомпозиция задачи в проверяемый инженерный план' } },
+                  { tag: 'L1 · GITHUB WEBHOOKS', desc: { en: 'Repo context sync, branches & diff ingestion', ru: 'Синхронизация репозитория, веток и диффов' } }
+                ],
+                guard: { en: 'GUARDRAIL: Zero unapproved merges — autonomy is earned via track record.', ru: 'ГАРДРЕЙЛ: Никаких мержей без плана — автономность зарабатывается историей прогонов.' }
+              },
+              {
+                num: '02', code: '02 · AGENT CORE', short: 'AGENT CORE', metric: 'PM · BUILD · REV',
+                stratum: 0, baseY: 0, x: -15, z: 15, w: 22, d: 22, h: 54, type: 'reactor',
+                top: '#00E5FF', left: '#00B2C7', right: '#007C8C',
+                spec: { en: 'Named AI Agent Team (PM, Builder, Reviewer) Working Like an Engineering Team', ru: 'Команда именованных AI-агентов (PM, Builder, Reviewer), работающая как команда' },
+                layers: [
+                  { tag: 'L3 · PM & HANDOFF ROUTER', desc: { en: 'Coordinates Builder, Reviewer & Judge turns', ru: 'Координация шагов между PM, Builder и Reviewer' } },
+                  { tag: 'L2 · CONTEXT MEMORY', desc: { en: 'Shared repo state & deterministic task graph', ru: 'Общее состояние репозитория и граф задач' } },
+                  { tag: 'L1 · AUDIT LEDGER', desc: { en: 'Every decision leaves a human-inspectable trace', ru: 'Каждый шаг оставляет проверяемый человеком след' } }
+                ],
+                guard: { en: 'GUARDRAIL: Deterministic handoff contracts prevent infinite agent loops.', ru: 'ГАРДРЕЙЛ: Жёсткие контракты передачи хода исключают зацикливание агентов.' }
+              },
+              {
+                num: '03', code: '03 · BUILDER AGENT', short: 'BUILDER', metric: 'CODE & TESTS',
+                stratum: 0, baseY: 0, x: -175, z: -35, w: 17, d: 17, h: 42, type: 'tower',
+                top: '#00E5FF', left: '#00B2C7', right: '#007C8C',
+                spec: { en: 'Hardened Builder Agent Writing Production Code & Automated Tests', ru: 'Укреплённый агент-разработчик (Builder), пишущий продакшен-код и тесты' },
+                layers: [
+                  { tag: 'L3 · PATCH SYNTHESIS', desc: { en: 'Multi-file AST-aware edits & migrations', ru: 'Многофайловые изменения кода и миграции' } },
+                  { tag: 'L2 · TEST HARNESS GEN', desc: { en: 'Writes & runs unit/integration specs first', ru: 'Генерация и прогон тестов перед отправкой ревьюеру' } },
+                  { tag: 'L1 · TOOL CALL DRIVER', desc: { en: 'Dispatches builds down to Sub-Vault Sandbox (05)', ru: 'Отправка сборок вниз в изолированный бункер-песочницу (05)' } }
+                ],
+                guard: { en: 'GUARDRAIL: Code never leaves Builder without passing sandboxed test suite.', ru: 'ГАРДРЕЙЛ: Код не передаётся дальше без зелёного прогона в песочнице.' }
+              },
+              {
+                num: '04', code: '04 · REVIEWER & JUDGE', short: 'JUDGE & PR', metric: '2ND PASS',
+                stratum: 0, baseY: 0, x: 20, z: -130, w: 18, d: 18, h: 44, type: 'tower',
+                top: '#FFD600', left: '#C7A700', right: '#8F7800',
+                spec: { en: 'Reviewer & Second Judge Agent Verifying Output Before Human Decision', ru: 'Агент-ревьюер и второй агент-судья для проверки перед решением человека' },
+                layers: [
+                  { tag: 'L3 · SECOND JUDGE AGENT', desc: { en: 'Independent critique against approved plan', ru: 'Независимая проверка вторым агентом-судьёй по плану' } },
+                  { tag: 'L2 · REGRESSION SCAN', desc: { en: 'Static analysis, security & edge-case checks', ru: 'Статический анализ, проверка безопасности и краевых кейсов' } },
+                  { tag: 'L1 · REJECTION LOOP', desc: { en: 'Returns actionable diff comments to Builder (03)', ru: 'Возврат конкретных замечаний по диффу обратно в Builder (03)' } }
+                ],
+                guard: { en: 'GUARDRAIL: Separate Judge model context eliminates self-confirmation bias.', ru: 'ГАРДРЕЙЛ: Изолированный контекст судьи исключает самоодобрение ошибок.' }
+              },
+              {
+                num: '05', code: '05 · SANDBOX RUNNER', short: 'SANDBOX', metric: 'SUB-VAULT L-1',
+                stratum: -1, baseY: -68, x: 35, z: 165, w: 19, d: 19, h: 36, type: 'cage',
+                top: '#FFD600', left: '#C7A700', right: '#8F7800',
+                spec: { en: 'Subterranean Sandboxed Code Runner Executing Customer Builds Safely', ru: 'Подземный изолированный раннер (Sub-Vault L-1) для безопасного запуска сборок' },
+                layers: [
+                  { tag: 'L3 · EPHEMERAL VM POD', desc: { en: 'Single-run micro-sandbox destroyed after build', ru: 'Одноразовый микро-контейнер, уничтожаемый после сборки' } },
+                  { tag: 'L2 · EGRESS FIREWALL', desc: { en: 'Strict network policy & dependency allowlist', ru: 'Строгая сетевая политика и контроль внешних пакетов' } },
+                  { tag: 'L1 · CPU / MEM QUOTA', desc: { en: 'Kills runaway processes & infinite test loops', ru: 'Аппаратные лимиты против зависших процессов' } }
+                ],
+                guard: { en: 'GUARDRAIL: Untrusted agent code runs strictly in Sub-Vault L-1 (-68m).', ru: 'ГАРДРЕЙЛ: Весь сгенерированный код выполняется строго в нижнем бункере L-1.' }
+              },
+              {
+                num: '06', code: '06 · ORG ISOLATION', short: 'ORG VAULT', metric: 'TENANT LOCK',
+                stratum: -1, baseY: -68, x: 190, z: 95, w: 18, d: 18, h: 34, type: 'cage',
+                top: '#B388FF', left: '#8B62D9', right: '#5E3DA8',
+                spec: { en: 'Strict Data & Secret Isolation Between Customer Organizations', ru: 'Строгое разделение данных, ключей и окружений между организациями клиентов' },
+                layers: [
+                  { tag: 'L3 · PER-ORG KMS KEYS', desc: { en: 'Scoped credentials & zero cross-tenant memory', ru: 'Отдельные ключи шифрования и полная изоляция памяти' } },
+                  { tag: 'L2 · STORAGE BOUNDARY', desc: { en: 'Isolated artifact & repository volumes', ru: 'Физическое разделение хранилищ артефактов и кода' } },
+                  { tag: 'L1 · ZERO-LEAK AUDIT', desc: { en: 'Cryptographic tenant boundary verification', ru: 'Криптографическая проверка границ арендатора' } }
+                ],
+                guard: { en: 'GUARDRAIL: Zero shared state between customer orgs at storage or runtime.', ru: 'ГАРДРЕЙЛ: Никакого общего состояния между организациями клиентов.' }
+              },
+              {
+                num: '07', code: '07 · SELF-IMPROVING', short: 'SELF-FIX', metric: 'ORBITAL L+1',
+                stratum: 1, baseY: 74, x: -135, z: -185, w: 18, d: 18, h: 38, type: 'tower',
+                top: '#FF3385', left: '#C72466', right: '#8C1444',
+                spec: { en: 'Orbital Meta-Agents Reviewing Failed Runs, Finding Root Causes & Proposing Fixes', ru: 'Орбитальная мета-система (L+1): разбор упавших прогонов и поиск первопричин' },
+                layers: [
+                  { tag: 'L3 · FIX PROPOSAL PR', desc: { en: 'Drafts harness/prompt patches for team approval', ru: 'Формирует предложения по фиксу для решения команды' } },
+                  { tag: 'L2 · ROOT-CAUSE MINER', desc: { en: 'Clusters failed trajectories & tool errors', ru: 'Кластеризация сбоев и поиск корневой причины в трейсах' } },
+                  { tag: 'L1 · RUN TRACE INGEST', desc: { en: 'Streams failed runs from Risk Radar (08)', ru: 'Приём телеметрии проблемных сборок от Радара (08)' } }
+                ],
+                guard: { en: 'GUARDRAIL: Self-improvement proposals require benchmark proof + human sign-off.', ru: 'ГАРДРЕЙЛ: Любое улучшение агента проверяется на бенчмарке и утверждается командой.' }
+              },
+              {
+                num: '08', code: '08 · EVALS & RADAR', short: 'RISK RADAR', metric: 'EARLY WARN',
+                stratum: 1, baseY: 74, x: 195, z: -65, w: 19, d: 19, h: 46, type: 'radar',
+                top: '#FF5500', left: '#CC4400', right: '#943000',
+                spec: { en: 'Realistic Customer Benchmarks & Early-Warning Stalled-Run Risk Radar', ru: 'Реалистичные бенчмарки и орбитальный радар раннего обнаружения зависших сборок' },
+                layers: [
+                  { tag: 'L3 · EARLY-WARN RADAR', desc: { en: 'Detects stalled customer builds before customer reports', ru: 'Обнаруживает проблему у клиента раньше самого клиента' } },
+                  { tag: 'L2 · REALISTIC EVALS', desc: { en: 'Hard engineering benchmarks modelled on real work', ru: 'Сложные бенчмарки, смоделированные по реальным задачам' } },
+                  { tag: 'L1 · REGRESSION GATE', desc: { en: 'Shows whether a change makes agents better or worse', ru: 'Точно показывает, стало ли качество агентов лучше или хуже' } }
+                ],
+                guard: { en: 'GUARDRAIL: Proactive stall detection alerts engineering before customer impact.', ru: 'ГАРДРЕЙЛ: Раннее обнаружение зависаний до того, как о них напишет клиент.' }
+              }
+            ]
+          },
+          voice: {
+            caseId: 'sully',
+            edges: [
+              [0, 1], [1, 2], [1, 3], [2, 4], [3, 4],
+              [4, 5], [3, 7], [6, 1], [7, 6], [5, 7]
+            ],
+            nodes: [
+              {
+                num: '01', code: '01 · TWILIO & LIVEKIT', short: 'SIP / WEBRTC', metric: '<35ms RTT',
+                stratum: 0, baseY: 0, x: -205, z: 155, w: 18, d: 18, h: 36, type: 'monolith',
+                top: '#C8FF00', left: '#99C200', right: '#6B8700',
+                spec: { en: 'Low-Latency Twilio SIP & LiveKit WebRTC Audio Router (<35ms RTT)', ru: 'Двусторонний аудио-стриминг через Twilio SIP и LiveKit WebRTC (<35 мс)' },
+                layers: [
+                  { tag: 'L3 · BARGE-IN HANDLER', desc: { en: 'Instant caller interruption & duplex audio flush', ru: 'Мгновенная обработка перебивания и сброс буфера' } },
+                  { tag: 'L2 · LIVEKIT WEBRTC', desc: { en: 'Jitter-buffered 24kHz PCM frame transport', ru: 'Транспорт аудио-фреймов 24 кГц с защитой от джиттера' } },
+                  { tag: 'L1 · TWILIO SIP TRUNK', desc: { en: 'Hospital PSTN telephony ingress & failover', ru: 'Входящая телефония клиник и автоматический фейловер' } }
+                ],
+                guard: { en: 'GUARDRAIL: Sub-35ms audio frame routing keeps conversations natural.', ru: 'ГАРДРЕЙЛ: Маршрутизация быстрее 35 мс удерживает естественный темп диалога.' }
+              },
+              {
+                num: '02', code: '02 · VOICE AI HARNESS', short: 'VOICE CORE', metric: 'ORCHESTRATOR',
+                stratum: 0, baseY: 0, x: -15, z: 15, w: 22, d: 22, h: 54, type: 'reactor',
+                top: '#00E5FF', left: '#00B2C7', right: '#007C8C',
+                spec: { en: 'Core Voice AI Harness Combining LLM Reasoning with State Machines', ru: 'Центральный харнесс голосового AI: оркестрация LLM и конечных автоматов' },
+                layers: [
+                  { tag: 'L3 · DIALOGUE PLANNER', desc: { en: 'Low-latency streaming LLM response synthesizer', ru: 'Потоковая генерация ответов LLM с минимальной задержкой' } },
+                  { tag: 'L2 · FSM ORCHESTRATOR', desc: { en: 'Strict state transitions for clinical workflows', ru: 'Конечный автомат клинических сценариев приёма' } },
+                  { tag: 'L1 · VOICE TTS STREAM', desc: { en: 'Chunked phoneme synthesis & prosody control', ru: 'Потоковый синтез речи с контролем интонации' } }
+                ],
+                guard: { en: 'GUARDRAIL: Hybrid FSM + LLM prevents off-script medical hallucinations.', ru: 'ГАРДРЕЙЛ: Гибрид FSM и LLM исключает отклонение от медицинского протокола.' }
+              },
+              {
+                num: '03', code: '03 · SPEECHMATICS ASR', short: 'ASR STREAM', metric: '24kHz LIVE',
+                stratum: 0, baseY: 0, x: -175, z: -35, w: 17, d: 17, h: 42, type: 'tower',
+                top: '#00E5FF', left: '#00B2C7', right: '#007C8C',
+                spec: { en: 'Multilingual Streaming ASR & Clinical Turn-Detection Pipeline', ru: 'Потоковое мультиязычное распознавание речи и детекция пауз' },
+                layers: [
+                  { tag: 'L3 · SEMANTIC VAD', desc: { en: 'Distinguishes patient pause from end-of-turn', ru: 'Отличает паузу на раздумье от конца реплики пациента' } },
+                  { tag: 'L2 · MEDICAL LEXICON', desc: { en: 'Drug names, dosages & ICD-10 terminology boost', ru: 'Словарь препаратов, дозировок и терминов МКБ-10' } },
+                  { tag: 'L1 · MULTI-LANG ASR', desc: { en: 'Real-time partial transcript streaming', ru: 'Потоковая транскрибация на нескольких языках' } }
+                ],
+                guard: { en: 'GUARDRAIL: Acoustic + semantic turn detection prevents cutting off patients.', ru: 'ГАРДРЕЙЛ: Семантический детектор пауз не перебивает пациента на полуслове.' }
+              },
+              {
+                num: '04', code: '04 · STATE GUARDRAILS', short: 'GUARDRAILS', metric: 'DETERMINISTIC',
+                stratum: 0, baseY: 0, x: 20, z: -130, w: 18, d: 18, h: 44, type: 'tower',
+                top: '#FFD600', left: '#C7A700', right: '#8F7800',
+                spec: { en: 'Deterministic State Guardrails Preventing Clinical Hallucinations', ru: 'Детерминированные гардрейлы, исключающие галлюцинации в медпроцессах' },
+                layers: [
+                  { tag: 'L3 · CLINICAL POLICY', desc: { en: 'Blocks unverified medical advice or diagnosis', ru: 'Блокировка непроверенных медицинских рекомендаций' } },
+                  { tag: 'L2 · SLOT VERIFIER', desc: { en: 'Confirms DOB, insurance & appointment slots', ru: 'Верификация даты рождения, страховки и слота записи' } },
+                  { tag: 'L1 · HUMAN ESCALATION', desc: { en: 'Warm SIP transfer to clinic staff on edge cases', ru: 'Мгновенный перевод звонка на регистратуру при нештатном кейсе' } }
+                ],
+                guard: { en: 'GUARDRAIL: 100% deterministic verification before any EHR write operation.', ru: 'ГАРДРЕЙЛ: Стопроцентная детерминированная проверка перед записью в МИС.' }
+              },
+              {
+                num: '05', code: '05 · TOOL CONTRACTS', short: 'SCHEMA BOX', metric: 'SUB-VAULT L-1',
+                stratum: -1, baseY: -68, x: 35, z: 165, w: 19, d: 19, h: 36, type: 'cage',
+                top: '#FFD600', left: '#C7A700', right: '#8F7800',
+                spec: { en: 'Strict Schema Validation Synchronizing Voice Agent, Backend & UI', ru: 'Строгая валидация контрактов между голосовым агентом, бэкендом и UI' },
+                layers: [
+                  { tag: 'L3 · ZOD / JSON SCHEMA', desc: { en: 'Strict runtime payload validation on tool calls', ru: 'Строгая runtime-валидация аргументов при вызове тулов' } },
+                  { tag: 'L2 · IDEMPOTENCY KEY', desc: { en: 'Prevents duplicate appointment bookings', ru: 'Защита от дублирования записи при повторном вызове' } },
+                  { tag: 'L1 · RETRY SANDBOX', desc: { en: 'Auto-repairs malformed LLM tool payloads', ru: 'Автоисправление невалидных JSON-вызовов от модели' } }
+                ],
+                guard: { en: 'GUARDRAIL: Malformed LLM tool calls are caught in Sub-Vault L-1 before execution.', ru: 'ГАРДРЕЙЛ: Невалидные вызовы инструментов перехватываются в бункере L-1.' }
+              },
+              {
+                num: '06', code: '06 · EHR ADAPTER VAULT', short: 'EHR VAULT', metric: '400+ ORGS',
+                stratum: -1, baseY: -68, x: 190, z: 95, w: 18, d: 18, h: 34, type: 'cage',
+                top: '#B388FF', left: '#8B62D9', right: '#5E3DA8',
+                spec: { en: 'Isolated Clinical EHR Integration Trusted by 400+ Healthcare Orgs', ru: 'Изолированная интеграция с клиниками для 400+ медорганизаций' },
+                layers: [
+                  { tag: 'L3 · FHIR / HL7 BRIDGE', desc: { en: 'Normalized clinical record & schedule adapters', ru: 'Единый адаптер расписаний и медкарт FHIR / HL7' } },
+                  { tag: 'L2 · PHI ENCRYPTION', desc: { en: 'Scoped patient data vault & PII redaction', ru: 'Шифрование персональных медданных и очистка логов' } },
+                  { tag: 'L1 · CIRCUIT BREAKER', desc: { en: 'Graceful queueing when hospital EHR is slow', ru: 'Буферизация запросов при тормозах внешней МИС клиники' } }
+                ],
+                guard: { en: 'GUARDRAIL: Isolated per-clinic EHR credentials serving 100K+ physicians.', ru: 'ГАРДРЕЙЛ: Полная изоляция учётных данных клиник (400+ медорганизаций).' }
+              },
+              {
+                num: '07', code: '07 · STRESS TEST SUITE', short: 'STRESS SIM', metric: 'ORBITAL L+1',
+                stratum: 1, baseY: 74, x: -135, z: -185, w: 18, d: 18, h: 38, type: 'tower',
+                top: '#FF3385', left: '#C72466', right: '#8C1444',
+                spec: { en: 'Automated Concurrent Call Stress-Testing & Evaluation Harnesses', ru: 'Орбитальный симулятор (L+1): стресс-тесты и пайплайны оценки звонков' },
+                layers: [
+                  { tag: 'L3 · ADVERSARIAL CALLS', desc: { en: 'Simulates noisy, accented & edge-case patients', ru: 'Симуляция фонового шума, акцентов и сложных пациентов' } },
+                  { tag: 'L2 · CONCURRENCY LOAD', desc: { en: 'Spikes parallel SIP streams before release', ru: 'Нагрузочное тестирование параллельных звонков перед релизом' } },
+                  { tag: 'L1 · LATENCY SCORER', desc: { en: 'Measures P95 turn-to-turn response times', ru: 'Контроль P95-задержки ответа на каждом шаге диалога' } }
+                ],
+                guard: { en: 'GUARDRAIL: Every voice prompt & harness change runs through synthetic callers.', ru: 'ГАРДРЕЙЛ: Каждое изменение проверяется сотнями синтетических звонков.' }
+              },
+              {
+                num: '08', code: '08 · TRACE DIAGNOSTICS', short: 'TRACE RADAR', metric: '100K+ DOCS',
+                stratum: 1, baseY: 74, x: 195, z: -65, w: 19, d: 19, h: 46, type: 'radar',
+                top: '#FF5500', left: '#CC4400', right: '#943000',
+                spec: { en: 'Runtime Diagnostics Isolating Production Call Incidents in Minutes', ru: 'Орбитальный радар диагностики: локализация инцидентов в звонках за минуты' },
+                layers: [
+                  { tag: 'L3 · TIMELINE REPLAY', desc: { en: 'Frame-accurate audio + ASR + LLM + Tool timeline', ru: 'Посекундная синхронизация аудио, ASR, LLM и вызовов тулов' } },
+                  { tag: 'L2 · DRIFT DETECTOR', desc: { en: 'Flags latency spikes or ASR degradation live', ru: 'Мгновенное обнаружение деградации задержек или распознавания' } },
+                  { tag: 'L1 · INCIDENT TRIAGE', desc: { en: 'Cuts root-cause debugging from hours to minutes', ru: 'Сокращение разбора прод-инцидентов с часов до минут' } }
+                ],
+                guard: { en: 'GUARDRAIL: Full end-to-end call observability across audio, LLM & EHR.', ru: 'ГАРДРЕЙЛ: Сквозная трассировка звонка от аудиопотока до ответа МИС.' }
+              }
+            ]
+          },
+          saas: {
+            caseId: 'kingpin',
+            edges: [
+              [0, 1], [1, 2], [1, 3], [2, 4], [3, 4],
+              [4, 5], [3, 7], [6, 1], [7, 6], [5, 7]
+            ],
+            nodes: [
+              {
+                num: '01', code: '01 · GATEWAY & FLAGS', short: 'CANARY GW', metric: 'TRUNK MAIN',
+                stratum: 0, baseY: 0, x: -205, z: 155, w: 18, d: 18, h: 36, type: 'monolith',
+                top: '#C8FF00', left: '#99C200', right: '#6B8700',
+                spec: { en: 'Trunk-Based Delivery Gateway with Feature Flags & Canary Rollouts', ru: 'Канареечный API-шлюз и поставка из main через фича-флаги' },
+                layers: [
+                  { tag: 'L3 · CANARY ROUTER', desc: { en: 'Progressive tenant rollout & instant kill-switch', ru: 'Поэтапная раскатка на клиентов и мгновенный откат' } },
+                  { tag: 'L2 · FEATURE FLAG SDK', desc: { en: 'Decouples deployment from business release', ru: 'Отделение деплоя кода в прод от включения фичи' } },
+                  { tag: 'L1 · RATE & AUTH EDGE', desc: { en: 'JWT tenant scoping & DDoS throttling', ru: 'Проверка прав арендатора и лимитирование запросов' } }
+                ],
+                guard: { en: 'GUARDRAIL: Trunk-based deploys to main with sub-second feature flag rollback.', ru: 'ГАРДРЕЙЛ: Прямая поставка из main с мгновенным отключением через фича-флаги.' }
+              },
+              {
+                num: '02', code: '02 · NESTJS B2B CORE', short: 'B2B CORE', metric: '220ms TTFB',
+                stratum: 0, baseY: 0, x: -15, z: 15, w: 22, d: 22, h: 54, type: 'reactor',
+                top: '#00E5FF', left: '#00B2C7', right: '#007C8C',
+                spec: { en: 'Transactional Multi-Tenant B2B Core Engine (220ms TTFB)', ru: 'Транзакционное ядро мультитенантной B2B-платформы (220 мс TTFB)' },
+                layers: [
+                  { tag: 'L3 · ORDER WORKFLOW', desc: { en: 'Wholesale checkout, credit limits & approvals', ru: 'Оптовый чекаут, кредитные лимиты и цепочки согласования' } },
+                  { tag: 'L2 · DOMAIN SERVICES', desc: { en: 'Modular NestJS bounded contexts & CQRS', ru: 'Модульные доменные сервисы NestJS с чёткими границами' } },
+                  { tag: 'L1 · QUERY PIPELINE', desc: { en: 'Optimized read projections (850ms -> 220ms TTFB)', ru: 'Оптимизированные выборки (снижение TTFB с 850 до 220 мс)' } }
+                ],
+                guard: { en: 'GUARDRAIL: 4x faster TTFB (220ms) under heavy multi-tenant wholesale load.', ru: 'ГАРДРЕЙЛ: Четырёхкратное ускорение ответа (220 мс) под оптовой нагрузкой.' }
+              },
+              {
+                num: '03', code: '03 · CATALOG & PRICING', short: 'CATALOG', metric: 'TIERED B2B',
+                stratum: 0, baseY: 0, x: -175, z: -35, w: 17, d: 17, h: 42, type: 'tower',
+                top: '#00E5FF', left: '#00B2C7', right: '#007C8C',
+                spec: { en: 'High-Speed B2B Catalog, Custom Contract Pricing & Bulk Rules', ru: 'Высокоскоростной каталог, индивидуальные B2B-цены и правила скидок' },
+                layers: [
+                  { tag: 'L3 · CONTRACT PRICING', desc: { en: 'Per-account price matrices & volume tiers', ru: 'Индивидуальные прайс-листы и скидки от объёма' } },
+                  { tag: 'L2 · INVENTORY ALLOC', desc: { en: 'Real-time warehouse stock reservation', ru: 'Резервирование остатков по складам в реальном времени' } },
+                  { tag: 'L1 · SEARCH INDEXER', desc: { en: 'Faceted SKU filtering across 100k+ items', ru: 'Фасетный поиск по сотням тысяч товарных позиций' } }
+                ],
+                guard: { en: 'GUARDRAIL: Zero price-calculation drift between catalog view and invoice.', ru: 'ГАРДРЕЙЛ: Полное совпадение расчёта цен между витриной и финальным счётом.' }
+              },
+              {
+                num: '04', code: '04 · ERP & CRM SYNC', short: 'ERP SYNC', metric: 'IDEMPOTENT',
+                stratum: 0, baseY: 0, x: 20, z: -130, w: 18, d: 18, h: 44, type: 'tower',
+                top: '#FFD600', left: '#C7A700', right: '#8F7800',
+                spec: { en: 'Bidirectional ERP & CRM Event Workers with Dead-Letter Recovery', ru: 'Идемпотентные воркеры двусторонней синхронизации с ERP и CRM' },
+                layers: [
+                  { tag: 'L3 · OUTBOX DISPATCH', desc: { en: 'Transactional outbox guarantees zero lost events', ru: 'Паттерн Transactional Outbox исключает потерю событий' } },
+                  { tag: 'L2 · IDEMPOTENT SYNC', desc: { en: 'Safe retries across NetSuite / HubSpot / ERP', ru: 'Идемпотентная синхронизация заказов и контрагентов' } },
+                  { tag: 'L1 · DLQ AUTO-REPLAY', desc: { en: 'Dead-letter queue inspection & self-recovery', ru: 'Очередь проблемных сообщений с автоматическим допрогоном' } }
+                ],
+                guard: { en: 'GUARDRAIL: Outbox + idempotency keys eliminate duplicate ERP invoices.', ru: 'ГАРДРЕЙЛ: Ключи идемпотентности исключают дубли счетов во внешней ERP.' }
+              },
+              {
+                num: '05', code: '05 · POSTGRES ACID DB', short: 'POSTGRES DB', metric: 'SUB-VAULT L-1',
+                stratum: -1, baseY: -68, x: 35, z: 165, w: 19, d: 19, h: 36, type: 'cage',
+                top: '#FFD600', left: '#C7A700', right: '#8F7800',
+                spec: { en: 'Tenant-Scoped PostgreSQL Cluster with Strict Transactional Guarantees', ru: 'Подземный кластер PostgreSQL (L-1) со строгими ACID-транзакциями' },
+                layers: [
+                  { tag: 'L3 · SERIALIZABLE TX', desc: { en: ' Prevents double-spend on inventory & credit', ru: 'Защита от гонок при списании баланса и остатков' } },
+                  { tag: 'L2 · COMPOSITE INDEXES', desc: { en: 'Eliminated N+1 queries across tenant joins', ru: 'Устранение N+1 запросов и профилирование планов выполнения' } },
+                  { tag: 'L1 · ZERO-DOWNTIME MIG', desc: { en: 'Expand-contract schema migrations in prod', ru: 'Безопасные миграции БД без остановки продакшена' } }
+                ],
+                guard: { en: 'GUARDRAIL: Row-level tenant scoping + zero-downtime schema evolution.', ru: 'ГАРДРЕЙЛ: Изоляция данных на уровне строк и миграции без простоя.' }
+              },
+              {
+                num: '06', code: '06 · REDIS LOCK & CACHE', short: 'REDIS VAULT', metric: 'SUB-MS',
+                stratum: -1, baseY: -68, x: 190, z: 95, w: 18, d: 18, h: 34, type: 'cage',
+                top: '#B388FF', left: '#8B62D9', right: '#5E3DA8',
+                spec: { en: 'Distributed Redis Cache & Concurrency Lock Manager', ru: 'Распределённый кеш и менеджер блокировок Redis для пиковых нагрузок' },
+                layers: [
+                  { tag: 'L3 · REDLOCK MUTEX', desc: { en: 'Distributed locks for concurrent cart updates', ru: 'Распределённые блокировки при параллельном редактировании заказа' } },
+                  { tag: 'L2 · TENANT CACHE TAGS', desc: { en: 'Instant surgical cache invalidation on price edit', ru: 'Точечная инвалидация кеша при обновлении прайс-листов' } },
+                  { tag: 'L1 · BULLMQ STREAMS', desc: { en: 'High-throughput background job queues', ru: 'Высоконагруженные очереди фоновых задач' } }
+                ],
+                guard: { en: 'GUARDRAIL: Stampede protection & deterministic cache invalidation.', ru: 'ГАРДРЕЙЛ: Защита от пробоя кеша и мгновенный сброс устаревших цен.' }
+              },
+              {
+                num: '07', code: '07 · LLM INSIGHTS', short: 'LLM TRIAGE', metric: 'ORBITAL L+1',
+                stratum: 1, baseY: 74, x: -135, z: -185, w: 18, d: 18, h: 38, type: 'tower',
+                top: '#FF3385', left: '#C72466', right: '#8C1444',
+                spec: { en: 'Automated LLM Sales/CS Feedback Pipeline (-80% Manual Triage Time)', ru: 'Орбитальный LLM-конвейер (L+1): анализ фидбека от Sales и CS (-80% времени)' },
+                layers: [
+                  { tag: 'L3 · PRODUCT SIGNALS', desc: { en: 'Ranks feature requests by revenue impact', ru: 'Ранжирование продуктовых запросов по влиянию на выручку' } },
+                  { tag: 'L2 · STRUCTURED EXTRACT', desc: { en: 'Turns raw call notes & tickets into typed schemas', ru: 'Превращение сырых заметок и тикетов в типизированные отчёты' } },
+                  { tag: 'L1 · CS / SALES INGEST', desc: { en: 'Automated ingestion from CRM & support channels', ru: 'Автоматический сбор обращений из CRM и каналов поддержки' } }
+                ],
+                guard: { en: 'GUARDRAIL: Cut manual feedback triage time by 80% for product leadership.', ru: 'ГАРДРЕЙЛ: Сокращение ручной обработки фидбека на 80%.' }
+              },
+              {
+                num: '08', code: '08 · GRAFANA & LOKI SLO', short: 'SLO RADAR', metric: '99.95% SLA',
+                stratum: 1, baseY: 74, x: 195, z: -65, w: 19, d: 19, h: 46, type: 'radar',
+                top: '#FF5500', left: '#CC4400', right: '#943000',
+                spec: { en: 'Full-Stack Observability (Grafana, Loki, Mimir) & Proactive Alerting', ru: 'Орбитальный стек наблюдаемости (Grafana, Loki, Mimir) и SLO-алертинг' },
+                layers: [
+                  { tag: 'L3 · BURN-RATE ALERTS', desc: { en: 'Pages on SLO error-budget burn before outage', ru: 'Алерты по скорости выгорания бюджета ошибок до падения сервиса' } },
+                  { tag: 'L2 · CORRELATED LOGS', desc: { en: 'TraceID links frontend request to SQL query', ru: 'Единый TraceID от клика в браузере до SQL-запроса в БД' } },
+                  { tag: 'L1 · MIMIR & LOKI', desc: { en: 'High-cardinality metrics & structured log stream', ru: 'Сбор метрик высокой кардинальности и структурированных логов' } }
+                ],
+                guard: { en: 'GUARDRAIL: Early warning observability cut incident MTTR across all services.', ru: 'ГАРДРЕЙЛ: Сквозная наблюдаемость радикально снизила время реакции (MTTR).' }
+              }
+            ]
+          }
+        };
+
+        let currentDomain = 'yagni';
+        let selectedNode = 1; // Start on 02 · AGENT CORE
+        let lockedNode = -1;
+        let hoveredNode = -1;
+        let isXray = false;
+        let activeStratum = 'all'; // 'all' | 1 | 0 | -1
+
+        // 3D Camera Orbit, Pan & Zoom State
+        let camYaw = 0.64;
+        let camPitch = 0.54;
+        let targetYaw = 0.64;
+        let targetPitch = 0.54;
+
+        let camZoom = 0.86;
+        let targetZoom = 0.86;
+
+        let camFocusX = 0;
+        let camFocusY = 8;
+        let camFocusZ = 0;
+        let targetFocusX = 0;
+        let targetFocusY = 8;
+        let targetFocusZ = 0;
+
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let dragMoved = false;
+
+        let clock = 0;
+        let traceWave = { active: false, progress: 0 };
+        // Interactive 5-Stage Chaos / Fault & Self-Healing Simulation State
+        let faultSim = {
+          active: false,
+          progress: 0, // 0..1
+          targetIdx: 2, // Default fault target: 03 · BUILDER (or currently locked node)
+          stage: 0
+        };
+
+        const nodeFlash = new Array(8).fill(0);
+        const nodeExplode = new Array(8).fill(0); // 0..1 physical 3D sub-layer deconstruction
+        const nodeScreenCache = new Array(8).fill(null);
+
+        const edgePackets = Array.from({ length: 12 }, (_, i) => ({
+          edgeIdx: i,
+          t: (i * 0.23) % 1,
+          speed: 0.0065 + (i % 3) * 0.002
+        }));
+
+        let width = 0, height = 0;
+        function resize() {
+          const rect = canvas.parentElement.getBoundingClientRect();
+          width = rect.width;
+          height = rect.height;
+          const dpr = window.devicePixelRatio || 1;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Accurate 3D-to-2D Projection:
+        // camDist is positive when FARTHER from camera, negative when CLOSER to camera.
+        function project3D(wx, wy, wz) {
+          const dx = wx - camFocusX;
+          const dy = wy - camFocusY;
+          const dz = wz - camFocusZ;
+
+          const cosY = Math.cos(camYaw);
+          const sinY = Math.sin(camYaw);
+          const rx = dx * cosY - dz * sinY;
+          const rz = dx * sinY + dz * cosY;
+
+          const cosP = Math.cos(camPitch);
+          const sinP = Math.sin(camPitch);
+          const ry = dy * cosP - rz * sinP;
+          const camDist = -(dy * sinP + rz * cosP);
+
+          const fov = 1100;
+          const persp = (fov / Math.max(340, fov + camDist)) * camZoom;
+
+          return {
+            x: width * 0.5 + rx * persp,
+            y: height * 0.54 - ry * persp,
+            depth: camDist,
+            scale: persp
+          };
+        }
+
+        function updateInspectorCard() {
+          const card = document.getElementById('iso-inspector-card');
+          if (!card) return;
+          if (lockedNode < 0) {
+            card.classList.remove('open');
+            return;
+          }
+
+          const lang = document.documentElement.getAttribute('data-lang') || 'en';
+          const node = ISO_DOMAINS[currentDomain].nodes[lockedNode];
+          if (!node) return;
+
+          card.classList.add('open');
+          card.style.borderColor = node.top;
+
+          const stratumNames = {
+            1: { en: 'STRATUM L+1 · ORBITAL TELEMETRY (+74m)', ru: 'ЯРУС L+1 · ОРБИТАЛЬНЫЙ РАДАР (+74м)' },
+            0: { en: 'STRATUM L0 · CORE EXECUTION DECK (0m)', ru: 'ЯРУС L0 · ОСНОВНОЕ ЯДРО (0м)' },
+            '-1': { en: 'STRATUM L-1 · SUBTERRANEAN VAULT (-68m)', ru: 'ЯРУС L-1 · ПОДЗЕМНЫЙ БУНКЕР (-68м)' }
+          };
+
+          const titleEl = document.getElementById('iso-insp-title');
+          const subEl = document.getElementById('iso-insp-sub');
+          const layersEl = document.getElementById('iso-insp-layers');
+          const guardEl = document.getElementById('iso-insp-guard');
+
+          if (titleEl) {
+            titleEl.textContent = `${node.code}  [${node.metric}]`;
+            titleEl.style.color = node.top;
+          }
+          if (subEl) {
+            const st = stratumNames[String(node.stratum)];
+            subEl.textContent = `${st ? (st[lang] || st.en) : ''} — ${node.spec[lang] || node.spec.en}`;
+          }
+          if (layersEl && node.layers) {
+            layersEl.innerHTML = node.layers
+              .map(
+                (l) => `
+                <div class="iso-insp-layer-item" style="border-left-color: ${node.top};">
+                  <strong style="color: ${node.top}; white-space: nowrap;">${l.tag}</strong>
+                  <span style="text-align: right; color: #D8D5CD;">${l.desc[lang] || l.desc.en}</span>
+                </div>`
+              )
+              .join('');
+          }
+          if (guardEl && node.guard) {
+            guardEl.textContent = node.guard[lang] || node.guard.en;
+          }
+        }
+
+        window.updateIsoHudText = function () {
+          const lang = document.documentElement.getAttribute('data-lang') || 'en';
+          const activeIdx = hoveredNode >= 0 ? hoveredNode : lockedNode >= 0 ? lockedNode : selectedNode;
+          const node = ISO_DOMAINS[currentDomain].nodes[activeIdx];
+          if (!node) return;
+
+          const badgeEl = document.getElementById('iso-hud-badge');
+          const textEl = document.getElementById('iso-hud-text');
+          if (badgeEl) {
+            badgeEl.textContent = node.code;
+            badgeEl.style.background = node.top;
+            badgeEl.style.color = node.top === '#FF5500' || node.top === '#FF3385' ? '#FFFFFF' : '#0A0A0A';
+          }
+          if (textEl) {
+            textEl.textContent = node.spec[lang] || node.spec.en;
+          }
+
+          updateInspectorCard();
+        };
+
+        window.focusIsoNode = function (idx) {
+          const nodes = ISO_DOMAINS[currentDomain].nodes;
+          if (!nodes[idx]) return;
+          lockedNode = idx;
+          selectedNode = idx;
+          nodeFlash[idx] = 1.0;
+          const n = nodes[idx];
+          targetFocusX = n.x * 0.62;
+          targetFocusY = n.baseY + n.h * 0.6;
+          targetFocusZ = n.z * 0.62;
+          targetZoom = 1.24;
+          const statusEl = document.getElementById('iso-trace-status');
+          if (statusEl) statusEl.textContent = '3D EXPLODED // ' + n.code;
+          window.updateIsoHudText();
+        };
+
+        window.stepIsoNode = function (dir) {
+          const nodes = ISO_DOMAINS[currentDomain].nodes;
+          const base = lockedNode >= 0 ? lockedNode : selectedNode;
+          const next = (base + dir + nodes.length) % nodes.length;
+          window.focusIsoNode(next);
+        };
+
+        window.setIsoStratum = function (stratum, btn) {
+          activeStratum = stratum;
+          document.querySelectorAll('[data-stratum-btn]').forEach((b) => b.classList.remove('active'));
+          if (btn) btn.classList.add('active');
+
+          lockedNode = -1;
+          if (stratum === 1) {
+            targetFocusX = 0;
+            targetFocusY = 82;
+            targetFocusZ = -110;
+            targetZoom = 1.08;
+            targetPitch = 0.46;
+          } else if (stratum === 0) {
+            targetFocusX = 0;
+            targetFocusY = 16;
+            targetFocusZ = 0;
+            targetZoom = 1.02;
+            targetPitch = 0.56;
+          } else if (stratum === -1) {
+            targetFocusX = 80;
+            targetFocusY = -58;
+            targetFocusZ = 110;
+            targetZoom = 1.12;
+            targetPitch = 0.44;
+          } else {
+            targetFocusX = 0;
+            targetFocusY = 8;
+            targetFocusZ = 0;
+            targetZoom = 0.86;
+            targetPitch = 0.54;
+          }
+          window.updateIsoHudText();
+        };
+
+        window.resetIsoCamera = function () {
+          lockedNode = -1;
+          activeStratum = 'all';
+          document.querySelectorAll('[data-stratum-btn]').forEach((b) => {
+            b.classList.toggle('active', b.getAttribute('data-stratum-btn') === 'all');
+          });
+          targetFocusX = 0;
+          targetFocusY = 8;
+          targetFocusZ = 0;
+          targetZoom = 0.86;
+          targetYaw = 0.64;
+          targetPitch = 0.54;
+          const statusEl = document.getElementById('iso-trace-status');
+          if (statusEl) statusEl.textContent = '3 DECKS · CLICK ANY 3D NODE TO EXPLODE';
+          window.updateIsoHudText();
+        };
+
+        window.toggleIsoXray = function (btn) {
+          isXray = !isXray;
+          if (btn) btn.classList.toggle('active', isXray);
+          const statusEl = document.getElementById('iso-trace-status');
+          if (statusEl) {
+            statusEl.textContent = isXray ? 'CAD X-RAY WIREFRAME ACTIVE' : '3 DECKS · CLICK ANY 3D NODE TO EXPLODE';
+          }
+        };
+
+        window.triggerIsoFault = function (keepFocus = false) {
+          const target = lockedNode >= 0 ? lockedNode : 2; // Default: 03 · BUILDER
+          faultSim.active = true;
+          faultSim.progress = 0;
+          faultSim.targetIdx = target;
+          faultSim.stage = 1;
+
+          const btn = document.getElementById('btn-iso-fault');
+          if (btn) btn.classList.add('active');
+
+          if (!keepFocus) {
+            lockedNode = -1;
+            targetFocusX = 0;
+            targetFocusY = 8;
+            targetFocusZ = 0;
+            targetZoom = 0.88;
+            updateInspectorCard();
+          }
+        };
+
+        window.setIsoDomain = function (domain, btn) {
+          currentDomain = domain;
+          lockedNode = -1;
+          selectedNode = 1;
+          faultSim.active = false;
+          document.getElementById('btn-iso-fault')?.classList.remove('active');
+          window.resetIsoCamera();
+          document.querySelectorAll('[data-iso-domain]').forEach((b) => b.classList.remove('active'));
+          if (btn) btn.classList.add('active');
+          window.fireIsoPacket();
+          window.updateIsoHudText();
+        };
+
+        window.fireIsoPacket = function () {
+          traceWave.active = true;
+          traceWave.progress = 0;
+          const statusEl = document.getElementById('iso-trace-status');
+          if (statusEl) statusEl.textContent = 'TRACING 3-DECK TOPOLOGY...';
+        };
+
+        window.openDomainBlueprint = function () {
+          const caseId = ISO_DOMAINS[currentDomain].caseId;
+          window.switchSectionDeck('systems');
+          if (window.htmx) {
+            window.htmx.ajax('GET', '/partials/case-' + caseId, '#arch-blueprint-slot');
+          }
+          setTimeout(() => {
+            document.getElementById('arch-blueprint-slot')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 150);
+        };
+
+        function isNodeConnected(a, b) {
+          if (a === b) return true;
+          const edges = ISO_DOMAINS[currentDomain].edges;
+          for (let i = 0; i < edges.length; i++) {
+            const [u, v] = edges[i];
+            if ((u === a && v === b) || (u === b && v === a)) return true;
+          }
+          return false;
+        }
+
+        // Mouse & Touch Orbit + Node Picking + Scroll Zoom
+        canvas.addEventListener('pointerdown', (e) => {
+          isDragging = true;
+          dragMoved = false;
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+          canvas.setPointerCapture(e.pointerId);
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const mx = e.clientX - rect.left;
+          const my = e.clientY - rect.top;
+
+          if (isDragging) {
+            const dx = e.clientX - dragStartX;
+            const dy = e.clientY - dragStartY;
+            if (Math.hypot(dx, dy) > 4) dragMoved = true;
+            targetYaw += dx * 0.0065;
+            targetPitch = Math.max(0.28, Math.min(0.86, targetPitch + dy * 0.0045));
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            return;
+          }
+
+          let bestIdx = -1;
+          let bestDepth = Infinity;
+          for (let i = 0; i < nodeScreenCache.length; i++) {
+            const sc = nodeScreenCache[i];
+            if (!sc) continue;
+            if (
+              mx >= sc.minX - 10 &&
+              mx <= sc.maxX + 10 &&
+              my >= sc.minY - 26 &&
+              my <= sc.maxY + 8
+            ) {
+              if (sc.depth < bestDepth) {
+                bestDepth = sc.depth;
+                bestIdx = i;
+              }
+            }
+          }
+
+          if (bestIdx !== hoveredNode) {
+            hoveredNode = bestIdx;
+            canvas.style.cursor = bestIdx >= 0 ? 'pointer' : 'grab';
+            window.updateIsoHudText();
+          }
+        });
+
+        canvas.addEventListener('pointerup', () => {
+          if (!dragMoved) {
+            if (hoveredNode >= 0) {
+              if (lockedNode === hoveredNode) {
+                window.resetIsoCamera();
+              } else {
+                window.focusIsoNode(hoveredNode);
+              }
+            } else if (lockedNode >= 0) {
+              window.resetIsoCamera();
+            } else {
+              window.fireIsoPacket();
+            }
+          }
+          isDragging = false;
+        });
+
+        canvas.addEventListener('pointerleave', () => {
+          isDragging = false;
+          hoveredNode = -1;
+          window.updateIsoHudText();
+        });
+
+        canvas.addEventListener(
+          'wheel',
+          (e) => {
+            e.preventDefault();
+            const delta = -e.deltaY * 0.0012;
+            targetZoom = Math.max(0.68, Math.min(1.6, targetZoom + delta));
+          },
+          { passive: false }
+        );
+
+        function drawPoly(pts, fill, stroke, lineWidth = 2.2) {
+          ctx.beginPath();
+          ctx.moveTo(pts[0].x, pts[0].y);
+          for (let i = 1; i < pts.length; i++) {
+            ctx.lineTo(pts[i].x, pts[i].y);
+          }
+          ctx.closePath();
+          if (fill) {
+            ctx.fillStyle = fill;
+            ctx.fill();
+          }
+          if (stroke) {
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = lineWidth;
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+          }
+        }
+
+        // Solid 3D Box with strict Backface Culling so hidden back walls never create 'X' seams
+        function draw3DBox(cx, yBot, yTop, cz, hw, hd, colors, alpha = 1.0, wireframeOnly = false) {
+          const cornersTop = [
+            project3D(cx - hw, yTop, cz - hd), // 0: North-West
+            project3D(cx + hw, yTop, cz - hd), // 1: North-East
+            project3D(cx + hw, yTop, cz + hd), // 2: South-East
+            project3D(cx - hw, yTop, cz + hd)  // 3: South-West
+          ];
+          const cornersBot = [
+            project3D(cx - hw, yBot, cz - hd),
+            project3D(cx + hw, yBot, cz - hd),
+            project3D(cx + hw, yBot, cz + hd),
+            project3D(cx - hw, yBot, cz + hd)
+          ];
+
+          ctx.save();
+          ctx.globalAlpha = alpha;
+
+          if (wireframeOnly || isXray) {
+            const strokeCol = colors.top;
+            drawPoly(cornersBot, 'rgba(16, 20, 30, 0.25)', strokeCol, 1.4);
+            for (let i = 0; i < 4; i++) {
+              ctx.beginPath();
+              ctx.moveTo(cornersBot[i].x, cornersBot[i].y);
+              ctx.lineTo(cornersTop[i].x, cornersTop[i].y);
+              ctx.strokeStyle = strokeCol;
+              ctx.lineWidth = 1.4;
+              ctx.stroke();
+            }
+            drawPoly(cornersTop, 'rgba(200, 255, 0, 0.12)', strokeCol, 1.8);
+            ctx.restore();
+            return { cornersTop, cornersBot };
+          }
+
+          const sinY = Math.sin(camYaw);
+          const cosY = Math.cos(camYaw);
+
+          const walls = [
+            { idx: [0, 1], nx:  0, nz: -1, col: colors.right },
+            { idx: [1, 2], nx:  1, nz:  0, col: colors.right },
+            { idx: [2, 3], nx:  0, nz:  1, col: colors.left },
+            { idx: [3, 0], nx: -1, nz:  0, col: colors.left }
+          ];
+
+          const visibleWalls = [];
+          for (let i = 0; i < walls.length; i++) {
+            const w = walls[i];
+            const facing = w.nx * sinY + w.nz * cosY;
+            if (facing > -0.02) {
+              const [a, b] = w.idx;
+              const avgDepth =
+                (cornersTop[a].depth + cornersTop[b].depth + cornersBot[a].depth + cornersBot[b].depth) * 0.25;
+              visibleWalls.push({
+                pts: [cornersTop[a], cornersTop[b], cornersBot[b], cornersBot[a]],
+                col: w.col,
+                depth: avgDepth
+              });
+            }
+          }
+
+          visibleWalls.sort((a, b) => b.depth - a.depth);
+          visibleWalls.forEach((vw) => {
+            drawPoly(vw.pts, vw.col, '#0A0A0A', 2.1);
+          });
+
+          drawPoly(cornersTop, colors.top, '#0A0A0A', 2.2);
+
+          ctx.restore();
+          return { cornersTop, cornersBot };
+        }
+
+        // STRATUM L-1 (-68m): Subterranean Sandbox & Isolation Vault Deck + Vertical Shafts
+        function drawSubterraneanVaultDeck(nodes) {
+          const vaultY = -68;
+          const vRad = 250;
+          const alpha = activeStratum === 'all' || activeStratum === -1 ? 1.0 : 0.22;
+
+          ctx.save();
+          ctx.globalAlpha = alpha;
+
+          const vFL = project3D(-vRad, vaultY,  vRad);
+          const vFR = project3D( vRad, vaultY,  vRad);
+          const vBR = project3D( vRad, vaultY, -vRad);
+          const vBL = project3D(-vRad, vaultY, -vRad);
+
+          drawPoly([vFL, vFR, vBR, vBL], 'rgba(10, 12, 22, 0.92)', '#5E3DA8', 2.2);
+
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'rgba(179, 136, 255, 0.11)';
+          for (let g = -vRad; g <= vRad; g += 50) {
+            const p1 = project3D(g, vaultY, -vRad);
+            const p2 = project3D(g, vaultY,  vRad);
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+
+            const q1 = project3D(-vRad, vaultY, g);
+            const q2 = project3D( vRad, vaultY, g);
+            ctx.beginPath();
+            ctx.moveTo(q1.x, q1.y);
+            ctx.lineTo(q2.x, q2.y);
+            ctx.stroke();
+          }
+
+          // 4 Structural Corner Columns connecting Sub-Vault (-68) to Main Core Deck (0)
+          const corners = [
+            [-vRad, -vRad],
+            [ vRad, -vRad],
+            [ vRad,  vRad],
+            [-vRad,  vRad]
+          ];
+          corners.forEach(([cx, cz]) => {
+            const cBot = project3D(cx, vaultY, cz);
+            const cTop = project3D(cx, 0, cz);
+            ctx.beginPath();
+            ctx.moveTo(cBot.x, cBot.y);
+            ctx.lineTo(cTop.x, cTop.y);
+            ctx.strokeStyle = 'rgba(179, 136, 255, 0.35)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          });
+
+          ctx.restore();
+        }
+
+        // STRATUM L0 (0m): Main Execution Deck + 3D Inter-Stratum Conduits (Horizontal + Vertical Elevators)
+        function drawMainDeckAndConduits(nodes, edges, focusIdx) {
+          const gridRadius = 270;
+          const step = 45;
+          const deckAlpha = activeStratum === 'all' || activeStratum === 0 ? 1.0 : 0.35;
+
+          ctx.save();
+          ctx.globalAlpha = deckAlpha;
+
+          const bFL = project3D(-gridRadius, 0,  gridRadius);
+          const bFR = project3D( gridRadius, 0,  gridRadius);
+          const bBR = project3D( gridRadius, 0, -gridRadius);
+          const bBL = project3D(-gridRadius, 0, -gridRadius);
+
+          // Semi-translucent armored floor so the Subterranean Vault (-68m) glows beneath it
+          drawPoly([bFL, bFR, bBR, bBL], 'rgba(14, 18, 27, 0.78)', '#3A435E', 2.5);
+
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+          for (let g = -gridRadius; g <= gridRadius; g += step) {
+            const p1 = project3D(g, 0, -gridRadius);
+            const p2 = project3D(g, 0,  gridRadius);
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+
+            const q1 = project3D(-gridRadius, 0, g);
+            const q2 = project3D( gridRadius, 0, g);
+            ctx.beginPath();
+            ctx.moveTo(q1.x, q1.y);
+            ctx.lineTo(q2.x, q2.y);
+            ctx.stroke();
+          }
+
+          // Glowing Floor Hatch Cutouts at Y=0 directly above Sub-Vault nodes (05, 06) + Vertical Elevator Beams
+          nodes.forEach((n, idx) => {
+            if (n.stratum === -1) {
+              const hatchR = n.w + 8;
+              const hPts = [
+                project3D(n.x - hatchR, 0.5, n.z - hatchR),
+                project3D(n.x + hatchR, 0.5, n.z - hatchR),
+                project3D(n.x + hatchR, 0.5, n.z + hatchR),
+                project3D(n.x - hatchR, 0.5, n.z + hatchR)
+              ];
+              drawPoly(hPts, 'rgba(8, 10, 16, 0.72)', n.top, 2.0);
+
+              // Vertical 3D Elevator Shaft from Sub-Vault roof up through the floor hatch
+              const shaftBot = project3D(n.x, n.baseY + n.h, n.z);
+              const shaftTop = project3D(n.x, 2, n.z);
+              ctx.beginPath();
+              ctx.moveTo(shaftBot.x, shaftBot.y);
+              ctx.lineTo(shaftTop.x, shaftTop.y);
+              ctx.strokeStyle = n.top;
+              ctx.lineWidth = 2.4;
+              ctx.setLineDash([4, 4]);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+          });
+
+          // Sweeping 3D Telemetry Scan Line across main floor
+          const scanZ = ((clock * 1.4) % (gridRadius * 2)) - gridRadius;
+          const swL = project3D(-gridRadius, 1, scanZ);
+          const swR = project3D( gridRadius, 1, scanZ);
+          ctx.beginPath();
+          ctx.moveTo(swL.x, swL.y);
+          ctx.lineTo(swR.x, swR.y);
+          ctx.strokeStyle = 'rgba(200, 255, 0, 0.22)';
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+
+          ctx.restore();
+
+          // 3D Inter-Stratum Highways (routes along Y=2 and dives/climbs vertically to Sub-Vault or Orbital nodes)
+          edges.forEach(([uIdx, vIdx], eIdx) => {
+            const u = nodes[uIdx];
+            const v = nodes[vIdx];
+            const isRel = focusIdx === -1 || focusIdx === uIdx || focusIdx === vIdx;
+
+            const uDeck = project3D(u.x, 2, u.z);
+            const vDeck = project3D(v.x, 2, v.z);
+
+            if (isRel) {
+              ctx.beginPath();
+              ctx.moveTo(uDeck.x, uDeck.y);
+              ctx.lineTo(vDeck.x, vDeck.y);
+              ctx.strokeStyle = '#0A0A0A';
+              ctx.lineWidth = 4.5;
+              ctx.stroke();
+            }
+
+            const isFaultEdge =
+              faultSim.active &&
+              faultSim.stage <= 3 &&
+              (uIdx === faultSim.targetIdx || vIdx === faultSim.targetIdx);
+
+            ctx.beginPath();
+            ctx.moveTo(uDeck.x, uDeck.y);
+            ctx.lineTo(vDeck.x, vDeck.y);
+            ctx.strokeStyle = isFaultEdge
+              ? '#FF2A55'
+              : isRel
+              ? (focusIdx >= 0 ? '#C8FF00' : 'rgba(0, 229, 255, 0.55)')
+              : 'rgba(255, 255, 255, 0.08)';
+            ctx.lineWidth = isRel ? 2.2 : 1.1;
+            ctx.stroke();
+
+            if (isRel && !isFaultEdge) {
+              const pkt = edgePackets[eIdx % edgePackets.length];
+              const px = u.x + (v.x - u.x) * pkt.t;
+              const pz = u.z + (v.z - u.z) * pkt.t;
+              const py = (u.baseY + (v.baseY - u.baseY) * pkt.t) * 0.35 + 3;
+              const sp = project3D(px, py, pz);
+              ctx.fillStyle = '#0A0A0A';
+              ctx.fillRect(sp.x - 4, sp.y - 4, 8, 8);
+              ctx.fillStyle = focusIdx >= 0 ? '#C8FF00' : '#00E5FF';
+              ctx.fillRect(sp.x - 2.5, sp.y - 2.5, 5, 5);
+            }
+          });
+        }
+
+        // Draw an Architecture Node (Supports BOTH Solid Mode AND Physical 3D Exploded 3-Layer Mode when clicked!)
+        function drawArchitectureNodeBody(idx, node, focusIdx) {
+          const isHovered = idx === hoveredNode;
+          const isLocked = idx === lockedNode;
+          const isSelected = idx === selectedNode && lockedNode === -1 && hoveredNode === -1;
+          const isRelevant = focusIdx === -1 || isNodeConnected(focusIdx, idx);
+
+          const stratumMatch = activeStratum === 'all' || activeStratum === node.stratum;
+          const alpha = !stratumMatch ? 0.18 : isRelevant ? 1.0 : 0.28;
+
+          const baseY = node.baseY;
+          const lift = isHovered ? 6 : 0;
+          const h = node.h + lift;
+          const exp = nodeExplode[idx]; // 0..1 physical 3D sub-layer deconstruction
+
+          const isFaultTarget = faultSim.active && idx === faultSim.targetIdx && faultSim.stage <= 4;
+
+          // Orbital Platform Pad + Telemetry Pylon for L+1 nodes (07, 08)
+          if (node.stratum === 1) {
+            const padR = node.w + 9;
+            draw3DBox(
+              node.x,
+              baseY - 6,
+              baseY,
+              node.z,
+              padR,
+              padR,
+              { top: '#1A2030', left: '#121622', right: '#0B0E17' },
+              alpha,
+              false
+            );
+
+            // Vertical Telemetry Pylon down to Main Deck (Y=0)
+            const pyTop = project3D(node.x, baseY - 6, node.z);
+            const pyBot = project3D(node.x, 0, node.z);
+            ctx.save();
+            ctx.globalAlpha = alpha * 0.65;
+            ctx.beginPath();
+            ctx.moveTo(pyBot.x, pyBot.y);
+            ctx.lineTo(pyTop.x, pyTop.y);
+            ctx.strokeStyle = node.top;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+          }
+
+          // Target Lock Reticle on node's deck
+          if (isHovered || isLocked || isSelected || isFaultTarget) {
+            const r = node.w + 12 + Math.sin(clock * 0.09) * 2.5;
+            const ringPts = [];
+            for (let k = 0; k < 8; k++) {
+              const ang = (k / 8) * Math.PI * 2 + clock * 0.025;
+              ringPts.push(project3D(node.x + Math.cos(ang) * r, baseY + 1.2, node.z + Math.sin(ang) * r));
+            }
+            const ringCol = isFaultTarget ? '#FF2A55' : '#C8FF00';
+            drawPoly(ringPts, isFaultTarget ? 'rgba(255, 42, 85, 0.22)' : 'rgba(200, 255, 0, 0.15)', ringCol, 2.2);
+          }
+
+          // Hard Ground Shadow on node's stratum deck
+          const shPts = [
+            project3D(node.x - node.w + 5, baseY + 0.4, node.z - node.d + 5),
+            project3D(node.x + node.w + 5, baseY + 0.4, node.z - node.d + 5),
+            project3D(node.x + node.w + 5, baseY + 0.4, node.z + node.d + 5),
+            project3D(node.x - node.w + 5, baseY + 0.4, node.z + node.d + 5)
+          ];
+          drawPoly(shPts, 'rgba(0, 0, 0, 0.65)', null);
+
+          const topCol = isFaultTarget
+            ? (Math.floor(clock / 6) % 2 === 0 ? '#FF2A55' : '#FFD600')
+            : nodeFlash[idx] > 0.25
+            ? '#FFFFFF'
+            : node.top;
+          const palette = {
+            top: topCol,
+            left: isFaultTarget ? '#B8143A' : node.left,
+            right: isFaultTarget ? '#7A0A24' : node.right
+          };
+
+          let baseBox;
+          let roofTopY = baseY + h + 8;
+
+          // PHYSICAL 3D EXPLODED DECONSTRUCTION WHEN CLICKED (exp > 0.04)
+          if (exp > 0.04) {
+            const sliceH = (h * 0.78) / 3;
+            const gap = exp * 18; // Vertical separation between L1, L2, L3 cartridges
+            const totalExpH = sliceH * 3 + gap * 2;
+
+            // 4 Glowing Vertical Spine Rods connecting the 3 exploded cartridges
+            const rodCorners = [
+              [-node.w * 0.75, -node.d * 0.75],
+              [ node.w * 0.75, -node.d * 0.75],
+              [ node.w * 0.75,  node.d * 0.75],
+              [-node.w * 0.75,  node.d * 0.75]
+            ];
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            rodCorners.forEach(([rx, rz]) => {
+              const rBot = project3D(node.x + rx, baseY, node.z + rz);
+              const rTop = project3D(node.x + rx, baseY + totalExpH + 6, node.z + rz);
+              ctx.beginPath();
+              ctx.moveTo(rBot.x, rBot.y);
+              ctx.lineTo(rTop.x, rTop.y);
+              ctx.strokeStyle = '#C8FF00';
+              ctx.lineWidth = 1.8;
+              ctx.stroke();
+            });
+            ctx.restore();
+
+            let bBot = null;
+            let bTop = null;
+            for (let s = 0; s < 3; s++) {
+              const y0 = baseY + s * (sliceH + gap);
+              const y1 = y0 + sliceH;
+              const slicePal =
+                s === 2
+                  ? palette
+                  : s === 1
+                  ? { top: '#00E5FF', left: '#0099B8', right: '#00667A' }
+                  : { top: '#C8FF00', left: '#8FB800', right: '#5E7A00' };
+              const sliceBox = draw3DBox(node.x, y0, y1, node.z, node.w, node.d, slicePal, alpha, false);
+              if (s === 0) bBot = sliceBox.cornersBot;
+              if (s === 2) bTop = sliceBox.cornersTop;
+
+              // Draw crisp 3D sub-layer tag right next to each floating slice
+              if (exp > 0.45 && node.layers && node.layers[2 - s]) {
+                const layerObj = node.layers[2 - s];
+                const tagAnchor = project3D(node.x + node.w + 6, (y0 + y1) * 0.5, node.z - node.d);
+                ctx.save();
+                ctx.font = '800 10px "JetBrains Mono", monospace';
+                const tw = ctx.measureText(layerObj.tag).width + 12;
+                const th = 17;
+                const tx = tagAnchor.x + 8;
+                const ty = tagAnchor.y - th / 2;
+
+                ctx.beginPath();
+                ctx.moveTo(tagAnchor.x - 4, tagAnchor.y);
+                ctx.lineTo(tx, tagAnchor.y);
+                ctx.strokeStyle = slicePal.top;
+                ctx.lineWidth = 1.6;
+                ctx.stroke();
+
+                ctx.fillStyle = '#0A0A0A';
+                ctx.fillRect(tx + 2, ty + 2, tw, th);
+                ctx.fillStyle = '#121622';
+                ctx.fillRect(tx, ty, tw, th);
+                ctx.strokeStyle = slicePal.top;
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(tx, ty, tw, th);
+                ctx.fillStyle = slicePal.top;
+                ctx.fillText(layerObj.tag, tx + 6, ty + 12);
+                ctx.restore();
+              }
+            }
+            baseBox = { cornersTop: bTop, cornersBot: bBot };
+            roofTopY = baseY + totalExpH + 14;
+          } else {
+            baseBox = draw3DBox(node.x, baseY, baseY + h, node.z, node.w, node.d, palette, alpha, false);
+
+            if (node.type === 'reactor') {
+              draw3DBox(
+                node.x,
+                baseY + h,
+                baseY + h + 15,
+                node.z,
+                node.w * 0.55,
+                node.d * 0.55,
+                { top: '#FFFFFF', left: node.top, right: node.left },
+                alpha,
+                false
+              );
+              const haloPts = [];
+              const haloR = node.w * 1.15;
+              for (let k = 0; k < 6; k++) {
+                const a = (k / 6) * Math.PI * 2 + clock * 0.028;
+                haloPts.push(project3D(node.x + Math.cos(a) * haloR, baseY + h + 20, node.z + Math.sin(a) * haloR));
+              }
+              ctx.save();
+              ctx.globalAlpha = alpha;
+              drawPoly(haloPts, null, '#C8FF00', 2.0);
+              ctx.restore();
+              roofTopY = baseY + h + 24;
+            } else if (node.type === 'cage') {
+              const cageBoost = faultSim.active && faultSim.stage === 3 ? 4 : 0;
+              draw3DBox(
+                node.x,
+                baseY,
+                baseY + h + 6 + cageBoost,
+                node.z,
+                node.w + 5 + cageBoost,
+                node.d + 5 + cageBoost,
+                { top: '#00E5FF', left: '#00E5FF', right: '#00E5FF' },
+                alpha * 0.82,
+                true
+              );
+              roofTopY = baseY + h + 10;
+            } else if (node.type === 'radar') {
+              const mastTop = project3D(node.x, baseY + h + 18, node.z);
+              const mastBot = project3D(node.x, baseY + h, node.z);
+              ctx.save();
+              ctx.globalAlpha = alpha;
+              ctx.beginPath();
+              ctx.moveTo(mastBot.x, mastBot.y);
+              ctx.lineTo(mastTop.x, mastTop.y);
+              ctx.strokeStyle = '#FFFFFF';
+              ctx.lineWidth = 2.4;
+              ctx.stroke();
+
+              const dishAngle = clock * (faultSim.active ? 0.14 : 0.045);
+              const d1 = project3D(node.x + Math.cos(dishAngle) * 15, baseY + h + 18, node.z + Math.sin(dishAngle) * 15);
+              const d2 = project3D(node.x - Math.cos(dishAngle) * 15, baseY + h + 18, node.z - Math.sin(dishAngle) * 15);
+              ctx.beginPath();
+              ctx.moveTo(d1.x, d1.y);
+              ctx.lineTo(d2.x, d2.y);
+              ctx.strokeStyle = faultSim.active ? '#FF2A55' : '#C8FF00';
+              ctx.lineWidth = 3.0;
+              ctx.stroke();
+              ctx.restore();
+              roofTopY = baseY + h + 22;
+            } else if (node.type === 'tower') {
+              draw3DBox(
+                node.x,
+                baseY + h,
+                baseY + h + 6,
+                node.z,
+                node.w * 0.56,
+                node.d * 0.56,
+                { top: '#181B24', left: '#101218', right: '#0A0A0A' },
+                alpha,
+                false
+              );
+              roofTopY = baseY + h + 10;
+            }
+          }
+
+          const allPts = [...baseBox.cornersTop, ...baseBox.cornersBot];
+          const xs = allPts.map((p) => p.x);
+          const ys = allPts.map((p) => p.y);
+          const anchorPt = project3D(node.x, roofTopY, node.z);
+          nodeScreenCache[idx] = {
+            minX: Math.min(...xs),
+            maxX: Math.max(...xs),
+            minY: Math.min(...ys),
+            maxY: Math.max(...ys),
+            anchorX: anchorPt.x,
+            anchorY: anchorPt.y,
+            depth: anchorPt.depth,
+            isRelevant: isRelevant && stratumMatch,
+            isHighlighted: isHovered || isLocked || isSelected || isFaultTarget || nodeFlash[idx] > 0.2
+          };
+        }
+
+        // Draw 3D Chaos / Fault & Self-Healing Beams across the 3 Vertical Decks
+        function drawFaultSimulationFX(nodes) {
+          if (!faultSim.active) return;
+          const target = nodes[faultSim.targetIdx];
+          const radar = nodes[7];   // 08 · RISK RADAR (Orbital L+1)
+          const selfFix = nodes[6]; // 07 · SELF-FIX (Orbital L+1)
+          const judge = nodes[3];   // 04 · JUDGE & PR (Core L0)
+          if (!target || !radar || !selfFix) return;
+
+          ctx.save();
+
+          // Stage 1..4: Expanding crimson shockwave on target node
+          if (faultSim.stage <= 4) {
+            const shockR = target.w + 10 + ((clock * 1.8) % 34);
+            const sPts = [];
+            for (let k = 0; k < 12; k++) {
+              const a = (k / 12) * Math.PI * 2;
+              sPts.push(project3D(target.x + Math.cos(a) * shockR, target.baseY + 2, target.z + Math.sin(a) * shockR));
+            }
+            drawPoly(sPts, null, '#FF2A55', 2.4);
+          }
+
+          // Stage 2+: Orbital Risk Radar (08) locks a 3D targeting beam onto the failing node
+          if (faultSim.stage >= 2 && faultSim.stage <= 4) {
+            const rOrigin = project3D(radar.x, radar.baseY + radar.h + 18, radar.z);
+            const tTop = project3D(target.x, target.baseY + target.h, target.z);
+            const tL = project3D(target.x - target.w, target.baseY + target.h, target.z - target.d);
+            const tR = project3D(target.x + target.w, target.baseY + target.h, target.z + target.d);
+
+            drawPoly([rOrigin, tL, tR], 'rgba(255, 42, 85, 0.2)', '#FF2A55', 1.8);
+            ctx.beginPath();
+            ctx.moveTo(rOrigin.x, rOrigin.y);
+            ctx.lineTo(tTop.x, tTop.y);
+            ctx.strokeStyle = '#FFD600';
+            ctx.lineWidth = 2.8;
+            ctx.stroke();
+          }
+
+          // Stage 4: Orbital Self-Fix (07) beams root-cause patch down to Judge (04) & Target
+          if (faultSim.stage === 4) {
+            const sfPt = project3D(selfFix.x, selfFix.baseY + selfFix.h, selfFix.z);
+            const jPt = project3D(judge.x, judge.baseY + judge.h, judge.z);
+            const tPt = project3D(target.x, target.baseY + target.h, target.z);
+
+            ctx.beginPath();
+            ctx.moveTo(sfPt.x, sfPt.y);
+            ctx.lineTo(jPt.x, jPt.y);
+            ctx.lineTo(tPt.x, tPt.y);
+            ctx.strokeStyle = '#00E5FF';
+            ctx.lineWidth = 3.2;
+            ctx.stroke();
+          }
+
+          // Stage 5: Green Healing Wave
+          if (faultSim.stage === 5) {
+            const healR = target.w + 26;
+            const hPts = [];
+            for (let k = 0; k < 12; k++) {
+              const a = (k / 12) * Math.PI * 2;
+              hPts.push(project3D(target.x + Math.cos(a) * healR, target.baseY + 4, target.z + Math.sin(a) * healR));
+            }
+            drawPoly(hPts, 'rgba(200, 255, 0, 0.25)', '#C8FF00', 3.0);
+          }
+
+          ctx.restore();
+        }
+
+        // High-Contrast Callout Labels on Top Layer with 2D Anti-Collision
+        function drawTopLayerLabels(nodes, focusIdx) {
+          ctx.font = '800 11px "JetBrains Mono", monospace';
+          const boxes = [];
+
+          nodes.forEach((node, idx) => {
+            const sc = nodeScreenCache[idx];
+            if (!sc) return;
+            if (focusIdx >= 0 && !sc.isRelevant) return;
+            if (activeStratum !== 'all' && node.stratum !== activeStratum) return;
+
+            const text = `${node.num} · ${node.short}`;
+            const tw = ctx.measureText(text).width + 16;
+            const th = 21;
+
+            boxes.push({
+              idx,
+              node,
+              text,
+              w: tw,
+              h: th,
+              anchorX: sc.anchorX,
+              anchorY: sc.anchorY,
+              x: sc.anchorX - tw / 2,
+              y: sc.anchorY - th - 10,
+              isHighlighted: sc.isHighlighted
+            });
+          });
+
+          // 2D Anti-Collision Repulsion Pass so labels never touch each other
+          for (let iter = 0; iter < 6; iter++) {
+            for (let i = 0; i < boxes.length; i++) {
+              for (let j = i + 1; j < boxes.length; j++) {
+                const a = boxes[i];
+                const b = boxes[j];
+                const ox = Math.min(a.x + a.w + 10, b.x + b.w + 10) - Math.max(a.x, b.x);
+                const oy = Math.min(a.y + a.h + 8, b.y + b.h + 8) - Math.max(a.y, b.y);
+                if (ox > 0 && oy > 0) {
+                  if (oy < ox) {
+                    const pushY = (oy / 2) + 1;
+                    if (a.y < b.y) { a.y -= pushY; b.y += pushY; }
+                    else { a.y += pushY; b.y -= pushY; }
+                  } else {
+                    const pushX = (ox / 2) + 1;
+                    if (a.x < b.x) { a.x -= pushX; b.x += pushX; }
+                    else { a.x += pushX; b.x -= pushX; }
+                  }
+                }
+              }
+            }
+          }
+
+          // Clamp inside canvas bounds & draw crisp leader pin + Neo-Brutalist badge
+          boxes.forEach((b) => {
+            b.x = Math.max(12, Math.min(width - b.w - 12, b.x));
+            b.y = Math.max(12, Math.min(height - b.h - 12, b.y));
+
+            const isFault = faultSim.active && b.idx === faultSim.targetIdx && faultSim.stage <= 4;
+            const pinX = b.x + b.w / 2;
+            const pinY = b.y + b.h;
+
+            ctx.beginPath();
+            ctx.moveTo(b.anchorX, b.anchorY);
+            ctx.lineTo(pinX, pinY);
+            ctx.strokeStyle = isFault ? '#FF2A55' : b.isHighlighted ? '#C8FF00' : b.node.top;
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(b.x + 3, b.y + 3, b.w, b.h);
+
+            ctx.fillStyle = isFault ? '#FF2A55' : b.isHighlighted ? b.node.top : '#0F121A';
+            ctx.fillRect(b.x, b.y, b.w, b.h);
+
+            if (!b.isHighlighted && !isFault) {
+              ctx.fillStyle = b.node.top;
+              ctx.fillRect(b.x, b.y, 4, b.h);
+            }
+
+            ctx.strokeStyle = isFault || b.isHighlighted ? '#0A0A0A' : b.node.top;
+            ctx.lineWidth = 1.8;
+            ctx.strokeRect(b.x, b.y, b.w, b.h);
+
+            ctx.font = '800 11px "JetBrains Mono", monospace';
+            ctx.fillStyle = isFault
+              ? '#FFFFFF'
+              : b.isHighlighted
+              ? (b.node.top === '#FF5500' || b.node.top === '#FF3385' ? '#FFFFFF' : '#0A0A0A')
+              : '#FFFFFF';
+            ctx.fillText(b.text, b.x + 9, b.y + 14.5);
+          });
+        }
+
+        function render() {
+          clock++;
+
+          if (!isDragging && lockedNode === -1 && !faultSim.active) {
+            targetYaw += Math.sin(clock * 0.006) * 0.0004;
+          }
+
+          camYaw += (targetYaw - camYaw) * 0.12;
+          camPitch += (targetPitch - camPitch) * 0.12;
+          camZoom += (targetZoom - camZoom) * 0.12;
+          camFocusX += (targetFocusX - camFocusX) * 0.12;
+          camFocusY += (targetFocusY - camFocusY) * 0.12;
+          camFocusZ += (targetFocusZ - camFocusZ) * 0.12;
+
+          ctx.clearRect(0, 0, width, height);
+
+          const domainObj = ISO_DOMAINS[currentDomain];
+          const nodes = domainObj.nodes;
+          const edges = domainObj.edges;
+
+          // Smoothly animate physical 3D sub-layer explosion for locked node
+          for (let i = 0; i < nodes.length; i++) {
+            const targetExp = lockedNode === i ? 1.0 : 0.0;
+            nodeExplode[i] += (targetExp - nodeExplode[i]) * 0.14;
+            nodeFlash[i] *= 0.9;
+          }
+
+          // Update 5-Stage Chaos / Fault Simulation
+          if (faultSim.active) {
+            faultSim.progress += 0.0042;
+            const p = faultSim.progress;
+            const statusEl = document.getElementById('iso-trace-status');
+            if (p < 0.22) {
+              faultSim.stage = 1;
+              if (statusEl) statusEl.textContent = 'STAGE 1/5 · FAULT INJECTED ON ' + nodes[faultSim.targetIdx].short;
+            } else if (p < 0.45) {
+              faultSim.stage = 2;
+              nodeFlash[7] = 0.8;
+              if (statusEl) statusEl.textContent = 'STAGE 2/5 · ORBITAL RADAR (08) LOCKED STALLED RUN';
+            } else if (p < 0.68) {
+              faultSim.stage = 3;
+              nodeFlash[4] = 0.8;
+              nodeFlash[5] = 0.8;
+              if (statusEl) statusEl.textContent = 'STAGE 3/5 · SUB-VAULT (05/06) BLAST RADIUS ISOLATED';
+            } else if (p < 0.88) {
+              faultSim.stage = 4;
+              nodeFlash[6] = 0.9;
+              nodeFlash[3] = 0.9;
+              if (statusEl) statusEl.textContent = 'STAGE 4/5 · SELF-FIX (07) + JUDGE (04) ROOT-CAUSE PATCH';
+            } else if (p < 1.0) {
+              faultSim.stage = 5;
+              nodeFlash[faultSim.targetIdx] = 1.0;
+              if (statusEl) statusEl.textContent = 'STAGE 5/5 · RECOVERED & VERIFIED ACROSS ALL 3 DECKS';
+            } else {
+              faultSim.active = false;
+              document.getElementById('btn-iso-fault')?.classList.remove('active');
+              if (statusEl) statusEl.textContent = 'INCIDENT RESOLVED · ZERO CUSTOMER IMPACT';
+            }
+          }
+
+          if (traceWave.active) {
+            traceWave.progress += 0.015;
+            const activeNodeIdx = Math.min(
+              nodes.length - 1,
+              Math.floor(traceWave.progress * nodes.length)
+            );
+            nodeFlash[activeNodeIdx] = 1.0;
+            selectedNode = activeNodeIdx;
+            window.updateIsoHudText();
+
+            if (traceWave.progress >= 1.0) {
+              traceWave.active = false;
+              const statusEl = document.getElementById('iso-trace-status');
+              if (statusEl) statusEl.textContent = 'TRACE COMPLETE · ALL 3 DECKS HEALTHY';
+            }
+          }
+
+          const focusIdx = hoveredNode >= 0 ? hoveredNode : lockedNode;
+
+          // LAYER 1 (Bottom): Subterranean Vault Deck (-68m) + Sub-Vault Nodes (05, 06)
+          drawSubterraneanVaultDeck(nodes);
+          nodes
+            .map((n, i) => ({ i, n, depth: project3D(n.x, n.baseY + n.h * 0.5, n.z).depth }))
+            .filter((item) => item.n.stratum === -1)
+            .sort((a, b) => b.depth - a.depth)
+            .forEach(({ i }) => drawArchitectureNodeBody(i, nodes[i], focusIdx));
+
+          // LAYER 2 (Middle): Main Execution Deck (0m) + 3D Conduits + Core Nodes (01, 02, 03, 04)
+          drawMainDeckAndConduits(nodes, edges, focusIdx);
+          nodes
+            .map((n, i) => ({ i, n, depth: project3D(n.x, n.baseY + n.h * 0.5, n.z).depth }))
+            .filter((item) => item.n.stratum === 0)
+            .sort((a, b) => b.depth - a.depth)
+            .forEach(({ i }) => drawArchitectureNodeBody(i, nodes[i], focusIdx));
+
+          // LAYER 3 (Top): Orbital Telemetry & Self-Fix Nodes (+74m: 07, 08) + Chaos Beams
+          nodes
+            .map((n, i) => ({ i, n, depth: project3D(n.x, n.baseY + n.h * 0.5, n.z).depth }))
+            .filter((item) => item.n.stratum === 1)
+            .sort((a, b) => b.depth - a.depth)
+            .forEach(({ i }) => drawArchitectureNodeBody(i, nodes[i], focusIdx));
+
+          drawFaultSimulationFX(nodes);
+
+          // LAYER 4 (HUD Overlay): Unoccluded High-Contrast Callout Labels
+          drawTopLayerLabels(nodes, focusIdx);
+
+          edgePackets.forEach((p) => {
+            p.t = (p.t + p.speed) % 1;
+          });
+
+          requestAnimationFrame(render);
+        }
+
+        window.updateIsoHudText();
+        requestAnimationFrame(render);
+      });
+    </script>
+  </body>
+</html>

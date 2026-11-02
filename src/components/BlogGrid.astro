@@ -1,0 +1,60 @@
+---
+import type { BlogPost } from '../data/profile';
+
+interface Props {
+  posts: BlogPost[];
+}
+
+const { posts } = Astro.props;
+---
+
+<div class="posts-grid">
+  {posts.map((post) => (
+    <article class="brutal-box brutal-box-hover post-card" data-tilt>
+      <div>
+        <div class="post-top">
+          <span class="post-cat" style={`background: ${post.color};`}>
+            <span class="lang-en">{post.categoryLabel.en}</span>
+            <span class="lang-ru">{post.categoryLabel.ru}</span>
+          </span>
+          <span class="post-stats">
+            <span class="lang-en">{post.readTime.en}</span>
+            <span class="lang-ru">{post.readTime.ru}</span>
+          </span>
+        </div>
+
+        <h3 class="post-title">
+          <span class="lang-en">{post.title.en}</span>
+          <span class="lang-ru">{post.title.ru}</span>
+        </h3>
+
+        <div class="post-takeaway">
+          <span class="lang-en">{post.takeaway.en}</span>
+          <span class="lang-ru">{post.takeaway.ru}</span>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+          {post.tags.map((tag) => (
+            <span class="brutal-tag" style="font-size: 0.68rem; padding: 2px 8px;">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <a
+        href={post.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="brutal-btn brutal-btn-lime"
+        style="width: 100%; justify-content: space-between; padding: 9px 14px; font-size: 0.78rem;"
+      >
+        <span>
+          <span class="lang-en">READ ON LINKEDIN</span>
+          <span class="lang-ru">ЧИТАТЬ В LINKEDIN</span>
+        </span>
+        <span>↗</span>
+      </a>
+    </article>
+  ))}
+</div>
