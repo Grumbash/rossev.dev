@@ -57,8 +57,8 @@ export const PROFILE = {
   },
   // Version A (max 12 words):
   tagline: {
-    en: 'STAFF ENGINEER @ YAGNI.APP // MAKING PRODUCTION AI AGENTS DEPENDABLE',
-    ru: 'STAFF ENGINEER В YAGNI.APP // НАДЁЖНЫЕ AI-АГЕНТЫ ДЛЯ РАЗРАБОТКИ'
+    en: 'FOUNDING / STAFF ENGINEER @ YAGNI.APP // PRODUCTION AI AGENTS',
+    ru: 'FOUNDING / STAFF ENGINEER В YAGNI.APP // НАДЁЖНЫЕ AI-АГЕНТЫ'
   },
   location: {
     en: 'Tbilisi, Georgia · Remote (US Team)',
@@ -72,8 +72,8 @@ export const PROFILE = {
   githubHandle: 'github.com/Grumbash',
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
-    en: 'I am a Staff Engineer on the core team at YAGNI (yagni.app), working alongside the founders to make AI agent teams dependable in production, not just impressive in a demo. Our named agents—builders, reviewers, product managers—take work from proposal to merged GitHub PR under human-approved plans. Previously, I spent 8+ years leading teams and building Voice AI and distributed systems.',
-    ru: 'Я Staff Engineer в основной команде американского стартапа YAGNI (yagni.app), где вместе с фаундерами делаю команды AI-агентов надёжными в реальной работе, а не только на демо. Наши агенты (разработчик, ревьюер, PM) ведут задачи в GitHub от идеи до смерженного PR по утверждённому человеком плану. За плечами — 8+ лет в архитектуре, голосовом AI и управлении командами.'
+    en: 'I am a Founding / Staff Engineer on the core team at YAGNI (yagni.app), working alongside the founders to make AI agent teams dependable in production, not just impressive in a demo. Our named agents—builders, reviewers, product managers—take work from proposal to merged GitHub PR under human-approved plans. Previously, I spent 8+ years leading teams and building Voice AI and distributed systems.',
+    ru: 'Я Founding / Staff Engineer в основной команде американского стартапа YAGNI (yagni.app), где вместе с фаундерами делаю команды AI-агентов надёжными в реальной работе, а не только на демо. Наши агенты (разработчик, ревьюер, PM) ведут задачи в GitHub от идеи до смерженного PR по утверждённому человеком плану. За плечами — 8+ лет в архитектуре, голосовом AI и управлении командами.'
   },
   medToAiStory: {
     en: 'How I work: I build with AI agents every day — I plan, delegate to agents, review their output with a second "judge" agent, and keep the human decision where it matters.',
@@ -87,7 +87,7 @@ export const PROFILE = {
     },
     {
       value: 'YAGNI',
-      label: { en: 'Staff Engineer (Core Team)', ru: 'Staff Engineer (Core Team)' },
+      label: { en: 'Founding Engineer, AI Agents', ru: 'Founding Engineer, AI Agents' },
       color: 'var(--cyan)'
     },
     {
@@ -158,20 +158,20 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Именованные AI-агенты (разработчик, ревьюер, PM), работающие по утверждённому человеком плану с полным аудитом шагов, песочницей и бенчмарками.'
     },
     metrics: [
-      { value: 'Core', label: { en: 'Staff Engineer', ru: 'Staff Engineer' } },
+      { value: 'Core', label: { en: 'Founding Engineer', ru: 'Founding Engineer' } },
       { value: 'GitHub', label: { en: 'Proposal → Merged PR', ru: 'От плана до PR' } },
       { value: 'Radar', label: { en: 'Proactive Reliability', ru: 'Радар рисков' } }
     ],
-    stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Isolation', 'Risk Radar', 'GitHub Integration'],
+    stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Query Guards', 'Self-Healing Syncs', 'Risk Radar'],
     architecture: {
       en: {
-        challenge: 'Making AI agent teams dependable in real customer codebases—where every action must be auditable, tenant data strictly isolated, and regressions caught before customers notice.',
-        solution: 'Hardened the build/review agent pipeline and sandboxed code runner, built benchmarks modeled on realistic engineering tasks, and introduced an early-warning risk radar and self-improving failure analyzer.',
+        challenge: 'Making AI agent teams dependable in real customer codebases—where every action must be auditable, tenant data strictly isolated, external workspace syncs self-healing, and regressions caught before customers notice.',
+        solution: 'Hardened multi-tenant data isolation and code-review agent routing, made external workspace backfills self-healing, streamlined single-command worktree/CI builds, and built realistic evaluation benchmarks with an early-warning risk radar.',
         outcomes: [
-          'Built evaluation benchmarks of hard, realistic engineering tasks to measure whether changes make agents better or worse.',
-          'Developed an experimental self-improving loop where agents inspect failed runs, identify root causes, and propose fixes for human review.',
-          'Implemented build monitoring, stalled-run detection, and an early-warning risk radar to catch issues before pilot customers report them.',
-          'Hardened the sandboxed code runner, build/review agents, and strict data isolation between customer organizations.'
+          'Hardened multi-tenant data access and sandboxed runners: closed cross-customer exposure paths in the operator API and enforced tenant-scoped query guards.',
+          'Improved code-review agent reliability and evaluation benchmarks: fixed ticket-key collisions across external trackers and built realistic task suites to measure agent changes.',
+          'Made connector backfills self-healing (stuck-cursor recovery, progress tracking, hard caps) and built an early-warning risk radar for stalled customer runs.',
+          'Developed an experimental self-improving loop where agents inspect failed runs and propose fixes, and streamlined the monorepo build chain to a single command for worktrees and CI.'
         ],
         topology: [
           '[Human-Approved Plan] ──► [Named Agent Team: PM · Builder · Reviewer]',
@@ -180,18 +180,18 @@ export const CASE_STUDIES: CaseStudy[] = [
         ]
       },
       ru: {
-        challenge: 'Сделать команды AI-агентов по-настоящему надёжными в продакшене: с прозрачным аудитом каждого шага, строгой изоляцией данных между организациями и защитой от регрессий.',
-        solution: 'Укрепил пайплайн агентов сборки и ревью, изолированный раннер кода, создал бенчмарки на реальных инженерных задачах, радар рисков и систему анализа сбоев другими агентами.',
+        challenge: 'Сделать команды AI-агентов по-настоящему надёжными в продакшене: с прозрачным аудитом каждого шага, строгой мультитенантной изоляцией, самовосстанавливающейся синхронизацией и защитой от регрессий.',
+        solution: 'Закрыл пути кросс-тенантной утечки данных через query-гарды, устранил коллизии ключей тикетов у агента-ревьюера, сделал бэкфиллы коннекторов самовосстанавливающимися и внедрил бенчмарки с радаром рисков.',
         outcomes: [
-          'Разработал бенчмарки на сложных реалистичных задачах, показывающие, улучшает или ухудшает агентов каждое изменение.',
-          'Создал экспериментальную систему, где агенты анализируют чужие прогоны, находят первопричины сбоев и предлагают фиксы команде.',
-          'Внедрил мониторинг клиентских сборок, детекцию зависших прогонов и «радар рисков» для обнаружения проблем до жалоб клиентов.',
-          'Укрепил агентов сборки и ревью, песочницу выполнения кода и изоляцию данных между организациями.'
+          'Укрепил мультитенантную изоляцию и песочницу: закрыл пути пересечения данных в операторском API и внедрил tenant-scoped query guards.',
+          'Повысил надёжность агента код-ревью и создал бенчмарки на реальных задачах: устранил коллизии ключей тикетов между YAGNI и внешними трекерами.',
+          'Сделал синхронизацию больших внешних воркспейсов самовосстанавливающейся (stuck-cursor recovery, лимиты, трекинг) и внедрил «радар рисков» для клиентских прогонов.',
+          'Создал экспериментальный контур самообучения агентов на разборе сбоев и упростил сборку монорепозитория для чистых worktree и CI до одной команды.'
         ],
         topology: [
           '[Утверждённый человеком план] ──► [Команда агентов: PM · Builder · Reviewer]',
-          '[Изолированная песочница + Изоляция орг.] ──► [Проверяемый PR в GitHub]',
-          '[Радар рисков и мониторинг прогонов] ──► [Агент поиска первопричин сбоев]'
+          '[Песочница + Tenant Query Guards] ──► [Проверяемый PR в GitHub]',
+          '[Self-Healing бэкфиллы + Радар рисков] ──► [Агент поиска первопричин сбоев]'
         ]
       }
     }
@@ -358,7 +358,7 @@ export const EXPERIENCE: ExperienceItem[] = [
   // Version C integrated right here as the #1 Experience entry!
   {
     id: 'exp-yagni',
-    role: { en: 'Staff Engineer', ru: 'Staff Engineer' },
+    role: { en: 'Founding Engineer, AI Agents (Staff)', ru: 'Founding Engineer, AI Agents (Staff)' },
     company: 'YAGNI (yagni.app)',
     period: { en: 'Oct 2026 — Present', ru: 'Окт 2026 — Наст. время' },
     location: { en: 'Tbilisi, Georgia · Remote (US Team)', ru: 'Тбилиси, Грузия · Удалённо (США)' },
@@ -367,20 +367,20 @@ export const EXPERIENCE: ExperienceItem[] = [
       ru: 'Американский стартап ранней стадии, создающий команды именованных AI-агентов, которые доводят задачи от предложения до смерженного PR в GitHub под контролем человека.'
     },
     color: 'var(--lime)',
-    metrics: ['Core Team', 'Agent Benchmarks', 'Risk Radar & Sandbox'],
+    metrics: ['Founding Team', 'Agent Benchmarks', 'Multi-Tenant Isolation', 'Self-Healing Syncs'],
     highlights: {
       en: [
-        'Build evaluation benchmarks of hard, realistic engineering tasks modeled on customer work to measure whether changes improve or degrade agent performance.',
-        'Develop an experimental self-improving system where agents review other agents’ runs, isolate root causes of failures, and propose fixes for the team.',
-        'Engineer customer build monitoring, stalled-run detection, and an early-warning risk radar to surface production issues before customers report them.',
-        'Harden core build and review agents, the sandboxed code runner, and strict data isolation between customer organizations.',
-        'Serve as technical point of contact for pilot customers in my time zone, running demos, troubleshooting, and turning feedback into engineering work.'
+        'Hardened multi-tenant data isolation and sandboxed execution: closed cross-customer data exposure paths in the operator API and added tenant-scoped query guards.',
+        'Improved AI code-review and build agent reliability: resolved ticket-key collisions across external trackers and built realistic evaluation benchmarks to verify agent changes.',
+        'Engineered self-healing connector backfills (stuck-cursor recovery, progress tracking, hard caps for large workspaces) alongside an early-warning risk radar for stalled runs.',
+        'Developed an experimental self-improving system where agents review failed runs, isolate root causes, and propose fixes; streamlined monorepo builds for worktrees and CI into a single command.',
+        'Partner with pilot customers as technical point of contact in my time zone—running demos, troubleshooting live runs, and turning feedback into engineering work.'
       ],
       ru: [
-        'Создаю бенчмарки на сложных реалистичных инженерных задачах, чтобы объективно проверять, делают ли изменения наших агентов лучше или хуже.',
-        'Разрабатываю экспериментальную систему самообучения, где агенты анализируют чужие прогоны, находят первопричины сбоев и предлагают фиксы команде.',
-        'Строю систему мониторинга клиентских сборок, детекции зависших прогонов и «радар рисков», предупреждающий о проблемах до обращения клиента.',
-        'Укрепляю базовый пайплайн: агентов сборки и ревью, изолированную песочницу для запуска кода и разделение данных между организациями.',
+        'Укрепил мультитенантный доступ к данным и песочницу запуска кода: закрыл пути кросс-клиентской утечки в операторском API и внедрил tenant-scoped query guards.',
+        'Повысил надёжность агентов код-ревью и сборки: устранил коллизии ключей тикетов с внешними трекерами и создал бенчмарки на реальных задачах для проверки изменений.',
+        'Сделал бэкфиллы коннекторов самовосстанавливающимися (восстановление зависших курсоров, трекинг прогресса, жёсткие лимиты для больших воркспейсов) и внедрил «радар рисков».',
+        'Разработал экспериментальную систему самообучения агентов на анализе сбоев и упростил цепочку сборки монорепозитория для чистых worktree и CI до одной команды.',
         'Веду пилотных клиентов в своём часовом поясе как технический контакт: провожу демо, разбираю сбои и перевожу фидбек в инженерные задачи.'
       ]
     }

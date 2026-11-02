@@ -1,8 +1,8 @@
-# Gleb Rosev — Staff Engineer @ YAGNI (yagni.app) & Hands-On Technology Leader
+# Gleb Rosev — Founding / Staff Engineer, AI Agents @ YAGNI (yagni.app) & Hands-On Technology Leader
 
 > Making AI agents dependable in production, not just impressive in a demo.
 
-- **Current Role**: Staff Engineer at YAGNI (`https://yagni.app`) — Oct 2026 – present (Core team, working alongside the founders)
+- **Current Role**: Founding / Staff Engineer, AI Agents at YAGNI (`https://yagni.app`) — Oct 2026 – present (Core team, working alongside the founders)
 - **Location**: Tbilisi, Georgia (Remote with US-based engineering teams; open to relocation / remote)
 - **Experience**: 8+ years building production software systems, leading teams of 5–12 engineers
 - **Email**: rossevgleb@gmail.com
@@ -14,11 +14,11 @@
 
 YAGNI builds agent teams for engineering organizations ("Agent teams, managed like your engineering team"). Named AI agents (a builder, a reviewer, a product manager and others) work like a real engineering team, taking software work from a proposal to a merged pull request under a plan that a human approves. Every important step leaves a record a person can review, and autonomy is earned through a track record. YAGNI integrates with the tools the team already uses (GitHub first) and doesn't replace them.
 
-### Focus Areas as Staff Engineer at YAGNI
-1. **Agent Quality & Evaluation**: Benchmarks of hard, realistic engineering tasks modelled on real customer work that show whether a change makes the agents better or worse.
-2. **Self-Improving Agents**: An experimental system where agents review other agents' runs, find the root causes of failures, and propose fixes for the team to decide on.
-3. **Reliability & Observability**: Monitoring of customer builds, detection of stalled or failing runs, and an early-warning "risk radar" so the team learns about a customer's problem before the customer reports it.
-4. **Core Pipeline**: Hardening the build and review agents, the sandboxed code runner, and data isolation between customer organizations.
+### Focus Areas & Key Contributions at YAGNI
+1. **Multi-Tenant Isolation & Sandboxed Execution**: Hardened multi-tenant data access by closing cross-customer data exposure paths in the operator API, enforcing tenant-scoped query guards, and hardening the sandboxed code runner.
+2. **Code-Review Agent Reliability & Evaluation**: Fixed ticket-key collisions between YAGNI and external trackers that routed the reviewer agent to the wrong issue; built realistic evaluation benchmarks modeled on customer work to measure whether changes make agents better or worse.
+3. **Self-Healing Syncs & Observability**: Made connector backfills self-healing (stuck-cursor recovery, progress tracking, hard caps for large external workspaces) and built stalled-run detection + an early-warning "risk radar".
+4. **Self-Improving Agents & Monorepo DX**: Built an experimental system where agents review failed runs, find root causes, and propose fixes; streamlined the monorepo build chain so a fresh checkout, worktree, or CI run builds its dependencies with a single command.
 5. **Customer Pilots**: Technical point of contact for pilot customers in the time zone — troubleshooting, running demos, and turning customer feedback into engineering work.
 
 ### How I Work
