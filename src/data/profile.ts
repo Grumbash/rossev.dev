@@ -68,6 +68,8 @@ export const PROFILE = {
   email: 'rossevgleb@gmail.com',
   linkedin: 'https://www.linkedin.com/in/rossev',
   linkedinHandle: 'linkedin.com/in/rossev',
+  github: 'https://github.com/Grumbash',
+  githubHandle: 'github.com/Grumbash',
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
     en: 'I am a Staff Engineer on the core team at YAGNI (yagni.app), working alongside the founders to make AI agent teams dependable in production, not just impressive in a demo. Our named agents—builders, reviewers, product managers—take work from proposal to merged GitHub PR under human-approved plans. Previously, I spent 8+ years leading teams and building Voice AI and distributed systems.',

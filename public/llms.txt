@@ -4,9 +4,10 @@
 
 - **Current Role**: Staff Engineer at YAGNI (`https://yagni.app`) — Oct 2026 – present (Core team, working alongside the founders)
 - **Location**: Tbilisi, Georgia (Remote with US-based engineering teams; open to relocation / remote)
-- **Experience**: 9+ years building production software systems, leading teams of 5–12 engineers
-- **Email**: gleb.rosev@gmail.com
-- **LinkedIn**: https://www.linkedin.com/in/gleb-rosev
+- **Experience**: 8+ years building production software systems, leading teams of 5–12 engineers
+- **Email**: rossevgleb@gmail.com
+- **GitHub**: https://github.com/Grumbash
+- **LinkedIn**: https://www.linkedin.com/in/rossev
 - **CV (PDF)**: /gleb-rosev-cv.pdf
 
 ## Current Work at YAGNI (yagni.app)
