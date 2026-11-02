@@ -218,7 +218,7 @@ export const ISO_DOMAINS: Record<'yagni' | 'voice' | 'saas', TopologyDomain> = {
           { tag: 'L2 · PHI ENCRYPTION', desc: { en: 'Scoped patient data vault & PII redaction', ru: 'Шифрование персональных медданных и очистка логов' } },
           { tag: 'L1 · CIRCUIT BREAKER', desc: { en: 'Graceful queueing when hospital EHR is slow', ru: 'Буферизация запросов при тормозах внешней МИС клиники' } }
         ],
-        guard: { en: 'GUARDRAIL: Isolated per-clinic EHR credentials serving 100K+ physicians.', ru: 'ГАРДРЕЙЛ: Полная изоляция учётных данных клиник (400+ медорганизаций).' }
+        guard: { en: 'GUARDRAIL: Isolated per-clinic EHR credentials across 400+ healthcare orgs.', ru: 'ГАРДРЕЙЛ: Полная изоляция учётных данных клиник (400+ медорганизаций).' }
       },
       {
         num: '07', code: '07 · STRESS TEST SUITE', short: 'STRESS SIM', metric: 'ORBITAL L+1',

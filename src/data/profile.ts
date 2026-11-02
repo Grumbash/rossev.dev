@@ -57,12 +57,12 @@ export const PROFILE = {
   },
   // Version A (max 12 words):
   tagline: {
-    en: 'FOUNDING / STAFF ENGINEER @ YAGNI.APP // PRODUCTION AI AGENTS',
-    ru: 'FOUNDING / STAFF ENGINEER В YAGNI.APP // НАДЁЖНЫЕ AI-АГЕНТЫ'
+    en: 'FOUNDING ENGINEER @ YAGNI.APP // PRODUCTION AI AGENTS',
+    ru: 'FOUNDING ENGINEER В YAGNI.APP // НАДЁЖНЫЕ AI-АГЕНТЫ'
   },
   location: {
-    en: 'Tbilisi, Georgia · Remote (US Team)',
-    ru: 'Тбилиси, Грузия · Удалённо с командой в США'
+    en: 'Tbilisi, Georgia',
+    ru: 'Тбилиси, Грузия'
   },
   phone: '+995 591 90 81 80',
   email: 'rossevgleb@gmail.com',
@@ -72,8 +72,8 @@ export const PROFILE = {
   githubHandle: 'github.com/Grumbash',
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
-    en: 'I am a Founding / Staff Engineer on the core team at YAGNI (yagni.app), working alongside the founders to make AI agent teams dependable in production, not just impressive in a demo. Our named agents—builders, reviewers, product managers—take work from proposal to merged GitHub PR under human-approved plans. Previously, I spent 8+ years leading teams and building Voice AI and distributed systems.',
-    ru: 'Я Founding / Staff Engineer в основной команде американского стартапа YAGNI (yagni.app), где вместе с фаундерами делаю команды AI-агентов надёжными в реальной работе, а не только на демо. Наши агенты (разработчик, ревьюер, PM) ведут задачи в GitHub от идеи до смерженного PR по утверждённому человеком плану. За плечами — 8+ лет в архитектуре, голосовом AI и управлении командами.'
+    en: 'I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus a medical degree.',
+    ru: 'Я строю системы, где важна надёжность, и делаю команды AI-агентов надёжными в продакшене, а не только на демо. Сейчас: Founding Engineer в YAGNI (yagni.app), вместе с фаундерами строю команды агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR в GitHub по утверждённому человеком плану. До этого: Staff Harness Engineer в голосовом AI для медицины в Sully.ai. 8+ лет в full-stack, мобайле, облаках и управлении командами, плюс медицинское образование.'
   },
   medToAiStory: {
     en: 'How I work: I build with AI agents every day — I plan, delegate to agents, review their output with a second "judge" agent, and keep the human decision where it matters.',
@@ -91,8 +91,8 @@ export const PROFILE = {
       color: 'var(--cyan)'
     },
     {
-      value: '400+',
-      label: { en: 'Healthcare Orgs (Sully.ai)', ru: 'Клиник (в Sully.ai)' },
+      value: '15s → 0s',
+      label: { en: 'Dead Air at Pickup (Sully.ai)', ru: 'Тишины при ответе (Sully.ai)' },
       color: 'var(--yellow)'
     },
     {
@@ -145,8 +145,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'yagni',
     company: 'YAGNI (yagni.app)',
-    period: 'OCT 2026 — PRESENT',
-    location: 'US Startup (Remote)',
+    period: 'NOV 2026 — PRESENT',
+    location: 'Tbilisi · Remote',
     color: 'var(--lime)',
     badge: { en: 'AGENT TEAMS FOR ENGINEERING', ru: 'КОМАНДЫ AI-АГЕНТОВ' },
     title: {
@@ -166,9 +166,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     architecture: {
       en: {
         challenge: 'Making AI agent teams dependable in real customer codebases—where every action must be auditable, tenant data strictly isolated, external workspace syncs self-healing, and regressions caught before customers notice.',
-        solution: 'Hardened multi-tenant data isolation and code-review agent routing, made external workspace backfills self-healing, streamlined single-command worktree/CI builds, and built realistic evaluation benchmarks with an early-warning risk radar.',
+        solution: 'Built tenant isolation and code-review agent routing, made external workspace backfills self-healing, streamlined single-command worktree/CI builds, and built realistic evaluation benchmarks with an early-warning risk radar.',
         outcomes: [
-          'Hardened multi-tenant data access and sandboxed runners: closed cross-customer exposure paths in the operator API and enforced tenant-scoped query guards.',
+          'Tenant isolation: tenant-scoped query guards and sandboxed code execution.',
           'Improved code-review agent reliability and evaluation benchmarks: fixed ticket-key collisions across external trackers and built realistic task suites to measure agent changes.',
           'Made connector backfills self-healing (stuck-cursor recovery, progress tracking, hard caps) and built an early-warning risk radar for stalled customer runs.',
           'Developed an experimental self-improving loop where agents inspect failed runs and propose fixes, and streamlined the monorepo build chain to a single command for worktrees and CI.'
@@ -181,9 +181,9 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
       ru: {
         challenge: 'Сделать команды AI-агентов по-настоящему надёжными в продакшене: с прозрачным аудитом каждого шага, строгой мультитенантной изоляцией, самовосстанавливающейся синхронизацией и защитой от регрессий.',
-        solution: 'Закрыл пути кросс-тенантной утечки данных через query-гарды, устранил коллизии ключей тикетов у агента-ревьюера, сделал бэкфиллы коннекторов самовосстанавливающимися и внедрил бенчмарки с радаром рисков.',
+        solution: 'Внедрил tenant-scoped query guards и песочницу для кода, устранил коллизии ключей тикетов у агента-ревьюера, сделал бэкфиллы коннекторов самовосстанавливающимися и внедрил бенчмарки с радаром рисков.',
         outcomes: [
-          'Укрепил мультитенантную изоляцию и песочницу: закрыл пути пересечения данных в операторском API и внедрил tenant-scoped query guards.',
+          'Изоляция клиентов: tenant-scoped query guards и песочница для запуска кода.',
           'Повысил надёжность агента код-ревью и создал бенчмарки на реальных задачах: устранил коллизии ключей тикетов между YAGNI и внешними трекерами.',
           'Сделал синхронизацию больших внешних воркспейсов самовосстанавливающейся (stuck-cursor recovery, лимиты, трекинг) и внедрил «радар рисков» для клиентских прогонов.',
           'Создал экспериментальный контур самообучения агентов на разборе сбоев и упростил сборку монорепозитория для чистых worktree и CI до одной команды.'
@@ -200,7 +200,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     id: 'sully',
     company: 'Sully.ai',
     period: 'SEP 2025 — OCT 2026',
-    location: 'US & MENA',
+    location: 'Dubai, UAE',
     color: 'var(--cyan)',
     badge: { en: 'VOICE AI & HARNESS', ru: 'ГОЛОСОВОЙ AI' },
     title: {
@@ -208,13 +208,13 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Мультиязычный голосовой AI и система Runtime-диагностики'
     },
     summary: {
-      en: 'Production AI employees for clinical workflows across real-time voice pipelines, telephony, evaluation harnesses, and backend services.',
-      ru: 'AI-сотрудники для клиник: real-time голосовые пайплайны, телефония, эвалы и трассировка в продакшене.'
+      en: 'AI receptionist for healthcare: voice agents for scheduling and clinic operations. Outbound call reliability, LiveKit dispatch, UAE data residency and the MENA launch.',
+      ru: 'AI-ресепшионист для клиник: голосовые агенты для записи и операционки. Надёжность исходящих звонков, диспетчеризация в LiveKit, резидентность данных в ОАЭ и запуск в MENA.'
     },
     metrics: [
-      { value: '400+', label: { en: 'Healthcare Orgs', ru: 'Клиник' } },
-      { value: '100K+', label: { en: 'Providers', ru: 'Врачей' } },
-      { value: 'Real-Time', label: { en: 'Voice Stream', ru: 'Телефония' } }
+      { value: '15s → 0s', label: { en: 'Dead Air at Pickup', ru: 'Тишины при ответе' } },
+      { value: 'MENA', label: { en: 'Launch Led', ru: 'Запуск в регионе' } },
+      { value: '400+', label: { en: 'Healthcare Orgs (Sully)', ru: 'Медорганизаций (Sully)' } }
     ],
     stack: ['LiveKit', 'Twilio', 'Speechmatics', 'OpenAI / Claude / Gemini', 'TypeScript', 'Node.js', 'Agent Evals'],
     architecture: {
@@ -222,9 +222,9 @@ export const CASE_STUDIES: CaseStudy[] = [
         challenge: 'Enterprise healthcare launches demand low-latency multilingual voice over live telephony and immediate root-cause visibility.',
         solution: 'Engineered end-to-end voice & harness reliability layers spanning Twilio/LiveKit ingress, ASR/LLM orchestration, deterministic evals, and trace telemetry.',
         outcomes: [
-          'Hardened multilingual voice pipelines across telephony, backend services, and operational tooling.',
-          'Built evaluation and runtime-diagnostic workflows that isolate production failures in minutes.',
-          'Trusted by 400+ healthcare organizations representing 100,000+ providers.'
+          'Removed ~15 s of dead air at pickup on outbound calls: the agent was greeting the caller while the line was still ringing.',
+          'Made agent dispatch reliable on LiveKit: retry-and-verify, no duplicate agents in one call, no silent calls.',
+          'Designed UAE audio-residency guardrails so TTS and STT fallbacks stay within approved regional providers.'
         ],
         topology: [
           '[Telephony / SIP / Twilio] ──► [LiveKit Real-Time Media Router]',
@@ -236,9 +236,9 @@ export const CASE_STUDIES: CaseStudy[] = [
         challenge: 'Enterprise-медицина требует минимальной задержки в телефонных диалогах, мультиязычности и мгновенной локализации сбоев.',
         solution: 'Спроектировал контур надёжности голосовых агентов: от телефонии (Twilio/LiveKit) и ASR (Speechmatics) до оркестрации LLM, эвалов и трассировки.',
         outcomes: [
-          'Обеспечил отказоустойчивость мультиязычных голосовых пайплайнов под enterprise-нагрузкой.',
-          'Разработал систему runtime-диагностики и оценки агентов для быстрой изоляции инцидентов.',
-          'Платформа используется 400+ медицинскими организациями (100 000+ врачей).'
+          'Убрал ~15 с тишины после ответа на исходящих звонках: агент здоровался, пока линия ещё звонила.',
+          'Сделал диспетчеризацию агентов в LiveKit надёжной: retry-and-verify, без двойных агентов в звонке и без «немых» звонков.',
+          'Спроектировал гарды резидентности аудио в ОАЭ: фолбэки TTS и STT остаются у одобренных региональных провайдеров.'
         ],
         topology: [
           '[Телефония / SIP / Twilio] ──► [LiveKit Real-Time Media Router]',
@@ -358,10 +358,10 @@ export const EXPERIENCE: ExperienceItem[] = [
   // Version C integrated right here as the #1 Experience entry!
   {
     id: 'exp-yagni',
-    role: { en: 'Founding Engineer, AI Agents (Staff)', ru: 'Founding Engineer, AI Agents (Staff)' },
+    role: { en: 'Founding Engineer, AI Agents', ru: 'Founding Engineer, AI Agents' },
     company: 'YAGNI (yagni.app)',
-    period: { en: 'Oct 2026 — Present', ru: 'Окт 2026 — Наст. время' },
-    location: { en: 'Tbilisi, Georgia · Remote (US Team)', ru: 'Тбилиси, Грузия · Удалённо (США)' },
+    period: { en: 'Nov 2026 — Present', ru: 'Ноя 2026 — Наст. время' },
+    location: { en: 'Tbilisi, Georgia · Remote', ru: 'Тбилиси, Грузия · Удалённо' },
     domain: {
       en: 'Early-stage US startup building named AI agent teams that take engineering work from proposal to merged GitHub pull request under human-approved plans.',
       ru: 'Американский стартап ранней стадии, создающий команды именованных AI-агентов, которые доводят задачи от предложения до смерженного PR в GitHub под контролем человека.'
@@ -370,43 +370,55 @@ export const EXPERIENCE: ExperienceItem[] = [
     metrics: ['Founding Team', 'Agent Benchmarks', 'Multi-Tenant Isolation', 'Self-Healing Syncs'],
     highlights: {
       en: [
-        'Hardened multi-tenant data isolation and sandboxed execution: closed cross-customer data exposure paths in the operator API and added tenant-scoped query guards.',
-        'Improved AI code-review and build agent reliability: resolved ticket-key collisions across external trackers and built realistic evaluation benchmarks to verify agent changes.',
-        'Engineered self-healing connector backfills (stuck-cursor recovery, progress tracking, hard caps for large workspaces) alongside an early-warning risk radar for stalled runs.',
-        'Developed an experimental self-improving system where agents review failed runs, isolate root causes, and propose fixes; streamlined monorepo builds for worktrees and CI into a single command.',
-        'Partner with pilot customers as technical point of contact in my time zone—running demos, troubleshooting live runs, and turning feedback into engineering work.'
+        'Tenant isolation: tenant-scoped query guards and sandboxed code execution.',
+        'Connector backfills made self-healing: stuck-cursor recovery, progress tracking and hard caps for long syncs of large workspaces.',
+        'Code-review agent reliability: fixed ticket-key collisions between YAGNI and external trackers that sent the reviewer to the wrong issue.',
+        'Agent benchmarks: realistic engineering task suites that show whether a prompt, model or harness change makes agents better or worse.',
+        'Risk radar: flags stalled customer runs before the customer reports them.',
+        'Self-improving loop (experimental): a meta-agent reads failed runs, isolates the cause and drafts a fix for the team to review.',
+        'Monorepo build chain reduced to one command for fresh checkouts, worktrees and CI.',
+        'Technical point of contact for pilot customers: demos, debugging live runs, turning feedback into engineering work.'
       ],
       ru: [
-        'Укрепил мультитенантный доступ к данным и песочницу запуска кода: закрыл пути кросс-клиентской утечки в операторском API и внедрил tenant-scoped query guards.',
-        'Повысил надёжность агентов код-ревью и сборки: устранил коллизии ключей тикетов с внешними трекерами и создал бенчмарки на реальных задачах для проверки изменений.',
-        'Сделал бэкфиллы коннекторов самовосстанавливающимися (восстановление зависших курсоров, трекинг прогресса, жёсткие лимиты для больших воркспейсов) и внедрил «радар рисков».',
-        'Разработал экспериментальную систему самообучения агентов на анализе сбоев и упростил цепочку сборки монорепозитория для чистых worktree и CI до одной команды.',
-        'Веду пилотных клиентов в своём часовом поясе как технический контакт: провожу демо, разбираю сбои и перевожу фидбек в инженерные задачи.'
+        'Изоляция клиентов: tenant-scoped query guards и песочница для запуска кода.',
+        'Самовосстанавливающиеся бэкфиллы коннекторов: восстановление зависших курсоров, трекинг прогресса и жёсткие лимиты для долгих синков больших воркспейсов.',
+        'Надёжность агента код-ревью: устранил коллизии ключей тикетов между YAGNI и внешними трекерами, из-за которых ревьюер шёл не в ту задачу.',
+        'Бенчмарки агентов: реалистичные инженерные задачи, которые показывают, стал ли агент лучше или хуже после смены промпта, модели или харнесса.',
+        'Радар рисков: замечает зависшие прогоны клиентов раньше, чем клиент о них сообщит.',
+        'Контур самоулучшения (эксперимент): мета-агент разбирает упавшие прогоны, находит причину и готовит фикс на ревью команде.',
+        'Сборка монорепозитория в одну команду для чистого checkout, worktree и CI.',
+        'Технический контакт для пилотных клиентов: демо, разбор живых прогонов, перевод фидбека в инженерные задачи.'
       ]
     }
   },
   {
     id: 'exp-sully',
-    role: { en: 'Staff AI Engineer — Harness & Voice Systems', ru: 'Staff AI Engineer — Harness & Voice Systems' },
+    role: { en: 'Staff Harness Engineer, AI Voice Systems', ru: 'Staff Harness Engineer, AI Voice Systems' },
     company: 'Sully.ai',
     period: { en: 'Sep 2025 — Oct 2026', ru: 'Сен 2025 — Окт 2026' },
-    location: { en: 'Remote · US & MENA', ru: 'Удалённо · США и MENA' },
+    location: { en: 'Dubai, UAE', ru: 'Дубай, ОАЭ' },
     domain: {
-      en: 'Healthcare AI building clinical & administrative AI employees.',
-      ru: 'AI-сотрудники для клинических и административных процессов в медицине.'
+      en: 'AI receptionist platform for healthcare: voice and text agents for scheduling, care coordination and clinic operations. Sully.ai serves 400+ healthcare organizations.',
+      ru: 'Платформа AI-ресепшиониста для медицины: голосовые и текстовые агенты для записи, координации лечения и работы клиник. Sully.ai обслуживает 400+ медицинских организаций.'
     },
     color: 'var(--cyan)',
-    metrics: ['400+ Healthcare Orgs', '100K+ Providers', 'Real-Time Voice AI'],
+    metrics: ['15s → 0s Dead Air at Pickup', 'MENA Launch', 'Real-Time Voice AI'],
     highlights: {
       en: [
-        'Hardened production multilingual AI systems across real-time voice pipelines, telephony, backend, and operational tooling.',
-        'Built evaluation, observability, and runtime-diagnostic harnesses that isolated production failures fast.',
-        'Drove stress testing, incident investigation, and deployment reliability for enterprise healthcare launches.'
+        'Led core engineering for the MENA launch: UAE infrastructure, Azure Blob Storage support, regional configuration and production readiness.',
+        'Removed ~15 s of dead air at pickup on outbound calls: the agent was greeting the caller while the line was still ringing.',
+        'Made agent dispatch reliable on LiveKit: retry-and-verify, no more duplicate agents in one call, no more silent calls.',
+        'Designed UAE audio-residency guardrails so TTS and STT fallbacks stay within approved regional providers instead of silently routing elsewhere.',
+        'Built patient-data validation for outbound campaigns: local phone formats, customer-specific schemas, clinic rules.',
+        'Built high-volume stress testing with headless LiveKit participants, Loki and Mimir validation, and runtime health checks; found and fixed the memory cascade behind burst failures.'
       ],
       ru: [
-        'Разрабатывал и укреплял мультиязычные голосовые AI-пайплайны, телефонию, бэкенд и операционный тулинг.',
-        'Создал процессы оценки (evals), observability и runtime-диагностики для быстрой локализации сбоев.',
-        'Отвечал за стресс-тестирование, разбор инцидентов и надёжность релизов для 400+ клиник и 100K+ врачей.'
+        'Вёл основную разработку для запуска в MENA: инфраструктура в ОАЭ, поддержка Azure Blob Storage, региональная конфигурация и готовность к продакшену.',
+        'Убрал ~15 с тишины после ответа на исходящих звонках: агент здоровался, пока линия ещё звонила.',
+        'Сделал диспетчеризацию агентов в LiveKit надёжной: retry-and-verify, без двойных агентов в одном звонке и без «немых» звонков.',
+        'Спроектировал гарды резидентности аудио в ОАЭ: фолбэки TTS и STT остаются у одобренных региональных провайдеров, а не уходят молча к другим.',
+        'Сделал валидацию данных пациентов для исходящих кампаний: локальные форматы номеров, схемы клиентов, правила клиник.',
+        'Построил нагрузочное тестирование с headless-участниками LiveKit, проверкой через Loki и Mimir и runtime health checks; нашёл и устранил каскад по памяти, ронявший систему под всплесками.'
       ]
     }
   },
@@ -414,7 +426,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'exp-kingpin',
     role: { en: 'Engineering Manager / Senior Full-Stack', ru: 'Engineering Manager / Senior Full-Stack' },
     company: 'Kingpin',
-    period: { en: 'Sep 2024 — Aug 2025', ru: 'Сен 2024 — Авг 2025' },
+    period: { en: 'Sep 2024 — Sep 2025', ru: 'Сен 2024 — Сен 2025' },
     location: { en: 'Dubai, UAE', ru: 'Дубай, ОАЭ' },
     domain: {
       en: 'AI-powered multi-tenant B2B SaaS platform for wholesale.',
