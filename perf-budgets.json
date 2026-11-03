@@ -1,0 +1,14 @@
+{
+  "bytes": {
+    "htmlGzip": 36000,
+    "inlineStyle": 32000,
+    "firstPartyJsGzip": 40000,
+    "singleChunkGzip": 25000,
+    "preloadedFonts": 100000,
+    "preloadedFontCount": 3
+  },
+  "lighthouse": {
+    "mobile": { "score": 0.95, "lcp": 2200, "cls": 0.02, "tbt": 100 },
+    "desktop": { "score": 0.98, "lcp": 800, "cls": 0.02, "tbt": 50 }
+  }
+}
