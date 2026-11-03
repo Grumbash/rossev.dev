@@ -70,6 +70,17 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - **FULL-STACK & MOBILE**: TypeScript, Node.js, NestJS, React, React Native, Next.js, PostgreSQL, MongoDB, Playwright, Cypress, Jest, Monorepos
 - **LEADERSHIP**: Teams of 5–12 Engineers, Customer Pilots & Demos, Technical Hiring, System Architecture, Mentoring (150+ Lectures), Product Strategy
 
+## Writing (30-second briefs; the LinkedIn post is the original)
+- [Engineering Management Is Applied Systems Thinking](https://rossev.dev/writing/engineering-management-systems-thinking/) (2026-10-13): Debug your team’s feedback loops, handoffs, and queue depth just like a distributed system.
+- [Every Engineering Estimate Is Actually Two Separate Things](https://rossev.dev/writing/every-engineering-estimate-is-two-things/) (2026-10-19): Separate probability sizing from deterministic business commitments.
+- [The New AI Bottleneck Isn’t Generation — It’s Verification](https://rossev.dev/writing/the-new-ai-bottleneck/) (2026-10-19): Harnesses, automated evals, and runtime observability separate AI toys from production.
+- [AI Agents Helped Write 30% More Code. Then What?](https://rossev.dev/writing/ai-agents-30-percent-more-code/) (2026-10-23): More code is a vanity metric if PR queues and incident rates spike alongside it.
+- [When Attackers Keep Hitting Your Infrastructure](https://rossev.dev/writing/attackers-kept-attacking-opencode/) (2026-10-23): Blast-radius isolation, rate limiting, and anomaly telemetry must exist from day one.
+- [Traditional Technical Seniority Is Dead — Ownership Remains](https://rossev.dev/writing/technical-seniority-is-dead/) (2026-10-18): Seniority today is system design, trade-off judgment, and end-to-end outcome ownership.
+- [Anatomy of a 5,000-Line If-Else Monster in Production](https://rossev.dev/writing/god-damn-5k-if-else/) (2026-10-19): Without explicit domain boundaries and state machines, entropy always wins.
+- [Stop Using LLMs as the World’s Most Expensive Regex](https://rossev.dev/writing/stop-using-llms-as-expensive-regex/) (2026-10-16): Combine fast deterministic code guardrails with LLMs only where ambiguity exists.
+- [Explanation vs. Ownership: Problems vs. Decisions](https://rossev.dev/writing/explanation-vs-ownership/) (2026-06-13): Don’t escalate raw problems — bring trade-offs, options, and a recommended decision.
+
 ## Education & Languages
 - **Education**: Belarusian State University — Medicine (2015 — 2019)
 - **Languages**: English (C1 — Advanced Professional), Russian (Native)
