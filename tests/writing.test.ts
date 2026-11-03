@@ -88,11 +88,18 @@ function expectReaderFooter(html: string, i: number) {
 let pages: Record<string, string> = {};
 let partials: Record<string, string> = {};
 let home = '';
+// Home's HTML plus the first-party scripts it loads: page code ships as bundled modules.
+let homeCode = '';
 let grid = '';
+// Home and its grid partials show the 6 latest posts; /writing/ lists them all.
+const latest = [...BLOG_POSTS].sort((a, b) => b.published.localeCompare(a.published)).slice(0, 6);
 
 beforeAll(() => {
   execSync('bun run build', { stdio: 'ignore' });
   home = read('dist/index.html');
+  const srcs = [...home.matchAll(/<script\b[^>]*\ssrc="(\/_astro\/[^"]+\.js)"/g)].map((m) => m[1]);
+  const chunks = existsSync('dist/_astro') ? readdirSync('dist/_astro').filter((f) => f.endsWith('.js')).map((f) => `/_astro/${f}`) : [];
+  homeCode = [home, ...[...new Set([...srcs, ...chunks])].map((u) => read(`dist${u}`))].join('\n');
   grid = read('dist/partials/posts-all/index.html');
   for (const p of BLOG_POSTS) {
     const file = `dist/writing/${p.slug}/index.html`;
@@ -254,7 +261,7 @@ describe('grid cards are crawlable links that still open the inline reader', () 
   for (const [name, html] of [['home', () => home], ['posts-all partial', () => grid]] as const) {
     test(name, () => {
       const tags = controls(html());
-      for (const p of BLOG_POSTS) {
+      for (const p of latest) {
         const card = tags.find((t) => t.tag === 'a' && t.attrs.href === pagePath(p.slug));
         expect(card, `<a href="${pagePath(p.slug)}">`).toBeDefined();
         expect(card!.attrs['data-track']).toBe('post_open');
@@ -270,7 +277,7 @@ describe('grid cards are crawlable links that still open the inline reader', () 
     });
   }
   test('home defines openBrief, which skips modifier clicks', () => {
-    const fn = home.match(/openBrief\s*=\s*function[\s\S]{0,600}/)?.[0] ?? '';
+    const fn = homeCode.match(/openBrief\s*=[\s\S]{0,600}/)?.[0] ?? '';
     expect(fn).not.toBe('');
     for (const k of ['ctrlKey', 'metaKey', 'shiftKey', 'altKey', 'button']) expect(fn).toContain(k);
   });
@@ -278,8 +285,8 @@ describe('grid cards are crawlable links that still open the inline reader', () 
 
 describe('old ?post= links', () => {
   test('client-side restore accepts any post number, not just 1-9', () => {
-    expect(home).not.toContain('^post-[1-9]$');
-    expect(home).toMatch(/post-\\d\+/);
+    expect(homeCode).not.toContain('^post-[1-9]$');
+    expect(homeCode).toMatch(/post-\\d\+/);
   });
 
   // Only post-1..9 ever had ?post= links; posts added later (the Publora sync) never did.
