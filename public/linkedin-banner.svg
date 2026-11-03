@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 396" width="1584" height="396">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800;900&amp;family=Space+Grotesk:wght@700;800;900&amp;display=swap');
+      .mono { font-family: 'JetBrains Mono', monospace; }
+      .sans { font-family: 'Space Grotesk', -apple-system, sans-serif; }
+    </style>
+    <!-- Background Grid Pattern -->
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M 36 0 L 0 0 0 36" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1584" height="396" fill="#0E1015"/>
+  <rect width="1584" height="396" fill="url(#grid)"/>
+
+  <!-- Subtle ambient glows -->
+  <circle cx="1520" cy="50" r="160" fill="#C8FF00" opacity="0.04" filter="blur(40px)"/>
+  <circle cx="340" cy="340" r="180" fill="#00E5FF" opacity="0.03" filter="blur(50px)"/>
+
+  <!-- Top System / Terminal Status Bar -->
+  <rect x="24" y="16" width="1536" height="34" fill="#181B24" stroke="#2B2F3D" stroke-width="2" rx="4"/>
+  <circle cx="44" cy="33" r="5" fill="#FF5500"/>
+  <circle cx="62" cy="33" r="5" fill="#FFD600"/>
+  <circle cx="80" cy="33" r="5" fill="#C8FF00"/>
+  <text x="104" y="38" class="mono" font-weight="800" font-size="12" fill="#B8B5AD" letter-spacing="1.5">
+    GLEB ROSEV // FOUNDING ENGINEER @ YAGNI (YAGNI.APP) // PRODUCTION AI AGENTS &amp; SYSTEMS ARCHITECTURE
+  </text>
+  <text x="1536" y="38" class="mono" font-weight="800" font-size="12" fill="#C8FF00" text-anchor="end" letter-spacing="1">
+    ● SYS:ONLINE · TBILISI, GE · REMOTE
+  </text>
+
+  <!-- SAFE ZONE:
+       LinkedIn desktop avatar occupies roughly x: 40-260, y: 190-396.
+       Identity starts at x: 390 so the avatar never covers the flow diagram.
+  -->
+
+  <!-- Left/Center Main Identity & Positioning (Starts at x=280) -->
+  <g transform="translate(390, 70)">
+    <!-- Badge -->
+    <rect x="0" y="0" width="370" height="26" fill="#181B24" stroke="#C8FF00" stroke-width="2" rx="2"/>
+    <text x="12" y="17" class="mono" font-weight="900" font-size="11" fill="#C8FF00" letter-spacing="1.5">
+      CORE FOUNDING TEAM · PRODUCTION AGENTS
+    </text>
+
+    <!-- Main Headline / Name -->
+    <text x="0" y="72" class="sans" font-weight="900" font-size="44" fill="#F4F2EC" letter-spacing="-1">
+      GLEB ROSEV
+    </text>
+
+    <!-- Role Tagline -->
+    <text x="0" y="108" class="mono" font-weight="800" font-size="20" fill="#00E5FF" letter-spacing="0.5">
+      FOUNDING ENGINEER @ YAGNI (YAGNI.APP)
+    </text>
+
+    <!-- Punchline / Mission statement -->
+    <text x="0" y="136" class="sans" font-weight="700" font-size="15" fill="#FFFFFF">
+      Making AI agent teams dependable in production, not just in demos.
+    </text>
+    <text x="0" y="156" class="sans" font-weight="500" font-size="13" fill="#9EA3B0">
+      Systems where reliability matters · Proposal to merged GitHub PR under human approval.
+    </text>
+
+    <!-- Inline Topology Pipeline Diagram -->
+    <g transform="translate(0, 180)">
+      <rect x="0" y="0" width="132" height="26" fill="#141720" stroke="#FFD600" stroke-width="1.5" rx="2"/>
+      <text x="66" y="17" class="mono" font-weight="800" font-size="10" fill="#FFD600" text-anchor="middle">APPROVED PLAN</text>
+
+      <path d="M 136 13 L 154 13" stroke="#FFD600" stroke-width="2" stroke-dasharray="2 2"/>
+      <polygon points="154,10 160,13 154,16" fill="#FFD600"/>
+
+      <rect x="164" y="0" width="186" height="26" fill="#141720" stroke="#C8FF00" stroke-width="1.5" rx="2"/>
+      <text x="257" y="17" class="mono" font-weight="800" font-size="10" fill="#C8FF00" text-anchor="middle">AGENTS: PM · DEV · REVIEW</text>
+
+      <path d="M 354 13 L 372 13" stroke="#00E5FF" stroke-width="2" stroke-dasharray="2 2"/>
+      <polygon points="372,10 378,13 372,16" fill="#00E5FF"/>
+
+      <rect x="382" y="0" width="154" height="26" fill="#141720" stroke="#00E5FF" stroke-width="1.5" rx="2"/>
+      <text x="459" y="17" class="mono" font-weight="800" font-size="10" fill="#00E5FF" text-anchor="middle">MERGED GITHUB PR</text>
+    </g>
+  </g>
+
+  <!-- Right Impact & Metric Cards (Updated with new wins & metrics from site) -->
+  <g transform="translate(990, 70)">
+    <!-- Card 1: YAGNI.APP -->
+    <g transform="translate(0, 0)">
+      <rect x="6" y="6" width="270" height="68" fill="#000000" rx="3"/>
+      <rect x="0" y="0" width="270" height="68" fill="#161922" stroke="#C8FF00" stroke-width="2.5" rx="3"/>
+      <rect x="0" y="0" width="6" height="68" fill="#C8FF00"/>
+      <text x="18" y="28" class="mono" font-weight="900" font-size="20" fill="#C8FF00">YAGNI.APP</text>
+      <text x="18" y="47" class="mono" font-weight="700" font-size="11" fill="#F4F2EC">Founding Engineer · AI Agents</text>
+      <text x="18" y="60" class="mono" font-weight="600" font-size="9" fill="#8E92A0">Tenant Guards · Benchmarks · Self-Healing</text>
+    </g>
+
+    <!-- Card 2: Sully.ai (15s → 0s Dead Air) -->
+    <g transform="translate(286, 0)">
+      <rect x="6" y="6" width="270" height="68" fill="#000000" rx="3"/>
+      <rect x="0" y="0" width="270" height="68" fill="#161922" stroke="#00E5FF" stroke-width="2.5" rx="3"/>
+      <rect x="0" y="0" width="6" height="68" fill="#00E5FF"/>
+      <text x="18" y="28" class="mono" font-weight="900" font-size="20" fill="#00E5FF">15s → 0s</text>
+      <text x="18" y="47" class="mono" font-weight="700" font-size="11" fill="#F4F2EC">Dead Air at Pickup (Sully.ai)</text>
+      <text x="18" y="60" class="mono" font-weight="600" font-size="9" fill="#8E92A0">Staff Harness Eng · Voice AI · 400+ Orgs</text>
+    </g>
+
+    <!-- Card 3: 8+ Yrs Distributed Systems & MD -->
+    <g transform="translate(0, 82)">
+      <rect x="6" y="6" width="270" height="68" fill="#000000" rx="3"/>
+      <rect x="0" y="0" width="270" height="68" fill="#161922" stroke="#FFD600" stroke-width="2.5" rx="3"/>
+      <rect x="0" y="0" width="6" height="68" fill="#FFD600"/>
+      <text x="18" y="28" class="mono" font-weight="900" font-size="20" fill="#FFD600">8+ YEARS</text>
+      <text x="18" y="47" class="mono" font-weight="700" font-size="11" fill="#F4F2EC">Production Systems &amp; Arch</text>
+      <text x="18" y="60" class="mono" font-weight="600" font-size="9" fill="#8E92A0">Full-Stack · Mobile · Cloud · Medical Degree</text>
+    </g>
+
+    <!-- Card 4: Leadership (5–12 Eng) -->
+    <g transform="translate(286, 82)">
+      <rect x="6" y="6" width="270" height="68" fill="#000000" rx="3"/>
+      <rect x="0" y="0" width="270" height="68" fill="#161922" stroke="#FF5500" stroke-width="2.5" rx="3"/>
+      <rect x="0" y="0" width="6" height="68" fill="#FF5500"/>
+      <text x="18" y="28" class="mono" font-weight="900" font-size="20" fill="#FF5500">5–12 ENG</text>
+      <text x="18" y="47" class="mono" font-weight="700" font-size="11" fill="#F4F2EC">Hands-on Team Leadership</text>
+      <text x="18" y="60" class="mono" font-weight="600" font-size="9" fill="#8E92A0">Trunk Delivery · Canary · EM / Lead</text>
+    </g>
+
+    <!-- Capabilities / Tech Pills below cards -->
+    <g transform="translate(0, 166)">
+      <rect x="0" y="0" width="556" height="34" fill="#141720" stroke="#2B2F3D" stroke-width="1.5" rx="3"/>
+      <text x="16" y="22" class="mono" font-weight="700" font-size="11" fill="#C8FF00">CORE:</text>
+      <text x="64" y="22" class="mono" font-weight="600" font-size="11" fill="#D4D0C5">
+        AI Agents · LiveKit · Twilio · Evals · TypeScript · Node · K8s
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom Strip: Domains & Link Verification -->
+  <rect x="990" y="348" width="570" height="32" fill="#14161F" stroke="#222633" stroke-width="1" rx="3"/>
+  <text x="1540" y="369" class="mono" font-weight="800" font-size="11" fill="#C8FF00" text-anchor="end">
+    YAGNI.APP · LINKEDIN.COM/IN/ROSSEV · GITHUB.COM/GRUMBASH
+  </text>
+</svg>
