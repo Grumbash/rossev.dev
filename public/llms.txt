@@ -8,7 +8,6 @@ Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in 
 - **Location**: Tbilisi, Georgia
 - **Experience**: 8+ years building production software systems, leading teams of 5–12 engineers
 - **Email**: rossevgleb@gmail.com
-- **Phone**: +995 591 90 81 80
 - **GitHub**: https://github.com/Grumbash
 - **LinkedIn**: https://www.linkedin.com/in/rossev
 - **Programmatic CV (PDF)**: /gleb-rosev-cv.pdf

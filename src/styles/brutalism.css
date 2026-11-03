@@ -947,7 +947,7 @@ a {
   overflow-wrap: anywhere;
 }
 
-/* Phone, languages, place: one quiet line under the contact rows */
+/* Languages, place: one quiet line under the contact rows (the phone is only in the CV PDF) */
 .hero-card .contact-list {
   margin-bottom: 10px;
 }
