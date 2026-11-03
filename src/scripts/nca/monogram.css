@@ -1,0 +1,24 @@
+/* GR monogram styles that can wait for its lazy chunk; the block's box is in
+   brutalism.css so nothing moves when this arrives. */
+.nca-canvas {
+  cursor: crosshair;
+  /* Vertical swipes still scroll the page; taps and horizontal drags erase. */
+  touch-action: pan-y;
+}
+
+.nca-canvas:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.nca-caption {
+  margin-bottom: 10px;
+}
+
+.nca-how {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  margin-bottom: 16px;
+}

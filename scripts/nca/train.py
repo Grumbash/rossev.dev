@@ -15,13 +15,19 @@ changes the update rule here (kernels, padding, channel order, alive mask, fire
 rate) has to change there too, or the shipped weights stop working.
 
 Files:
-  public/nca/gr.json        weights the page fetches (rounded to 5 significant digits).
+  public/nca/gr.bin         weights the page fetches: float16 plus a small header (format
+                            above write_bin; decoded by src/scripts/nca/weights.ts).
                             Written only when a checkpoint's evaluation beats the bar: the
                             score of the existing --out file (else of --init, else none).
                             To train a replacement from scratch, either beat the shipped
                             weights or point --out somewhere else.
   scripts/nca/target.json   the training target, premultiplied RGBA, row-major. Read,
                             not regenerated, unless you pass --write-target.
+
+Also, without training:
+  train.py --to-bin old/gr.json      convert float32 JSON weights to --out (how the shipped
+                                     gr.bin was made from the original gr.json)
+  train.py --fallback-svg            print the static GR <svg> that index.astro inlines
 
 Run (PyTorch is not a project dependency, so use a throwaway venv):
   uv venv /tmp/nca-venv && VIRTUAL_ENV=/tmp/nca-venv uv pip install torch numpy pillow fonttools brotli
@@ -34,6 +40,7 @@ a different, similar model.
 
 The shipped weights are one from-scratch run with these defaults:
   train.py --seed 6          # 48 min; best checkpoint at iteration 11000, batch loss ~4e-3
+(it wrote float32 JSON then; gr.bin is that file through --to-bin, not retrained)
 Fine-tuning the earlier bites-only model on strokes (--init, at 5e-4 and 1e-3)
 was tried first and stalled: after a cut between the letters it kept growing the
 lime block into the G. Learning strokes from the start fixed that.
@@ -47,6 +54,7 @@ import io
 import json
 import math
 import pathlib
+import struct
 import time
 
 import numpy as np
@@ -131,6 +139,52 @@ def make_target(highlight: bool) -> np.ndarray:
         bx += pad_x
     over(slice(y0, y0 + CAP_HEIGHT), slice(bx, bx + r.shape[1]), INK, r)
     return np.concatenate([rgb, alpha[..., None]], axis=-1).astype(np.float32)
+
+
+def fallback_svg() -> str:
+    """The target as a vector <svg>, for the page to show in the monogram's place until
+    the model draws, and instead of it on Save-Data or 2G. Same layout as make_target();
+    the viewBox is the grid at 2 units per cell so whole numbers stay accurate (to a
+    quarter cell after the 4x upscale) and the markup small."""
+    from fontTools.pens.svgPathPen import SVGPathPen
+    from fontTools.pens.transformPen import TransformPen
+
+    font = instancer.instantiateVariableFont(TTFont(FONT), {"wght": 700})
+    glyphs = font.getGlyphSet()
+    cmap = font.getBestCmap()
+    names = [cmap[ord(ch)] for ch in "GR"]
+
+    def bounds(name: str) -> tuple[float, float, float, float]:
+        from fontTools.pens.boundsPen import BoundsPen
+        pen = BoundsPen(glyphs)
+        glyphs[name].draw(pen)
+        return pen.bounds
+
+    boxes = [bounds(n) for n in names]
+    bottom = min(b[1] for b in boxes)
+    top = max(b[3] for b in boxes)
+    scale = CAP_HEIGHT / (top - bottom)
+    widths = [round((b[2] - b[0]) * scale) for b in boxes]
+    gap, pad_x, pad_y = 3, 2, 3
+    block_w = widths[1] + 2 * pad_x
+    x0 = (SIZE - (widths[0] + gap + block_w)) // 2
+    y0 = (SIZE - CAP_HEIGHT) // 2
+    lefts = [x0, x0 + widths[0] + gap + pad_x]
+
+    def path(name: str, box: tuple[float, float, float, float], left: float) -> str:
+        pen = SVGPathPen(glyphs, ntos=lambda v: str(round(v)))
+        # Font units (y up) to half-cells (y down), glyph ink box at (left, y0).
+        k = 2 * scale
+        t = (k, 0, 0, -k, 2 * (left - box[0] * scale), 2 * (y0 + top * scale))
+        glyphs[name].draw(TransformPen(pen, t))
+        return pen.getCommands()
+
+    ink = "#0A0A0A"
+    return (
+        f'<svg class="nca-canvas nca-fallback" viewBox="0 0 {2 * SIZE} {2 * SIZE}" width="{SIZE}" height="{SIZE}" aria-hidden="true">'
+        f'<rect x="{2 * (lefts[1] - pad_x)}" y="{2 * (y0 - pad_y)}" width="{2 * block_w}" height="{2 * (CAP_HEIGHT + 2 * pad_y)}" fill="#C8FF00"/>'
+        f'<path fill="{ink}" d="{path(names[0], boxes[0], lefts[0])}{path(names[1], boxes[1], lefts[1])}"/></svg>'
+    )
 
 
 # --- model ----------------------------------------------------------------
@@ -340,36 +394,52 @@ def train(args: argparse.Namespace) -> None:
 
 # --- export -------------------------------------------------------------------
 
-def sig(v: float, digits: int = 5) -> float:
-    return float(f"{v:.{digits}g}")
+# Weights file (public/nca/gr.bin), read by src/scripts/nca/weights.ts. Little-endian:
+#   "NCA1"                                  4-byte magic
+#   uint16 size, channels, hidden           6 bytes
+#   float32 fireRate, aliveThreshold        8 bytes
+#   float16 w1 [hidden][3*channels], b1 [hidden], w2 [channels][hidden]
+MAGIC = b"NCA1"
+HEADER = struct.Struct("<4sHHHff")
+
+
+def weight_arrays(model: NCA) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    w1 = model.w1.weight.detach().cpu().reshape(HIDDEN, 3 * CHANNELS).numpy()  # [hidden][perception]
+    b1 = model.w1.bias.detach().cpu().numpy()
+    w2 = model.w2.weight.detach().cpu().reshape(CHANNELS, HIDDEN).numpy()      # [channel][hidden]
+    return w1, b1, w2
+
+
+def write_bin(w1: np.ndarray, b1: np.ndarray, w2: np.ndarray, path: pathlib.Path) -> None:
+    body = np.concatenate([w1.ravel(), b1.ravel(), w2.ravel()]).astype("<f2")
+    if not np.isfinite(body).all():
+        raise SystemExit("a weight overflows float16")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(HEADER.pack(MAGIC, SIZE, CHANNELS, HIDDEN, FIRE_RATE, ALIVE) + body.tobytes())
 
 
 def export(model: NCA, path: pathlib.Path) -> None:
-    w1 = model.w1.weight.detach().cpu().reshape(HIDDEN, 3 * CHANNELS)  # [hidden][perception]
-    b1 = model.w1.bias.detach().cpu()
-    w2 = model.w2.weight.detach().cpu().reshape(CHANNELS, HIDDEN)      # [channel][hidden]
-    data = {
-        "size": SIZE,
-        "channels": CHANNELS,
-        "hidden": HIDDEN,
-        "fireRate": FIRE_RATE,
-        "aliveThreshold": ALIVE,
-        "w1": [sig(v) for v in w1.flatten().tolist()],
-        "b1": [sig(v) for v in b1.tolist()],
-        "w2": [sig(v) for v in w2.flatten().tolist()],
-    }
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, separators=(",", ":")))
+    write_bin(*weight_arrays(model), path)
 
 
 def load_weights(path: pathlib.Path, device: torch.device) -> dict[str, torch.Tensor]:
-    data = json.loads(path.read_text())
-    t = lambda k, *shape: torch.tensor(data[k], dtype=torch.float32, device=device).reshape(*shape)
-    model = NCA().to(device)
-    state = model.state_dict()
-    state["w1.weight"] = t("w1", HIDDEN, 3 * CHANNELS, 1, 1)
-    state["w1.bias"] = t("b1", HIDDEN)
-    state["w2.weight"] = t("w2", CHANNELS, HIDDEN, 1, 1)
+    """Weights from a gr.bin, or from the gr.json the site shipped before the binary."""
+    if path.suffix == ".json":
+        data = json.loads(path.read_text())
+        w1, b1, w2 = (np.asarray(data[k], dtype=np.float32) for k in ("w1", "b1", "w2"))
+    else:
+        raw = path.read_bytes()
+        magic, size, channels, hidden, _, _ = HEADER.unpack_from(raw)
+        if (magic, size, channels, hidden) != (MAGIC, SIZE, CHANNELS, HIDDEN):
+            raise SystemExit(f"{path} is not a {SIZE}x{SIZE}, {CHANNELS}-channel, {HIDDEN}-hidden NCA1 file")
+        body = np.frombuffer(raw, dtype="<f2", offset=HEADER.size).astype(np.float32)
+        n1, n2 = HIDDEN * 3 * CHANNELS, HIDDEN
+        w1, b1, w2 = body[:n1], body[n1 : n1 + n2], body[n1 + n2 :]
+    t = lambda a, *shape: torch.from_numpy(np.ascontiguousarray(a)).to(device).reshape(*shape)
+    state = NCA().to(device).state_dict()
+    state["w1.weight"] = t(w1, HIDDEN, 3 * CHANNELS, 1, 1)
+    state["w1.bias"] = t(b1, HIDDEN)
+    state["w2.weight"] = t(w2, CHANNELS, HIDDEN, 1, 1)
     return state
 
 
@@ -395,11 +465,24 @@ if __name__ == "__main__":
     ap.add_argument("--lr", type=float, default=2e-3)
     ap.add_argument("--decay", type=lambda v: [float(f) for f in v.split(",")], default=[0.4, 0.85],
                     help="fractions of the run where the learning rate drops 10x (default 0.4,0.85)")
-    ap.add_argument("--init", type=pathlib.Path, help="start from these weights (a gr.json) instead of scratch")
+    ap.add_argument("--init", type=pathlib.Path, help="start from these weights (gr.bin, or an old gr.json) instead of scratch")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--plain", action="store_true", help="black GR without the lime block behind R")
     ap.add_argument("--cpu", action="store_true")
-    ap.add_argument("--out", type=pathlib.Path, default=ROOT / "public/nca/gr.json")
+    ap.add_argument("--out", type=pathlib.Path, default=ROOT / "public/nca/gr.bin")
     ap.add_argument("--target", type=pathlib.Path, default=ROOT / "scripts/nca/target.json")
     ap.add_argument("--write-target", action="store_true", help="render GR again and overwrite --target before training")
-    train(ap.parse_args())
+    ap.add_argument("--to-bin", type=pathlib.Path, metavar="GR_JSON",
+                    help="convert existing weights to --out (gr.bin) and exit; no training")
+    ap.add_argument("--fallback-svg", action="store_true",
+                    help="print the static GR <svg> the page shows on Save-Data / 2G, and exit")
+    args = ap.parse_args()
+    if args.to_bin:
+        state = load_weights(args.to_bin, torch.device("cpu"))
+        write_bin(state["w1.weight"].reshape(HIDDEN, -1).numpy(), state["w1.bias"].numpy(),
+                  state["w2.weight"].reshape(CHANNELS, -1).numpy(), args.out)
+        print(f"wrote {args.out} ({args.out.stat().st_size} bytes)")
+    elif args.fallback_svg:
+        print(fallback_svg())
+    else:
+        train(args)

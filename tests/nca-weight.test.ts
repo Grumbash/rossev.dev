@@ -24,7 +24,9 @@ const inlineStyles = () => [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)
 
 describe('before the visitor reaches the monogram', () => {
   test('the page ships only a small loader for it, which imports the rest on demand', () => {
-    const nca = eagerScripts().filter((s) => /nca/i.test(s));
+    // A chunk belongs to the monogram if it touches its markup or module, not if some
+    // unrelated identifier happens to contain the letters n-c-a (openCaseBreakdown).
+    const nca = eagerScripts().filter((s) => /nca-(block|canvas|section|fallback)|monogram/i.test(s));
     expect(nca.length).toBeGreaterThan(0);
     for (const s of nca) {
       expect(gz(s)).toBeLessThan(600);
