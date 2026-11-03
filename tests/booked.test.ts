@@ -46,6 +46,17 @@ describe('bookingSource', () => {
     expect(bookingSource('?uid=&utm_content=hero')).toBeNull();
   });
 
+  test('a reschedule is not a new booking: cal.com forwards the booking page\'s rescheduleUid', () => {
+    expect(bookingSource(`${REDIRECT}&rescheduleUid=old123`)).toBeNull();
+    expect(bookingSource('?rescheduleUid=old123&uid=abc&utm_content=hero')).toBeNull();
+    expect(bookingSource(`${REDIRECT}&rescheduleUid=`)).toBe('hero');
+  });
+
+  test('the same placement forwarded twice is still that placement; conflicting ones are unknown', () => {
+    expect(bookingSource('?uid=abc&utm_content=hero&utm_content=hero')).toBe('hero');
+    expect(bookingSource('?uid=abc&utm_content=hero&utm_content=nav')).toBe('unknown');
+  });
+
   test('never returns anything outside the placement list, unknown or null', () => {
     const allowed = new Set([...PLACEMENTS, 'unknown', null]);
     const junk = ['', '?', '?uid', '?uid=1&utm_content=', '?uid=1&utm_content=nav&utm_content=evil', '?uid=1&uid=2&utm_content=footer', REDIRECT];
@@ -172,6 +183,12 @@ describe('built /booked', () => {
     // Everything that reports the URL loads after parsing.
     const umami = html.match(/<script[^>]*cloud\.umami\.is\/script\.js[^>]*>/)?.[0] ?? '';
     expect(umami).toMatch(/\bdefer\b/);
+    // Vercel Analytics / Speed Insights and any other external or module script run after parsing too.
+    const scripts = [...html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)].map((m) => ({ attrs: m[1] ?? '', code: m[2] }));
+    const late = (s: { attrs: string }) => /\b(defer|async)\b|type="module"/.test(s.attrs);
+    expect(scripts.some((s) => /vercel|speed-insights|_vercel/i.test(s.code + s.attrs) && late(s))).toBe(true);
+    for (const s of scripts.filter((s) => /\ssrc=/.test(s.attrs))) expect(late(s)).toBe(true);
+    for (const s of scripts.filter((s) => /vercel|umami|_vercel/i.test(s.code + s.attrs))) expect(late(s)).toBe(true);
   });
 
   test('a cal.com redirect leaves only the placement: clean URL, no PII anywhere', () => {

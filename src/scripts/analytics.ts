@@ -42,7 +42,14 @@ export const EVENTS = {
   // Home section scrolled into view, once per page view. section: experience|writing|contact
   // (every page renders the #contact footer; only home reports, see data-page in Base.astro)
   section_view: ['section'],
+  // A call booked on cal.com: fires once on /booked after a redirect that carries a uid.
+  // source: nav|hero|footer|reader (the cal.com link's utm_content) | unknown
+  booking_confirmed: ['source'],
 } as const;
+
+// Where a cal.com link sits. calUrl() tags links with it; /booked reads it back.
+export const PLACEMENTS = ['nav', 'hero', 'footer', 'reader'] as const;
+export type Placement = (typeof PLACEMENTS)[number];
 
 export type EventName = keyof typeof EVENTS;
 type Props = Record<string, string>;
@@ -84,7 +91,7 @@ export function eventFromDataset(dataset: Record<string, string | undefined>): {
   return { name: name as EventName, props: Object.keys(props).length ? props : undefined };
 }
 
-export function calUrl(placement: 'nav' | 'hero' | 'footer' | 'reader'): string {
+export function calUrl(placement: Placement): string {
   const url = new URL(PROFILE.calendar);
   url.searchParams.set('utm_source', 'rossev.dev');
   url.searchParams.set('utm_medium', 'site');
@@ -92,9 +99,27 @@ export function calUrl(placement: 'nav' | 'hero' | 'footer' | 'reader'): string 
   return url.toString();
 }
 
+// /booked query -> the placement of the link that led to the booking. null: no new booking, i.e. no uid
+// (a reload, a typed URL) or a reschedule (cal.com forwards the booking page's rescheduleUid).
+// Reads only uid, rescheduleUid and utm_content; everything else cal.com forwards (email, name, phone...) is ignored.
+// Self-contained: booked.astro inlines its source into a <head> script and declares PLACEMENTS next to it.
+export function bookingSource(search: string, placements: readonly string[] = PLACEMENTS): Placement | 'unknown' | null {
+  const q = new URLSearchParams(search);
+  if (!q.get('uid') || q.get('rescheduleUid')) return null;
+  const content = q.getAll('utm_content');
+  const same = content.length > 0 && content.every((c) => c === content[0]);
+  return same && placements.indexOf(content[0]) >= 0 ? (content[0] as Placement) : 'unknown';
+}
+
 export function initAnalytics(): void {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
+
+  // Set by the /booked head script; the attribute is page-writable, so only a known placement goes out.
+  const booked = root.getAttribute('data-booking-source');
+  if (booked !== null) {
+    track('booking_confirmed', { source: (PLACEMENTS as readonly string[]).includes(booked) ? booked : 'unknown' });
+  }
 
   // Capture phase runs before the element's onclick, so this is the language before the click.
   let langBefore: string | null = null;
