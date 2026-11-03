@@ -11,6 +11,7 @@ import BlogGrid from '../components/BlogGrid.astro';
 import CaseBlueprint from '../components/CaseBlueprint.astro';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
+import { calUrl } from '../scripts/analytics';
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://rossev.dev').toString();
 const ogImageUrl = new URL('/og-card.png', Astro.site || 'https://rossev.dev').toString();
@@ -93,6 +94,17 @@ const jsonLd = {
     </script>
 
     <script src="/htmx.min.js" defer></script>
+
+    <!-- Umami Cloud: custom funnel events (see README "Analytics") -->
+    {import.meta.env.PUBLIC_UMAMI_WEBSITE_ID && (
+      <script
+        is:inline
+        defer
+        src="https://cloud.umami.is/script.js"
+        data-website-id={import.meta.env.PUBLIC_UMAMI_WEBSITE_ID}
+        data-domains="rossev.dev"
+      ></script>
+    )}
   </head>
   <body>
     <!-- TOP NAV: text links scroll, buttons act -->
@@ -124,6 +136,8 @@ const jsonLd = {
             class="ctrl-btn active-lang"
             id="btn-lang-en"
             onclick="window.setSiteLang('en')"
+            data-track="lang_switch"
+            data-track-to="en"
             aria-label="Switch language to English"
           >
             EN
@@ -133,6 +147,8 @@ const jsonLd = {
             class="ctrl-btn"
             id="btn-lang-ru"
             onclick="window.setSiteLang('ru')"
+            data-track="lang_switch"
+            data-track-to="ru"
             aria-label="Switch language to Russian"
           >
             RU
@@ -142,13 +158,16 @@ const jsonLd = {
             class="ctrl-btn"
             id="btn-theme-toggle"
             onclick="window.toggleSiteTheme()"
+            data-track="theme_switch"
             title="Toggle Light / Dark Mode"
           >
             <span class="lang-en">THEME</span>
             <span class="lang-ru">ТЕМА</span>
           </button>
           <a
-            href={PROFILE.calendar}
+            href={calUrl('nav')}
+            data-track="cta_book"
+            data-track-placement="nav"
             target="_blank"
             rel="noopener noreferrer"
             class="brutal-btn brutal-btn-lime brutal-btn-sm"
@@ -188,7 +207,9 @@ const jsonLd = {
 
               <div class="hero-actions">
                 <a
-                  href={PROFILE.calendar}
+                  href={calUrl('hero')}
+                  data-track="cta_book"
+                  data-track-placement="hero"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="brutal-btn brutal-btn-lime"
@@ -201,6 +222,8 @@ const jsonLd = {
                   target="_blank"
                   download="Gleb_Rosev_Staff_Engineer_CV.pdf"
                   class="brutal-btn"
+                  data-track="cv_download"
+                  data-track-placement="hero"
                 >
                   <span class="lang-en">DOWNLOAD CV ↓</span>
                   <span class="lang-ru">СКАЧАТЬ CV ↓</span>
@@ -211,11 +234,13 @@ const jsonLd = {
                 <div class="contact-row">
                   <dt class="label">Email</dt>
                   <dd>
-                    <a class="text-link" href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+                    <a class="text-link" href={`mailto:${PROFILE.email}`} data-track="email_click" data-track-placement="hero">{PROFILE.email}</a>
                     <button
                       type="button"
                       class="copy-btn"
                       onclick={`window.copyToClipboard('${PROFILE.email}')`}
+                      data-track="email_copy"
+                      data-track-placement="hero"
                     >
                       <span class="lang-en">copy</span><span class="lang-ru">копировать</span>
                     </button>
@@ -223,7 +248,7 @@ const jsonLd = {
                 </div>
                 <div class="contact-row">
                   <dt class="label">LinkedIn</dt>
-                  <dd><a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer">in/rossev ↗</a></dd>
+                  <dd><a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" data-track="linkedin_click" data-track-placement="hero">in/rossev ↗</a></dd>
                 </div>
                 <div class="contact-row">
                   <dt class="label">GitHub</dt>
@@ -281,6 +306,8 @@ const jsonLd = {
                   class="mode-btn active"
                   data-iso-domain="yagni"
                   onclick="window.setIsoDomain('yagni', this)"
+                  data-track="topology_interact"
+                  data-track-action="domain"
                 >
                   <span class="lang-en">AGENT TEAMS (YAGNI)</span>
                   <span class="lang-ru">АГЕНТЫ (YAGNI)</span>
@@ -290,6 +317,8 @@ const jsonLd = {
                   class="mode-btn"
                   data-iso-domain="voice"
                   onclick="window.setIsoDomain('voice', this)"
+                  data-track="topology_interact"
+                  data-track-action="domain"
                 >
                   <span class="lang-en">VOICE AI (SULLY)</span>
                   <span class="lang-ru">ГОЛОСОВОЙ AI</span>
@@ -299,6 +328,8 @@ const jsonLd = {
                   class="mode-btn"
                   data-iso-domain="saas"
                   onclick="window.setIsoDomain('saas', this)"
+                  data-track="topology_interact"
+                  data-track-action="domain"
                 >
                   <span class="lang-en">B2B SAAS & OPS</span>
                   <span class="lang-ru">B2B SAAS И OPS</span>
@@ -311,6 +342,8 @@ const jsonLd = {
                   class="mode-btn mode-btn-fault"
                   id="btn-iso-fault"
                   onclick="window.triggerIsoFault()"
+                  data-track="topology_interact"
+                  data-track-action="fault"
                 >
                   <span class="lang-en">INJECT FAULT</span><span class="lang-ru">ТЕСТ СБОЯ</span>
                 </button>
@@ -319,6 +352,8 @@ const jsonLd = {
                   class="mode-btn"
                   id="btn-iso-xray"
                   onclick="window.toggleIsoXray(this)"
+                  data-track="topology_interact"
+                  data-track-action="xray"
                 >
                   <span class="lang-en">CAD X-RAY</span><span class="lang-ru">РЕНТГЕН CAD</span>
                 </button>
@@ -327,6 +362,8 @@ const jsonLd = {
                   class="mode-btn"
                   id="btn-iso-reset"
                   onclick="window.resetIsoCamera()"
+                  data-track="topology_interact"
+                  data-track-action="reset"
                 >
                   <span class="lang-en">OVERVIEW</span><span class="lang-ru">ОБЗОР</span>
                 </button>
@@ -334,6 +371,8 @@ const jsonLd = {
                   type="button"
                   class="mode-btn active"
                   onclick="window.fireIsoPacket()"
+                  data-track="topology_interact"
+                  data-track-action="packet"
                 >
                   <span class="lang-en">TRACE</span><span class="lang-ru">ТРАССИРОВКА</span>
                 </button>
@@ -356,6 +395,8 @@ const jsonLd = {
                   class="iso-stratum-btn active"
                   data-stratum-btn="all"
                   onclick="window.setIsoStratum('all', this)"
+                  data-track="topology_interact"
+                  data-track-action="stratum"
                 >
                   <span class="lang-en">ALL 3 DECKS</span><span class="lang-ru">ВСЕ 3 ЯРУСА</span>
                 </button>
@@ -364,6 +405,8 @@ const jsonLd = {
                   class="iso-stratum-btn"
                   data-stratum-btn="1"
                   onclick="window.setIsoStratum(1, this)"
+                  data-track="topology_interact"
+                  data-track-action="stratum"
                 >
                   <span class="lang-en">L+1 · ORBITAL RADAR</span><span class="lang-ru">L+1 · РАДАР И EVALS</span>
                 </button>
@@ -372,6 +415,8 @@ const jsonLd = {
                   class="iso-stratum-btn"
                   data-stratum-btn="0"
                   onclick="window.setIsoStratum(0, this)"
+                  data-track="topology_interact"
+                  data-track-action="stratum"
                 >
                   <span class="lang-en">L0 · CORE DECK</span><span class="lang-ru">L0 · ЯДРО СИСТЕМЫ</span>
                 </button>
@@ -380,6 +425,8 @@ const jsonLd = {
                   class="iso-stratum-btn"
                   data-stratum-btn="-1"
                   onclick="window.setIsoStratum(-1, this)"
+                  data-track="topology_interact"
+                  data-track-action="stratum"
                 >
                   <span class="lang-en">L-1 · SUB-VAULT</span><span class="lang-ru">L-1 · БУНКЕР ИЗОЛЯЦИИ</span>
                 </button>
@@ -389,19 +436,19 @@ const jsonLd = {
               <div class="iso-inspector-card" id="iso-inspector-card">
                 <div class="iso-insp-head">
                   <span class="iso-insp-title" id="iso-insp-title">02 · AGENT CORE</span>
-                  <button type="button" class="iso-insp-close" onclick="window.resetIsoCamera()">×</button>
+                  <button type="button" class="iso-insp-close" onclick="window.resetIsoCamera()" data-track="topology_interact" data-track-action="reset">×</button>
                 </div>
                 <div id="iso-insp-sub" style="font-size: 0.72rem; color: #B8C0D4; margin-bottom: 6px;"></div>
                 <div class="iso-insp-layers" id="iso-insp-layers"></div>
                 <div class="iso-insp-guard" id="iso-insp-guard"></div>
                 <div class="iso-insp-actions">
-                  <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(-1)">
+                  <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(-1)" data-track="topology_interact" data-track-action="step">
                     <span class="lang-en">‹ PREV NODE</span><span class="lang-ru">‹ ПРЕД. УЗЕЛ</span>
                   </button>
-                  <button type="button" class="iso-insp-btn iso-insp-btn-fault" onclick="window.triggerIsoFault(true)">
+                  <button type="button" class="iso-insp-btn iso-insp-btn-fault" onclick="window.triggerIsoFault(true)" data-track="topology_interact" data-track-action="fault">
                     <span class="lang-en">BREAK & HEAL</span><span class="lang-ru">СБОЙ И ФИКС</span>
                   </button>
-                  <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(1)">
+                  <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(1)" data-track="topology_interact" data-track-action="step">
                     <span class="lang-en">NEXT NODE ›</span><span class="lang-ru">СЛЕД. УЗЕЛ ›</span>
                   </button>
                 </div>
@@ -421,6 +468,8 @@ const jsonLd = {
                 class="mode-btn"
                 style="padding: 3px 9px; font-size: 0.68rem;"
                 onclick="window.openDomainBlueprint()"
+                data-track="topology_interact"
+                data-track-action="blueprint"
               >
                 <span class="lang-en">BLUEPRINT ↘</span>
                 <span class="lang-ru">КЕЙС ↘</span>
@@ -465,7 +514,7 @@ const jsonLd = {
                   <a class="text-link" href="/llms.txt" target="_blank">/llms.txt</a>.
                 </p>
               </div>
-              <button type="button" class="brutal-btn brutal-btn-sm" onclick="window.copyToolbox()">
+              <button type="button" class="brutal-btn brutal-btn-sm" onclick="window.copyToolbox()" data-track="toolbox_copy">
                 <span class="lang-en">COPY AS TEXT</span>
                 <span class="lang-ru">СКОПИРОВАТЬ ТЕКСТОМ</span>
               </button>
@@ -484,6 +533,8 @@ const jsonLd = {
                         type="button"
                         class="skill-link"
                         data-skill={skill}
+                        data-track="skill_click"
+                        data-track-skill={skill}
                         data-jobs={SKILL_USAGE[skill].join(' ')}
                         aria-pressed="false"
                         aria-controls="experience-timeline"
@@ -617,6 +668,8 @@ const jsonLd = {
               </div>
               <a
                 href={PROFILE.linkedin}
+                data-track="linkedin_click"
+                data-track-placement="writing"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="brutal-btn"
@@ -632,6 +685,8 @@ const jsonLd = {
                 class="filter-tab active"
                 aria-pressed="true"
                 hx-get="/partials/posts-all"
+                data-track="post_filter"
+                data-track-filter="all"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
@@ -644,6 +699,8 @@ const jsonLd = {
                 class="filter-tab"
                 aria-pressed="false"
                 hx-get="/partials/posts-ai"
+                data-track="post_filter"
+                data-track-filter="ai"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
@@ -656,6 +713,8 @@ const jsonLd = {
                 class="filter-tab"
                 aria-pressed="false"
                 hx-get="/partials/posts-leadership"
+                data-track="post_filter"
+                data-track-filter="leadership"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
@@ -668,6 +727,8 @@ const jsonLd = {
                 class="filter-tab"
                 aria-pressed="false"
                 hx-get="/partials/posts-systems"
+                data-track="post_filter"
+                data-track-filter="systems"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
@@ -680,6 +741,8 @@ const jsonLd = {
                 class="filter-tab"
                 aria-pressed="false"
                 hx-get="/partials/posts-delivery"
+                data-track="post_filter"
+                data-track-filter="delivery"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
@@ -721,7 +784,7 @@ const jsonLd = {
                 </span>
               </p>
               <div class="hero-actions">
-                <a href={PROFILE.calendar} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime">
+                <a href={calUrl('footer')} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime" data-track="cta_book" data-track-placement="footer">
                   <span class="lang-en">BOOK A 30-MIN CALL ↗</span>
                   <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН ↗</span>
                 </a>
@@ -729,16 +792,18 @@ const jsonLd = {
                   type="button"
                   class="brutal-btn"
                   onclick={`window.copyToClipboard('${PROFILE.email}')`}
+                  data-track="email_copy"
+                  data-track-placement="footer"
                 >
                   <span class="lang-en">COPY EMAIL</span>
                   <span class="lang-ru">СКОПИРОВАТЬ EMAIL</span>
                 </button>
               </div>
               <div class="footer-links">
-                <a class="text-link" href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
-                <a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                <a class="text-link" href={`mailto:${PROFILE.email}`} data-track="email_click" data-track-placement="footer">{PROFILE.email}</a>
+                <a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" data-track="linkedin_click" data-track-placement="footer">LinkedIn ↗</a>
                 <a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-                <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Staff_Engineer_CV.pdf">
+                <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Staff_Engineer_CV.pdf" data-track="cv_download" data-track-placement="footer">
                   <span class="lang-en">CV (PDF) ↓</span><span class="lang-ru">CV (PDF) ↓</span>
                 </a>
                 <a class="text-link" href="/llms.txt" target="_blank" title="Plain-text Markdown context for AI Agents & LLMs">/llms.txt ↗</a>
@@ -959,7 +1024,9 @@ const jsonLd = {
     <!-- Bundled TypeScript 3D Multi-Stratum Topology Engine -->
     <script>
       import { initIsoArchitectureEngine } from '../scripts/iso-engine';
+      import { initAnalytics } from '../scripts/analytics';
       document.addEventListener('DOMContentLoaded', initIsoArchitectureEngine);
+      initAnalytics();
     </script>
     <!-- Vercel Web Analytics & Speed Insights -->
     <Analytics />
