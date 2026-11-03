@@ -26,7 +26,8 @@ Files:
 
 Also, without training:
   train.py --to-bin old/gr.json      convert float32 JSON weights to --out (how the shipped
-                                     gr.bin was made from the original gr.json)
+                                     gr.bin was made from the original gr.json); refuses to
+                                     overwrite an existing --out without --force
   train.py --fallback-svg            print the static GR <svg> that index.astro inlines
 
 Run (PyTorch is not a project dependency, so use a throwaway venv):
@@ -373,8 +374,9 @@ def train(args: argparse.Namespace) -> None:
             print(f"it {it:5d}  loss {loss.item():.5f}  log10 {math.log10(loss.item()):.2f}  {time.time() - t0:5.0f}s", flush=True)
         if it % 1000 == 0 or it == args.iters:
             # Late training is noisy, so keep the checkpoint whose worst test-like
-            # case is best rather than whatever the last iteration left.
-            scores = evaluate(model, target, device)
+            # case is best rather than whatever the last iteration left. Score what
+            # export() would ship (float16), the same precision as the bar it must beat.
+            scores = evaluate(as_shipped(model), target, device)
             worst = max(scores.values())
             print(f"  eval  worst {worst:.4f}  {show(scores)}", flush=True)
             if worst < best:
@@ -416,6 +418,15 @@ def write_bin(w1: np.ndarray, b1: np.ndarray, w2: np.ndarray, path: pathlib.Path
         raise SystemExit("a weight overflows float16")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(HEADER.pack(MAGIC, SIZE, CHANNELS, HIDDEN, FIRE_RATE, ALIVE) + body.tobytes())
+
+
+def as_shipped(model: NCA) -> NCA:
+    """A copy of the model with its weights rounded through float16, as gr.bin stores them."""
+    shipped = NCA().to(model.kernels.device)
+    with torch.no_grad():
+        for dst, src in zip(shipped.parameters(), model.parameters()):
+            dst.copy_(src.detach().half().float())
+    return shipped
 
 
 def export(model: NCA, path: pathlib.Path) -> None:
@@ -474,10 +485,13 @@ if __name__ == "__main__":
     ap.add_argument("--write-target", action="store_true", help="render GR again and overwrite --target before training")
     ap.add_argument("--to-bin", type=pathlib.Path, metavar="GR_JSON",
                     help="convert existing weights to --out (gr.bin) and exit; no training")
+    ap.add_argument("--force", action="store_true", help="with --to-bin: overwrite an existing --out")
     ap.add_argument("--fallback-svg", action="store_true",
                     help="print the static GR <svg> the page shows on Save-Data / 2G, and exit")
     args = ap.parse_args()
     if args.to_bin:
+        if args.out.exists() and not args.force:
+            raise SystemExit(f"{args.out} exists; pass --force to overwrite it")
         state = load_weights(args.to_bin, torch.device("cpu"))
         write_bin(state["w1.weight"].reshape(HIDDEN, -1).numpy(), state["w1.bias"].numpy(),
                   state["w2.weight"].reshape(CHANNELS, -1).numpy(), args.out)

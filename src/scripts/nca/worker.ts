@@ -100,11 +100,14 @@ function tick(): boolean {
 
 const ticker = createTicker(tick, TICK_MS);
 
-function reset(): void {
+/** Restarts from a seed. `silent` grows it out of sight and shows the finished
+ * monogram: used under reduced motion, and for the first frame, which replaces the
+ * page's static GR (a GR → dot → GR flash would read as a glitch, not as growth;
+ * Reset and full wipes still show the growth). */
+function reset(silent = reducedMotion): void {
   if (!ca) return;
   ca.seed();
-  if (reducedMotion) {
-    // No growth animation: show the finished monogram straight away.
+  if (silent) {
     ca.step(GROWN_STEPS);
     budget = 0;
   } else {
@@ -129,7 +132,7 @@ scope.onmessage = async (event: MessageEvent<ToWorker>) => {
         scope.postMessage({ type: 'error', message: String(err) } satisfies FromWorker);
         return;
       }
-      reset();
+      reset(true);
       break;
     }
     case 'visible':
