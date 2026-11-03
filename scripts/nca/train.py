@@ -16,8 +16,10 @@ rate) has to change there too, or the shipped weights stop working.
 
 Files:
   public/nca/gr.json        weights the page fetches (rounded to 5 significant digits).
-                            Written only when an evaluation beats the best so far; with
-                            --init, the starting weights' own score is the bar to beat.
+                            Written only when a checkpoint's evaluation beats the bar: the
+                            score of the existing --out file (else of --init, else none).
+                            To train a replacement from scratch, either beat the shipped
+                            weights or point --out somewhere else.
   scripts/nca/target.json   the training target, premultiplied RGBA, row-major. Read,
                             not regenerated, unless you pass --write-target.
 
@@ -277,12 +279,18 @@ def train(args: argparse.Namespace) -> None:
     sched = torch.optim.lr_scheduler.MultiStepLR(opt, milestones=[round(args.iters * f) for f in args.decay], gamma=0.1)
 
     pool = seed_state(args.pool, device)
+    # The bar to beat before --out is written: the weights already there, or
+    # failing that the --init weights. So no run, from scratch or fine-tune, can
+    # replace the shipped model with a worse one.
     best = math.inf
-    if args.init:
-        # A fine-tune only replaces the --out file if it beats where it started.
-        scores = evaluate(model, target, device)
+    bar = args.out if args.out.exists() else args.init
+    if bar:
+        judge = NCA().to(device)
+        judge.load_state_dict(load_weights(bar, device))
+        scores = evaluate(judge, target, device)
         best = max(scores.values())
-        print(f"  init  worst {best:.4f}  {show(scores)}", flush=True)
+        print(f"  bar ({bar.name})  worst {best:.4f}  {show(scores)}", flush=True)
+    saved = False
     t0 = time.time()
     for it in range(1, args.iters + 1):
         idx = torch.from_numpy(rng.choice(args.pool, args.batch, replace=False)).to(device)
@@ -317,11 +325,12 @@ def train(args: argparse.Namespace) -> None:
             print(f"  eval  worst {worst:.4f}  {show(scores)}", flush=True)
             if worst < best:
                 best = worst
+                saved = True
                 export(model, args.out)
                 print("  saved", flush=True)
 
-    if best == math.inf or not args.out.exists():
-        print("nothing saved")
+    if not saved:
+        print(f"nothing saved: no checkpoint beat {bar}")
         return
     # Re-check with the rounded weights the browser will actually load.
     model.load_state_dict(load_weights(args.out, device))

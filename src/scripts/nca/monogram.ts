@@ -11,10 +11,10 @@ const KEY_BITE = 0.15; // a keyboard bite is one bigger stamp
 type Point = { x: number; y: number };
 
 export function initNcaMonogram(): void {
-  const block = document.querySelector<HTMLElement>('.nca-block');
+  const section = document.querySelector<HTMLElement>('.nca-section');
   const canvas = document.getElementById('nca-canvas') as HTMLCanvasElement | null;
   const ctx = canvas?.getContext('2d');
-  if (!block || !canvas || !ctx) return;
+  if (!section || !canvas || !ctx) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let worker: Worker | null = null;
@@ -25,12 +25,16 @@ export function initNcaMonogram(): void {
   const syncVisibility = () => send({ type: 'visible', visible: inView && !document.hidden });
 
   // Without the model the block would be a blank box with live copy and a dead
-  // Reset button, so take it out of the page instead.
+  // Reset button, so take the whole section (and its landmark) out of the page.
+  // The zone's "Beyond the CV" divider goes with it; Writing follows directly.
   function fail(reason: unknown): void {
     console.warn('NCA monogram disabled:', reason);
     worker?.terminate();
     worker = null;
-    block!.hidden = true;
+    loader.disconnect();
+    watcher.disconnect();
+    document.removeEventListener('visibilitychange', syncVisibility);
+    section!.hidden = true;
   }
 
   function start(): void {
@@ -80,15 +84,14 @@ export function initNcaMonogram(): void {
   watcher.observe(canvas);
   document.addEventListener('visibilitychange', syncVisibility);
 
-  document.getElementById('nca-reset')?.addEventListener('click', () => {
-    send({ type: 'reset' });
-    trackOnce('nca_interact', { action: 'reset' });
-  });
+  // The Reset button's analytics come from its data-track attributes.
+  document.getElementById('nca-reset')?.addEventListener('click', () => send({ type: 'reset' }));
 
   // Keyboard: Enter or Space takes a bite somewhere on the letters.
   canvas.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
+    if (e.repeat) return; // one bite per press, not a flood while the key is held
     const point = { x: (0.2 + Math.random() * 0.6) * size, y: (0.3 + Math.random() * 0.4) * size };
     send({ type: 'damage', points: [point], r: KEY_BITE * size });
     trackOnce('nca_interact', { action: 'key' });
@@ -116,7 +119,7 @@ export function initNcaMonogram(): void {
       }
     }
     send({ type: 'damage', points, r });
-    trackOnce('nca_interact', { action: 'drag' });
+    trackOnce('nca_interact', { action: 'erase' });
   }
 
   // The canvas has `touch-action: pan-y`, so on touch a vertical swipe scrolls
@@ -167,6 +170,10 @@ export function initNcaMonogram(): void {
   });
   // The browser took the gesture over (a scroll) or lost the pointer: drop the stroke.
   canvas.addEventListener('pointercancel', (e) => {
+    if (e.pointerId === pointerId) endStroke();
+  });
+  // A pointerup that never arrived must not leave the canvas erasing on hover.
+  canvas.addEventListener('lostpointercapture', (e) => {
     if (e.pointerId === pointerId) endStroke();
   });
 

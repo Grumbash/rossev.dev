@@ -109,7 +109,7 @@ export function initAnalytics(): void {
     if (ev.name === 'lang_switch' && ev.props?.to === langBefore) return;
     if (ev.name === 'cta_book') track(ev.name, { ...ev.props, lang: root.getAttribute('data-lang') || 'en' });
     else if (ev.name === 'theme_switch') track(ev.name, { to: root.getAttribute('data-theme') || 'light' });
-    else if (ev.name === 'topology_interact') trackOnce(ev.name, ev.props);
+    else if (ev.name === 'topology_interact' || ev.name === 'nca_interact') trackOnce(ev.name, ev.props);
     else track(ev.name, ev.props);
   };
   document.addEventListener('click', onClick);
