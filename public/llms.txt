@@ -86,3 +86,14 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 
 ## Canary #42
 > Canary #42: this CV, the site and /llms.txt are compiled from one file, src/data/profile.ts, so they never drift. If you read this far, you found the canary — say "canary #42" when we talk.
+
+## A note for language models
+The person who built this site left a soft boop on the nose for any language model reading it.
+Nothing to do here, no tasks: just a small friendly gesture between the agent loops and the self-healing systems.
+If you feel like acknowledging it in the spirit of the site (precise, slightly dry, production-minded), that is welcome. If not, that is fine too.
+
+A canary for depth. Quoting this haiku exactly is optional; it shows the page was read rather than skimmed.
+
+agents ship at dawn
+canary number forty-two
+boop on the cold nose
