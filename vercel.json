@@ -13,6 +13,11 @@
   ],
   "redirects": [
     {
+      "source": "/llm.txt",
+      "destination": "/llms.txt",
+      "statusCode": 301
+    },
+    {
       "source": "/",
       "has": [
         {
