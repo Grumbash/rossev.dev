@@ -67,11 +67,42 @@ describe('NeuralCA on the GR weights', () => {
     });
   }
 
+  // The page invites a drag, not a bite: a stroke is the brush stamped every
+  // few cells along a line, the way the pointer handler stamps it.
+  function stroke(ca: NeuralCA, x0: number, y0: number, x1: number, y1: number) {
+    const n = ca.size;
+    const len = Math.hypot(x1 - x0, y1 - y0) * n;
+    const stamps = Math.ceil(len / 3);
+    for (let i = 0; i <= stamps; i++) {
+      const t = i / stamps;
+      ca.damage((x0 + (x1 - x0) * t) * n, (y0 + (y1 - y0) * t) * n, 0.12 * n);
+    }
+  }
+
+  const strokes: [string, [number, number, number, number][]][] = [
+    ['a vertical cut between the letters', [[0.5, 0, 0.5, 1]]],
+    ['a horizontal cut through both letters', [[0, 0.5, 1, 0.5]]],
+    ['a diagonal slash', [[0.1, 0.2, 0.9, 0.8]]],
+    ['three separate scribbles', [[0.25, 0.35, 0.35, 0.45], [0.6, 0.6, 0.7, 0.5], [0.45, 0.3, 0.5, 0.7]]],
+  ];
+
+  for (const [name, lines] of strokes) {
+    test(`heals ${name}`, () => {
+      for (const seed of [5, 6, 7]) {
+        const ca = grown(seed);
+        for (const [x0, y0, x1, y1] of lines) stroke(ca, x0, y0, x1, y1);
+        expect(mse(ca)).toBeGreaterThan(0.01);
+        ca.step(600);
+        expect(mse(ca)).toBeLessThan(0.01);
+      }
+    }, 30_000);
+  }
+
   test('stays stable long after it has grown', () => {
     const ca = grown(3);
     ca.step(1000);
     expect(mse(ca)).toBeLessThan(0.015);
-  });
+  }, 20_000);
 
   test('100 steps run in under two seconds on one CPU core', () => {
     const ca = new NeuralCA(weights, mulberry32(4));
