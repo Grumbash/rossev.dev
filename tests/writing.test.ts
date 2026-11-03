@@ -5,7 +5,7 @@
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { BLOG_POSTS, PROFILE, readTimeLabel } from '../src/data/profile';
+import { BLOG_POSTS, PROFILE, blogPostingLd, cardReadTime, fullPostLink, linkedinLabel, readTimeLabel } from '../src/data/profile';
 import budgets from '../perf-budgets.json';
 import { evaluateBytes, type Check } from '../scripts/perf-check';
 
@@ -102,6 +102,37 @@ beforeAll(() => {
 });
 
 describe('post data', () => {
+  // No post has a body yet (the Publora sync adds them), so the page logic is pinned here on a fixture.
+  test('with the full text here, every label and the JSON-LD treat the site as the original', () => {
+    const stub = { ...BLOG_POSTS[0], body: undefined };
+    const full = { ...BLOG_POSTS[0], body: { en: 'The text.', ru: 'Текст.' } };
+    const n = stub.originalMinutes;
+    expect(cardReadTime(stub)).toEqual({ en: `${n}-MIN ORIGINAL`, ru: `ОРИГИНАЛ ${n} МИН` });
+    expect(cardReadTime(full)).toEqual({ en: `${n}-MIN FULL POST`, ru: `ПОЛНЫЙ ТЕКСТ ${n} МИН` });
+    expect(linkedinLabel(stub)).toEqual({ en: 'ORIGINAL POST ON LINKEDIN ↗', ru: 'ОРИГИНАЛ В LINKEDIN ↗' });
+    expect(linkedinLabel(full)).toEqual({ en: 'ALSO ON LINKEDIN ↗', ru: 'ТАКЖЕ В LINKEDIN ↗' });
+    // The inline reader shows the brief only, so it links to the page that has the text.
+    expect(fullPostLink(full, true)).toEqual({ href: pagePath(full.slug), en: 'READ THE FULL POST →', ru: 'ЧИТАТЬ ПОЛНОСТЬЮ →' });
+    expect(fullPostLink(full, false)).toBeNull();
+    expect(fullPostLink(stub, true)).toBeNull();
+    const url = `${SITE}${pagePath(full.slug)}`;
+    const ldStub = blogPostingLd(stub, url, `${SITE}/og-card.png`);
+    const ldFull = blogPostingLd(full, url, `${SITE}/og-card.png`);
+    expect(ldStub.isBasedOn).toBe(stub.url);
+    expect(ldFull.isBasedOn).toBeUndefined();
+    expect(ldFull.sameAs).toBe(full.url);
+    expect(ldFull.author).toEqual({ '@id': PERSON });
+    expect(ldFull.url).toBe(url);
+  });
+
+  test('the templates take those labels and the JSON-LD from the shared helpers', () => {
+    expect(read('src/components/BlogGrid.astro')).toContain('cardReadTime(post)');
+    expect(read('src/components/BlogGrid.astro')).not.toMatch(/MIN ORIGINAL/);
+    expect(read('src/components/PostBrief.astro')).toContain('linkedinLabel(post)');
+    expect(read('src/components/PostBrief.astro')).toContain('fullPostLink(post, inline)');
+    expect(read('src/pages/writing/[slug].astro')).toContain('blogPostingLd(post');
+  });
+
   test('the read time is honest about where the text is: the original on LinkedIn, or the full post here', () => {
     const stub = BLOG_POSTS[0];
     expect(readTimeLabel({ ...stub, body: undefined })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ОРИГИНАЛ` });
