@@ -16,8 +16,8 @@ const url = new URL(`/cases/${study.id}/`, Astro.site || 'https://rossev.dev').t
 ---
 
 <Base
-  title={`${study.title.en} — architecture breakdown by Gleb Rosev`}
-  description={`${study.company}, ${study.period.toLowerCase()}: ${study.summary.en}`}
+  title={`${study.title.en} · Gleb Rosev`}
+  description={`Architecture breakdown, ${study.company} (${study.period}): ${study.summary.en}`}
   canonical={url}
   ogType="article"
 >
