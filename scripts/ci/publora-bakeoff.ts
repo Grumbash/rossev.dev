@@ -1,6 +1,6 @@
 // ONE-OFF, delete before merge: the model bake-off for the Publora sync, run by
-// .github/workflows/publora-bakeoff.yml on the PR. It takes the two newest published LinkedIn posts
-// with real text, puts each through every candidate model with the sync's own prompt, schema and
+// .github/workflows/publora-bakeoff.yml on the PR. It takes two of Gleb's LinkedIn posts
+// from the backfill file, puts each through every candidate model with the sync's own prompt, schema and
 // validator, and writes EN entry + RU adaptation + the real cost (OpenRouter usage.cost) side by
 // side to the Job Summary. It writes nothing to the repo; keys come only from the env and are
 // redacted from every line it prints.
@@ -12,10 +12,13 @@ import { callOpenRouter, redact } from './openrouter';
 import { sanitize } from './watchdog';
 import { DRAFT_SCHEMA, activityId, buildMessages, cleanSource, linkedinTargets, parseListPosts, publishedDate, validateDraft, type Target } from './publora-sync';
 import POSTS from '../../src/data/posts.json';
+import BACKFILL from '../../src/data/linkedin-backfill.json';
 import type { BlogPost } from '../../src/data/profile';
 
 export const MODELS = ['deepseek/deepseek-v4.1-flash', 'mistralai/mistral-small-2603', 'qwen/qwen3.8-flash', 'anthropic/claude-haiku-5.5'];
 const PUBLORA = 'https://api.publora.com/api/v1';
+// The two posts the models are compared on: the top post by far and a longer story (texts from the backfill).
+const BAKEOFF_POSTS = ['7522992144504995840', '7521565265558462464'];
 // Posts since 2026-10-13 from Gleb's LinkedIn export (public post ids only; the export itself stays
 // out of the repo): did Publora publish each, and will the sync add it or fill its full text?
 const CHECKLIST: [string, string][] = [
@@ -83,14 +86,16 @@ async function pickPosts(env: Record<string, string | undefined>, deps: Deps, n 
 function checklist(targets: Target[], documents: Set<string>) {
   const inPublora = new Map(targets.map((t) => [t.activityId, t]));
   const site = new Map((POSTS as BlogPost[]).map((p) => [activityId(p.url), p]));
-  const out = ['## Backfill checklist (LinkedIn export since 2026-10-13)', '', '| date | post | in Publora | on the site | the sync will |', '|---|---|---|---|---|'];
+  const backfill = new Set((BACKFILL as { activityId: string }[]).map((e) => e.activityId));
+  const out = ['## Backfill checklist (LinkedIn export since 2026-10-13)', '', '| date | post | in Publora | in the backfill file | on the site | the sync will |', '|---|---|---|---|---|---|'];
   for (const [id, label] of CHECKLIST) {
     const t = inPublora.get(id);
     const p = site.get(id);
     const len = t ? cleanSource(t.content).length : 0;
-    const will = !t ? '**nothing: not in Publora**' : p ? (p.body ? 'nothing' : 'add the full text') : 'add the post';
-    const pub = t ? `yes, ${len} chars${documents.has(id) ? ', PDF carousel' : ''}` : '**no**';
-    out.push(`| ${publishedDate(id)} | ${txt(label, 80)} | ${pub} | ${p ? (p.body ? 'with full text' : 'brief only') : 'no'} | ${will} |`);
+    const has = !!t || backfill.has(id);
+    const will = !has ? '**nothing: no text anywhere**' : p ? (p.body ? 'nothing' : 'add the full text') : 'add the post';
+    const pub = t ? `yes, ${len} chars${documents.has(id) ? ', PDF carousel' : ''}` : 'no';
+    out.push(`| ${publishedDate(id)} | ${txt(label, 80)} | ${pub} | ${backfill.has(id) ? 'yes' : 'no'} | ${p ? (p.body ? 'with full text' : 'brief only') : 'no'} | ${will} |`);
   }
   out.push('');
   return out.join('\n');
@@ -188,12 +193,21 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
   const secrets = [env.PUBLORA_API_KEY, env.OPENROUTER_API_KEY];
   const log = (s: string) => deps.log(redact(s, secrets));
   const summary = (md: string) => deps.summary(redact(md, secrets));
-  for (const k of ['PUBLORA_API_KEY', 'OPENROUTER_API_KEY']) if (!env[k]?.trim()) return log(`bakeoff: ${k} is not set`);
+  if (!env.OPENROUTER_API_KEY?.trim()) return log('bakeoff: OPENROUTER_API_KEY is not set');
   const models = env.BAKEOFF_MODELS?.split(',').map((s) => s.trim()).filter(Boolean) ?? MODELS;
   try {
-    const { targets, documents, picked } = await pickPosts(env, { ...deps, log });
+    let targets: Target[] = [];
+    let documents = new Set<string>();
+    try {
+      ({ targets, documents } = await pickPosts(env, { ...deps, log }));
+    } catch (e: any) {
+      log(`bakeoff: Publora unavailable (${e?.message ?? e}); the checklist shows the backfill only`);
+    }
     const dedupe = checklist(targets, documents) + '\n' + dedupeCheck(targets);
-    if (!picked.length) return summary(`# Publora bake-off\n\nNo published LinkedIn post with enough text found.\n\n${dedupe}`);
+    const picked: Target[] = (BACKFILL as { activityId: string; url: string; text: string }[])
+      .filter((e) => BAKEOFF_POSTS.includes(e.activityId))
+      .map((e) => ({ postGroupId: 'linkedin-backfill', activityId: e.activityId, postedId: '', content: e.text, url: e.url }));
+    if (!picked.length) return summary(`# Publora bake-off\n\nThe bake-off posts are missing from the backfill file.\n\n${dedupe}`);
     const all: Result[][] = [];
     const parts: string[] = [];
     for (const t of picked) {
