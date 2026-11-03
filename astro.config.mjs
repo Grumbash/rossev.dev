@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://glebrosev.dev',
+  site: 'https://rossev.dev',
   devToolbar: {
     enabled: false
   }
