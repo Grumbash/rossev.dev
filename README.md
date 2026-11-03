@@ -45,7 +45,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 
 | Event | Props | Fires on |
 | --- | --- | --- |
-| `cta_book` | `placement` (nav, hero, footer), `lang` | cal.com link |
+| `cta_book` | `placement` (nav, hero, footer, reader), `lang` | cal.com link |
 | `email_copy` / `email_click` | `placement` (hero, footer) | copy-email button / mailto link |
 | `cv_download` | `placement` (hero, footer) | CV PDF link |
 | `linkedin_click` | `placement` (hero, writing, footer) | LinkedIn profile link |
@@ -57,10 +57,17 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset) | GR monogram in Beyond the CV, once per action per view |
 | `lang_switch` / `theme_switch` | `to` | EN/RU (only on an actual change), THEME |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |
+| `booking_confirmed` | `source` (nav, hero, footer, reader, unknown) | `/booked` after a cal.com redirect carrying a booking `uid`, once per booking |
 
 `section_view` also fires for sections passed on the way: a nav jump to `#contact` smooth-scrolls past Experience and Writing, so they count too.
 
 Every cal.com link carries `?utm_source=rossev.dev&utm_medium=site&utm_content=<placement>`, built by `calUrl()`.
+
+### Bookings
+
+cal.com sends visitors to `/booked` after they book: event type → Advanced → Redirect on booking → `https://rossev.dev/booked/`, with "Forward parameters" on. Without forwarding there is no `uid` and no `utm_content`, so no `booking_confirmed` is sent. The forwarded query also carries the booking (email, name, phone, guests...). A classic inline script in the page's `<head>` keeps only whether a `uid` is present and the `utm_content` placement (`bookingSource()`), then strips the whole query before the deferred Umami and Vercel scripts read the URL. Vercel's server logs still see the full redirect URL. Reschedules are not counted: cal.com forwards the booking page's `rescheduleUid`, and a non-empty one means no event.
+
+Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` bookings start on `/writing/*`, so a `/` (path) first step makes it a home-only funnel; prepend it only for that.
 
 ## License
 
