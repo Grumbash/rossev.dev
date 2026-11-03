@@ -1,0 +1,124 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "source": "/partials/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-1$"
+        }
+      ],
+      "destination": "/writing/engineering-management-systems-thinking/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-2$"
+        }
+      ],
+      "destination": "/writing/every-engineering-estimate-is-two-things/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-3$"
+        }
+      ],
+      "destination": "/writing/the-new-ai-bottleneck/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-4$"
+        }
+      ],
+      "destination": "/writing/ai-agents-30-percent-more-code/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-5$"
+        }
+      ],
+      "destination": "/writing/attackers-kept-attacking-opencode/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-6$"
+        }
+      ],
+      "destination": "/writing/technical-seniority-is-dead/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-7$"
+        }
+      ],
+      "destination": "/writing/god-damn-5k-if-else/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-8$"
+        }
+      ],
+      "destination": "/writing/stop-using-llms-as-expensive-regex/",
+      "statusCode": 301
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post",
+          "value": "^post-9$"
+        }
+      ],
+      "destination": "/writing/explanation-vs-ownership/",
+      "statusCode": 301
+    }
+  ]
+}

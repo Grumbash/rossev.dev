@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { deflateSync } from 'node:zlib';
-import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES } from '../src/data/profile';
+import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, BLOG_POSTS, postPath } from '../src/data/profile';
 
 const ROOT_DIR = resolve(import.meta.dir, '..');
 const PUBLIC_DIR = resolve(ROOT_DIR, 'public');
@@ -54,6 +54,12 @@ function generateLlmsTxt(): void {
   lines.push('## Core Technical Capabilities');
   for (const cap of CAPABILITIES) {
     lines.push(`- **${cap.title.en}**: ${cap.skills.join(', ')}`);
+  }
+  lines.push('');
+
+  lines.push('## Writing (30-second briefs; the LinkedIn post is the original)');
+  for (const post of BLOG_POSTS) {
+    lines.push(`- [${post.title.en}](https://rossev.dev${postPath(post)}) (${post.published}): ${post.takeaway.en}`);
   }
   lines.push('');
 

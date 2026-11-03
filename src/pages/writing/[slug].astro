@@ -1,0 +1,98 @@
+---
+// One indexable, shareable page per post: the same brief as the inline reader, plus `body`
+// when a post has one. The LinkedIn post stays the original (isBasedOn / sameAs).
+import { BLOG_POSTS, postPath, readTimeLabel, type BlogPost } from '../../data/profile';
+import Base from '../../layouts/Base.astro';
+import PostBrief from '../../components/PostBrief.astro';
+
+export function getStaticPaths() {
+  return BLOG_POSTS.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: BlogPost };
+
+const SITE = 'https://rossev.dev/';
+const PERSON_ID = `${SITE}#person`;
+const url = new URL(postPath(post), Astro.site || SITE).toString();
+const ogImageUrl = new URL('/og-card.png', Astro.site || SITE).toString();
+const readTime = readTimeLabel(post);
+const title = `${post.title.en} — Gleb Rosev`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BlogPosting',
+      '@id': `${url}#post`,
+      headline: post.title.en,
+      alternativeHeadline: post.title.ru,
+      description: post.takeaway.en,
+      url,
+      mainEntityOfPage: { '@id': url },
+      datePublished: post.published,
+      author: { '@id': PERSON_ID },
+      publisher: { '@id': PERSON_ID },
+      isPartOf: { '@id': `${SITE}#website` },
+      isBasedOn: post.url,
+      sameAs: post.url,
+      inLanguage: ['en', 'ru'],
+      keywords: post.tags,
+      image: ogImageUrl
+    },
+    // The full Person node lives on home; this is enough to resolve the @id here.
+    {
+      '@type': 'Person',
+      '@id': PERSON_ID,
+      name: 'Gleb Rosev',
+      url: SITE,
+      sameAs: ['https://www.linkedin.com/in/rossev/', 'https://github.com/Grumbash']
+    }
+  ]
+};
+---
+
+<Base
+  title={title}
+  description={post.takeaway.en}
+  canonical={url}
+  ogType="article"
+  ogTitle={title}
+  jsonLd={jsonLd}
+  cta={false}
+>
+  <meta slot="head" property="article:published_time" content={post.published} />
+  <section class="section-block">
+    <div class="container" style="max-width: 860px;">
+      <a class="text-link" href="/writing/" style="display: inline-block; margin-bottom: 18px;">
+        <span class="lang-en">← All writing</span>
+        <span class="lang-ru">← Все заметки</span>
+      </a>
+
+      <article class="brutal-box post-reader-drawer">
+        <div class="blueprint-header">
+          <span>
+            <span class="lang-en">// ENGINEERING NOTE BRIEF // {post.categoryLabel.en} · {readTime.en}</span>
+            <span class="lang-ru">// КОНСПЕКТ ИНЖЕНЕРНОЙ ЗАМЕТКИ // {post.categoryLabel.ru} · {readTime.ru}</span>
+          </span>
+          <time datetime={post.published}>{post.published}</time>
+        </div>
+
+        <div style="padding: 22px 24px;">
+          <h1 style="font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; line-height: 1.15; margin-bottom: 10px;">
+            <span class="lang-en">{post.title.en}</span>
+            <span class="lang-ru">{post.title.ru}</span>
+          </h1>
+          <p class="post-takeaway" style="font-size: 1rem;">
+            <span class="lang-en">{post.takeaway.en}</span>
+            <span class="lang-ru">{post.takeaway.ru}</span>
+          </p>
+
+          <PostBrief post={post} />
+        </div>
+      </article>
+    </div>
+  </section>
+</Base>
