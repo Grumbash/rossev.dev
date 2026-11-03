@@ -1,6 +1,7 @@
 // Page side of the GR neural cellular automaton: loads the worker when the block
 // nears the viewport, draws the frames it sends, and turns pointer drags and
 // key presses into damage. The model itself runs in ./worker.ts.
+import { trackOnce } from '../analytics';
 import type { FromWorker, ToWorker } from './worker';
 
 const WEIGHTS_URL = '/nca/gr.json';
@@ -79,7 +80,10 @@ export function initNcaMonogram(): void {
   watcher.observe(canvas);
   document.addEventListener('visibilitychange', syncVisibility);
 
-  document.getElementById('nca-reset')?.addEventListener('click', () => send({ type: 'reset' }));
+  document.getElementById('nca-reset')?.addEventListener('click', () => {
+    send({ type: 'reset' });
+    trackOnce('nca_interact', { action: 'reset' });
+  });
 
   // Keyboard: Enter or Space takes a bite somewhere on the letters.
   canvas.addEventListener('keydown', (e) => {
@@ -87,6 +91,7 @@ export function initNcaMonogram(): void {
     e.preventDefault();
     const point = { x: (0.2 + Math.random() * 0.6) * size, y: (0.3 + Math.random() * 0.4) * size };
     send({ type: 'damage', points: [point], r: KEY_BITE * size });
+    trackOnce('nca_interact', { action: 'key' });
   });
 
   // Pointer erasing. Grid coordinates come from the content box: the bounding
@@ -111,6 +116,7 @@ export function initNcaMonogram(): void {
       }
     }
     send({ type: 'damage', points, r });
+    trackOnce('nca_interact', { action: 'drag' });
   }
 
   // The canvas has `touch-action: pan-y`, so on touch a vertical swipe scrolls
