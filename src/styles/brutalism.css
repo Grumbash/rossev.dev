@@ -20,9 +20,9 @@
   --shadow-md: 6px 6px 0px var(--shadow);
   --shadow-lg: 10px 10px 0px var(--shadow);
 
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-headline: 'Syne', 'Space Grotesk', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-headline: 'Syne Variable', 'Syne', 'Space Grotesk Variable', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
 }
 
 html[data-theme="dark"] {

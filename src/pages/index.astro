@@ -1,5 +1,11 @@
 ---
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/space-grotesk/wght.css';
+import '@fontsource-variable/syne/wght.css';
 import '../styles/brutalism.css';
+import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import groteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+import syneLatin from '@fontsource-variable/syne/files/syne-latin-wght-normal.woff2?url';
 import {
   PROFILE,
   CASE_STUDIES,
@@ -69,13 +75,10 @@ const jsonLd = {
     />
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <!-- Non-Blocking Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap"
-    />
+    <!-- Self-hosted fonts (no third-party round trip before first paint) -->
+    <link rel="preload" href={monoLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={groteskLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={syneLatin} as="font" type="font/woff2" crossorigin />
 
     <!-- Structured Data (JSON-LD Person Schema) -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
