@@ -70,8 +70,17 @@ const nextInline = inline
     class="brutal-btn brutal-btn-lime"
     style="padding: 8px 14px; font-size: 0.78rem;"
   >
-    <span class="lang-en">ORIGINAL POST ON LINKEDIN ↗</span>
-    <span class="lang-ru">ОРИГИНАЛ В LINKEDIN ↗</span>
+    {post.body ? (
+      <>
+        <span class="lang-en">ALSO ON LINKEDIN ↗</span>
+        <span class="lang-ru">ТАКЖЕ В LINKEDIN ↗</span>
+      </>
+    ) : (
+      <>
+        <span class="lang-en">ORIGINAL POST ON LINKEDIN ↗</span>
+        <span class="lang-ru">ОРИГИНАЛ В LINKEDIN ↗</span>
+      </>
+    )}
   </a>
 </div>
 

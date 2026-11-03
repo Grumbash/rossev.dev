@@ -56,7 +56,9 @@ I publish on LinkedIn through [Publora](https://publora.com). Once a day (06:17 
 
 - A post counts once LinkedIn has it (`published` on the LinkedIn target, also in partially published groups) and its date is on or after `PUBLORA_SINCE` (repo variable, default `2026-10-13`). Older posts were added by hand.
 - "Already on the site" is matched by the numeric LinkedIn activity id, since the site keeps vanity URLs and Publora returns URNs. The date comes from the same id.
-- The English page text is the LinkedIn original, cleaned without a model (mentions become names, trailing hashtags go). The model writes the card (title, takeaway, quote, 3 bullets in EN and RU) and the Russian adaptation of the full text.
+- The post page carries the full text, so the site is the original and LinkedIn is linked as "also on LinkedIn". The English text is the LinkedIn original, cleaned without a model (mentions become names, trailing hashtags go). The model writes the card (title, takeaway, quote, 3 bullets in EN and RU) and the Russian adaptation of the full text.
+- Posts already on the site with only a brief get their full text the same way, once Publora has them: the original in English plus a Russian adaptation, while the hand-written brief stays as it is.
+- For a carousel, the site gets the caption only; the slides stay on LinkedIn.
 - The model answers under a strict JSON schema, gets no tools, and sees the post as data. Its answer is checked field by field: exact shape, Russian where Russian belongs, and no number the post never said. A post that fails is skipped, listed in the PR with the reason, and retried the next day; the others still land.
 - New posts go on top of the grid, with the next `post-N` id, the category label the site already uses and the next color.
 - A post I don't want on the site: add its LinkedIn id (the PR lists it) to `src/data/publora-ignore.json` on `main` and close the PR. Closing alone would bring it back the next day.
