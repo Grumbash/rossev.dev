@@ -5,7 +5,7 @@ import { PROFILE } from '../data/profile';
 
 // Every event and its props (max 2). Add a control here before tagging it.
 export const EVENTS = {
-  // cal.com link clicked. placement: nav|hero|footer; lang: page language at click time
+  // cal.com link clicked. placement: nav|hero|footer|reader; lang: page language at click time
   cta_book: ['placement', 'lang'],
   // "copy email" button. placement: hero|footer
   email_copy: ['placement'],
@@ -13,7 +13,7 @@ export const EVENTS = {
   email_click: ['placement'],
   // CV PDF link. placement: hero|footer
   cv_download: ['placement'],
-  // LinkedIn profile link. placement: hero|writing|footer
+  // LinkedIn profile link. placement: hero|writing|footer|reader
   linkedin_click: ['placement'],
   // A job's architecture case (<details class="job-case">) opened by the visitor (not the ?case= auto-open on load),
   // including via the topology BLUEPRINT button, which also sends topology_interact{blueprint}. id: case study id
@@ -22,7 +22,8 @@ export const EVENTS = {
   skill_click: ['skill'],
   // Toolbox "copy as text"
   toolbox_copy: [],
-  // Post opened in the on-site reader. id: post id
+  // Post opened from a home card or a reader's "Next" (inline reader or post page): inline on a plain click on home,
+  // otherwise its page (post-page Next, modifier/middle click). id: post id
   post_open: ['id'],
   // Post's LinkedIn original opened (grid card or reader). id: post id
   post_linkedin: ['id'],
@@ -35,7 +36,8 @@ export const EVENTS = {
   lang_switch: ['to'],
   // Theme toggle. to: light|dark (read after the toggle)
   theme_switch: ['to'],
-  // Section scrolled into view, once per page view. section: experience|writing|contact
+  // Home section scrolled into view, once per page view. section: experience|writing|contact
+  // (every page renders the #contact footer; only home reports, see data-page in Base.astro)
   section_view: ['section'],
 } as const;
 
@@ -79,7 +81,7 @@ export function eventFromDataset(dataset: Record<string, string | undefined>): {
   return { name: name as EventName, props: Object.keys(props).length ? props : undefined };
 }
 
-export function calUrl(placement: 'nav' | 'hero' | 'footer'): string {
+export function calUrl(placement: 'nav' | 'hero' | 'footer' | 'reader'): string {
   const url = new URL(PROFILE.calendar);
   url.searchParams.set('utm_source', 'rossev.dev');
   url.searchParams.set('utm_medium', 'site');
@@ -146,7 +148,9 @@ export function initAnalytics(): void {
   canvas?.addEventListener('pointerleave', () => (start = null));
 
   // A section counts once its top has passed 60% of the viewport height (works for tall sections on phones).
-  if (typeof IntersectionObserver === 'undefined') return;
+  // Base.astro marks <html data-page="home|writing">; unmarked markup counts as home.
+  const page = root.getAttribute('data-page');
+  if (typeof IntersectionObserver === 'undefined' || (page && page !== 'home')) return;
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) if (entry.isIntersecting) trackOnce('section_view', { section: entry.target.id });
