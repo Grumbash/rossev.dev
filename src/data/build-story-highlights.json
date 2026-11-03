@@ -170,5 +170,37 @@
     },
     "findings": [],
     "green": "f01970d4970f7208c8025471769deed4dbbc39b8"
+  },
+  "14": {
+    "visitorChange": {
+      "en": "This page: every merged PR of the site with its red test, what was caught before merge and what I decided. Every number on it is computed from the data.",
+      "ru": "Эта страница: каждый смерженный PR сайта с красным тестом, тем, что поймали до мержа, и тем, что решил я. Каждое число на ней посчитано из данных."
+    },
+    "humanDecision": {
+      "en": "Only this site’s PRs count here: the hero’s 28 PRs are YAGNI’s, and the page says so. Each card also shows what the human decided, not only what was caught.",
+      "ru": "Здесь считаются только PR этого сайта: 28 PR из hero — это YAGNI, и страница так и говорит. В каждой карточке есть и то, что решил человек, а не только то, что поймали."
+    },
+    "findings": [
+      {
+        "en": "The hero link sat right after the YAGNI numbers and read as proof of them. Now it says it is the same loop on this site’s own PRs.",
+        "ru": "Ссылка в hero стояла сразу после цифр YAGNI и читалась как их доказательство. Теперь она говорит, что это тот же цикл на PR этого сайта.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+      },
+      {
+        "en": "The page claimed a judge step for every PR, but only three PR descriptions record a review. Now a card mentions a review only where its PR says one ran.",
+        "ru": "Страница приписывала шаг судьи каждому PR, хотя ревью записано только в трёх описаниях. Теперь карточка упоминает ревью, только если о нём сказано в PR.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+      },
+      {
+        "en": "The freshness test would have turned main red after every merge. Now the data records the main commit it covers.",
+        "ru": "Тест свежести ронял бы main после каждого мержа. Теперь данные помнят, по какой коммит main они собраны.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/a5acd79503175c3194e31900e9356803c57a1e9c"
+      }
+    ],
+    "review": {
+      "en": "Written by an independent writer agent and reviewed by an independent judge pass: ship after fixes. Its findings were fixed before merge.",
+      "ru": "Код написал независимый агент, дифф проверил независимый судья: «можно мержить после правок». Его замечания исправлены до мержа."
+    },
+    "green": "37af6d8820ae058c1b46234a80e5524258c26cab"
   }
 }
