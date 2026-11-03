@@ -63,8 +63,8 @@ describe('facts agree everywhere', () => {
     expect(visibleEn()).toMatch(/-80%\s*Feedback analysis time/i);
   });
 
-  test('the YAGNI PR count is framed as the first week, not 8 days', () => {
-    expect(visibleEn()).toMatch(/28 PRs\s*Merged in the first week, almost all built by agents/);
+  test('the YAGNI PR count is framed as the first week, with who wrote the code and who planned it', () => {
+    expect(visibleEn()).toMatch(/28 PRs\s*Merged in the first week: 98% of the code by agents, 97% of the planning by me/);
     expect(visibleEn()).not.toMatch(/first 8 days/);
   });
 });
