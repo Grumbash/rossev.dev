@@ -35,6 +35,11 @@ export interface ExperienceItem {
   color: string;
   metrics: string[];
   highlights: { en: string[]; ru: string[] };
+  // Company or product site; rendered as a link on the company name.
+  url?: string;
+  // CASE_STUDIES id whose architecture breakdown expands under this job.
+  caseId?: string;
+  stack: string[];
 }
 
 export interface BlogPost {
@@ -70,6 +75,12 @@ export const PROFILE = {
   linkedinHandle: 'linkedin.com/in/rossev',
   github: 'https://github.com/Grumbash',
   githubHandle: 'github.com/Grumbash',
+  calendar: 'https://cal.com/rossev',
+  languages: [
+    { en: 'English · C1', ru: 'Английский · C1' },
+    { en: 'Russian · native', ru: 'Русский · родной' }
+  ],
+  timezone: 'UTC+4',
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
     en: 'I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus a medical degree.',
@@ -86,8 +97,8 @@ export const PROFILE = {
       color: 'var(--lime)'
     },
     {
-      value: 'YAGNI',
-      label: { en: 'Founding Engineer, AI Agents', ru: 'Founding Engineer, AI Agents' },
+      value: '-80%',
+      label: { en: 'Triage Time (Kingpin)', ru: 'Времени триажа (Kingpin)' },
       color: 'var(--cyan)'
     },
     {
@@ -99,44 +110,6 @@ export const PROFILE = {
       value: '5–12',
       label: { en: 'Engineers Led', ru: 'Инженеров в командах' },
       color: 'var(--orange)'
-    }
-  ],
-  selectedImpact: [
-    {
-      tag: { en: 'AGENT RELIABILITY', ru: 'НАДЁЖНОСТЬ АГЕНТОВ' },
-      color: 'var(--lime)',
-      title: { en: 'PRODUCTION-GRADE AI AGENTS', ru: 'AI-АГЕНТЫ ДЛЯ РЕАЛЬНОГО ПРОДАКШЕНА' },
-      text: {
-        en: 'Building realistic evaluation benchmarks, self-improving failure diagnostics, and sandboxed runners at YAGNI (yagni.app).',
-        ru: 'Реалистичные бенчмарки качества, самообучающийся разбор сбоев и изолированное выполнение кода для агентских команд в YAGNI.'
-      }
-    },
-    {
-      tag: { en: 'LEADERSHIP', ru: 'ЛИДЕРСТВО' },
-      color: 'var(--yellow)',
-      title: { en: 'HANDS-ON TEAM LEADERSHIP', ru: 'ИГРАЮЩИЙ ЛИДЕР (5–12 ИНЖЕНЕРОВ)' },
-      text: {
-        en: 'Led cross-functional teams up to 12 people while actively shipping architecture and core backend/AI code.',
-        ru: 'Управление кросс-функциональными командами до 12 человек с личным участием в коде и архитектуре.'
-      }
-    },
-    {
-      tag: { en: 'DELIVERY', ru: 'ПОСТАВКА' },
-      color: 'var(--cyan)',
-      title: { en: 'TRUNK-BASED & CANARY', ru: 'TRUNK-BASED И КАНАРЕЙКИ' },
-      text: {
-        en: 'Established feature-flagged trunk-based delivery from main across multi-environment microservices.',
-        ru: 'Ежедневные релизы из main через фича-флаги и канареечные выкатки без простоев.'
-      }
-    },
-    {
-      tag: { en: 'OBSERVABILITY', ru: 'НАБЛЮДАЕМОСТЬ' },
-      color: 'var(--pink)',
-      title: { en: 'RISK RADAR & TELEMETRY', ru: 'РАДАР РИСКОВ И OBSERVABILITY' },
-      text: {
-        en: 'Designing early-warning risk radars, stalled-run detection, and Grafana/Loki/Mimir observability to catch issues before customers do.',
-        ru: 'Радар раннего предупреждения сбоев, мониторинг зависших прогонов и сквозная телеметрия до обращения клиента.'
-      }
     }
   ]
 };
@@ -158,9 +131,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Именованные AI-агенты (разработчик, ревьюер, PM), работающие по утверждённому человеком плану с полным аудитом шагов, песочницей и бенчмарками.'
     },
     metrics: [
-      { value: 'Core', label: { en: 'Founding Engineer', ru: 'Founding Engineer' } },
-      { value: 'GitHub', label: { en: 'Proposal → Merged PR', ru: 'От плана до PR' } },
-      { value: 'Radar', label: { en: 'Proactive Reliability', ru: 'Радар рисков' } }
+      { value: '28 PRs', label: { en: 'Merged in the first 8 days', ru: 'Смержено за первые 8 дней' } },
+      { value: '89%', label: { en: 'Of my PRs written by agents', ru: 'Моих PR написали агенты' } }
     ],
     stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Query Guards', 'Self-Healing Syncs', 'Risk Radar'],
     architecture: {
@@ -368,6 +340,9 @@ export const EXPERIENCE: ExperienceItem[] = [
     },
     color: 'var(--lime)',
     metrics: ['Founding Team', 'Agent Benchmarks', 'Multi-Tenant Isolation', 'Self-Healing Syncs'],
+    url: 'https://yagni.app',
+    caseId: 'yagni',
+    stack: ['TypeScript', 'Node.js', 'PostgreSQL', 'Claude / OpenAI', 'GitHub', 'Agent Evals', 'Sandboxed Runners'],
     highlights: {
       en: [
         'Tenant isolation: tenant-scoped query guards and sandboxed code execution.',
@@ -403,6 +378,9 @@ export const EXPERIENCE: ExperienceItem[] = [
     },
     color: 'var(--cyan)',
     metrics: ['15s → 0s Dead Air at Pickup', 'MENA Launch', 'Real-Time Voice AI'],
+    url: 'https://www.sully.ai',
+    caseId: 'sully',
+    stack: ['LiveKit', 'Twilio', 'Speechmatics', 'OpenAI / Claude / Gemini', 'TypeScript', 'Node.js', 'Grafana / Loki / Mimir'],
     highlights: {
       en: [
         'Led core engineering for the MENA launch: UAE infrastructure, Azure Blob Storage support, regional configuration and production readiness.',
@@ -434,6 +412,9 @@ export const EXPERIENCE: ExperienceItem[] = [
     },
     color: 'var(--yellow)',
     metrics: ['12 Engineers Led', '-80% Triage Time', 'Canary Releases'],
+    url: 'https://kingpin.ai',
+    caseId: 'kingpin',
+    stack: ['TypeScript', 'NestJS', 'React / Next.js', 'PostgreSQL', 'Redis', 'OpenAI / RAG', 'Grafana / Loki'],
     highlights: {
       en: [
         'Led a cross-functional team of up to 12 people while staying active in architecture and code.',
@@ -459,6 +440,8 @@ export const EXPERIENCE: ExperienceItem[] = [
     },
     color: 'var(--orange)',
     metrics: ['100K+ Downloads', '5 Engineers Led', 'Unified Monorepo'],
+    url: 'https://kernelics.com',
+    stack: ['React Native', 'TypeScript', 'Native Crypto Modules', 'Monorepo', 'CI/CD'],
     highlights: {
       en: [
         'Led a 5-person team across web and mobile product delivery in a shared monorepo.',
@@ -484,6 +467,10 @@ export const EXPERIENCE: ExperienceItem[] = [
     },
     color: 'var(--pink)',
     metrics: ['220ms TTFB (25→55 SP)', '$10M+ Raised Arch', '1,500+ Students/Yr'],
+    // BattlePro is now ForgeHub.
+    url: 'https://forgehub.com',
+    caseId: 'battlepro',
+    stack: ['React', 'Next.js', 'Node.js', 'TypeScript', 'AWS'],
     highlights: {
       en: [
         'Owned frontend architecture and hiring for a 5-engineer team at BattlePro; doubled velocity (25 → 55 SP) and hit 220ms TTFB / 1.7s TTI.',
@@ -551,6 +538,58 @@ export const CAPABILITIES = [
     ]
   }
 ];
+
+// Where each toolbox skill was used, as EXPERIENCE ids (exp-battlepro covers
+// ITechArt too). A skill with no entry renders as plain text, not a filter.
+export const SKILL_USAGE: Record<string, string[]> = {
+  'Agent Teams & Harnesses': ['exp-yagni', 'exp-sully'],
+  'Agent Evaluation & Benchmarks': ['exp-yagni', 'exp-sully'],
+  'Self-Improving Loops': ['exp-yagni'],
+  'Sandboxed Code Runners': ['exp-yagni'],
+  'OpenAI / Claude / Gemini': ['exp-yagni', 'exp-sully', 'exp-kingpin'],
+  LiveKit: ['exp-sully'],
+  Twilio: ['exp-sully'],
+  Speechmatics: ['exp-sully'],
+  'RAG Pipelines': ['exp-kingpin'],
+  'Distributed Systems': ['exp-yagni', 'exp-sully', 'exp-kingpin'],
+  'Multi-Tenant Isolation': ['exp-yagni', 'exp-kingpin'],
+  'Backend Services': ['exp-yagni', 'exp-sully', 'exp-kingpin', 'exp-battlepro'],
+  'GitHub & ERP/CRM Integrations': ['exp-yagni', 'exp-kingpin'],
+  PostgreSQL: ['exp-yagni', 'exp-kingpin'],
+  Redis: ['exp-kingpin'],
+  AWS: ['exp-battlepro'],
+  'Risk Radar & Early Warning': ['exp-yagni'],
+  Observability: ['exp-yagni', 'exp-sully', 'exp-kingpin'],
+  'Runtime Diagnostics': ['exp-sully'],
+  Grafana: ['exp-sully', 'exp-kingpin'],
+  Loki: ['exp-sully', 'exp-kingpin'],
+  Mimir: ['exp-sully'],
+  'Trunk-Based Delivery': ['exp-kingpin'],
+  'Canary Releases': ['exp-kingpin'],
+  'Feature Flags': ['exp-kingpin'],
+  TypeScript: ['exp-yagni', 'exp-sully', 'exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  'Node.js': ['exp-yagni', 'exp-sully', 'exp-battlepro'],
+  NestJS: ['exp-kingpin'],
+  React: ['exp-kingpin', 'exp-battlepro'],
+  'React Native': ['exp-kernelics'],
+  'Next.js': ['exp-kingpin', 'exp-battlepro'],
+  Monorepos: ['exp-yagni', 'exp-kernelics'],
+  'Teams of 5–12 Engineers': ['exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  'Customer Pilots & Demos': ['exp-yagni'],
+  'Technical Hiring': ['exp-battlepro'],
+  'System Architecture': ['exp-yagni', 'exp-sully', 'exp-battlepro'],
+  'Mentoring (150+ Lectures)': ['exp-battlepro'],
+  MCP: ['exp-yagni', 'exp-sully', 'exp-kingpin'],
+  Kubernetes: ['exp-sully', 'exp-kingpin', 'exp-kernelics'],
+  Docker: ['exp-yagni', 'exp-sully', 'exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  GCP: ['exp-yagni', 'exp-sully', 'exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  'Incident Response': ['exp-yagni', 'exp-sully', 'exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  MongoDB: ['exp-sully', 'exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  Playwright: ['exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  Cypress: ['exp-kernelics', 'exp-battlepro'],
+  Jest: ['exp-yagni', 'exp-sully', 'exp-kingpin', 'exp-kernelics', 'exp-battlepro'],
+  'Product Strategy': ['exp-yagni', 'exp-kingpin']
+};
 
 export const BLOG_POSTS: BlogPost[] = [
   {
@@ -716,43 +755,3 @@ export const BLOG_POSTS: BlogPost[] = [
     color: 'var(--orange)'
   }
 ];
-
-export const BLOG_MOMENTUM = {
-  pulseSeries: [
-    { label: 'W1', pct: 22 },
-    { label: 'W2', pct: 34 },
-    { label: 'W3', pct: 28 },
-    { label: 'W4', pct: 46 },
-    { label: 'W5', pct: 42 },
-    { label: 'W6', pct: 58 },
-    { label: 'W7', pct: 64 },
-    { label: 'W8', pct: 54 },
-    { label: 'W9', pct: 76 },
-    { label: 'W10', pct: 84 },
-    { label: 'W11', pct: 94 },
-    { label: 'W12', pct: 100 }
-  ],
-  coreThemes: [
-    {
-      title: { en: 'Agent Teams & Evals', ru: 'Команды агентов и Эвалы' },
-      desc: { en: 'Benchmarks, sandboxes & verification', ru: 'Бенчмарки, песочницы и проверка' },
-      color: 'var(--lime)'
-    },
-    {
-      title: { en: 'Systems Thinking', ru: 'Системное мышление' },
-      desc: { en: 'Org bottlenecks & ownership', ru: 'Процессы и оунершип' },
-      color: 'var(--yellow)'
-    },
-    {
-      title: { en: 'Prod Reliability', ru: 'Надёжность в бою' },
-      desc: { en: 'Risk radars & canary ops', ru: 'Радары рисков и канарейки' },
-      color: 'var(--cyan)'
-    }
-  ],
-  audienceBreakdown: [
-    { label: { en: 'Senior & Staff Engineers', ru: 'Senior и Staff инженеры' }, badge: { en: 'CORE', ru: 'ЯДРО' } },
-    { label: { en: 'Founders, VPs & EMs', ru: 'Фаундеры, VP и EM' }, badge: { en: 'LEADERS', ru: 'ЛИДЕРЫ' } },
-    { label: { en: 'AI & Distributed Systems', ru: 'AI и распред. системы' }, badge: { en: 'FOCUS', ru: 'ДОМЕН' } },
-    { label: { en: 'US · UK · EU · Georgia', ru: 'США · Британия · ЕС' }, badge: { en: 'GLOBAL', ru: 'ХАБЫ' } }
-  ]
-};
