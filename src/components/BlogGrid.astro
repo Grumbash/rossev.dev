@@ -41,6 +41,8 @@ const { posts } = Astro.props;
           type="button"
           class="brutal-btn brutal-btn-sm"
           hx-get={`/partials/post-${post.id}`}
+          data-track="post_open"
+          data-track-id={post.id}
           hx-target="#post-reader-slot"
           hx-swap="innerHTML transition:true"
           onclick={`window.setUrlParam && window.setUrlParam('post', '${post.id}'); setTimeout(() => document.getElementById('post-reader-slot')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120)`}
@@ -49,7 +51,7 @@ const { posts } = Astro.props;
           <span class="lang-ru">ЧИТАТЬ РАЗБОР</span>
         </button>
 
-        <a class="text-link" href={post.url} target="_blank" rel="noopener noreferrer">
+        <a class="text-link" href={post.url} target="_blank" rel="noopener noreferrer" data-track="post_linkedin" data-track-id={post.id}>
           LinkedIn ↗
         </a>
       </div>
