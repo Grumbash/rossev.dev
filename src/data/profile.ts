@@ -86,6 +86,16 @@ export const PROFILE = {
     en: 'Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in Tbilisi, building production AI agent teams; previously Staff Harness Engineer at Sully.ai; 8+ years in engineering; medical degree.',
     ru: 'Глеб Росев (латиницей также Rossev) — Founding Engineer в YAGNI (yagni.app), Тбилиси: строит команды AI-агентов для продакшена; ранее — Staff Harness Engineer в Sully.ai; 8+ лет в разработке; медицинское образование.'
   },
+  // Value line under the name: what I solve + proof. Every number must already be a fact on the page.
+  valueLine: {
+    en: 'AI agents that hold up in production, not just in the demo: dead air at pickup on healthcare calls cut from 15 s to 0; 28 PRs in week one: agents wrote 98% of the code, I did 97% of the planning.',
+    ru: 'AI-агенты, которые держатся в продакшене, а не только на демо: тишина при ответе в медицинских звонках — 15 с → 0; 28 PR за первую неделю: 98% кода написали агенты, 97% планирования — моё.'
+  },
+  // Short bio for the hero only (max 40 words EN). The long `bio` below feeds the CV PDF and llms.txt.
+  bioShort: {
+    en: 'Now: Founding Engineer at YAGNI, building AI agent teams (PM, Builder, Reviewer) that take work from proposal to merged PR under human-approved plans. Before: healthcare voice AI at Sully.ai. 8+ years, plus a medical degree.',
+    ru: 'Сейчас: Founding Engineer в YAGNI — команды AI-агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR по утверждённому человеком плану. До этого: голосовой AI для медицины в Sully.ai. 8+ лет, плюс медицинское образование.'
+  },
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
     en: 'I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus a medical degree.',
@@ -136,7 +146,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Именованные AI-агенты (разработчик, ревьюер, PM), работающие по утверждённому человеком плану с полным аудитом шагов, песочницей и бенчмарками.'
     },
     metrics: [
-      { value: '28 PRs', label: { en: 'Merged in the first week, almost all built by agents', ru: 'Смержено за первую неделю, почти все собрали агенты' } },
+      { value: '28 PRs', label: { en: 'Merged in the first week: 98% of the code by agents, 97% of the planning by me', ru: 'Смержено за первую неделю: 98% кода написали агенты, 97% планирования — моё' } },
       { value: '89%', label: { en: 'Of my PRs written by agents', ru: 'Моих PR написали агенты' } }
     ],
     stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Query Guards', 'Self-Healing Syncs', 'Risk Radar'],

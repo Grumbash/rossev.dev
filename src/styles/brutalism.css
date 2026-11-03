@@ -309,7 +309,6 @@ a {
   padding: 32px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background: var(--surface);
 }
 
@@ -320,6 +319,16 @@ a {
   line-height: 0.96;
   letter-spacing: -0.04em;
   text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* What I solve + proof, right under the name */
+.hero-value {
+  font-size: 1.18rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  max-width: 60ch;
   margin-bottom: 14px;
 }
 
@@ -337,21 +346,28 @@ a {
   background: var(--ink);
   color: var(--bg);
   padding: 7px 12px;
-  margin-bottom: 16px;
-  display: inline-block;
+  margin-bottom: 18px;
+  align-self: flex-start;
 }
 
 .hero-bio {
-  font-size: 1.02rem;
-  margin-bottom: 16px;
+  font-size: 0.98rem;
+  margin-bottom: 10px;
   color: var(--ink);
   max-width: 60ch;
+}
+
+.hero-summary {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  max-width: 60ch;
+  color: var(--ink-muted);
 }
 
 .med-twist-box {
   border-left: 4px solid var(--orange);
   padding: 4px 14px;
-  margin-bottom: 22px;
   font-size: 0.92rem;
   color: var(--ink-muted);
 }
@@ -360,13 +376,24 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 22px;
+  margin-bottom: 10px;
+}
+
+/* Who the call is for and when I reply: plain text, not a control */
+.hero-cta-note {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--ink-muted);
+  max-width: 60ch;
+  margin-bottom: 20px;
 }
 
 .hero-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+  margin-bottom: 22px;
 }
 
 .stat-card {
@@ -904,6 +931,22 @@ a {
   overflow-wrap: anywhere;
 }
 
+/* Phone, languages, place: one quiet line under the contact rows */
+.hero-card .contact-list {
+  margin-bottom: 10px;
+}
+
+.contact-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  margin-bottom: 20px;
+}
+
 .copy-btn {
   margin-left: 6px;
   font-family: var(--font-mono);
@@ -1365,6 +1408,9 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
   .hero-card {
     padding: 18px 14px;
   }
+  .hero-value {
+    font-size: 1.05rem;
+  }
   .section-block {
     padding: 34px 0;
   }
@@ -1373,15 +1419,26 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
 @media (max-width: 480px) {
   .hero-title {
     font-size: 2.2rem;
+    margin-bottom: 10px;
+  }
+  .hero-value {
+    font-size: 0.98rem;
+    line-height: 1.35;
+    margin-bottom: 10px;
   }
   .hero-role {
-    font-size: 1.05rem;
+    font-size: 0.7rem;
+    padding: 5px 8px;
+    margin-bottom: 12px;
+  }
+  .hero-stats-grid {
+    margin-bottom: 14px;
   }
   .hero-bio {
     font-size: 0.9rem;
   }
   .stat-card {
-    padding: 8px;
+    padding: 6px 0 0;
   }
   .stat-val {
     font-size: 1.15rem;
