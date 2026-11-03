@@ -1198,12 +1198,13 @@ html[data-theme="dark"] .zone-beyond {
 }
 
 /* Neural cellular automaton GR monogram, top of the "Beyond the CV" zone.
-   It has its own section; the two sections together keep the spacing of one. */
-.nca-section {
+   It has its own section; the two sections together keep the spacing of one.
+   Two classes so the phone .section-block padding in the media query can't win. */
+.section-block.nca-section {
   padding-bottom: 0;
 }
 
-.nca-section + .section-block {
+.section-block.nca-section + .section-block {
   padding-top: 0;
 }
 
@@ -1212,10 +1213,6 @@ html[data-theme="dark"] .zone-beyond {
   align-items: center;
   gap: 28px;
   margin-bottom: 48px;
-}
-
-.nca-block[hidden] {
-  display: none;
 }
 
 .nca-canvas {
