@@ -389,6 +389,16 @@ describe('.github/workflows/perf.yml', () => {
     expect(iGate).toBeGreaterThan(iDog);
   });
 
+  test("Chrome can start on ubuntu-latest: AppArmor's userns restriction is lifted before the gate, Chrome's own sandbox stays on", () => {
+    const runs = steps.map((s) => String(s.run ?? ''));
+    const iUserns = runs.findIndex((r) => r.includes('kernel.apparmor_restrict_unprivileged_userns=0'));
+    const iPerf = steps.findIndex((s) => s.id === 'perf');
+    expect(iUserns).toBeGreaterThanOrEqual(0);
+    expect(iUserns).toBeLessThan(iPerf);
+    expect(raw).not.toContain('--no-sandbox');
+    expect(readFileSync('scripts/perf-check.ts', 'utf8')).not.toContain('--no-sandbox');
+  });
+
   test('forks are told apart, runs are bounded and superseded runs cancelled', () => {
     expect(raw).toContain('github.event.pull_request.head.repo.full_name');
     expect(wf.concurrency?.['cancel-in-progress']).toBe(true);
