@@ -1,11 +1,15 @@
 ---
-import { PROFILE, CASE_STUDIES, EXPERIENCE, CAPABILITIES, SKILL_USAGE, BLOG_POSTS, latestPosts } from '../data/profile';
-import Base from '../layouts/Base.astro';
-import BlogGrid from '../components/BlogGrid.astro';
-import { calUrl } from '../scripts/analytics';
+import { PROFILE, CASE_STUDIES, EXPERIENCE, CAPABILITIES, SKILL_USAGE, BLOG_POSTS, latestPosts } from '../../data/profile';
+import Base from '../../layouts/Base.astro';
+import BlogGrid from '../../components/BlogGrid.astro';
+import { calUrl } from '../../scripts/analytics';
+import { LOCALES, localeOf, localePath, localeStaticPaths, t } from '../../i18n';
 
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://rossev.dev').toString();
-const ogImageUrl = new URL('/og-card.png', Astro.site || 'https://rossev.dev').toString();
+export const getStaticPaths = localeStaticPaths;
+const lang = localeOf(Astro.params.locale);
+const d = t(lang);
+const homePath = localePath(lang, '/');
+const ogImageUrl = new URL('/og-card.png', 'https://rossev.dev').toString();
 
 const SITE = 'https://rossev.dev/';
 const PERSON_ID = `${SITE}#person`;
@@ -19,14 +23,15 @@ const jsonLd = {
       '@id': WEBSITE_ID,
       url: SITE,
       name: 'Gleb Rosev',
-      inLanguage: ['en', 'ru'],
+      inLanguage: LOCALES,
       publisher: { '@id': PERSON_ID },
       about: { '@id': PERSON_ID }
     },
     {
       '@type': 'ProfilePage',
-      '@id': `${SITE}#profilepage`,
-      url: SITE,
+      '@id': `${new URL(homePath, SITE)}#profilepage`,
+      url: new URL(homePath, SITE).toString(),
+      inLanguage: lang,
       isPartOf: { '@id': WEBSITE_ID },
       mainEntity: { '@id': PERSON_ID }
     },
@@ -74,12 +79,11 @@ const jsonLd = {
 <Base
   home
   htmx
-  title="Gleb Rosev — Founding Engineer @ YAGNI | AI Agent Teams, Architecture & Reliability"
-  description="Gleb Rosev — Founding Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. 8+ years building distributed systems, Voice AI (Sully.ai), and leading engineering teams."
-  canonical={canonicalUrl}
-  ogTitle="Gleb Rosev — Founding Engineer @ YAGNI (yagni.app)"
-  ogDescription="Making AI agent teams dependable in production, not just impressive in a demo. Agent benchmarks, self-improving loops, healthcare Voice AI & distributed systems."
-  twitterDescription="Making AI agent teams dependable in production, not just impressive in a demo."
+  title={d.meta.homeTitle}
+  description={d.meta.homeDescription}
+  ogTitle={d.meta.homeOgTitle}
+  ogDescription={d.meta.homeOgDescription}
+  twitterDescription={d.meta.homeTwitterDescription}
   jsonLd={jsonLd}
 >
   <Fragment slot="head">
@@ -91,24 +95,18 @@ const jsonLd = {
         <div class="hero-grid">
           <div class="brutal-box hero-card">
             <h1 class="hero-title">
-              <span class="lang-en">GLEB <span class="hero-title-highlight">ROSEV</span></span>
-              <span class="lang-ru">ГЛЕБ <span class="hero-title-highlight">РОСЕВ</span></span>
+              {d.hero.firstName} <span class="hero-title-highlight">{d.hero.lastName}</span>
             </h1>
 
             <p class="hero-value">
-              <span class="lang-en">{PROFILE.valueLine.en}</span>
-              <span class="lang-ru">{PROFILE.valueLine.ru}</span>
+              {PROFILE.valueLine[lang]}
               {/* The YAGNI numbers can't be shown here; the same way of working can, on this site's own PRs.
                   Worded so it doesn't read as proof of those numbers. */}
-              <a class="text-link hero-value-link" href="/how-its-built/">
-                <span class="lang-en">Same loop on this site’s own PRs →</span>
-                <span class="lang-ru">Тот же цикл на PR этого сайта →</span>
-              </a>
+              <a class="text-link hero-value-link" href={localePath(lang, '/how-its-built/')}>{d.hero.buildLoop}</a>
             </p>
 
             <div class="hero-role">
-              <span class="lang-en">{PROFILE.tagline.en}</span>
-              <span class="lang-ru">{PROFILE.tagline.ru}</span>
+              {PROFILE.tagline[lang]}
             </div>
 
             <div class="hero-stats-grid">
@@ -116,8 +114,7 @@ const jsonLd = {
                 <div class="stat-card">
                   <span class="stat-val">{st.value}</span>
                   <div class="stat-lbl">
-                    <span class="lang-en">{st.label.en}</span>
-                    <span class="lang-ru">{st.label.ru}</span>
+                    {st.label[lang]}
                   </div>
                 </div>
               ))}
@@ -132,8 +129,7 @@ const jsonLd = {
                 rel="noopener noreferrer"
                 class="brutal-btn brutal-btn-lime"
               >
-                <span class="lang-en">BOOK A 30-MIN INTRO CALL ↗</span>
-                <span class="lang-ru">СОЗВОН-ЗНАКОМСТВО, 30 МИН ↗</span>
+                {d.hero.bookIntro}
               </a>
               <a
                 href="/gleb-rosev-cv.pdf"
@@ -143,24 +139,20 @@ const jsonLd = {
                 data-track="cv_download"
                 data-track-placement="hero"
               >
-                <span class="lang-en">DOWNLOAD CV ↓</span>
-                <span class="lang-ru">СКАЧАТЬ CV ↓</span>
+                {d.hero.downloadCv}
               </a>
             </div>
 
             <p class="hero-cta-note">
-              <span class="lang-en">Hiring for AI agents or platform? Tell me the problem — I reply within 24h.</span>
-              <span class="lang-ru">Нанимаете под AI-агентов или платформу? Опишите задачу — отвечу в течение 24 ч.</span>
+              {d.hero.ctaNote}
             </p>
 
             <p class="hero-bio">
-              <span class="lang-en">{PROFILE.bioShort.en}</span>
-              <span class="lang-ru">{PROFILE.bioShort.ru}</span>
+              {PROFILE.bioShort[lang]}
             </p>
 
             <p class="hero-summary">
-              <span class="lang-en">{PROFILE.summaryThirdPerson.en}</span>
-              <span class="lang-ru">{PROFILE.summaryThirdPerson.ru}</span>
+              {PROFILE.summaryThirdPerson[lang]}
             </p>
 
             <dl class="contact-list">
@@ -175,7 +167,7 @@ const jsonLd = {
                     data-track="email_copy"
                     data-track-placement="hero"
                   >
-                    <span class="lang-en">copy</span><span class="lang-ru">копировать</span>
+                    {d.hero.copy}
                   </button>
                 </dd>
               </div>
@@ -189,16 +181,13 @@ const jsonLd = {
               </div>
             </dl>
             <div class="contact-meta">
-              <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(', ')}</span>
-              <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(', ')}</span>
+              <span>{PROFILE.languages.map((l) => l[lang]).join(', ')}</span>
               <span aria-hidden="true">·</span>
-              <span class="lang-en">{PROFILE.location.en} · Remote · {PROFILE.timezone}</span>
-              <span class="lang-ru">{PROFILE.location.ru} · удалённо · {PROFILE.timezone}</span>
+              <span>{PROFILE.location[lang]} · {d.hero.remote} · {PROFILE.timezone}</span>
             </div>
 
             <div class="med-twist-box">
-              <span class="lang-en">{PROFILE.medToAiStory.en}</span>
-              <span class="lang-ru">{PROFILE.medToAiStory.ru}</span>
+              {PROFILE.medToAiStory[lang]}
             </div>
           </div>
 
@@ -206,8 +195,7 @@ const jsonLd = {
           <div class="brutal-box stage-iso-card">
             <div class="stage-header">
               <span>
-                <span class="lang-en">3D SYSTEM ARCHITECTURE TOPOLOGY</span>
-                <span class="lang-ru">3D-ТОПОЛОГИЯ АРХИТЕКТУРЫ СИСТЕМ</span>
+                {d.topology.title}
               </span>
               <span id="iso-trace-status">STEP 1/3</span>
             </div>
@@ -220,35 +208,31 @@ const jsonLd = {
               <p class="visually-hidden" aria-live="polite" data-story-live></p>
               <div class="iso-story-captions">
                 <p class="iso-story-caption is-current" data-story-step="1">
-                  <span class="lang-en">1 · A human approves the plan. Agents don't touch code until a person signs off.</span>
-                  <span class="lang-ru">1 · Человек утверждает план. Агенты не трогают код, пока человек не согласовал.</span>
+                  {d.topology.step1}
                 </p>
                 <p class="iso-story-caption" data-story-step="2">
-                  <span class="lang-en">2 · Agents build in a sandbox. Builder writes code and tests, a separate judge reviews, everything runs isolated.</span>
-                  <span class="lang-ru">2 · Агенты строят в песочнице. Builder пишет код и тесты, отдельный судья проверяет, всё запускается изолированно.</span>
+                  {d.topology.step2}
                 </p>
                 <p class="iso-story-caption" data-story-step="3">
-                  <span class="lang-en">3 · Break it. Inject a fault and watch the guard catch it.</span>
-                  <span class="lang-ru">3 · Сломайте. Внедрите сбой и посмотрите, как защита его поймает.</span>
+                  {d.topology.step3}
                 </p>
                 <a
                   class="iso-story-caption iso-story-case"
                   data-story-case
-                  href="/?case=yagni#case-yagni"
+                  href={`${homePath}?case=yagni#case-yagni`}
                   data-track="topology_interact"
                   data-track-action="case"
                 >
-                  <span class="lang-en">This is what I built at YAGNI. See the breakdown →</span>
-                  <span class="lang-ru">Это я построил в YAGNI. Смотреть разбор →</span>
+                  {d.topology.caseLink}
                 </a>
               </div>
               <div class="iso-story-controls">
                 <button type="button" class="mode-btn" data-story-prev disabled>
-                  <span aria-hidden="true">‹</span><span class="visually-hidden"><span class="lang-en">Previous step</span><span class="lang-ru">Предыдущий шаг</span></span>
+                  <span aria-hidden="true">‹</span><span class="visually-hidden">{d.topology.prev}</span>
                 </button>
                 <span class="iso-story-count" data-story-count>1/3</span>
                 <button type="button" class="mode-btn active" data-story-next>
-                  <span class="lang-en">Next ›</span><span class="lang-ru">Дальше ›</span>
+                  {d.topology.next}
                 </button>
                 <button
                   type="button"
@@ -258,7 +242,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="heal"
                 >
-                  <span class="lang-en">Break & heal</span><span class="lang-ru">Сломать и починить</span>
+                  {d.topology.breakHeal}
                 </button>
                 <button
                   type="button"
@@ -269,7 +253,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="explore"
                 >
-                  <span class="lang-en">Explore</span><span class="lang-ru">Исследовать</span>
+                  {d.topology.explore}
                 </button>
               </div>
             </div>
@@ -285,8 +269,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="domain"
                 >
-                  <span class="lang-en">AGENT TEAMS (YAGNI)</span>
-                  <span class="lang-ru">АГЕНТЫ (YAGNI)</span>
+                  {d.topology.domainYagni}
                 </button>
                 <button
                   type="button"
@@ -296,8 +279,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="domain"
                 >
-                  <span class="lang-en">VOICE AI (SULLY)</span>
-                  <span class="lang-ru">ГОЛОСОВОЙ AI</span>
+                  {d.topology.domainVoice}
                 </button>
                 <button
                   type="button"
@@ -307,8 +289,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="domain"
                 >
-                  <span class="lang-en">B2B SAAS & OPS</span>
-                  <span class="lang-ru">B2B SAAS И OPS</span>
+                  {d.topology.domainSaas}
                 </button>
               </div>
 
@@ -321,7 +302,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="fault"
                 >
-                  <span class="lang-en">INJECT FAULT</span><span class="lang-ru">ТЕСТ СБОЯ</span>
+                  {d.topology.fault}
                 </button>
                 <button
                   type="button"
@@ -331,7 +312,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="xray"
                 >
-                  <span class="lang-en">CAD X-RAY</span><span class="lang-ru">РЕНТГЕН CAD</span>
+                  {d.topology.xray}
                 </button>
                 <button
                   type="button"
@@ -341,7 +322,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="reset"
                 >
-                  <span class="lang-en">OVERVIEW</span><span class="lang-ru">ОБЗОР</span>
+                  {d.topology.overview}
                 </button>
                 <button
                   type="button"
@@ -350,7 +331,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="packet"
                 >
-                  <span class="lang-en">TRACE</span><span class="lang-ru">ТРАССИРОВКА</span>
+                  {d.topology.trace}
                 </button>
               </div>
               <span class="iso-hint-fine">DRAG · CTRL/⌘+SCROLL · CLICK A NODE</span>
@@ -373,7 +354,7 @@ const jsonLd = {
                 data-track="topology_interact"
                 data-track-action="play"
               >
-                <span class="lang-en">▶ Play</span><span class="lang-ru">▶ Смотреть</span>
+                {d.topology.play}
               </button>
 
               {/* Vertical Depth Deck Slicer (Top-Right) */}
@@ -386,7 +367,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="stratum"
                 >
-                  <span class="lang-en">ALL 3 DECKS</span><span class="lang-ru">ВСЕ 3 ЯРУСА</span>
+                  {d.topology.strataAll}
                 </button>
                 <button
                   type="button"
@@ -396,7 +377,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="stratum"
                 >
-                  <span class="lang-en">L+1 · ORBITAL RADAR</span><span class="lang-ru">L+1 · РАДАР И EVALS</span>
+                  {d.topology.stratumTop}
                 </button>
                 <button
                   type="button"
@@ -406,7 +387,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="stratum"
                 >
-                  <span class="lang-en">L0 · CORE DECK</span><span class="lang-ru">L0 · ЯДРО СИСТЕМЫ</span>
+                  {d.topology.stratumCore}
                 </button>
                 <button
                   type="button"
@@ -416,7 +397,7 @@ const jsonLd = {
                   data-track="topology_interact"
                   data-track-action="stratum"
                 >
-                  <span class="lang-en">L-1 · SUB-VAULT</span><span class="lang-ru">L-1 · БУНКЕР ИЗОЛЯЦИИ</span>
+                  {d.topology.stratumVault}
                 </button>
               </div>
 
@@ -431,13 +412,13 @@ const jsonLd = {
                 <div class="iso-insp-guard" id="iso-insp-guard"></div>
                 <div class="iso-insp-actions">
                   <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(-1)" data-track="topology_interact" data-track-action="step">
-                    <span class="lang-en">‹ PREV NODE</span><span class="lang-ru">‹ ПРЕД. УЗЕЛ</span>
+                    {d.topology.prevNode}
                   </button>
                   <button type="button" class="iso-insp-btn iso-insp-btn-fault" onclick="window.triggerIsoFault(true)" data-track="topology_interact" data-track-action="fault">
-                    <span class="lang-en">BREAK & HEAL</span><span class="lang-ru">СБОЙ И ФИКС</span>
+                    {d.topology.faultHeal}
                   </button>
                   <button type="button" class="iso-insp-btn" onclick="window.stepIsoNode(1)" data-track="topology_interact" data-track-action="step">
-                    <span class="lang-en">NEXT NODE ›</span><span class="lang-ru">СЛЕД. УЗЕЛ ›</span>
+                    {d.topology.nextNode}
                   </button>
                 </div>
               </div>
@@ -459,8 +440,7 @@ const jsonLd = {
                 data-track="topology_interact"
                 data-track-action="blueprint"
               >
-                <span class="lang-en">BLUEPRINT ↘</span>
-                <span class="lang-ru">КЕЙС ↘</span>
+                {d.topology.blueprint}
               </button>
             </div>
           </div>
@@ -473,12 +453,10 @@ const jsonLd = {
           <div class="section-head">
             <div>
               <span class="section-kicker">
-                <span class="lang-en">Experience · 2018 — now</span>
-                <span class="lang-ru">Опыт · 2018 — сейчас</span>
+                {d.experience.kicker}
               </span>
               <h2 class="section-title">
-                <span class="lang-en">8+ years in production</span>
-                <span class="lang-ru">8+ лет в продакшене</span>
+                {d.experience.title}
               </h2>
             </div>
           </div>
@@ -487,32 +465,22 @@ const jsonLd = {
             <div class="toolbox-intro">
               <div>
                 <span class="label">
-                  <span class="lang-en">Toolbox · for skimmers and screeners</span>
-                  <span class="lang-ru">Инструменты · для тех, кто сканирует</span>
+                  {d.toolbox.label}
                 </span>
                 <p class="toolbox-lead">
-                  <span class="lang-en">
-                    Every keyword in one place, for recruiters who skim and the ATS and LLMs that parse.
-                    Click a skill to see where I used it. The same list lives in
-                  </span>
-                  <span class="lang-ru">
-                    Все ключевые слова в одном месте: для рекрутеров, которые пробегают глазами, и для ATS и LLM, которые парсят.
-                    Нажмите на навык, чтобы увидеть, где я его применял. Тот же список лежит в
-                  </span>
+                  {d.toolbox.lead}
                   <a class="text-link" href="/llms.txt" target="_blank">/llms.txt</a>.
                 </p>
               </div>
               <button type="button" class="brutal-btn brutal-btn-sm" onclick="window.copyToolbox()" data-track="toolbox_copy">
-                <span class="lang-en">COPY AS TEXT</span>
-                <span class="lang-ru">СКОПИРОВАТЬ ТЕКСТОМ</span>
+                {d.toolbox.copy}
               </button>
             </div>
 
             {CAPABILITIES.map((cap) => (
               <div class="toolbox-row" data-toolbox-row>
                 <span class="toolbox-head">
-                  <span class="lang-en">{cap.title.en}</span>
-                  <span class="lang-ru">{cap.title.ru}</span>
+                  {cap.title[lang]}
                 </span>
                 <span class="toolbox-skills">
                   {cap.skills.map((skill) =>
@@ -538,7 +506,7 @@ const jsonLd = {
               </div>
             ))}
 
-            <div class="toolbox-result" id="toolbox-result" aria-live="polite" hidden></div>
+            <div class="toolbox-result" id="toolbox-result" aria-live="polite" data-used-at={d.toolbox.usedAt} data-clear={d.toolbox.clear} hidden></div>
           </div>
 
           <ol class="timeline" id="experience-timeline">
@@ -559,31 +527,26 @@ const jsonLd = {
                         )}
                         {idx === 0 && (
                           <span class="label label-now">
-                            <span class="lang-en">Now</span>
-                            <span class="lang-ru">Сейчас</span>
+                            {d.experience.now}
                           </span>
                         )}
                       </div>
                       <h3 class="job-role">
-                        <span class="lang-en">{exp.role.en}</span>
-                        <span class="lang-ru">{exp.role.ru}</span>
+                        {exp.role[lang]}
                       </h3>
                     </div>
                     <div class="job-meta">
                       <div>
-                        <span class="lang-en">{exp.period.en}</span>
-                        <span class="lang-ru">{exp.period.ru}</span>
+                        {exp.period[lang]}
                       </div>
                       <div>
-                        <span class="lang-en">{exp.location.en}</span>
-                        <span class="lang-ru">{exp.location.ru}</span>
+                        {exp.location[lang]}
                       </div>
                     </div>
                   </div>
 
                   <p class="job-domain">
-                    <span class="lang-en">{exp.domain.en}</span>
-                    <span class="lang-ru">{exp.domain.ru}</span>
+                    {exp.domain[lang]}
                   </p>
 
                   {numbers.length > 0 && (
@@ -592,44 +555,34 @@ const jsonLd = {
                         <div class="job-metric">
                           <span class="job-metric-val">{m.value}</span>
                           <span class="job-metric-lbl">
-                            <span class="lang-en">{m.label.en}</span>
-                            <span class="lang-ru">{m.label.ru}</span>
+                            {m.label[lang]}
                           </span>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  <ul class="exp-bullets lang-en">
-                    {exp.highlights.en.map((bullet) => (
-                      <li>{bullet}</li>
-                    ))}
-                  </ul>
-                  <ul class="exp-bullets lang-ru">
-                    {exp.highlights.ru.map((bullet) => (
+                  <ul class="exp-bullets">
+                    {exp.highlights[lang].map((bullet) => (
                       <li>{bullet}</li>
                     ))}
                   </ul>
 
                   <div class="job-stack">
-                    <span class="label"><span class="lang-en">Stack</span><span class="lang-ru">Стек</span></span>
+                    <span class="label">{d.experience.stack}</span>
                     {exp.stack.map((tech) => (
                       <span class="brutal-tag">{tech}</span>
                     ))}
                   </div>
 
                   {cs && (
-                    <details class="job-case" id={`case-${cs.id}`} data-case-src={`/partials/case-${cs.id}`}>
+                    <details class="job-case" id={`case-${cs.id}`} data-case-src={localePath(lang, `/partials/case-${cs.id}`)}>
                       <summary class="brutal-btn">
-                        <span class="lang-en">ARCHITECTURE BREAKDOWN</span>
-                        <span class="lang-ru">РАЗБОР АРХИТЕКТУРЫ</span>
+                        {d.experience.breakdown}
                       </summary>
                       {/* The breakdown loads on first open (src/scripts/case-loader.ts); until then, and without JS, a link to its page */}
                       <div data-case-body>
-                        <a class="text-link" href={`/cases/${cs.id}/`}>
-                          <span class="lang-en">Open the {cs.company} breakdown →</span>
-                          <span class="lang-ru">Открыть разбор {cs.company} →</span>
-                        </a>
+                        <a class="text-link" href={localePath(lang, `/cases/${cs.id}/`)}>{d.experience.openBreakdown(cs.company)}</a>
                       </div>
                     </details>
                   )}
@@ -645,8 +598,7 @@ const jsonLd = {
       <div class="zone-beyond">
         <div class="container">
           <div class="zone-divider">
-            <span class="lang-en">Beyond the CV</span>
-            <span class="lang-ru">Вне резюме</span>
+            {d.writing.beyond}
           </div>
         </div>
 
@@ -656,8 +608,7 @@ const jsonLd = {
         <section class="nca-section" aria-labelledby="nca-heading">
           <div class="container">
             <h2 id="nca-heading" class="visually-hidden">
-              <span class="lang-en">Self-healing GR monogram</span>
-              <span class="lang-ru">Самовосстанавливающаяся монограмма GR</span>
+              {d.nca.heading}
             </h2>
             <div class="nca-block">
               <canvas
@@ -673,22 +624,16 @@ const jsonLd = {
               ></canvas>
               <svg class="nca-canvas nca-fallback" viewBox="0 0 112 112" width="56" height="56" aria-hidden="true"><rect x="56" y="24" width="46" height="64" fill="#C8FF00"/><path fill="#0A0A0A" d="M28 82Q23 82 19 80Q15 77 12 73Q10 68 10 62V50Q10 40 15 35Q21 30 30 30Q39 30 44 35Q49 40 49 48V48H40V48Q40 45 39 43Q38 41 36 40Q34 38 30 38Q25 38 22 42Q19 45 19 50V62Q19 67 22 71Q25 74 30 74Q35 74 38 71Q40 68 40 64V63H28V55H49V81H41V76H39Q39 77 38 79Q37 80 34 81Q32 82 28 82ZM60 81V31H82Q86 31 90 33Q93 34 95 37Q97 40 97 44V45Q97 50 95 52Q93 55 90 57V58Q93 58 94 60Q96 62 96 65V81H86V66Q86 64 86 63Q85 62 83 62H69V81ZM69 54H81Q84 54 86 52Q88 50 88 47V46Q88 43 86 41Q84 40 81 40H69Z"/></svg>
               <span id="nca-label" class="visually-hidden">
-                <span class="lang-en">GR monogram grown by a neural cellular automaton.<span data-nca-live> Press Enter or Space to take a bite out of it and watch it heal.</span></span>
-                <span class="lang-ru">Монограмма GR, выращенная нейронным клеточным автоматом.<span data-nca-live> Нажмите Enter или пробел, чтобы откусить кусок, и посмотрите, как она заживёт.</span></span>
+                {d.nca.label}<span data-nca-live>{d.nca.labelLive}</span>
               </span>
               <div>
                 <p id="nca-caption">
-                  <span class="lang-en">An 8,320-parameter neural cellular automaton, trained from scratch, running in your browser. Every pixel runs the same tiny network and only sees its neighbours. <span data-nca-live>Damage it: drag across the letters (or Tab + Enter).</span><span data-nca-paused hidden>Paused to save your data: on a faster connection this monogram grows and heals itself.</span></span>
-                  <span class="lang-ru">Нейронный клеточный автомат на 8 320 параметров, обученный с нуля и работающий прямо в браузере. Каждый пиксель запускает одну и ту же крошечную сеть и видит только соседей. <span data-nca-live>Повредите его: проведите по буквам (или Tab + Enter).</span><span data-nca-paused hidden>На паузе, чтобы сэкономить трафик: на быстром соединении эта монограмма сама растёт и залечивается.</span></span>
+                  {d.nca.caption} <span data-nca-live>{d.nca.captionLive}</span><span data-nca-paused hidden>{d.nca.captionPaused}</span>
                 </p>
                 <p class="nca-bridge">
-                  <span class="lang-en">Same idea I apply to production: <a class="text-link" href="/?case=yagni#case-yagni" data-track="nca_interact" data-track-action="case">systems that notice damage and repair themselves →</a></span>
-                  <span class="lang-ru">Тот же принцип я применяю в продакшене: <a class="text-link" href="/?case=yagni#case-yagni" data-track="nca_interact" data-track-action="case">системы, которые замечают поломку и чинят себя сами →</a></span>
+                  {d.nca.bridge} <a class="text-link" href={`${homePath}?case=yagni#case-yagni`} data-track="nca_interact" data-track-action="case">{d.nca.bridgeLink}</a>
                 </p>
-                <p class="fine-print">
-                  <span class="lang-en">How it works: each cell holds 16 numbers, reads its 3×3 neighbourhood through Sobel filters and updates through one 128-unit hidden layer. Trained to grow from a single cell and to heal after cuts and bites, after <a class="text-link" href="https://distill.pub/2020/growing-ca/" target="_blank" rel="noopener noreferrer">Mordvintsev et al., Distill 2020 ↗</a></span>
-                  <span class="lang-ru">Как это работает: в каждой клетке 16 чисел; она смотрит на соседей 3×3 через фильтры Собеля и обновляется через один скрытый слой на 128 нейронов. Обучен вырастать из одной клетки и залечивать порезы и укусы, по статье <a class="text-link" href="https://distill.pub/2020/growing-ca/" target="_blank" rel="noopener noreferrer">Mordvintsev et al., Distill 2020 ↗</a></span>
-                </p>
+                <p class="fine-print" set:html={d.nca.howHtml} />
                 <button
                   type="button"
                   id="nca-reset"
@@ -697,8 +642,7 @@ const jsonLd = {
                   data-track-action="reset"
                   data-nca-live
                 >
-                  <span class="lang-en">Reset</span>
-                  <span class="lang-ru">Заново</span>
+                  {d.nca.reset}
                 </button>
               </div>
             </div>
@@ -710,12 +654,10 @@ const jsonLd = {
             <div class="section-head">
               <div>
                 <span class="section-kicker">
-                  <span class="lang-en">Writing</span>
-                  <span class="lang-ru">Блог</span>
+                  {d.writing.kicker}
                 </span>
                 <h2 class="section-title">
-                  <span class="lang-en">Field notes on AI, systems & leadership</span>
-                  <span class="lang-ru">Заметки об AI, системах и менеджменте</span>
+                  {d.writing.title}
                 </h2>
               </div>
               <a
@@ -726,81 +668,75 @@ const jsonLd = {
                 rel="noopener noreferrer"
                 class="brutal-btn"
               >
-                <span class="lang-en">FOLLOW ON LINKEDIN ↗</span>
-                <span class="lang-ru">ЧИТАТЬ В LINKEDIN ↗</span>
+                {d.writing.follow}
               </a>
             </div>
 
-            <div class="filter-bar" role="group" aria-label="Filter Essays by Topic">
+            <div class="filter-bar" role="group" aria-label={d.writing.filterLabel}>
               <button
                 type="button"
                 class="filter-tab active"
                 aria-pressed="true"
-                hx-get="/partials/posts-all"
+                hx-get={localePath(lang, "/partials/posts-all")}
                 data-track="post_filter"
                 data-track-filter="all"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
               >
-                <span class="lang-en">All</span>
-                <span class="lang-ru">Все</span>
+                {d.writing.filterAll}
               </button>
               <button
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get="/partials/posts-ai"
+                hx-get={localePath(lang, "/partials/posts-ai")}
                 data-track="post_filter"
                 data-track-filter="ai"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
               >
-                <span class="lang-en">AI systems</span>
-                <span class="lang-ru">AI-системы</span>
+                {d.writing.filterAi}
               </button>
               <button
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get="/partials/posts-leadership"
+                hx-get={localePath(lang, "/partials/posts-leadership")}
                 data-track="post_filter"
                 data-track-filter="leadership"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
               >
-                <span class="lang-en">Leadership</span>
-                <span class="lang-ru">Лидерство</span>
+                {d.writing.filterLeadership}
               </button>
               <button
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get="/partials/posts-systems"
+                hx-get={localePath(lang, "/partials/posts-systems")}
                 data-track="post_filter"
                 data-track-filter="systems"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
               >
-                <span class="lang-en">Reliability</span>
-                <span class="lang-ru">Надёжность</span>
+                {d.writing.filterSystems}
               </button>
               <button
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get="/partials/posts-delivery"
+                hx-get={localePath(lang, "/partials/posts-delivery")}
                 data-track="post_filter"
                 data-track-filter="delivery"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
               >
-                <span class="lang-en">Delivery</span>
-                <span class="lang-ru">Поставка</span>
+                {d.writing.filterDelivery}
               </button>
             </div>
 
@@ -808,14 +744,11 @@ const jsonLd = {
             <div id="post-reader-slot" aria-live="polite"></div>
 
             <div id="blog-posts-container" aria-live="polite">
-              <BlogGrid posts={latestPosts(BLOG_POSTS)} />
+              <BlogGrid posts={latestPosts(BLOG_POSTS)} lang={lang} />
             </div>
 
             <div class="writing-more">
-              <a class="brutal-btn" href="/writing/">
-                <span class="lang-en">ALL {BLOG_POSTS.length} POSTS →</span>
-                <span class="lang-ru">ВСЕ ПОСТЫ ({BLOG_POSTS.length}) →</span>
-              </a>
+              <a class="brutal-btn" href={localePath(lang, '/writing/')}>{d.writing.allPosts(BLOG_POSTS.length)}</a>
             </div>
           </div>
         </section>
@@ -824,10 +757,10 @@ const jsonLd = {
   <Fragment slot="scripts">
     <!-- Bundled page code: 3D topology engine and its story, case loader, post reader, toolbox -->
     <script>
-      import { initIsoArchitectureEngine } from '../scripts/iso-engine';
-      import { initTopologyStory } from '../scripts/topology-story-dom';
-      import { initCaseLoader } from '../scripts/case-loader';
-      import { initHome } from '../scripts/home';
+      import { initIsoArchitectureEngine } from '../../scripts/iso-engine';
+      import { initTopologyStory } from '../../scripts/topology-story-dom';
+      import { initCaseLoader } from '../../scripts/case-loader';
+      import { initHome } from '../../scripts/home';
       initHome();
       initCaseLoader();
       document.addEventListener('DOMContentLoaded', () => {
@@ -837,7 +770,7 @@ const jsonLd = {
     </script>
     {/* GR monogram: a tiny loader; the model, worker and their CSS load near the block */}
     <script>
-      import { initNcaLoader } from '../scripts/nca/loader';
+      import { initNcaLoader } from '../../scripts/nca/loader';
       initNcaLoader();
     </script>
   </Fragment>

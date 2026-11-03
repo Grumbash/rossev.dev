@@ -93,14 +93,14 @@ export const fullPostLink = (post: BlogPost, inline: boolean) =>
 
 const SITE_URL = 'https://rossev.dev/';
 
-// The BlogPosting node of a post page. Without a body the LinkedIn post is the original
-// (isBasedOn); with the full text here this page is the original and LinkedIn another copy (sameAs).
-export const blogPostingLd = (post: BlogPost, url: string, image: string): Record<string, unknown> => ({
+// The BlogPosting node of a post page, in that page's language (/writing/... en, /ru/writing/... ru).
+// Without a body the LinkedIn post is the original (isBasedOn); with the full text here this page
+// is the original and LinkedIn another copy (sameAs).
+export const blogPostingLd = (post: BlogPost, url: string, image: string, lang: 'en' | 'ru' = 'en'): Record<string, unknown> => ({
   '@type': 'BlogPosting',
   '@id': `${url}#post`,
-  headline: post.title.en,
-  alternativeHeadline: post.title.ru,
-  description: post.takeaway.en,
+  headline: post.title[lang],
+  description: post.takeaway[lang],
   url,
   mainEntityOfPage: { '@id': url },
   datePublished: post.published,
@@ -109,7 +109,7 @@ export const blogPostingLd = (post: BlogPost, url: string, image: string): Recor
   isPartOf: { '@id': `${SITE_URL}#website` },
   ...(post.body ? {} : { isBasedOn: post.url }),
   sameAs: post.url,
-  inLanguage: ['en', 'ru'],
+  inLanguage: lang,
   keywords: post.tags,
   image
 });

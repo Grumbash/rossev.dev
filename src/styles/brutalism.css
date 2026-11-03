@@ -42,20 +42,6 @@ html[data-theme="dark"] {
   --pink: #FF3B8B;
 }
 
-/* Strict Bilingual Visibility Toggle: Russian is hidden by default unless data-lang="ru" */
-.lang-ru {
-  display: none !important;
-}
-html[data-lang="ru"] .lang-ru {
-  display: revert !important;
-}
-html[data-lang="ru"] ul.exp-bullets.lang-ru {
-  display: flex !important;
-}
-html[data-lang="ru"] .lang-en {
-  display: none !important;
-}
-
 * {
   box-sizing: border-box;
   margin: 0;

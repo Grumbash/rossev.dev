@@ -165,11 +165,13 @@ describe('built /booked', () => {
     for (const p of ['dist/index.html', 'dist/writing/index.html']) expect(read(p)).not.toMatch(/href="[^"]*\/booked/);
   });
 
-  test('speaks English and Russian', () => {
-    const h1 = html.match(/<h1[\s\S]*?<\/h1>/)?.[0] ?? '';
-    const lang = (cls: string) => (h1.match(new RegExp(`class="${cls}"[^>]*>([^<]+)<`))?.[1] ?? '').trim();
-    expect(lang('lang-en').length).toBeGreaterThan(0);
-    expect(lang('lang-ru')).toMatch(/[А-Яа-яЁё]/);
+  test('speaks English and Russian (/booked/ and /ru/booked/), both noindex', () => {
+    const h1 = (page: string) => (page.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? '').replace(/<[^>]+>/g, '').trim();
+    const ru = read('dist/ru/booked/index.html');
+    expect(h1(html)).toMatch(/[A-Za-z]/);
+    expect(h1(html)).not.toMatch(/[А-Яа-яЁё]/);
+    expect(h1(ru)).toMatch(/[А-Яа-яЁё]/);
+    expect(ru).toMatch(/<meta[^>]*name="robots"[^>]*content="[^"]*noindex/);
   });
 
   test('offers no second "book a call": the visitor has just booked', () => {
