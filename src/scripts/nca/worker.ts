@@ -2,7 +2,8 @@
 // Runs the GR neural cellular automaton off the main thread. A grown grid costs
 // a few milliseconds per step on a laptop and several times that on a phone, so
 // the page only receives finished frames and never steps the model itself.
-import { NeuralCA, type NcaWeights } from './model';
+import { NeuralCA } from './model';
+import { decodeWeights } from './weights';
 import { createTicker } from './ticker';
 
 export type ToWorker =
@@ -121,7 +122,7 @@ scope.onmessage = async (event: MessageEvent<ToWorker>) => {
       try {
         const res = await fetch(msg.weightsUrl);
         if (!res.ok) throw new Error(`weights: HTTP ${res.status}`);
-        const weights = (await res.json()) as NcaWeights;
+        const weights = decodeWeights(await res.arrayBuffer());
         ca = new NeuralCA(weights);
         aliveThreshold = weights.aliveThreshold;
       } catch (err) {

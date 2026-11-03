@@ -1,20 +1,27 @@
-// Page side of the GR neural cellular automaton: loads the worker when the block
-// nears the viewport, draws the frames it sends, and turns pointer drags and
-// key presses into damage. The model itself runs in ./worker.ts.
-import { trackOnce } from '../analytics';
+// Page side of the GR neural cellular automaton, imported by ./loader.ts once the
+// block nears the viewport: starts the worker, draws the frames it sends, and turns
+// pointer drags and key presses into damage. The model itself runs in ./worker.ts.
 import type { FromWorker, ToWorker } from './worker';
+// Inlined into this lazy chunk and injected on init: imported as a stylesheet,
+// Astro would hoist it into the page's critical CSS.
+import css from './monogram.css?inline';
 
-const WEIGHTS_URL = '/nca/gr.json';
+const WEIGHTS_URL = '/nca/gr.bin';
 const BRUSH = 0.12; // eraser radius as a fraction of the grid side, same as the tests
 const KEY_BITE = 0.15; // a keyboard bite is one bigger stamp
 
 type Point = { x: number; y: number };
 
-export function initNcaMonogram(): void {
+/** `track` sends the nca_interact analytics event (once per action per view). The
+ * loader passes it in, so this chunk has no static dependencies and its dynamic
+ * import needs no preload helper in the eager loader. */
+export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void {
   const section = document.querySelector<HTMLElement>('.nca-section');
   const canvas = document.getElementById('nca-canvas') as HTMLCanvasElement | null;
+  const fallback = section?.querySelector('.nca-fallback');
   const ctx = canvas?.getContext('2d');
   if (!section || !canvas || !ctx) return;
+  document.head.appendChild(document.createElement('style')).textContent = css;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let worker: Worker | null = null;
@@ -31,7 +38,6 @@ export function initNcaMonogram(): void {
     console.warn('NCA monogram disabled:', reason);
     worker?.terminate();
     worker = null;
-    loader.disconnect();
     watcher.disconnect();
     document.removeEventListener('visibilitychange', syncVisibility);
     section!.hidden = true;
@@ -56,22 +62,16 @@ export function initNcaMonogram(): void {
         canvas!.width = canvas!.height = size;
       }
       ctx!.putImageData(new ImageData(msg.pixels, size, size), 0, 0);
+      if (canvas!.hidden) {
+        // The static GR in the markup holds the spot (same box) until the model draws.
+        canvas!.hidden = false;
+        fallback?.remove(); // (the `hidden` attribute does not hide an <svg>)
+      }
       send({ type: 'recycle', pixels: msg.pixels }, [msg.pixels.buffer]);
     };
     send({ type: 'init', weightsUrl: WEIGHTS_URL, reducedMotion });
     syncVisibility();
   }
-
-  // Fetch the weights and spin up the worker only once the block is close.
-  const loader = new IntersectionObserver(
-    (entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
-      loader.disconnect();
-      start();
-    },
-    { rootMargin: '400px 0px' }
-  );
-  loader.observe(canvas);
 
   // Run only while on screen and the tab is visible.
   const watcher = new IntersectionObserver(
@@ -81,8 +81,9 @@ export function initNcaMonogram(): void {
     },
     { threshold: 0.05 }
   );
-  watcher.observe(canvas);
+  watcher.observe(section);
   document.addEventListener('visibilitychange', syncVisibility);
+  start();
 
   // The Reset button's analytics come from its data-track attributes.
   document.getElementById('nca-reset')?.addEventListener('click', () => send({ type: 'reset' }));
@@ -94,7 +95,7 @@ export function initNcaMonogram(): void {
     if (e.repeat) return; // one bite per press, not a flood while the key is held
     const point = { x: (0.2 + Math.random() * 0.6) * size, y: (0.3 + Math.random() * 0.4) * size };
     send({ type: 'damage', points: [point], r: KEY_BITE * size });
-    trackOnce('nca_interact', { action: 'key' });
+    track('key');
   });
 
   // Pointer erasing. Grid coordinates come from the content box: the bounding
@@ -119,7 +120,7 @@ export function initNcaMonogram(): void {
       }
     }
     send({ type: 'damage', points, r });
-    trackOnce('nca_interact', { action: 'erase' });
+    track('erase');
   }
 
   // The canvas has `touch-action: pan-y`, so on touch a vertical swipe scrolls
