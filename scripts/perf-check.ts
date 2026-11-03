@@ -1,7 +1,8 @@
-// The performance gate behind `bun run perf` and the pre-push hook. Builds the site, holds
+// The performance gate behind `bun run perf` and the CI check on every PR. Builds the site, holds
 // dist/ to the byte budgets in perf-budgets.json, then runs Lighthouse against `astro preview`
 // (mobile and desktop, median of PERF_RUNS runs) and exits 1 on any breach. The full report
-// goes to .perf/last-report.md, which the perf-watchdog agent reads when a push is blocked.
+// goes to .perf/last-report.md, which CI posts to the job summary and the watchdog
+// (scripts/ci/watchdog.ts) hands to a model on a breach.
 //
 // Usage: bun scripts/perf-check.ts [target dir]  (or PERF_TARGET; default: the current directory).
 // Env: PERF_SKIP_LIGHTHOUSE=1 checks bytes only; PERF_RUNS=n sets Lighthouse runs (default 3).
@@ -214,7 +215,7 @@ function lighthouse(url: string, desktop: boolean): LhrLike {
 const ROOT = resolve(import.meta.dir, '..');
 const LH_BIN = join(ROOT, 'node_modules/.bin/lighthouse');
 
-// Redraw one status line on a terminal; in a hook or pipe, print each step on its own line.
+// Redraw one status line on a terminal; in CI or a pipe, print each step on its own line.
 const progress = (msg: string) =>
   process.stdout.isTTY ? process.stdout.write(`\r\x1b[K${msg}`) : msg && console.log(msg);
 
@@ -235,8 +236,8 @@ const spread = (ff: string, rs: LhrLike[]) => {
 
 async function main() {
   const t0 = Date.now();
-  // Target: the checkout to measure (the hook passes a throwaway worktree of the pushed commit).
-  // The report always lands in .perf/ of the current directory, the repo the push came from.
+  // Target: the checkout to measure (default: the current directory, which is what CI measures).
+  // The report always lands in .perf/ of the current directory.
   const target = resolve(process.argv[2] || process.env.PERF_TARGET || '.');
   const reportPath = resolve('.perf/last-report.md');
   mkdirSync(dirname(reportPath), { recursive: true });
@@ -273,7 +274,7 @@ async function main() {
 
   let stage = 'budgets';
   try {
-    // The pushed commit's budgets, if it has them; otherwise the ones next to the checker.
+    // The target's budgets, if it has them; otherwise the ones next to the checker.
     const budgetFile = [join(target, 'perf-budgets.json'), resolve('perf-budgets.json'), join(ROOT, 'perf-budgets.json')].find(existsSync);
     if (!budgetFile) throw new Error('perf-budgets.json not found');
     const budgets = JSON.parse(readFileSync(budgetFile, 'utf8')) as { bytes: ByteBudgets; lighthouse: LhBudgets };
@@ -289,6 +290,11 @@ async function main() {
     const chrome = process.env.PERF_SKIP_LIGHTHOUSE ? null : findChrome();
     if (process.env.PERF_SKIP_LIGHTHOUSE) notes.push('Lighthouse skipped (PERF_SKIP_LIGHTHOUSE=1).');
     else if (!chrome) {
+      // In CI a green gate must mean Lighthouse ran: a runner image without Chrome fails loudly.
+      if (process.env.CI) {
+        stage = 'lighthouse';
+        throw new Error('Chrome not found on the CI runner (set CHROME_PATH); refusing to skip Lighthouse');
+      }
       const msg = 'Chrome not found (set CHROME_PATH); Lighthouse NOT run, byte budgets only.';
       console.warn(`perf: WARNING ${msg}`);
       notes.push(msg);
@@ -319,7 +325,7 @@ async function main() {
       };
       measure('mobile', n, '');
       measure('desktop', n, '');
-      // Lighthouse is noisy: before failing a push, give a failing form factor 5 more runs
+      // Lighthouse is noisy: before failing the gate, give a failing form factor 5 more runs
       // and judge on the median of all of them.
       for (const ff of failingFormFactors(evaluateLighthouse(runs, budgets.lighthouse))) {
         progress('');
