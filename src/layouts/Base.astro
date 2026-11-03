@@ -1,0 +1,360 @@
+---
+// Shared chrome for every page: <head> (meta, fonts, theme/lang bootstrap, analytics), nav,
+// contact footer, toast and the global helpers (language, theme, URL params, clipboard).
+// Page-specific scripts go in the "scripts" slot; page-specific <head> bits in the "head" slot.
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/space-grotesk/wght.css';
+import '@fontsource-variable/syne/wght.css';
+import '../styles/brutalism.css';
+import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import groteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+import syneLatin from '@fontsource-variable/syne/files/syne-latin-wght-normal.woff2?url';
+import { PROFILE } from '../data/profile';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
+import { calUrl } from '../scripts/analytics';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogType?: 'website' | 'article';
+  ogTitle?: string;
+  ogDescription?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  jsonLd?: object;
+  // Home links its sections as #anchors; every other page as /#anchors.
+  home?: boolean;
+  // Nav and footer "book a call" buttons. Post pages turn them off: the reader footer has the one CTA.
+  cta?: boolean;
+  // htmx is only needed where partials are swapped in (home).
+  htmx?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = 'website',
+  ogTitle = title,
+  ogDescription = description,
+  twitterTitle = ogTitle,
+  twitterDescription = ogDescription,
+  jsonLd,
+  home = false,
+  cta = true,
+  htmx = false
+} = Astro.props;
+
+const ogImageUrl = new URL('/og-card.png', Astro.site || 'https://rossev.dev').toString();
+const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
+---
+
+<!DOCTYPE html>
+<html lang="en" data-lang="en" data-theme="light" data-page={home ? 'home' : 'writing'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Favicon, Manifest & AI Crawler Discovery -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Agent & LLM Context (/llms.txt)" />
+
+    <!-- Open Graph / Telegram / Slack / LinkedIn / X Cards (Raster PNG 1200x630) -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={twitterTitle} />
+    <meta name="twitter:description" content={twitterDescription} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Self-hosted fonts (no third-party round trip before first paint) -->
+    <link rel="preload" href={monoLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={groteskLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={syneLatin} as="font" type="font/woff2" crossorigin />
+
+    <!-- Structured Data (JSON-LD) -->
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <!-- Synchronous Anti-FOUC Theme & Language Initialization -->
+    <script is:inline>
+      (function () {
+        try {
+          var savedLang = localStorage.getItem('rosev_lang') || 'en';
+          document.documentElement.setAttribute('data-lang', savedLang);
+          document.documentElement.setAttribute('lang', savedLang);
+          var savedTheme = localStorage.getItem('rosev_theme');
+          if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    {htmx && <script src="/htmx.min.js" defer></script>}
+
+    <!-- Umami Cloud: custom funnel events (see README "Analytics") -->
+    {import.meta.env.PUBLIC_UMAMI_WEBSITE_ID && (
+      <script
+        is:inline
+        defer
+        src="https://cloud.umami.is/script.js"
+        data-website-id={import.meta.env.PUBLIC_UMAMI_WEBSITE_ID}
+        data-domains="rossev.dev"
+      ></script>
+    )}
+    <slot name="head" />
+  </head>
+  <body>
+    <!-- TOP NAV: text links scroll, buttons act -->
+    <header class="top-nav">
+      <div class="nav-inner">
+        <a href={home ? '#top' : '/'} class="brand-logo">
+          <span class="brand-badge">GR</span>
+          <span>GLEB ROSEV</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Sections">
+          <a class="nav-link" href={anchor('experience')}>
+            <span class="lang-en">Experience</span>
+            <span class="lang-ru">Опыт</span>
+          </a>
+          <a class="nav-link" href={anchor('writing')}>
+            <span class="lang-en">Writing</span>
+            <span class="lang-ru">Блог</span>
+          </a>
+          <a class="nav-link" href={anchor('contact')}>
+            <span class="lang-en">Contact</span>
+            <span class="lang-ru">Контакты</span>
+          </a>
+        </nav>
+
+        <div class="nav-controls">
+          <button
+            type="button"
+            class="ctrl-btn active-lang"
+            id="btn-lang-en"
+            onclick="window.setSiteLang('en')"
+            data-track="lang_switch"
+            data-track-to="en"
+            aria-label="Switch language to English"
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            class="ctrl-btn"
+            id="btn-lang-ru"
+            onclick="window.setSiteLang('ru')"
+            data-track="lang_switch"
+            data-track-to="ru"
+            aria-label="Switch language to Russian"
+          >
+            RU
+          </button>
+          <button
+            type="button"
+            class="ctrl-btn"
+            id="btn-theme-toggle"
+            onclick="window.toggleSiteTheme()"
+            data-track="theme_switch"
+            title="Toggle Light / Dark Mode"
+          >
+            <span class="lang-en">THEME</span>
+            <span class="lang-ru">ТЕМА</span>
+          </button>
+          {cta && (
+            <a
+              href={calUrl('nav')}
+              data-track="cta_book"
+              data-track-placement="nav"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="brutal-btn brutal-btn-lime brutal-btn-sm"
+            >
+              <span class="lang-en">BOOK A CALL ↗</span>
+              <span class="lang-ru">СОЗВОН ↗</span>
+            </a>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <slot />
+
+      <!-- CONTACT & FOOTER -->
+      <footer id="contact" class="section-block site-footer">
+        <div class="container">
+          <div class="contact-grid">
+            <div>
+              <span class="section-kicker">
+                <span class="lang-en">Contact</span>
+                <span class="lang-ru">Контакты</span>
+              </span>
+              <h2 class="section-title" style="margin-bottom: 12px;">
+                <span class="lang-en">Let’s talk</span>
+                <span class="lang-ru">Давайте поговорим</span>
+              </h2>
+              <p class="footer-lead">
+                <span class="lang-en">
+                  Always happy to connect with founders, engineering leaders, and builders working on production AI agents and distributed systems.
+                </span>
+                <span class="lang-ru">
+                  Всегда рад общению с фаундерами, техлидами и инженерами, создающими AI-агентов и сложные продакшен-системы.
+                </span>
+              </p>
+              <div class="hero-actions">
+                {cta && (
+                  <a href={calUrl('footer')} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime" data-track="cta_book" data-track-placement="footer">
+                    <span class="lang-en">BOOK A 30-MIN CALL ↗</span>
+                    <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН ↗</span>
+                  </a>
+                )}
+                <button
+                  type="button"
+                  class="brutal-btn"
+                  onclick={`window.copyToClipboard('${PROFILE.email}')`}
+                  data-track="email_copy"
+                  data-track-placement="footer"
+                >
+                  <span class="lang-en">COPY EMAIL</span>
+                  <span class="lang-ru">СКОПИРОВАТЬ EMAIL</span>
+                </button>
+              </div>
+              <div class="footer-links">
+                <a class="text-link" href={`mailto:${PROFILE.email}`} data-track="email_click" data-track-placement="footer">{PROFILE.email}</a>
+                <a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" data-track="linkedin_click" data-track-placement="footer">LinkedIn ↗</a>
+                <a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Founding_Engineer_CV.pdf" data-track="cv_download" data-track-placement="footer">
+                  <span class="lang-en">CV (PDF) ↓</span><span class="lang-ru">CV (PDF) ↓</span>
+                </a>
+                <a class="text-link" href="/llms.txt" target="_blank" title="Plain-text Markdown context for AI Agents & LLMs">/llms.txt ↗</a>
+              </div>
+            </div>
+
+            <div class="footer-facts">
+              <dl>
+              <div class="contact-row">
+                <dt class="label"><span class="lang-en">Education</span><span class="lang-ru">Образование</span></dt>
+                <dd>
+                  <span class="lang-en">Belarusian State University — Medicine (2015 — 2019)</span>
+                  <span class="lang-ru">БГУ — Медицинское дело (2015 — 2019)</span>
+                </dd>
+              </div>
+              <div class="contact-row">
+                <dt class="label"><span class="lang-en">Languages</span><span class="lang-ru">Языки</span></dt>
+                <dd>
+                  <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(' · ')}</span>
+                  <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(' · ')}</span>
+                </dd>
+              </div>
+              <div class="contact-row">
+                <dt class="label"><span class="lang-en">Based</span><span class="lang-ru">Где</span></dt>
+                <dd>
+                  <span class="lang-en">{PROFILE.location.en} · Remote · {PROFILE.timezone}</span>
+                  <span class="lang-ru">{PROFILE.location.ru} · удалённо · {PROFILE.timezone}</span>
+                </dd>
+              </div>
+              </dl>
+              <p class="footer-fineprint">
+                <span class="lang-en">CV auto-built from</span><span class="lang-ru">CV собирается из</span>
+                <code>profile.ts</code> (LLM Canary <code>#YAGNI-42</code>)
+                · © {new Date().getFullYear()} <span class="lang-en">Gleb Rosev</span><span class="lang-ru">Глеб Росев</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite">
+      COPIED TO CLIPBOARD
+    </div>
+
+    <script is:inline>
+      // 1. Language & Theme Switcher
+      window.setSiteLang = function (lang) {
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.setAttribute('lang', lang);
+        localStorage.setItem('rosev_lang', lang);
+        const btnEn = document.getElementById('btn-lang-en');
+        const btnRu = document.getElementById('btn-lang-ru');
+        if (btnEn && btnRu) {
+          btnEn.classList.toggle('active-lang', lang === 'en');
+          btnRu.classList.toggle('active-lang', lang === 'ru');
+        }
+        if (window.updateIsoHudText) {
+          window.updateIsoHudText();
+        }
+      };
+
+      window.toggleSiteTheme = function () {
+        const cur = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = cur === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('rosev_theme', next);
+      };
+
+      (function syncLangButtons() {
+        const savedLang = document.documentElement.getAttribute('data-lang') || 'en';
+        const btnEn = document.getElementById('btn-lang-en');
+        const btnRu = document.getElementById('btn-lang-ru');
+        if (btnEn && btnRu) {
+          btnEn.classList.toggle('active-lang', savedLang === 'en');
+          btnRu.classList.toggle('active-lang', savedLang === 'ru');
+        }
+      })();
+
+      // URL query parameter helper for deep-linking cases and posts
+      window.setUrlParam = function (key, val) {
+        try {
+          const url = new URL(window.location.href);
+          if (val === null || val === undefined || val === '') {
+            url.searchParams.delete(key);
+          } else {
+            url.searchParams.set(key, val);
+          }
+          window.history.replaceState({}, '', url.toString());
+        } catch (e) {}
+      };
+
+      // 2. Clipboard
+      window.copyToClipboard = function (text, label) {
+        const ru = document.documentElement.getAttribute('data-lang') === 'ru';
+        const msg = (ru ? 'Скопировано: ' : 'Copied: ') + (label || text);
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        }
+        const toast = document.getElementById('brutal-toast');
+        if (toast) {
+          toast.textContent = msg;
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2400);
+        }
+      };
+    </script>
+    <slot name="scripts" />
+
+    <!-- Funnel analytics (Umami custom events) -->
+    <script>
+      import { initAnalytics } from '../scripts/analytics';
+      initAnalytics();
+    </script>
+    <!-- Vercel Web Analytics & Speed Insights -->
+    <Analytics />
+    <SpeedInsights />
+  </body>
+</html>

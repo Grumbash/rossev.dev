@@ -1,0 +1,122 @@
+---
+// The 30-second brief and the reader footer, one markup for the inline reader (HTMX partial)
+// and the post page. The footer is the next step: next post, share, follow, one soft CTA.
+import { BLOG_POSTS, PROFILE, postPath, type BlogPost } from '../data/profile';
+import { calUrl } from '../scripts/analytics';
+
+interface Props {
+  post: BlogPost;
+  // Inline reader on home: "Next" swaps the next brief into the same slot instead of navigating.
+  inline?: boolean;
+}
+
+const { post, inline = false } = Astro.props;
+const next = BLOG_POSTS[(BLOG_POSTS.indexOf(post) + 1) % BLOG_POSTS.length];
+const pageUrl = new URL(postPath(post), Astro.site ?? 'https://rossev.dev').toString();
+const paragraphs = (s: string) => s.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+
+// Same contract as the grid cards: a real href for crawlers and new tabs, hx-get for the inline swap.
+// Either way moving on is a post_open.
+const nextInline = inline
+  ? {
+      'hx-get': `/partials/post-${next.id}`,
+      'hx-trigger': 'open-brief',
+      'hx-target': '#post-reader-slot',
+      'hx-swap': 'innerHTML transition:true',
+      onclick: 'window.openBrief && window.openBrief(this, event)'
+    }
+  : {};
+---
+
+<p style="font-family: var(--font-mono); font-size: 0.88rem; padding: 10px 14px; background: #12151E; color: #C8FF00; border-left: 4px solid #C8FF00; margin-bottom: 16px;">
+  “<span class="lang-en">{post.brief.quote.en}</span><span class="lang-ru">{post.brief.quote.ru}</span>”
+</p>
+
+<div class="lang-en">
+  <ul class="exp-bullets" style="margin-top: 8px; margin-bottom: 18px;">
+    {post.brief.bullets.en.map((b) => (
+      <li>{b}</li>
+    ))}
+  </ul>
+</div>
+
+<div class="lang-ru">
+  <ul class="exp-bullets" style="margin-top: 8px; margin-bottom: 18px;">
+    {post.brief.bullets.ru.map((b) => (
+      <li>{b}</li>
+    ))}
+  </ul>
+</div>
+
+{!inline && post.body && (
+  <div class="post-body" style="margin-bottom: 18px; line-height: 1.65;">
+    <div class="lang-en">{paragraphs(post.body.en).map((p) => <p style="margin-bottom: 12px;">{p}</p>)}</div>
+    <div class="lang-ru">{paragraphs(post.body.ru).map((p) => <p style="margin-bottom: 12px;">{p}</p>)}</div>
+  </div>
+)}
+
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 2px dashed var(--border); padding-top: 14px;">
+  <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+    {post.tags.map((t) => (
+      <span class="brutal-tag" style="font-size: 0.72rem;">#{t}</span>
+    ))}
+  </div>
+  <a
+    href={post.url}
+    data-track="post_linkedin"
+    data-track-id={post.id}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="brutal-btn brutal-btn-lime"
+    style="padding: 8px 14px; font-size: 0.78rem;"
+  >
+    <span class="lang-en">ORIGINAL POST ON LINKEDIN ↗</span>
+    <span class="lang-ru">ОРИГИНАЛ В LINKEDIN ↗</span>
+  </a>
+</div>
+
+<!-- Reader footer: where to go after the brief -->
+<div class="reader-footer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 2px dashed var(--border);">
+  <a href={postPath(next)} class="brutal-btn" style="justify-content: space-between; text-transform: none;" data-track="post_open" data-track-id={next.id} {...nextInline}>
+    <span>
+      <span class="lang-en">NEXT: {next.title.en}</span>
+      <span class="lang-ru">ДАЛЕЕ: {next.title.ru}</span>
+    </span>
+    <span aria-hidden="true">→</span>
+  </a>
+
+  <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+    <button
+      type="button"
+      class="brutal-btn brutal-btn-sm"
+      data-url={pageUrl}
+      onclick="window.copyToClipboard && window.copyToClipboard(this.dataset.url)"
+    >
+      <span class="lang-en">COPY LINK</span>
+      <span class="lang-ru">СКОПИРОВАТЬ ССЫЛКУ</span>
+    </button>
+    <a
+      class="text-link"
+      href={PROFILE.linkedin}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-track="linkedin_click"
+      data-track-placement="reader"
+    >
+      <span class="lang-en">Follow on LinkedIn ↗</span>
+      <span class="lang-ru">Подписаться в LinkedIn ↗</span>
+    </a>
+  </div>
+
+  <a
+    class="text-link"
+    href={calUrl('reader')}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-track="cta_book"
+    data-track-placement="reader"
+  >
+    <span class="lang-en">Building agents that need to work in prod? 30-min intro call →</span>
+    <span class="lang-ru">Строите агентов, которые должны работать в проде? 30-минутный созвон →</span>
+  </a>
+</div>

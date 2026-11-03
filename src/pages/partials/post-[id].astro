@@ -1,5 +1,6 @@
 ---
-import { BLOG_POSTS } from '../../data/profile';
+import { BLOG_POSTS, readTimeLabel } from '../../data/profile';
+import PostBrief from '../../components/PostBrief.astro';
 
 export const partial = true;
 
@@ -11,180 +12,16 @@ export function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-
-const POST_NOTES: Record<string, { bullets: { en: string[]; ru: string[] }; quote: { en: string; ru: string } }> = {
-  'post-1': {
-    bullets: {
-      en: [
-        'Treat PR review queues, handoff delays, and context-switching like backpressure in a distributed message bus.',
-        'When delivery slows down, inspect the system topology (ownership boundaries, approval gates, CI feedback time) before blaming individual throughput.',
-        'Design small, autonomous loops with explicit interfaces so engineers spend time shipping rather than synchronizing.'
-      ],
-      ru: [
-        'Рассматривайте очереди на код-ревью, задержки передачи задач и переключение контекста как backpressure в распределённой шине.',
-        'Когда поставка замедляется, ищите узкие места в топологии процессов (границы ответственности, время прогона CI), а не в людях.',
-        'Стройте автономные контуры с чёткими контрактами, чтобы команда тратила время на поставку, а не на бесконечные синхронизации.'
-      ]
-    },
-    quote: {
-      en: 'An engineering organization is a distributed system where the nodes happen to be humans and AI agents.',
-      ru: 'Инженерная организация — это распределённая система, где узлами выступают люди и AI-агенты.'
-    }
-  },
-  'post-2': {
-    bullets: {
-      en: [
-        'Every estimate mixes two orthogonal concepts: (1) probabilistic discovery of unknown complexity and (2) a deterministic calendar commitment.',
-        'Conflating the two forces engineers to pad estimates defensively or cut architectural corners to hit an arbitrary date.',
-        'Scope the commitment around a core milestone with feature-flagged progressive depth so dates stay reliable without sacrificing quality.'
-      ],
-      ru: [
-        'Любая оценка смешивает две разные вещи: (1) вероятностный прогноз неизвестной сложности и (2) твёрдое бизнесовое обязательство к дате.',
-        'Когда их путают, инженеры либо перезакладываются втрое, либо режут углы в архитектуре ради дедлайна.',
-        'Фиксируйте дату для ядра функциональности, а дополнительные сценарии закрывайте итеративно за фича-флагами.'
-      ]
-    },
-    quote: {
-      en: 'Commit to outcomes and interfaces; keep scope modular behind feature flags.',
-      ru: 'Берите обязательства по результату и контрактам, а объём держите модульным за фича-флагами.'
-    }
-  },
-  'post-3': {
-    bullets: {
-      en: [
-        'Generating code with LLMs is cheap; proving that generated code is safe, isolated, and regression-free under production load is the real bottleneck.',
-        'Production AI requires deterministic harnesses: sandboxed code runners, realistic task benchmarks, and a second independent "judge" review pass.',
-        'Autonomy is earned through a measurable track record on real engineering benchmarks, never assumed from a single demo.'
-      ],
-      ru: [
-        'Генерация кода стала дешёвой; настоящее узкое место — доказать, что этот код безопасен, изолирован и не ломает прод.',
-        'Боевой AI требует жёсткого харнесса: изолированных песочниц, реалистичных бенчмарков и независимой проверки вторым агентом-судьёй.',
-        'Автономность агента зарабатывается статистикой успешных прогонов, а не эффектным демо.'
-      ]
-    },
-    quote: {
-      en: 'Making AI agents dependable in production is an evaluation and systems-hardening problem.',
-      ru: 'Надёжность AI-агентов в продакшене — это задача верификации, песочниц и системной инженерии.'
-    }
-  },
-  'post-4': {
-    bullets: {
-      en: [
-        'Writing 30% more lines of code only creates 30% more review debt if the verification and merge pipeline stays manual and unguarded.',
-        'Agent teams must own the whole loop from proposal to tested PR under a human-approved plan — including running tests and fixing their own failures.',
-        'Measure end-to-end merged value and production stability, not raw token or LOC output.'
-      ],
-      ru: [
-        'Плюс 30% сгенерированного кода превращаются в +30% долга на ревью, если конвейер проверки остаётся прежним.',
-        'Команды агентов должны проходить весь цикл от утверждённого плана до протестированного PR, сами исправляя падения тестов в песочнице.',
-        'Измеряйте доставленную в прод ценность и стабильность релизов, а не количество написанных строк.'
-      ]
-    },
-    quote: {
-      en: 'Code volume is a cost center; verified merged behavior is the asset.',
-      ru: 'Объём кода — это издержки; актив — это проверенное поведение в продакшене.'
-    }
-  },
-  'post-5': {
-    bullets: {
-      en: [
-        'Production runners and public endpoints face continuous automated probing, runaway payloads, and noisy-neighbor spikes.',
-        'Hardening means ephemeral sandboxes, strict egress allowlists, per-organization data isolation, and an early-warning risk radar.',
-        'Detect stalled or anomalous runs before the customer notices and isolate the blast radius to a single ephemeral container.'
-      ],
-      ru: [
-        'Боевые раннеры и API постоянно сталкиваются с аномальными нагрузками, зависшими процессами и попытками пробить изоляцию.',
-        'Защита строится на одноразовых песочницах, строгом разделении данных организаций и радаре раннего предупреждения.',
-        'Ловите зависшие сборки раньше клиента и запирайте радиус поражения внутри одного изолированного контейнера.'
-      ]
-    },
-    quote: {
-      en: 'Security and reliability are architectural boundaries, not after-the-fact patches.',
-      ru: 'Безопасность и надёжность — это физические границы архитектуры, а не патчи задним числом.'
-    }
-  },
-  'post-6': {
-    bullets: {
-      en: [
-        'Memorizing framework syntax is no longer a differentiator when AI agents can scaffold boilerplate in seconds.',
-        'True Staff/Senior leverage lies in problem framing, boundary design, failure-mode anticipation, and owning the production outcome.',
-        'The best engineers operate as architects and judges: they define the plan, delegate execution to agents, and verify the critical invariants.'
-      ],
-      ru: [
-        'Знание синтаксиса фреймворков больше не отличает сеньора, когда агент генерирует бойлерплейт за секунды.',
-        'Настоящий уровень Staff/Senior сегодня — это постановка задачи, проектирование границ, предвидение сбоев и ответственность за прод.',
-        'Сильные инженеры работают как архитекторы и судьи: утверждают план, делегируют рутину агентам и верифицируют ключевые инварианты.'
-      ]
-    },
-    quote: {
-      en: 'Syntax is automated; architectural judgment and ownership are more valuable than ever.',
-      ru: 'Синтаксис автоматизирован — архитектурное суждение и оунершип ценятся как никогда.'
-    }
-  },
-  'post-7': {
-    bullets: {
-      en: [
-        'Every 5,000-line if-else monolith starts as "just one quick special case" added without an explicit state machine.',
-        'In complex workflows (clinical voice intake, multi-tenant B2B pricing, agent handoffs), implicit flags create impossible-to-test state explosions.',
-        'Replace nested branching with explicit finite state machines (FSM), typed contracts, and deterministic transition guards.'
-      ],
-      ru: [
-        'Любой монстр из 5 000 строк if-else начинается с «одного маленького исключения», добавленного в обход конечного автомата.',
-        'В сложных процессах (голосовой AI для клиник, оптовый B2B-прайсинг, оркестрация агентов) неявные флаги вызывают комбинаторный взрыв состояний.',
-        'Заменяйте вложенные условия явными конечными автоматами (FSM), типизированными контрактами и детерминированными переходами.'
-      ]
-    },
-    quote: {
-      en: 'Explicit state machines turn 5,000 lines of defensive branching into an auditable graph.',
-      ru: 'Явный конечный автомат превращает 5 000 строк хрупких условий в проверяемый граф.'
-    }
-  },
-  'post-8': {
-    bullets: {
-      en: [
-        'Routing deterministic parsing, validation, or schema checks through an LLM burns latency, money, and reliability.',
-        'Use strict code (Zod schemas, AST parsers, state machines) for everything deterministic, and reserve LLM calls strictly for semantic reasoning.',
-        'Hybrid architectures deliver sub-second latency and predictable production behavior.'
-      ],
-      ru: [
-        'Гонять детерминированный парсинг, валидацию или маршрутизацию через LLM — значит сжигать задержку, бюджет и надёжность.',
-        'Используйте строгий код (схемы, парсеры, автоматы) для всего предсказуемого, оставляя LLM только там, где нужно семантическое решение.',
-        'Гибридная архитектура даёт минимальную задержку и предсказуемое поведение в бою.'
-      ]
-    },
-    quote: {
-      en: 'Let deterministic code guard the boundaries; let models handle the ambiguity inside.',
-      ru: 'Пусть детерминированный код держит границы, а модели решают неоднозначность внутри них.'
-    }
-  },
-  'post-9': {
-    bullets: {
-      en: [
-        'Explaining why something failed is reporting; proposing three concrete recovery options with trade-offs and executing the fix is ownership.',
-        'In early-stage startups and core platform teams, leaders value engineers who compress the loop from "incident detected" to "root cause resolved".',
-        'Every post-mortem should end with a systemic guardrail or benchmark so the same class of failure cannot recur.'
-      ],
-      ru: [
-        'Объяснить, почему всё упало — это отчёт; принести варианты решения с компромиссами и закрыть проблему — это оунершип.',
-        'В продуктовых и платформенных командах ценятся инженеры, которые сжимают путь от обнаружения сбоя до системного фикса.',
-        'Каждый разбор инцидента должен заканчиваться новым автотестом, бенчмарком или гардрейлом.'
-      ]
-    },
-    quote: {
-      en: 'Ownership means closing the loop with a permanent architectural fix.',
-      ru: 'Оунершип — это закрытие цикла постоянным архитектурным превентивным фиксом.'
-    }
-  }
-};
-
-const note = POST_NOTES[post.id] || POST_NOTES['post-3'];
+const readTime = readTimeLabel(post);
 ---
 
+<!-- A fragment for the inline reader; the indexable copy is /writing/<slug>/.
+     Kept out of the index by the X-Robots-Tag header on /partials/* (vercel.json). -->
 <div class="brutal-box post-reader-drawer" style="margin-bottom: 24px; background: var(--surface); border-color: var(--border);">
   <div class="blueprint-header">
     <span>
-      <span class="lang-en">// ENGINEERING NOTE BRIEF // {post.categoryLabel.en} · {post.readTime.en}</span>
-      <span class="lang-ru">// КОНСПЕКТ ИНЖЕНЕРНОЙ ЗАМЕТКИ // {post.categoryLabel.ru} · {post.readTime.ru}</span>
+      <span class="lang-en">// ENGINEERING NOTE BRIEF // {post.categoryLabel.en} · {readTime.en}</span>
+      <span class="lang-ru">// КОНСПЕКТ ИНЖЕНЕРНОЙ ЗАМЕТКИ // {post.categoryLabel.ru} · {readTime.ru}</span>
     </span>
     <button
       type="button"
@@ -196,49 +33,11 @@ const note = POST_NOTES[post.id] || POST_NOTES['post-3'];
   </div>
 
   <div style="padding: 22px 24px;">
-    <h3 style="font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; margin-bottom: 10px;">
+    <h3 class="post-reader-heading" tabindex="-1" style="font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; margin-bottom: 10px;">
       <span class="lang-en">{post.title.en}</span>
       <span class="lang-ru">{post.title.ru}</span>
     </h3>
 
-    <p style="font-family: var(--font-mono); font-size: 0.88rem; padding: 10px 14px; background: #12151E; color: #C8FF00; border-left: 4px solid #C8FF00; margin-bottom: 16px;">
-      “<span class="lang-en">{note.quote.en}</span><span class="lang-ru">{note.quote.ru}</span>”
-    </p>
-
-    <div class="lang-en">
-      <ul class="exp-bullets" style="margin-top: 8px; margin-bottom: 18px;">
-        {note.bullets.en.map((b) => (
-          <li>{b}</li>
-        ))}
-      </ul>
-    </div>
-
-    <div class="lang-ru">
-      <ul class="exp-bullets" style="margin-top: 8px; margin-bottom: 18px;">
-        {note.bullets.ru.map((b) => (
-          <li>{b}</li>
-        ))}
-      </ul>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 2px dashed var(--border); padding-top: 14px;">
-      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-        {post.tags.map((t) => (
-          <span class="brutal-tag" style="font-size: 0.72rem;">#{t}</span>
-        ))}
-      </div>
-      <a
-        href={post.url}
-        data-track="post_linkedin"
-        data-track-id={post.id}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="brutal-btn brutal-btn-lime"
-        style="padding: 8px 14px; font-size: 0.78rem;"
-      >
-        <span class="lang-en">ORIGINAL POST ON LINKEDIN ↗</span>
-        <span class="lang-ru">ОРИГИНАЛ В LINKEDIN ↗</span>
-      </a>
-    </div>
+    <PostBrief post={post} inline />
   </div>
 </div>

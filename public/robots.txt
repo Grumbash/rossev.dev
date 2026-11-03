@@ -3,3 +3,5 @@ Allow: /
 
 # AI Agent & LLM Context File
 # See /llms.txt for structured plain-text engineering profile
+
+Sitemap: https://rossev.dev/sitemap-index.xml
