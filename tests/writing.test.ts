@@ -283,3 +283,20 @@ describe('post pages are held to the byte budgets too', () => {
     for (const c of html) expect(c.ok, `${c.files.join(',')}: ${c.actual} > ${c.limit}`).toBe(true);
   });
 });
+
+describe('filter tabs', () => {
+  // A reader who clicks a filter should see cards stamped with the word they clicked.
+  test('each category filter is labelled like its cards, in both languages', () => {
+    const tabs = [...home.matchAll(/<button\b[^>]*data-track-filter="(\w+)"[^>]*>([\s\S]*?)<\/button>/g)];
+    const categories = [...new Set(BLOG_POSTS.map((p) => p.category))];
+    for (const c of categories) {
+      const tab = tabs.find((m) => m[1] === c);
+      expect(tab, `filter tab for ${c}`).toBeDefined();
+      const label = BLOG_POSTS.find((p) => p.category === c)!.categoryLabel;
+      const en = tab![2].match(/<span class="lang-en">([\s\S]*?)<\/span>/)?.[1];
+      const ru = tab![2].match(/<span class="lang-ru">([\s\S]*?)<\/span>/)?.[1];
+      expect(decode(en ?? '').trim().toUpperCase(), `${c} en`).toBe(label.en);
+      expect(decode(ru ?? '').trim().toLocaleUpperCase('ru'), `${c} ru`).toBe(label.ru);
+    }
+  });
+});
