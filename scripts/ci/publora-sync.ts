@@ -400,7 +400,7 @@ export type Skipped = { url: string; reason: string };
 const usd = (n: number) => `$${n.toFixed(n >= 0.001 ? 4 : 6)}`;
 
 /** Markdown for the PR: what was added, where, what it cost, what was skipped and why. */
-export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; skipped: Skipped[]; model: string; costUsd: number }) {
+export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; skipped: Skipped[]; model: string; costUsd: number; waiting?: number }) {
   const out = ['LinkedIn posts from Publora, drafted for the site. Read the EN brief and the RU adaptation on the preview before merging.', ''];
   if (o.added.length) out.push(`**New posts (${o.added.length})**`, '');
   for (const p of o.added)
@@ -415,6 +415,7 @@ export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; skipped: Ski
     out.push('', `**Full text added to posts already on the site (${o.filled.length})**: the original in English, a Russian adaptation; the brief is unchanged.`, '');
     for (const p of o.filled) out.push(`- **${sanitize(p.title.en, 200)}** · \`/writing/${p.slug}/\``);
   }
+  if (o.waiting) out.push('', `${o.waiting} more post(s) over this run's cap of ${MAX_CALLS} model calls come in the first run after this PR is merged.`);
   out.push('', `Model: \`${sanitize(o.model, 100)}\` · cost ${usd(o.costUsd)}`);
   if (o.skipped.length) {
     out.push('', `**Skipped (${o.skipped.length})**, retried on the next run:`, '');
@@ -510,9 +511,16 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
     // Publora's copy wins; the backfill only adds posts it never had.
     let backfilled = 0;
-    for (const e of deps.readBackfill?.() ?? []) {
+    let backfill: unknown = [];
+    try {
+      backfill = deps.readBackfill?.() ?? [];
+    } catch (e) {
+      log(`the backfill file is unreadable, skipping it: ${why(e)}`);
+    }
+    if (!Array.isArray(backfill)) log('the backfill file is not a list, skipping it.');
+    for (const e of Array.isArray(backfill) ? (backfill as BackfillEntry[]) : []) {
       const id = String(e?.activityId ?? '');
-      if (!/^\d{15,}$/.test(id) || activityId(String(e.url)) !== id || typeof e.text !== 'string' || seen.has(id)) continue;
+      if (!/^\d{15,}$/.test(id) || !isLinkedinUrl(e.url) || activityId(e.url) !== id || typeof e.text !== 'string' || seen.has(id)) continue;
       seen.set(id, { postGroupId: 'linkedin-backfill', activityId: id, postedId: '', content: e.text, url: e.url });
       backfilled++;
     }
@@ -534,9 +542,13 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
 
     // Oldest first: each is prepended, so the newest ends up on top with the highest id.
-    const allNew = [...fresh.values()].sort((a, b) => (BigInt(a.activityId) < BigInt(b.activityId) ? -1 : 1));
-    const targets = allNew.slice(0, MAX_CALLS);
-    if (allNew.length > MAX_CALLS) log(`${allNew.length - MAX_CALLS} more new post(s) wait for the next run.`);
+    // Over the cap the newest go first; the bot branch is rebuilt from main each run, so the rest
+    // come in the first run after this PR is merged.
+    const byAge = (a: Target, b: Target) => (BigInt(a.activityId) < BigInt(b.activityId) ? -1 : 1);
+    const allNew = [...fresh.values()].sort(byAge);
+    const targets = allNew.slice(-MAX_CALLS);
+    const waitingNew = allNew.length - targets.length;
+    if (waitingNew) log(`${waitingNew} more new post(s) wait for the first run after this PR is merged (next run).`);
     const example = posts.find((p) => p.slug === 'every-engineering-estimate-is-two-things') ?? posts[0];
     const added: BlogPost[] = [];
     const skipped: Skipped[] = [];
@@ -594,7 +606,8 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     const filled: BlogPost[] = [];
     const queue = [...stubs.values()];
     const fills = Math.min(MAX_FILLS, Math.max(0, MAX_CALLS - targets.length));
-    if (queue.length > fills) log(`${queue.length - fills} more brief-only post(s) get their full text on the next run.`);
+    const waitingFills = Math.max(0, queue.length - fills);
+    if (waitingFills) log(`${waitingFills} more brief-only post(s) get their full text in the first run after this PR is merged (next run).`);
     for (const t of queue.slice(0, fills)) {
       const skip = (reason: string) => {
         skipped.push({ url: t.url, reason: `full text: ${reason}` });
@@ -640,7 +653,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
     // The PR body first: if any write fails, posts.json is left as it was.
     const newestFirst = [...added].reverse();
-    if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ added: newestFirst, filled, skipped, model, costUsd }));
+    if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ added: newestFirst, filled, skipped, model, costUsd, waiting: waitingNew + waitingFills }));
     deps.writeFile(POSTS_JSON, JSON.stringify(posts, null, 2) + '\n');
     const what = [
       added.length && `${added.length} LinkedIn post${added.length === 1 ? '' : 's'}`,
