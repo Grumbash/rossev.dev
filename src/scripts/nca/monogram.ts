@@ -31,9 +31,9 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
   const send = (msg: ToWorker, transfer: Transferable[] = []) => worker?.postMessage(msg, transfer);
   const syncVisibility = () => send({ type: 'visible', visible: inView && !document.hidden });
 
-  // Without the model the block would be a blank box with live copy and a dead
-  // Reset button, so take the whole section (and its landmark) out of the page.
-  // The zone's "Beyond the CV" divider goes with it; Writing follows directly.
+  // Without the model the block would show a static GR beside copy that invites
+  // damage and a dead Reset button, so take the whole section (and its landmark)
+  // out of the page. The zone's "Beyond the CV" divider stays; Writing follows it.
   function fail(reason: unknown): void {
     console.warn('NCA monogram disabled:', reason);
     worker?.terminate();
@@ -63,7 +63,8 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
       }
       ctx!.putImageData(new ImageData(msg.pixels, size, size), 0, 0);
       if (canvas!.hidden) {
-        // The static GR in the markup holds the spot (same box) until the model draws.
+        // The static GR in the markup holds the spot (same box) until the model's
+        // first frame, which the worker grows out of sight so it already looks the same.
         canvas!.hidden = false;
         fallback?.remove(); // (the `hidden` attribute does not hide an <svg>)
       }

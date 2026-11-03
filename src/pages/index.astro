@@ -83,6 +83,10 @@ const jsonLd = {
   twitterDescription="Making AI agent teams dependable in production, not just impressive in a demo."
   jsonLd={jsonLd}
 >
+  <Fragment slot="head">
+    {/* Without JS the GR monogram is a static picture: drop the copy and Reset button that invite damage. */}
+    <noscript><style>[data-nca-live]{display:none!important}</style></noscript>
+  </Fragment>
       <!-- HERO: who, what, how to reach me. Topology stays on the right. -->
       <section class="hero-section container">
         <div class="hero-grid">
@@ -586,15 +590,15 @@ const jsonLd = {
               ></canvas>
               <svg class="nca-canvas nca-fallback" viewBox="0 0 112 112" width="56" height="56" aria-hidden="true"><rect x="56" y="24" width="46" height="64" fill="#C8FF00"/><path fill="#0A0A0A" d="M28 82Q23 82 19 80Q15 77 12 73Q10 68 10 62V50Q10 40 15 35Q21 30 30 30Q39 30 44 35Q49 40 49 48V48H40V48Q40 45 39 43Q38 41 36 40Q34 38 30 38Q25 38 22 42Q19 45 19 50V62Q19 67 22 71Q25 74 30 74Q35 74 38 71Q40 68 40 64V63H28V55H49V81H41V76H39Q39 77 38 79Q37 80 34 81Q32 82 28 82ZM60 81V31H82Q86 31 90 33Q93 34 95 37Q97 40 97 44V45Q97 50 95 52Q93 55 90 57V58Q93 58 94 60Q96 62 96 65V81H86V66Q86 64 86 63Q85 62 83 62H69V81ZM69 54H81Q84 54 86 52Q88 50 88 47V46Q88 43 86 41Q84 40 81 40H69Z"/></svg>
               <span id="nca-label" class="visually-hidden">
-                <span class="lang-en">GR monogram grown by a neural cellular automaton. Press Enter or Space to take a bite out of it and watch it heal.</span>
-                <span class="lang-ru">Монограмма GR, выращенная нейронным клеточным автоматом. Нажмите Enter или пробел, чтобы откусить кусок, и посмотрите, как она заживёт.</span>
+                <span class="lang-en">GR monogram grown by a neural cellular automaton.<span data-nca-live> Press Enter or Space to take a bite out of it and watch it heal.</span></span>
+                <span class="lang-ru">Монограмма GR, выращенная нейронным клеточным автоматом.<span data-nca-live> Нажмите Enter или пробел, чтобы откусить кусок, и посмотрите, как она заживёт.</span></span>
               </span>
               <div>
-                <p id="nca-caption" class="nca-caption">
+                <p id="nca-caption">
                   <span class="lang-en">An 8,320-parameter neural cellular automaton, trained from scratch, running in your browser. Every pixel runs the same tiny network and only sees its neighbours. <span data-nca-live>Damage it: drag across the letters (or Tab + Enter).</span><span data-nca-paused hidden>Paused to save your data: on a faster connection this monogram grows and heals itself.</span></span>
                   <span class="lang-ru">Нейронный клеточный автомат на 8 320 параметров, обученный с нуля и работающий прямо в браузере. Каждый пиксель запускает одну и ту же крошечную сеть и видит только соседей. <span data-nca-live>Повредите его: проведите по буквам (или Tab + Enter).</span><span data-nca-paused hidden>На паузе, чтобы сэкономить трафик: на быстром соединении эта монограмма сама растёт и залечивается.</span></span>
                 </p>
-                <p class="nca-how">
+                <p class="fine-print">
                   <span class="lang-en">How it works: each cell holds 16 numbers, reads its 3×3 neighbourhood through Sobel filters and updates through one 128-unit hidden layer. Trained to grow from a single cell and to heal after cuts and bites, after <a class="text-link" href="https://distill.pub/2020/growing-ca/" target="_blank" rel="noopener noreferrer">Mordvintsev et al., Distill 2020 ↗</a></span>
                   <span class="lang-ru">Как это работает: в каждой клетке 16 чисел; она смотрит на соседей 3×3 через фильтры Собеля и обновляется через один скрытый слой на 128 нейронов. Обучен вырастать из одной клетки и залечивать порезы и укусы, по статье <a class="text-link" href="https://distill.pub/2020/growing-ca/" target="_blank" rel="noopener noreferrer">Mordvintsev et al., Distill 2020 ↗</a></span>
                 </p>
