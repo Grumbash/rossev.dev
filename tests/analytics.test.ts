@@ -77,6 +77,142 @@ describe('helper', () => {
   });
 });
 
+// A minimal fake DOM for initAnalytics: enough to dispatch clicks, toggles, pointer
+// moves and intersections the way the browser does, and record what reaches Umami.
+describe('runtime (initAnalytics)', () => {
+  const g = globalThis as any;
+  type L = { fn: (e: any) => void; capture: boolean };
+  let calls: unknown[][];
+  let docListeners: Record<string, L[]>;
+  let canvasListeners: Record<string, L[]>;
+  let attrs: Record<string, string>;
+  let observers: { options: any; cb: (entries: any[]) => void; targets: any[] }[];
+
+  const listen = (map: Record<string, L[]>) => (type: string, fn: any, opt?: any) =>
+    (map[type] ??= []).push({ fn, capture: opt === true || !!opt?.capture });
+  const tagged = (dataset: Record<string, string>) => {
+    const e: any = { dataset, closest: (sel: string) => (sel === '[data-track]' ? e : null) };
+    return e;
+  };
+  // Capture listeners, then the element's own onclick, then bubble listeners.
+  const dispatch = (type: string, event: any, onclick?: () => void) => {
+    for (const l of docListeners[type] ?? []) if (l.capture) l.fn(event);
+    onclick?.();
+    for (const l of docListeners[type] ?? []) if (!l.capture) l.fn(event);
+  };
+  const click = (target: any, onclick?: () => void, extra: Record<string, unknown> = {}) =>
+    dispatch('click', { type: 'click', target, button: 0, ...extra }, onclick);
+  const canvas = (type: string, e: Record<string, unknown>) => {
+    for (const l of canvasListeners[type] ?? []) l.fn({ type, ...e });
+  };
+
+  async function boot(search = '') {
+    calls = [];
+    docListeners = {};
+    canvasListeners = {};
+    attrs = { 'data-lang': 'en', 'data-theme': 'light' };
+    observers = [];
+    const canvasEl = { id: 'iso-arch-canvas', addEventListener: listen(canvasListeners) };
+    const sections: Record<string, any> = { experience: { id: 'experience' }, writing: { id: 'writing' }, contact: { id: 'contact' } };
+    g.window = { umami: { track: (...a: unknown[]) => calls.push(a) }, location: { search } };
+    g.location = g.window.location;
+    g.document = {
+      documentElement: { getAttribute: (k: string) => attrs[k] ?? null, setAttribute: (k: string, v: string) => (attrs[k] = v) },
+      addEventListener: listen(docListeners),
+      getElementById: (id: string) => (id === 'iso-arch-canvas' ? canvasEl : sections[id] ?? null),
+    };
+    g.window.addEventListener = g.document.addEventListener;
+    g.IntersectionObserver = class {
+      targets: any[] = [];
+      constructor(public cb: (entries: any[]) => void, public options: any = {}) {
+        observers.push(this as any);
+      }
+      observe(t: any) { this.targets.push(t); }
+      unobserve() {}
+      disconnect() {}
+    };
+    // Fresh module per boot so trackOnce state is per page view.
+    const mod = await import(`../src/scripts/analytics.ts?boot=${Math.random()}`);
+    mod.initAnalytics();
+  }
+  afterEach(() => {
+    for (const k of ['window', 'document', 'location', 'IntersectionObserver']) delete g[k];
+  });
+
+  test('theme_switch reports the theme after the toggle', async () => {
+    await boot();
+    click(tagged({ track: 'theme_switch' }), () => (attrs['data-theme'] = 'dark'));
+    expect(calls).toEqual([['theme_switch', { to: 'dark' }]]);
+  });
+
+  test('cta_book carries placement and the page language at click time', async () => {
+    await boot();
+    attrs['data-lang'] = 'ru';
+    click(tagged({ track: 'cta_book', trackPlacement: 'footer' }));
+    expect(calls).toEqual([['cta_book', { placement: 'footer', lang: 'ru' }]]);
+  });
+
+  test('middle-click on a tracked link counts; right-click does not', async () => {
+    await boot();
+    const cta = tagged({ track: 'cta_book', trackPlacement: 'hero' });
+    dispatch('auxclick', { type: 'auxclick', target: cta, button: 1 });
+    dispatch('auxclick', { type: 'auxclick', target: cta, button: 2 });
+    expect(calls).toEqual([['cta_book', { placement: 'hero', lang: 'en' }]]);
+  });
+
+  test('lang_switch is not sent when the language does not change', async () => {
+    await boot();
+    click(tagged({ track: 'lang_switch', trackTo: 'en' }), () => (attrs['data-lang'] = 'en'));
+    click(tagged({ track: 'lang_switch', trackTo: 'ru' }), () => (attrs['data-lang'] = 'ru'));
+    expect(calls).toEqual([['lang_switch', { to: 'ru' }]]);
+  });
+
+  test('case_open ignores the case opened by a ?case= deep link, counts later opens', async () => {
+    await boot('?case=sully');
+    const toggle = (id: string, open: boolean) =>
+      dispatch('toggle', { type: 'toggle', target: { id: `case-${id}`, open, classList: { contains: (c: string) => c === 'job-case' } } });
+    toggle('sully', true);
+    expect(calls).toEqual([]);
+    toggle('sully', false);
+    toggle('sully', true);
+    toggle('kingpin', true);
+    expect(calls).toEqual([['case_open', { id: 'sully' }], ['case_open', { id: 'kingpin' }]]);
+  });
+
+  test('section_view needs a real share of the section on screen, and fires once', async () => {
+    await boot();
+    expect(observers.length).toBe(1);
+    const { options, cb, targets } = observers[0];
+    const t = Array.isArray(options.threshold) ? Math.min(...options.threshold) : options.threshold ?? 0;
+    const shrinksViewport = /-\d+%/.test(options.rootMargin ?? '');
+    expect(t >= 0.2 || shrinksViewport).toBe(true);
+    expect(targets.map((x: any) => x.id).sort()).toEqual(['contact', 'experience', 'writing']);
+    const exp = targets.find((x: any) => x.id === 'experience');
+    cb([{ target: exp, isIntersecting: true, intersectionRatio: 0.5 }]);
+    cb([{ target: exp, isIntersecting: true, intersectionRatio: 0.5 }]);
+    expect(calls).toEqual([['section_view', { section: 'experience' }]]);
+  });
+
+  test('topology drag counts a real horizontal drag, not a tap or a vertical touch scroll', async () => {
+    await boot();
+    // tap
+    canvas('pointerdown', { clientX: 100, clientY: 100, pointerType: 'mouse' });
+    canvas('pointerup', { clientX: 100, clientY: 100, pointerType: 'mouse' });
+    // vertical page scroll on a phone
+    canvas('pointerdown', { clientX: 100, clientY: 100, pointerType: 'touch' });
+    canvas('pointermove', { clientX: 102, clientY: 160, pointerType: 'touch' });
+    canvas('pointerup', { clientX: 102, clientY: 160, pointerType: 'touch' });
+    expect(calls).toEqual([]);
+    // real drag, twice: sent once
+    for (let i = 0; i < 2; i++) {
+      canvas('pointerdown', { clientX: 100, clientY: 100, pointerType: 'mouse' });
+      canvas('pointermove', { clientX: 140, clientY: 104, pointerType: 'mouse' });
+      canvas('pointerup', { clientX: 140, clientY: 104, pointerType: 'mouse' });
+    }
+    expect(calls).toEqual([['topology_interact', { action: 'drag' }]]);
+  });
+});
+
 describe('built markup', () => {
   let html = '';
   let page: Tag[] = [];
