@@ -1,4 +1,5 @@
 import { ISO_DOMAINS, type TopologyNode } from '../data/topology';
+import { settleResidual, shouldKeepAnimating } from './iso-loop';
 
 declare global {
   interface Window {
@@ -105,6 +106,8 @@ export function initIsoArchitectureEngine(): void {
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Resizing wipes the canvas; an idle loop has to draw it again.
+    ensureLoopRunning();
   }
   resize();
   window.addEventListener('resize', resize);
@@ -400,6 +403,7 @@ export function initIsoArchitectureEngine(): void {
       targetPitch = Math.max(0.28, Math.min(0.86, targetPitch + dy * 0.0045));
       dragStartX = e.clientX;
       dragStartY = e.clientY;
+      ensureLoopRunning();
       return;
     }
 
@@ -425,6 +429,7 @@ export function initIsoArchitectureEngine(): void {
       hoveredNode = bestIdx;
       canvas.style.cursor = bestIdx >= 0 ? 'pointer' : 'grab';
       window.updateIsoHudText();
+      ensureLoopRunning();
     }
   });
 
@@ -449,6 +454,7 @@ export function initIsoArchitectureEngine(): void {
     isDragging = false;
     hoveredNode = -1;
     window.updateIsoHudText();
+    ensureLoopRunning();
   });
 
   // Keyboard Accessibility on 3D Canvas
@@ -1327,7 +1333,33 @@ export function initIsoArchitectureEngine(): void {
       });
     }
 
-    rafId = requestAnimationFrame(render);
+    const residual = settleResidual(
+      [
+        [camYaw, targetYaw],
+        [camPitch, targetPitch],
+        [camZoom, targetZoom],
+        [camFocusX, targetFocusX],
+        [camFocusY, targetFocusY],
+        [camFocusZ, targetFocusZ]
+      ],
+      nodeExplode.slice(0, nodes.length),
+      nodeFlash.slice(0, nodes.length),
+      lockedNode
+    );
+    if (
+      shouldKeepAnimating({
+        reducedMotion: prefersReducedMotion,
+        dragging: isDragging,
+        traceActive: traceWave.active,
+        faultActive: faultSim.active,
+        residual
+      })
+    ) {
+      rafId = requestAnimationFrame(render);
+    } else {
+      rafId = null;
+      lastFrameTs = null;
+    }
   }
 
   function ensureLoopRunning() {
