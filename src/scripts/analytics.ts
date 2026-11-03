@@ -16,7 +16,8 @@ export const EVENTS = {
   // LinkedIn profile link. placement: hero|writing|footer|reader
   linkedin_click: ['placement'],
   // A job's architecture case (<details class="job-case">) opened by the visitor (not the ?case= auto-open on load),
-  // including via the topology BLUEPRINT button, which also sends topology_interact{blueprint}. id: case study id
+  // including via the topology BLUEPRINT button (also sends topology_interact{blueprint}), the story's YAGNI case link
+  // (also topology_interact{case}) and the GR monogram bridge link (also nca_interact{case}). id: case study id
   case_open: ['id'],
   // Toolbox skill clicked to highlight jobs. skill: the skill name
   skill_click: ['skill'],
@@ -30,10 +31,12 @@ export const EVENTS = {
   // Writing filter tab. filter: all|ai|leadership|systems|delivery
   post_filter: ['filter'],
   // Topology used, once per action per page view.
-  // action: domain|fault|xray|reset|packet|stratum|step|blueprint, or drag (horizontal drag on the canvas)
+  // action: domain|fault|xray|reset|packet|stratum|step|blueprint (free play, behind Explore),
+  // drag (horizontal drag on the canvas), and the guided story:
+  // step2|step3|heal|case|play|explore (arrived at step 2/3, Break & heal, YAGNI case link, phone Play, Explore toggle)
   topology_interact: ['action'],
-  // GR monogram (neural cellular automaton) used, once per action per page view.
-  // action: drag (pointer erase) | key (Enter/Space bite) | reset
+  // nca_interact: GR monogram (neural cellular automaton) used, once per action per page view.
+  // action: drag (pointer erase) | key (Enter/Space bite) | reset | case (bridge link to the YAGNI case)
   nca_interact: ['action'],
   // Language switch to a different language. to: en|ru
   lang_switch: ['to'],

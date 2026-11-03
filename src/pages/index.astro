@@ -210,11 +210,73 @@ const jsonLd = {
                 <span class="lang-en">3D SYSTEM ARCHITECTURE TOPOLOGY</span>
                 <span class="lang-ru">3D-ТОПОЛОГИЯ АРХИТЕКТУРЫ СИСТЕМ</span>
               </span>
-              <span id="iso-trace-status">8 NODES · DRAG / ⌘+SCROLL / CLICK</span>
+              <span id="iso-trace-status">STEP 1/3</span>
             </div>
 
-            <!-- Top Controls: Domain Switcher & 3D Engine Modes -->
-            <div class="arch-tabs-bar">
+            {/* Guided story: 3 steps that end on the YAGNI case. All captions share one grid cell,
+                 so the panel is as tall as the longest one and switching steps moves nothing.
+                 DRAFT copy, not approved yet. */}
+            <div class="iso-story">
+              {/* Screen readers hear the current caption from here; the stacked captions below only swap visibility */}
+              <p class="visually-hidden" aria-live="polite" data-story-live></p>
+              <div class="iso-story-captions">
+                <p class="iso-story-caption is-current" data-story-step="1">
+                  <span class="lang-en">1 · A human approves the plan. Agents don't touch code until a person signs off.</span>
+                  <span class="lang-ru">1 · Человек утверждает план. Агенты не трогают код, пока человек не согласовал.</span>
+                </p>
+                <p class="iso-story-caption" data-story-step="2">
+                  <span class="lang-en">2 · Agents build in a sandbox. Builder writes code and tests, a separate judge reviews, everything runs isolated.</span>
+                  <span class="lang-ru">2 · Агенты строят в песочнице. Builder пишет код и тесты, отдельный судья проверяет, всё запускается изолированно.</span>
+                </p>
+                <p class="iso-story-caption" data-story-step="3">
+                  <span class="lang-en">3 · Break it. Inject a fault and watch the guard catch it.</span>
+                  <span class="lang-ru">3 · Сломайте. Внедрите сбой и посмотрите, как защита его поймает.</span>
+                </p>
+                <a
+                  class="iso-story-caption iso-story-case"
+                  data-story-case
+                  href="/?case=yagni#case-yagni"
+                  data-track="topology_interact"
+                  data-track-action="case"
+                >
+                  <span class="lang-en">This is what I built at YAGNI. See the breakdown →</span>
+                  <span class="lang-ru">Это я построил в YAGNI. Смотреть разбор →</span>
+                </a>
+              </div>
+              <div class="iso-story-controls">
+                <button type="button" class="mode-btn" data-story-prev disabled>
+                  <span aria-hidden="true">‹</span><span class="visually-hidden"><span class="lang-en">Previous step</span><span class="lang-ru">Предыдущий шаг</span></span>
+                </button>
+                <span class="iso-story-count" data-story-count>1/3</span>
+                <button type="button" class="mode-btn active" data-story-next>
+                  <span class="lang-en">Next ›</span><span class="lang-ru">Дальше ›</span>
+                </button>
+                <button
+                  type="button"
+                  class="mode-btn mode-btn-fault"
+                  data-story-break
+                  hidden
+                  data-track="topology_interact"
+                  data-track-action="heal"
+                >
+                  <span class="lang-en">Break & heal</span><span class="lang-ru">Сломать и починить</span>
+                </button>
+                <button
+                  type="button"
+                  class="mode-btn iso-story-explore"
+                  data-story-explore
+                  aria-expanded="false"
+                  aria-controls="iso-explore"
+                  data-track="topology_interact"
+                  data-track-action="explore"
+                >
+                  <span class="lang-en">Explore</span><span class="lang-ru">Исследовать</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Free play (behind Explore): Domain Switcher & 3D Engine Modes */}
+            <div class="arch-tabs-bar" id="iso-explore" hidden>
               <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                 <button
                   type="button"
@@ -292,9 +354,10 @@ const jsonLd = {
                   <span class="lang-en">TRACE</span><span class="lang-ru">ТРАССИРОВКА</span>
                 </button>
               </div>
+              <span class="iso-hint-fine">DRAG · CTRL/⌘+SCROLL · CLICK A NODE</span>
             </div>
 
-            <!-- Deep 3D Spatial Canvas (3 Vertical Strata + Exploded Node Inspector) -->
+            {/* Deep 3D Spatial Canvas (3 Vertical Strata + Exploded Node Inspector) */}
             <div class="iso-canvas-container" id="iso-canvas-wrap">
               <canvas
                 id="iso-arch-canvas"
@@ -303,7 +366,18 @@ const jsonLd = {
                 aria-label="Interactive 3D System Architecture Topology. Use Left and Right arrow keys to cycle nodes, Enter to explode node layers, F to simulate fault."
               ></canvas>
 
-              <!-- Vertical Depth Deck Slicer (Top-Right) -->
+              {/* Phones: the canvas is a still poster until this is pressed (no rAF loop before it) */}
+              <button
+                type="button"
+                class="mode-btn active iso-play"
+                data-story-play
+                data-track="topology_interact"
+                data-track-action="play"
+              >
+                <span class="lang-en">▶ Play</span><span class="lang-ru">▶ Смотреть</span>
+              </button>
+
+              {/* Vertical Depth Deck Slicer (Top-Right) */}
               <div class="iso-stratum-rail">
                 <button
                   type="button"
@@ -347,7 +421,7 @@ const jsonLd = {
                 </button>
               </div>
 
-              <!-- Interactive Node Dossier Overlay (Appears when a 3D building is clicked/exploded) -->
+              {/* Interactive Node Dossier Overlay (Appears when a 3D building is clicked/exploded) */}
               <div class="iso-inspector-card" id="iso-inspector-card">
                 <div class="iso-insp-head">
                   <span class="iso-insp-title" id="iso-insp-title">02 · AGENT CORE</span>
@@ -370,7 +444,7 @@ const jsonLd = {
               </div>
             </div>
 
-            <!-- Clean Bottom Specification Bar -->
+            {/* Clean Bottom Specification Bar */}
             <div class="iso-bottom-hud">
               <div class="iso-layer-spec">
                 <span class="iso-spec-pill" id="iso-hud-badge">02 · AGENT CORE</span>
@@ -601,6 +675,10 @@ const jsonLd = {
                 <p id="nca-caption">
                   <span class="lang-en">An 8,320-parameter neural cellular automaton, trained from scratch, running in your browser. Every pixel runs the same tiny network and only sees its neighbours. <span data-nca-live>Damage it: drag across the letters (or Tab + Enter).</span><span data-nca-paused hidden>Paused to save your data: on a faster connection this monogram grows and heals itself.</span></span>
                   <span class="lang-ru">Нейронный клеточный автомат на 8 320 параметров, обученный с нуля и работающий прямо в браузере. Каждый пиксель запускает одну и ту же крошечную сеть и видит только соседей. <span data-nca-live>Повредите его: проведите по буквам (или Tab + Enter).</span><span data-nca-paused hidden>На паузе, чтобы сэкономить трафик: на быстром соединении эта монограмма сама растёт и залечивается.</span></span>
+                </p>
+                <p class="nca-bridge">
+                  <span class="lang-en">Same idea I apply to production: <a class="text-link" href="/?case=yagni#case-yagni" data-track="nca_interact" data-track-action="case">systems that notice damage and repair themselves →</a></span>
+                  <span class="lang-ru">Тот же принцип я применяю в продакшене: <a class="text-link" href="/?case=yagni#case-yagni" data-track="nca_interact" data-track-action="case">системы, которые замечают поломку и чинят себя сами →</a></span>
                 </p>
                 <p class="fine-print">
                   <span class="lang-en">How it works: each cell holds 16 numbers, reads its 3×3 neighbourhood through Sobel filters and updates through one 128-unit hidden layer. Trained to grow from a single cell and to heal after cuts and bites, after <a class="text-link" href="https://distill.pub/2020/growing-ca/" target="_blank" rel="noopener noreferrer">Mordvintsev et al., Distill 2020 ↗</a></span>
@@ -867,7 +945,11 @@ const jsonLd = {
     <!-- Bundled TypeScript 3D Multi-Stratum Topology Engine -->
     <script>
       import { initIsoArchitectureEngine } from '../scripts/iso-engine';
-      document.addEventListener('DOMContentLoaded', initIsoArchitectureEngine);
+      import { initTopologyStory } from '../scripts/topology-story-dom';
+      document.addEventListener('DOMContentLoaded', () => {
+        initIsoArchitectureEngine();
+        initTopologyStory();
+      });
     </script>
     {/* GR monogram: a tiny loader; the model, worker and their CSS load near the block */}
     <script>
