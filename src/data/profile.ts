@@ -81,6 +81,11 @@ export const PROFILE = {
     { en: 'Russian · native', ru: 'Русский · родной' }
   ],
   timezone: 'UTC+4',
+  // One third-person sentence: who he is, both spellings. Same text opens /llms.txt.
+  summaryThirdPerson: {
+    en: 'Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in Tbilisi, building production AI agent teams; previously Staff Harness Engineer at Sully.ai; 8+ years in engineering; medical degree.',
+    ru: 'Глеб Росев (латиницей также Rossev) — Founding Engineer в YAGNI (yagni.app), Тбилиси: строит команды AI-агентов для продакшена; ранее — Staff Harness Engineer в Sully.ai; 8+ лет в разработке; медицинское образование.'
+  },
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
     en: 'I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus a medical degree.',
@@ -98,7 +103,7 @@ export const PROFILE = {
     },
     {
       value: '-80%',
-      label: { en: 'Triage Time (Kingpin)', ru: 'Времени триажа (Kingpin)' },
+      label: { en: 'Feedback Analysis Time (Kingpin)', ru: 'Время анализа фидбека (Kingpin)' },
       color: 'var(--cyan)'
     },
     {
@@ -131,7 +136,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Именованные AI-агенты (разработчик, ревьюер, PM), работающие по утверждённому человеком плану с полным аудитом шагов, песочницей и бенчмарками.'
     },
     metrics: [
-      { value: '28 PRs', label: { en: 'Merged in the first 8 days', ru: 'Смержено за первые 8 дней' } },
+      { value: '28 PRs', label: { en: 'Merged in the first week, almost all built by agents', ru: 'Смержено за первую неделю, почти все собрали агенты' } },
       { value: '89%', label: { en: 'Of my PRs written by agents', ru: 'Моих PR написали агенты' } }
     ],
     stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Query Guards', 'Self-Healing Syncs', 'Risk Radar'],
@@ -232,11 +237,11 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Мультитенантная B2B-платформа и LLM-конвейер аналитики'
     },
     summary: {
-      en: 'Led 12 engineers shipping multi-tenant catalog/order workflows, ERP/CRM syncs, canary releases, and an LLM pipeline cutting triage time by 80%.',
+      en: 'Led 12 engineers shipping multi-tenant catalog/order workflows, ERP/CRM syncs, canary releases, and an LLM pipeline cutting feedback analysis time by 80%.',
       ru: 'Команда до 12 человек: мультитенантные заказы, синхронизация ERP/CRM, канареечные релизы и LLM-аналитика (-80% времени).'
     },
     metrics: [
-      { value: '-80%', label: { en: 'Analysis Time', ru: 'Время триажа' } },
+      { value: '-80%', label: { en: 'Feedback analysis time', ru: 'Время анализа фидбека' } },
       { value: '12 ENG', label: { en: 'Team Led', ru: 'Команда' } },
       { value: 'Canary', label: { en: 'Trunk Delivery', ru: 'Деплой' } }
     ],
@@ -253,7 +258,7 @@ export const CASE_STUDIES: CaseStudy[] = [
         topology: [
           '[Multi-Tenant B2B Portal] ──► [Feature-Flagged API Gateway / NestJS]',
           '[Order & Catalog Core] ◄──► [Async ERP / CRM Sync Workers + Redis]',
-          '[Sales & CS Inputs] ──► [LLM Insight Pipeline] ──► [-80% Triage Time]'
+          '[Sales & CS Inputs] ──► [LLM Insight Pipeline] ──► [-80% Feedback Analysis Time]'
         ]
       },
       ru: {
@@ -411,7 +416,7 @@ export const EXPERIENCE: ExperienceItem[] = [
       ru: 'AI-платформа и мультитенантный B2B SaaS для дистрибуции.'
     },
     color: 'var(--yellow)',
-    metrics: ['12 Engineers Led', '-80% Triage Time', 'Canary Releases'],
+    metrics: ['12 Engineers Led', '-80% Feedback Analysis Time', 'Canary Releases'],
     url: 'https://kingpin.ai',
     caseId: 'kingpin',
     stack: ['TypeScript', 'NestJS', 'React / Next.js', 'PostgreSQL', 'Redis', 'OpenAI / RAG', 'Grafana / Loki'],
@@ -424,7 +429,7 @@ export const EXPERIENCE: ExperienceItem[] = [
       ru: [
         'Руководил командой до 12 человек, совмещая управление поставкой с работой в коде и архитектуре.',
         'Запустил мультитенантные заказы с ERP/CRM интеграциями, фича-флагами и мониторингом в Grafana.',
-        'Создал LLM-пайплайн анализа фидбека от Sales и CS, ускоривший продуктовый триаж на 80%.'
+        'Создал LLM-пайплайн для фидбека от Sales и CS, сокративший время его анализа на 80%.'
       ]
     }
   },
