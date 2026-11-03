@@ -165,8 +165,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Именованные AI-агенты (разработчик, ревьюер, PM), работающие по утверждённому человеком плану с полным аудитом шагов, песочницей и бенчмарками.'
     },
     metrics: [
-      { value: '28 PRs', label: { en: 'Merged in the first week: 98% of the code by agents, 97% of the planning by me', ru: 'Смержено за первую неделю: 98% кода написали агенты, 97% планирования — моё' } },
-      { value: '89%', label: { en: 'Of my PRs written by agents', ru: 'Моих PR написали агенты' } }
+      { value: '28 PRs', label: { en: 'Merged in the first week: 98% of the code by agents, 97% of the planning by me', ru: 'Смержено за первую неделю: 98% кода написали агенты, 97% планирования — моё' } }
     ],
     stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Query Guards', 'Self-Healing Syncs', 'Risk Radar'],
     architecture: {

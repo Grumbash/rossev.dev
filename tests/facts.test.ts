@@ -24,7 +24,15 @@ const byType = (t: string) => graph.find((n) => n['@type'] === t);
 const visibleEn = () =>
   html
     .replace(/<script[\s\S]*?<\/script>/g, '')
+    .replace(/<style[\s\S]*?<\/style>/g, '')
     .replace(/<span class="lang-ru">[\s\S]*?<\/span>/g, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ');
+const visibleRu = () =>
+  html
+    .replace(/<script[\s\S]*?<\/script>/g, '')
+    .replace(/<style[\s\S]*?<\/style>/g, '')
+    .replace(/<span class="lang-en">[\s\S]*?<\/span>/g, '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ');
 
@@ -66,5 +74,15 @@ describe('facts agree everywhere', () => {
   test('the YAGNI PR count is framed as the first week, with who wrote the code and who planned it', () => {
     expect(visibleEn()).toMatch(/28 PRs\s*Merged in the first week: 98% of the code by agents, 97% of the planning by me/);
     expect(visibleEn()).not.toMatch(/first 8 days/);
+  });
+
+  test('the YAGNI card claims one agent share, 98% of the code, and drops the unprovable 89% of PRs', () => {
+    for (const text of [visibleEn(), visibleRu(), llms]) {
+      expect(text).not.toMatch(/89%/);
+      expect(text).not.toMatch(/Of my PRs written by agents|Моих PR написали агенты/i);
+    }
+    const shares = [...visibleEn().matchAll(/(\d+)% of the code/g), ...visibleRu().matchAll(/(\d+)% кода/g)].map((m) => m[1]);
+    expect(shares.length).toBeGreaterThan(0);
+    expect(new Set(shares)).toEqual(new Set(['98']));
   });
 });
