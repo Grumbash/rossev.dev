@@ -19,7 +19,10 @@ import type { BlogPost } from '../../src/data/profile';
 import { callOpenRouter, redact, type Msg } from './openrouter';
 import { sanitize } from './watchdog';
 
-export const DEFAULT_MODEL = 'deepseek/deepseek-v4.1-flash';
+// Picked in a bake-off on two real posts (sync prompt, schema, validator): Haiku 5.5 wrote the most
+// natural Russian at ~$0.001 a post; GLM-5.3 Flash was nearly as good at half that. OpenRouter
+// falls back to the second on an error, rate limit or timeout. Comma-separated.
+export const DEFAULT_MODEL = 'anthropic/claude-haiku-5.5,z-ai/glm-5.3-flash';
 export const DEFAULT_SINCE = '2026-10-13';
 export const POSTS_JSON = 'src/data/posts.json';
 // LinkedIn activity ids Gleb decided not to put on the site: closing the bot PR alone would bring them back daily.

@@ -10,6 +10,7 @@ import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { BLOG_POSTS, type BlogPost } from '../src/data/profile';
 import {
+  DEFAULT_MODEL,
   activityId,
   buildEntry,
   checkEntry,
@@ -390,7 +391,8 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     expect(body).toContain('/writing/velocity-is-a-waiting-problem/');
     expect(body).toContain(`urn:li:share:${NEW_ID}`);
     expect(body).toMatch(/\$0\.0008/);
-    expect(body).not.toMatch(/co-authored-by|generated with|claude|🤖/i);
+    // No attribution lines; naming the model that wrote the draft is a fact for the reviewer, not attribution.
+    expect(body).not.toMatch(/co-authored-by|generated with|🤖/i);
   });
 
   test('nothing new: no model call, posts.json untouched, added=0, no PR body', async () => {
@@ -449,6 +451,32 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     const log = h.logs.join('\n');
     expect(log).not.toContain('sk_publora_test_secret');
     expect(log).not.toContain('sk-or-test-secret');
+  });
+});
+
+// --- the model --------------------------------------------------------------------------------------
+
+describe('the model picked in the bake-off', () => {
+  test('Haiku 5.5 first, GLM-5.3 Flash as the OpenRouter fallback; the call sends both', async () => {
+    expect(DEFAULT_MODEL).toBe('anthropic/claude-haiku-5.5,z-ai/glm-5.3-flash');
+    const h = harness();
+    await run(h.env, h.deps);
+    for (const c of toModel(h)) {
+      expect(c.body.model).toBe('anthropic/claude-haiku-5.5');
+      expect(c.body.models).toEqual(['anthropic/claude-haiku-5.5', 'z-ai/glm-5.3-flash']);
+    }
+  });
+
+  test('the one-off bake-off is gone', () => {
+    expect(existsSync('scripts/ci/publora-bakeoff.ts')).toBe(false);
+    expect(existsSync('.github/workflows/publora-bakeoff.yml')).toBe(false);
+  });
+
+  test('README states the model chain and the measured cost per post', () => {
+    const readme = readFileSync('README.md', 'utf8');
+    expect(readme).toContain('anthropic/claude-haiku-5.5,z-ai/glm-5.3-flash');
+    expect(readme).toMatch(/\$0\.001 per post/);
+    expect(readme).not.toContain('<!-- cost -->');
   });
 });
 
