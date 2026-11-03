@@ -46,8 +46,9 @@ const text = (html: string) =>
   decode(html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ');
 
 // LinkedIn activity ids are snowflakes: the top bits are the ms timestamp of publication.
+// Vanity urls carry it as share-<id>; feed urls of synced posts as urn:li:share:<id>.
 const linkedinDate = (url: string) => {
-  const id = url.match(/(?:share|ugcPost|activity)-(\d{15,})/)?.[1];
+  const id = url.match(/(?:share|ugcPost|activity)[-:](\d{15,})/)?.[1];
   return id ? new Date(Number(BigInt(id) >> 22n)).toISOString().slice(0, 10) : undefined;
 };
 
@@ -234,9 +235,10 @@ describe('old ?post= links', () => {
     expect(home).toMatch(/post-\\d\+/);
   });
 
-  test('vercel 301-redirects each /?post=<id> to its page, matching the id exactly', () => {
+  // Only post-1..9 ever had ?post= links; posts added later (the Publora sync) never did.
+  test('vercel 301-redirects each legacy /?post=<id> to its page, matching the id exactly', () => {
     const cfg = JSON.parse(read('vercel.json'));
-    for (const p of BLOG_POSTS) {
+    for (const p of BLOG_POSTS.filter((p) => Number(p.id.replace('post-', '')) <= 9)) {
       const r = (cfg.redirects ?? []).find(
         (x: any) => x.source === '/' && x.has?.some((h: any) => h.type === 'query' && h.key === 'post' && h.value === `^${p.id}$`),
       );
