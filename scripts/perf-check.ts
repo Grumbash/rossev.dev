@@ -93,8 +93,8 @@ export function evaluateBytes(distDir: string, b: ByteBudgets): Check[] {
   out.push(check('preloaded-fonts', fontBytes, b.preloadedFonts, 'B', fonts));
   out.push(check('preloaded-font-count', fonts.length, b.preloadedFontCount, 'files', fonts));
 
-  // The writing index and post pages share the home page's HTML budget, one check per page
-  // (after the index.html checks).
+  // The writing index, post pages and /how-its-built/ share the home page's HTML budget, one check
+  // per page (after the index.html checks).
   const writingDir = join(distDir, 'writing');
   const writingIndex = existsSync(join(writingDir, 'index.html')) ? ['writing/index.html'] : [];
   const posts = existsSync(writingDir)
@@ -103,7 +103,8 @@ export function evaluateBytes(distDir: string, b: ByteBudgets): Check[] {
         .map((d) => `writing/${d.name}/index.html`)
         .sort()
     : [];
-  for (const p of [...writingIndex, ...posts]) out.push(check('html-gzip', gz(readFileSync(join(distDir, p))), b.htmlGzip, 'B', [p]));
+  const buildStory = existsSync(join(distDir, 'how-its-built', 'index.html')) ? ['how-its-built/index.html'] : [];
+  for (const p of [...writingIndex, ...posts, ...buildStory]) out.push(check('html-gzip', gz(readFileSync(join(distDir, p))), b.htmlGzip, 'B', [p]));
 
   return out;
 }
