@@ -1197,6 +1197,85 @@ html[data-theme="dark"] .zone-beyond {
   --shadow: #0A0A0A;
 }
 
+/* Neural cellular automaton GR monogram, top of the "Beyond the CV" zone.
+   It has its own section; the two sections together keep the spacing of one. */
+.nca-section {
+  padding-bottom: 0;
+}
+
+.nca-section + .section-block {
+  padding-top: 0;
+}
+
+.nca-block {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 48px;
+}
+
+.nca-block[hidden] {
+  display: none;
+}
+
+.nca-canvas {
+  flex: none;
+  /* 56 cells at 4 px each keep the upscale crisp; the border sits outside that. */
+  box-sizing: content-box;
+  width: 224px;
+  height: 224px;
+  image-rendering: pixelated;
+  /* The monogram is black with a lime block: it sits on the light page colour in both themes. */
+  background: #F4F0EA;
+  border: 2px solid var(--border);
+  cursor: crosshair;
+  /* Vertical swipes still scroll the page; taps and horizontal drags erase. */
+  touch-action: pan-y;
+}
+
+.nca-canvas:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.nca-copy {
+  max-width: 560px;
+}
+
+.nca-caption {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.nca-how {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  margin-bottom: 16px;
+}
+
+@media (max-width: 680px) {
+  .nca-block {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .zone-divider {
   font-family: var(--font-headline);
   font-size: clamp(2.2rem, 6vw, 4rem);

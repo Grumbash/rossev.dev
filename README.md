@@ -8,6 +8,8 @@ Everything about me lives in one file, `src/data/profile.ts`. The site, the PDF 
 
 Built in two evenings with Gemini Argon. Astro 5, TypeScript, HTMX for the partials, a small hand-written canvas engine for the 3D topology (`src/scripts/iso-engine.ts`). Hosted on Vercel.
 
+The GR monogram at the top of "Beyond the CV" is a neural cellular automaton ([Mordvintsev et al., 2020](https://distill.pub/2020/growing-ca/)) trained from scratch by `scripts/nca/train.py` (PyTorch, run it in a throwaway venv; see the header) and run in a Web Worker by `src/scripts/nca/`. `bun test tests/nca.test.ts` checks the shipped weights still grow and heal.
+
 ## Run it
 
 ```bash
