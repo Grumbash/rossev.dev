@@ -1,31 +1,30 @@
-// Global helpers every page's markup calls from onclick: language, theme, URL params, clipboard.
-// The no-flash theme/language bootstrap stays inline in Base.astro's <head>; this runs as a module.
+// Global helpers every page's markup calls from onclick: theme, URL params, clipboard; and the
+// language links, which carry the current ?query and #anchor over to the other locale's page.
+// The no-flash theme bootstrap stays inline in Base.astro's <head>; this runs as a module.
 declare global {
   interface Window {
-    setSiteLang: (lang: 'en' | 'ru') => void;
     toggleSiteTheme: () => void;
     setUrlParam: (key: string, val: string | null | undefined) => void;
     copyToClipboard: (text: string, label?: string) => void;
   }
 }
 
-const syncLangButtons = (lang: string) => {
-  document.getElementById('btn-lang-en')?.classList.toggle('active-lang', lang === 'en');
-  document.getElementById('btn-lang-ru')?.classList.toggle('active-lang', lang === 'ru');
-};
+// The other locale's path plus where the visitor is on this page: ?case=yagni, #experience.
+export const langSwitchHref = (path: string, search: string, hash: string) => path + search + hash;
 
 export function initSite() {
   const root = document.documentElement;
 
-  window.setSiteLang = (lang) => {
-    root.setAttribute('data-lang', lang);
-    root.setAttribute('lang', lang);
-    try {
-      localStorage.setItem('rosev_lang', lang);
-    } catch {}
-    syncLangButtons(lang);
-    window.updateIsoHudText?.();
+  // Capture phase: the href is updated before the browser follows it (click, middle-click, keyboard).
+  const carry = (e: Event) => {
+    const a = (e.target as Element | null)?.closest?.('a[data-lang-switch]') as HTMLAnchorElement | null;
+    if (!a) return;
+    const path = a.dataset.path ?? a.getAttribute('href')!.split(/[?#]/)[0];
+    a.dataset.path = path;
+    a.setAttribute('href', langSwitchHref(path, window.location.search, window.location.hash));
   };
+  document.addEventListener('click', carry, true);
+  document.addEventListener('auxclick', carry, true);
 
   window.toggleSiteTheme = () => {
     const next = (root.getAttribute('data-theme') || 'light') === 'light' ? 'dark' : 'light';
@@ -46,14 +45,11 @@ export function initSite() {
   };
 
   window.copyToClipboard = (text, label) => {
-    const ru = root.getAttribute('data-lang') === 'ru';
     navigator.clipboard?.writeText(text).catch(() => {});
     const toast = document.getElementById('brutal-toast');
     if (!toast) return;
-    toast.textContent = (ru ? 'Скопировано: ' : 'Copied: ') + (label || text);
+    toast.textContent = (toast.dataset.copied ?? 'Copied: ') + (label || text);
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2400);
   };
-
-  syncLangButtons(root.getAttribute('data-lang') || 'en');
 }

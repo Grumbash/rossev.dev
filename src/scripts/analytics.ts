@@ -126,7 +126,7 @@ export function initAnalytics(): void {
 
   // Capture phase runs before the element's onclick, so this is the language before the click.
   let langBefore: string | null = null;
-  document.addEventListener('click', () => (langBefore = root.getAttribute('data-lang')), true);
+  document.addEventListener('click', () => (langBefore = root.getAttribute('lang')), true);
 
   // Bubble phase on document: runs after the element's own onclick handler.
   const onClick = (e: Event) => {
@@ -135,7 +135,7 @@ export function initAnalytics(): void {
     if (!ev) return;
     // EN while already on EN is not a switch.
     if (ev.name === 'lang_switch' && ev.props?.to === langBefore) return;
-    if (ev.name === 'cta_book') track(ev.name, { ...ev.props, lang: root.getAttribute('data-lang') || 'en' });
+    if (ev.name === 'cta_book') track(ev.name, { ...ev.props, lang: root.getAttribute('lang') || 'en' });
     else if (ev.name === 'theme_switch') track(ev.name, { to: root.getAttribute('data-theme') || 'light' });
     else if (ev.name === 'topology_interact' || ev.name === 'nca_interact') trackOnce(ev.name, ev.props);
     else track(ev.name, ev.props);

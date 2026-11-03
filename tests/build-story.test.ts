@@ -204,10 +204,11 @@ describe(`built ${PATH}`, () => {
     expect(meta('og:url')).toBe(`${SITE}${PATH}`);
   });
 
-  test('speaks English and Russian', () => {
-    const h1 = html.match(/<h1[\s\S]*?<\/h1>/)?.[0] ?? '';
-    expect(h1).toMatch(/class="lang-en"/);
-    expect(h1.match(/class="lang-ru"[^>]*>([\s\S]*?)<\/span>/)?.[1] ?? '').toMatch(CYRILLIC);
+  test('speaks English and Russian (here and on /ru/)', () => {
+    const h1 = (page: string) => text(page.match(/<h1[\s\S]*?<\/h1>/)?.[0] ?? '');
+    expect(h1(html)).toMatch(/built/i);
+    expect(h1(html)).not.toMatch(CYRILLIC);
+    expect(h1(read(`dist/ru${PATH}index.html`))).toMatch(CYRILLIC);
   });
 
   test('one card per PR in the data, each linking to its real PR and its red test', () => {
@@ -222,13 +223,20 @@ describe(`built ${PATH}`, () => {
       if (p.redTest) expect(hrefs(c)).toContain(p.redTest.url);
       const t = text(c);
       expect(t).toContain(p.visitorChange.en);
-      expect(t).toContain(p.visitorChange.ru);
       expect(t).toContain(p.humanDecision.en);
       for (const f of p.findings) {
         expect(t).toContain(f.en);
         expect(hrefs(c)).toContain(f.ref);
       }
       if (!p.redTest) expect(t).toContain(p.preLoop.en);
+    }
+  });
+
+  test('the RU page carries the same cards in Russian', () => {
+    const ru = text(read(`dist/ru${PATH}index.html`));
+    for (const p of story.prs) {
+      expect(ru).toContain(p.visitorChange.ru);
+      expect(ru).toContain(p.humanDecision.ru);
     }
   });
 

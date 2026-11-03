@@ -9,6 +9,15 @@
           "value": "noindex"
         }
       ]
+    },
+    {
+      "source": "/ru/partials/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
     }
   ],
   "redirects": [

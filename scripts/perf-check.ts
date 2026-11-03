@@ -94,17 +94,22 @@ export function evaluateBytes(distDir: string, b: ByteBudgets): Check[] {
   out.push(check('preloaded-font-count', fonts.length, b.preloadedFontCount, 'files', fonts));
 
   // The writing index, post pages and /how-its-built/ share the home page's HTML budget, one check
-  // per page (after the index.html checks).
-  const writingDir = join(distDir, 'writing');
-  const writingIndex = existsSync(join(writingDir, 'index.html')) ? ['writing/index.html'] : [];
-  const posts = existsSync(writingDir)
-    ? readdirSync(writingDir, { withFileTypes: true })
-        .filter((d) => d.isDirectory() && existsSync(join(writingDir, d.name, 'index.html')))
-        .map((d) => `writing/${d.name}/index.html`)
-        .sort()
-    : [];
-  const buildStory = existsSync(join(distDir, 'how-its-built', 'index.html')) ? ['how-its-built/index.html'] : [];
-  for (const p of [...writingIndex, ...posts, ...buildStory]) out.push(check('html-gzip', gz(readFileSync(join(distDir, p))), b.htmlGzip, 'B', [p]));
+  // per page (after the index.html checks); so does each page's other-locale copy under ru/.
+  const pages: string[] = [];
+  for (const prefix of ['', 'ru/']) {
+    if (prefix && existsSync(join(distDir, prefix, 'index.html'))) pages.push(`${prefix}index.html`);
+    const writingDir = join(distDir, prefix, 'writing');
+    if (existsSync(join(writingDir, 'index.html'))) pages.push(`${prefix}writing/index.html`);
+    if (existsSync(writingDir))
+      pages.push(
+        ...readdirSync(writingDir, { withFileTypes: true })
+          .filter((d) => d.isDirectory() && existsSync(join(writingDir, d.name, 'index.html')))
+          .map((d) => `${prefix}writing/${d.name}/index.html`)
+          .sort(),
+      );
+    if (existsSync(join(distDir, prefix, 'how-its-built', 'index.html'))) pages.push(`${prefix}how-its-built/index.html`);
+  }
+  for (const p of pages) out.push(check('html-gzip', gz(readFileSync(join(distDir, p))), b.htmlGzip, 'B', [p]));
 
   return out;
 }

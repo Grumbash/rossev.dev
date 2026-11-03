@@ -3,16 +3,19 @@
 // and the post page. The footer is the next step: next post, share, follow, one soft CTA.
 import { BLOG_POSTS, PROFILE, fullPostLink, linkedinLabel, postPath, type BlogPost } from '../data/profile';
 import { calUrl } from '../scripts/analytics';
+import { SITE, localePath, t, type Locale } from '../i18n';
 
 interface Props {
   post: BlogPost;
+  lang: Locale;
   // Inline reader on home: "Next" swaps the next brief into the same slot instead of navigating.
   inline?: boolean;
 }
 
-const { post, inline = false } = Astro.props;
+const { post, lang, inline = false } = Astro.props;
+const d = t(lang).reader;
 const next = BLOG_POSTS[(BLOG_POSTS.indexOf(post) + 1) % BLOG_POSTS.length];
-const pageUrl = new URL(postPath(post), Astro.site ?? 'https://rossev.dev').toString();
+const pageUrl = new URL(localePath(lang, postPath(post)), SITE).toString();
 const linkedin = linkedinLabel(post);
 const fullPost = fullPostLink(post, inline);
 const paragraphs = (s: string) => s.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
@@ -21,7 +24,7 @@ const paragraphs = (s: string) => s.split(/\n\s*\n/).map((p) => p.trim()).filter
 // Either way moving on is a post_open.
 const nextInline = inline
   ? {
-      'hx-get': `/partials/post-${next.id}`,
+      'hx-get': localePath(lang, `/partials/post-${next.id}`),
       'hx-trigger': 'open-brief',
       'hx-target': '#post-reader-slot',
       'hx-swap': 'innerHTML transition:true',
@@ -31,36 +34,24 @@ const nextInline = inline
 ---
 
 <p style="font-family: var(--font-mono); font-size: 0.88rem; padding: 10px 14px; background: #12151E; color: #C8FF00; border-left: 4px solid #C8FF00; margin-bottom: 16px;">
-  “<span class="lang-en">{post.brief.quote.en}</span><span class="lang-ru">{post.brief.quote.ru}</span>”
+  “{post.brief.quote[lang]}”
 </p>
 
-<div class="lang-en">
-  <ul class="exp-bullets" style="margin-top: 8px; margin-bottom: 18px;">
-    {post.brief.bullets.en.map((b) => (
-      <li>{b}</li>
-    ))}
-  </ul>
-</div>
-
-<div class="lang-ru">
-  <ul class="exp-bullets" style="margin-top: 8px; margin-bottom: 18px;">
-    {post.brief.bullets.ru.map((b) => (
-      <li>{b}</li>
-    ))}
-  </ul>
-</div>
+<ul class="exp-bullets" style="margin-top: 8px; margin-bottom: 18px;">
+  {post.brief.bullets[lang].map((b) => (
+    <li>{b}</li>
+  ))}
+</ul>
 
 {!inline && post.body && (
   <div class="post-body" style="margin-bottom: 18px; line-height: 1.65;">
-    <div class="lang-en">{paragraphs(post.body.en).map((p) => <p style="margin-bottom: 12px;">{p}</p>)}</div>
-    <div class="lang-ru">{paragraphs(post.body.ru).map((p) => <p style="margin-bottom: 12px;">{p}</p>)}</div>
+    {paragraphs(post.body[lang]).map((p) => <p style="margin-bottom: 12px;">{p}</p>)}
   </div>
 )}
 
 {fullPost && (
-  <a href={fullPost.href} class="brutal-btn" style="display: inline-flex; margin-bottom: 18px; padding: 8px 14px; font-size: 0.78rem;" data-track="post_open" data-track-id={post.id}>
-    <span class="lang-en">{fullPost.en}</span>
-    <span class="lang-ru">{fullPost.ru}</span>
+  <a href={localePath(lang, fullPost.href)} class="brutal-btn" style="display: inline-flex; margin-bottom: 18px; padding: 8px 14px; font-size: 0.78rem;" data-track="post_open" data-track-id={post.id}>
+    {fullPost[lang]}
   </a>
 )}
 
@@ -79,18 +70,14 @@ const nextInline = inline
     class="brutal-btn brutal-btn-lime"
     style="padding: 8px 14px; font-size: 0.78rem;"
   >
-    <span class="lang-en">{linkedin.en}</span>
-    <span class="lang-ru">{linkedin.ru}</span>
+    {linkedin[lang]}
   </a>
 </div>
 
 <!-- Reader footer: where to go after the brief -->
 <div class="reader-footer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 2px dashed var(--border);">
-  <a href={postPath(next)} class="brutal-btn" style="justify-content: space-between; text-transform: none;" data-track="post_open" data-track-id={next.id} {...nextInline}>
-    <span>
-      <span class="lang-en">NEXT: {next.title.en}</span>
-      <span class="lang-ru">ДАЛЕЕ: {next.title.ru}</span>
-    </span>
+  <a href={localePath(lang, postPath(next))} class="brutal-btn" style="justify-content: space-between; text-transform: none;" data-track="post_open" data-track-id={next.id} {...nextInline}>
+    <span>{d.next} {next.title[lang]}</span>
     <span aria-hidden="true">→</span>
   </a>
 
@@ -101,8 +88,7 @@ const nextInline = inline
       data-url={pageUrl}
       onclick="window.copyToClipboard && window.copyToClipboard(this.dataset.url)"
     >
-      <span class="lang-en">COPY LINK</span>
-      <span class="lang-ru">СКОПИРОВАТЬ ССЫЛКУ</span>
+      {d.copyLink}
     </button>
     <a
       class="text-link"
@@ -112,8 +98,7 @@ const nextInline = inline
       data-track="linkedin_click"
       data-track-placement="reader"
     >
-      <span class="lang-en">Follow on LinkedIn ↗</span>
-      <span class="lang-ru">Подписаться в LinkedIn ↗</span>
+      {d.follow}
     </a>
   </div>
 
@@ -125,7 +110,6 @@ const nextInline = inline
     data-track="cta_book"
     data-track-placement="reader"
   >
-    <span class="lang-en">Building agents that need to work in prod? 30-min intro call →</span>
-    <span class="lang-ru">Строите агентов, которые должны работать в проде? 30-минутный созвон →</span>
+    {d.cta}
   </a>
 </div>
