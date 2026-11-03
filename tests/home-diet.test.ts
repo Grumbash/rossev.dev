@@ -66,7 +66,8 @@ describe('home shows the latest posts and links the rest', () => {
   });
 
   test('the writing section links to /writing/ for all posts', () => {
-    const writing = home.slice(home.indexOf('id="writing"'));
+    const at = home.indexOf('id="writing"');
+    const writing = home.slice(at, home.indexOf('</section>', at));
     expect(writing).toMatch(/<a\b[^>]*href="\/writing\/"/);
   });
 });
@@ -196,6 +197,22 @@ describe('case loader (src/scripts/case-loader.ts)', () => {
     await flush();
     expect(all['case-battlepro'].open).toBe(true);
     expect(all['case-battlepro'].body.innerHTML).toContain('href="/cases/battlepro/"');
+  });
+
+  test('a failed load is retried on the next open', async () => {
+    let calls = 0;
+    const { all, fetched, fetchFn } = setup('', async () =>
+      ++calls === 1 ? { ok: false, text: async () => '' } : { ok: true, text: async () => '<div class="blueprint-inspector">x</div>' },
+    );
+    const mod = await import(`../src/scripts/case-loader.ts?t=${Math.random()}`);
+    mod.initCaseLoader(fetchFn);
+    g.window.openCaseBreakdown('sully');
+    await flush();
+    expect(all['case-sully'].body.innerHTML).toContain('href="/cases/sully/"');
+    g.window.openCaseBreakdown('sully');
+    await flush();
+    expect(fetched).toEqual(['/partials/case-sully', '/partials/case-sully']);
+    expect(all['case-sully'].body.innerHTML).toContain('blueprint-inspector');
   });
 
   test('an unknown or malformed ?case= does nothing', async () => {

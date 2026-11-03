@@ -288,15 +288,15 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
       COPIED TO CLIPBOARD
     </div>
 
-    <slot name="scripts" />
-
-    <!-- Global helpers (language, theme, URL params, clipboard) and funnel analytics (Umami custom events) -->
+    <!-- Before page scripts: onclick handlers and the analytics toggle listener exist first. Global helpers (language, theme, URL params, clipboard) and funnel analytics (Umami custom events) -->
     <script>
       import { initSite } from '../scripts/site';
       import { initAnalytics } from '../scripts/analytics';
       initSite();
       initAnalytics();
     </script>
+    <slot name="scripts" />
+
     <!-- Vercel Web Analytics & Speed Insights -->
     <Analytics />
     <SpeedInsights />

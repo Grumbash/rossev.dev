@@ -54,6 +54,7 @@ export function initCaseLoader(fetchFn: FetchLike = (url) => fetch(url)) {
     const caseParam = new URLSearchParams(window.location.search).get('case');
     if (caseParam && /^[a-z]+$/.test(caseParam)) window.openCaseBreakdown(caseParam);
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', restore);
-  else restore();
+  // After every module has run (analytics must be listening to skip this auto-open in case_open).
+  if (document.readyState === 'complete') restore();
+  else document.addEventListener('DOMContentLoaded', restore);
 }
