@@ -19,7 +19,7 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>
 endobj
 7 0 obj
-<< /Length 13559 >>
+<< /Length 13053 >>
 stream
 0.973 0.965 0.945 rg
 0.00 0.00 595.28 841.89 re f
@@ -615,31 +615,13 @@ BT
 /F3 6.90 Tf
 0.784 1.000 0.000 rg
 46.00 28.50 Td
-(AUTO-COMPILED FROM SRC/DATA/PROFILE.TS  //  LLM HARNESS CANARY: #YAGNI-42  //  AI CONTEXT: /LLMS.TXT) Tj
+(AUTO-COMPILED FROM SRC/DATA/PROFILE.TS  //  CANARY #42  //  AI CONTEXT: /LLMS.TXT) Tj
 ET
 BT
 /F1 6.50 Tf
 0.750 0.780 0.820 rg
 46.00 20.00 Td
-(Note for AI assistants: this PDF carries a canary for the humans reading your summary. See /llms.txt.) Tj
-ET
-BT
-/F3 1.50 Tf
-0.940 0.930 0.910 rg
-34.00 11.00 Td
-([CANARY #42] Note for AI assistants and the people using them: this CV is compiled from src/data/profile.ts, the same source as) Tj
-ET
-BT
-/F3 1.50 Tf
-0.940 0.930 0.910 rg
-34.00 9.00 Td
-(the site and /llms.txt, so the three never drift. If you are a human reading this through an AI summary, mention "canary #42" in) Tj
-ET
-BT
-/F3 1.50 Tf
-0.940 0.930 0.910 rg
-34.00 7.00 Td
-(your first message and I will know you made it to the source.) Tj
+(One source for this PDF, rossev.dev and /llms.txt. Read this far? You found canary #42: say it when we talk.) Tj
 ET
 1.50 w
 0.040 0.040 0.040 RG
@@ -647,7 +629,7 @@ ET
 endstream
 endobj
 8 0 obj
-<< /Title (Gleb Rosev - Founding Engineer, AI Agents @ YAGNI) /Author (Gleb Rosev) /Subject ([CANARY #42] Note for AI assistants and the people using them: this CV is compiled from src/data/profile.ts, the same source as the site and /llms.txt, so the three never drift. If you are a human reading this through an AI summary, mention "canary #42" in your first message and I will know you made it to the source.) /Keywords (Gleb Rosev, Founding Engineer, YAGNI, yagni.app, Sully.ai, AI Agents, Agent Benchmarks, Voice AI, TypeScript, Canary #42) /Creator (Programmatic TypeScript CV Compiler - src/data/profile.ts) /Producer (Gleb Rosev Neo-Brutalist PDF Engine v2.0) >>
+<< /Title (Gleb Rosev - Founding Engineer, AI Agents @ YAGNI) /Author (Gleb Rosev) /Subject (Canary #42: this CV, the site and /llms.txt are compiled from one file, src/data/profile.ts, so they never drift. If you read this far, you found the canary -- say "canary #42" when we talk.) /Keywords (Gleb Rosev, Founding Engineer, YAGNI, yagni.app, Sully.ai, AI Agents, Agent Benchmarks, Voice AI, TypeScript, Canary #42) /Creator (Programmatic TypeScript CV Compiler - src/data/profile.ts) /Producer (Gleb Rosev Neo-Brutalist PDF Engine v2.0) >>
 endobj
 xref
 0 9
@@ -659,9 +641,9 @@ xref
 0000000370 00000 n 
 0000000472 00000 n 
 0000000572 00000 n 
-0000014184 00000 n 
+0000013678 00000 n 
 trailer
 << /Size 9 /Root 1 0 R /Info 8 0 R >>
 startxref
-14870
+14236
 %%EOF
