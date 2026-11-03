@@ -552,3 +552,84 @@ describe('README', () => {
     expect(readme).toMatch(/per post/i);
   });
 });
+
+// --- holes the judge found -----------------------------------------------------------------------
+
+describe('the validator has no easy holes', () => {
+  const src = cleanSource(NEW_TEXT);
+
+  test('Russian means mostly Russian, and the adaptation covers the whole post', () => {
+    const oneWord = structuredClone(DRAFT_NEW);
+    oneWord.bodyRu = src + ' и';
+    expect(validateDraft(oneWord, src).ok).toBe(false);
+    const firstParagraphOnly = structuredClone(DRAFT_NEW);
+    firstParagraphOnly.bodyRu = 'У большинства команд нет проблемы со скоростью.';
+    expect(validateDraft(firstParagraphOnly, src).ok).toBe(false);
+    const mixedTitle = structuredClone(DRAFT_NEW);
+    mixedTitle.title.ru = 'Your Team Has a Waiting Problem, не Velocity';
+    expect(validateDraft(mixedTitle, src).ok).toBe(false);
+  });
+
+  test('a number cannot be scaled up, shortened, or glued to a letter', () => {
+    const with_ = (source: string, bullet: string) => {
+      const d = structuredClone(DRAFT_NEW);
+      d.bullets.en[1] = bullet;
+      return validateDraft(d, cleanSource(`${NEW_TEXT}\n\n${source}`)).ok;
+    };
+    expect(with_('We closed 1 000 tickets.', 'The team closed 1 000 000 tickets last year.')).toBe(false);
+    expect(with_('It took 3.5 hours.', 'Each review took about 5 hours on average.')).toBe(false);
+    expect(with_('Nothing about quarters here.', 'Plan the Q4 roadmap around the review queue.')).toBe(false);
+    expect(with_('We closed 1 000 tickets.', 'The team closed 1000 tickets in a quarter.')).toBe(true);
+    expect(with_('It took 3.5 hours.', 'Each review took 3.5 hours on average here.')).toBe(true);
+    expect(with_('We run K8s and B2B sales.', 'Even K8s teams in B2B have the same queue.')).toBe(true);
+  });
+});
+
+describe('one bad post never blocks the others', () => {
+  test('a get-post failure for one group skips that group; the rest still land', async () => {
+    const ghost = { postGroupId: 'g-deleted', status: 'published', posts: [li(`urn:li:share:${NEW_ID}9`, 'published', 'gone')] } as Group;
+    const h = harness({ groups: [...GROUPS, ghost] });
+    const real = h.deps.fetch;
+    h.deps.fetch = (async (url: string, init?: RequestInit) =>
+      url.includes('/get-post/g-deleted') ? new Response(JSON.stringify({ success: false, error: 'Post group not found' }), { status: 404 }) : real(url, init)) as typeof fetch;
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('added');
+    expect(written(h)!.length).toBe(BLOG_POSTS.length + 2);
+    expect(h.logs.join('\n')).toMatch(/g-deleted.*404/);
+  });
+
+  test('a published LinkedIn target whose id cannot be read is counted in the log, not silently dropped', async () => {
+    const odd = { postGroupId: 'g-odd', status: 'published', posts: [li('urn:li:something:abc', 'published', 'odd')] } as Group;
+    const h = harness({ groups: [GROUPS[1], odd] });
+    await run(h.env, h.deps);
+    expect(h.logs.join('\n')).toMatch(/1 .*without a LinkedIn id/i);
+  });
+});
+
+describe('a post Gleb rejected stays rejected', () => {
+  test('ids in src/data/publora-ignore.json are never imported, and the PR body says how to add one', async () => {
+    expect(readJson('src/data/publora-ignore.json')).toEqual([]);
+    const h = harness();
+    (h.deps as any).readIgnored = () => [NEW_ID];
+    await run(h.env, h.deps);
+    expect(written(h)!.slice(0, 1).map((p) => p.slug)).toEqual(['ownership-is-not-on-call']);
+    expect(written(h)!.length).toBe(BLOG_POSTS.length + 1);
+    expect(toModel(h).length).toBe(1);
+    expect(h.writes['.publora/pr-body.md']).toContain('publora-ignore.json');
+    expect(h.writes['.publora/pr-body.md']).toContain(PARTIAL_ID);
+  });
+});
+
+describe('nothing is half-written', () => {
+  test('if the PR body cannot be written, posts.json is not touched either', async () => {
+    const h = harness();
+    const write = h.deps.writeFile;
+    h.deps.writeFile = (p: string, s: string) => {
+      if (p === '.publora/pr-body.md') throw new Error('disk full');
+      write(p, s);
+    };
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('error');
+    expect(h.writes[POSTS_JSON]).toBeUndefined();
+  });
+});

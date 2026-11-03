@@ -20,3 +20,6 @@ dist/
 
 # Perf gate reports
 .perf/
+
+# Publora sync scratch (PR body)
+.publora/

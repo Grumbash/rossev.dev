@@ -9,6 +9,10 @@
 // Usage (CI): bun scripts/ci/watchdog.ts. Env: see run() below.
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { callOpenRouter, redact } from './openrouter';
+
+// The model call lives in ./openrouter (shared with the Publora sync); re-exported for the tests.
+export { callOpenRouter };
 
 export const MARKER = '<!-- rossev-perf-watchdog -->';
 /** Free primary, cheap paid fallback (OpenRouter switches on an error or rate limit). Comma-separated. */
@@ -147,55 +151,7 @@ export function buildMessages(o: { report: string; diffStat: string; diff: strin
   ];
 }
 
-// --- the model call --------------------------------------------------------------------------
-
-type Msg = { role: 'system' | 'user' | 'assistant'; content: string };
-
-/** One bounded chat completion, no tools. Throws on any failure; the error never holds the key. */
-export async function callOpenRouter(o: { apiKey: string; model: string; messages: Msg[]; fetchImpl?: typeof fetch; timeoutMs?: number }) {
-  const models = o.model.split(',').map((m) => m.trim()).filter(Boolean);
-  const res = await (o.fetchImpl ?? fetch)('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${o.apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://rossev.dev',
-      'X-Title': 'rossev.dev perf watchdog',
-    },
-    body: JSON.stringify({
-      model: models[0],
-      ...(models.length > 1 ? { models } : {}),
-      messages: o.messages,
-      max_tokens: 1500,
-      temperature: 0.2,
-      // Low effort, reasoning not returned: a thinking model must leave room in max_tokens for the answer.
-      reasoning: { effort: 'low', exclude: true },
-      usage: { include: true },
-    }),
-    signal: AbortSignal.timeout(o.timeoutMs ?? 90_000),
-  });
-  const raw = await res.text();
-  const detail = redact(raw.slice(0, 300), [o.apiKey]);
-  if (!res.ok) throw new Error(`OpenRouter HTTP ${res.status}`, { cause: detail });
-  let data: any;
-  try {
-    data = JSON.parse(raw);
-  } catch {
-    throw new Error('OpenRouter returned non-JSON', { cause: detail });
-  }
-  const text = data?.choices?.[0]?.message?.content;
-  if (data?.error || typeof text !== 'string' || !text.trim()) throw new Error('OpenRouter returned no answer', { cause: detail });
-  return {
-    text,
-    costUsd: typeof data.usage?.cost === 'number' ? (data.usage.cost as number) : undefined,
-    model: typeof data.model === 'string' ? (data.model as string) : models[0],
-  };
-}
-
 // --- the CI run ------------------------------------------------------------------------------
-
-const redact = (s: string, secrets: (string | undefined)[]) =>
-  secrets.reduce<string>((out, k) => (k && k.length >= 4 ? out.split(k).join('***') : out), s);
 
 export type Deps = {
   fetch: typeof fetch;
