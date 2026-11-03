@@ -68,11 +68,12 @@ export interface BlogPost {
   color: string;
 }
 
-// "30-SEC BRIEF · 3-MIN ORIGINAL": what the reader gets here vs. on LinkedIn.
-export const readTimeLabel = (post: BlogPost) => ({
-  en: `30-SEC BRIEF · ${post.originalMinutes}-MIN ORIGINAL`,
-  ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ОРИГИНАЛ`
-});
+// "30-SEC BRIEF · 3-MIN ORIGINAL": what the reader gets here vs. on LinkedIn. With a body the
+// full post is on the page itself, so the minutes describe that.
+export const readTimeLabel = (post: BlogPost) =>
+  post.body
+    ? { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN FULL POST`, ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ПОЛНЫЙ ТЕКСТ` }
+    : { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ОРИГИНАЛ` };
 
 export const postPath = (post: BlogPost) => `/writing/${post.slug}/`;
 

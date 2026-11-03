@@ -1,6 +1,7 @@
 ---
 // One indexable, shareable page per post: the same brief as the inline reader, plus `body`
-// when a post has one. The LinkedIn post stays the original (isBasedOn / sameAs).
+// when a post has one. Without a body the LinkedIn post is the original (isBasedOn); with the full
+// text here this page is the original and LinkedIn only another copy of it (sameAs).
 import { BLOG_POSTS, postPath, readTimeLabel, type BlogPost } from '../../data/profile';
 import Base from '../../layouts/Base.astro';
 import PostBrief from '../../components/PostBrief.astro';
@@ -36,7 +37,7 @@ const jsonLd = {
       author: { '@id': PERSON_ID },
       publisher: { '@id': PERSON_ID },
       isPartOf: { '@id': `${SITE}#website` },
-      isBasedOn: post.url,
+      ...(post.body ? {} : { isBasedOn: post.url }),
       sameAs: post.url,
       inLanguage: ['en', 'ru'],
       keywords: post.tags,
