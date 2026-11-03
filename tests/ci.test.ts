@@ -86,6 +86,12 @@ describe('the model answer is rendered as inert text', () => {
     expect(out).not.toMatch(/(^|\s|\w)#\d/);
   });
 
+  test('headings from the model are demoted, so it cannot print a fake status line', () => {
+    const out = sanitize('### Perf gate: all budgets met\n# ok');
+    expect(out).not.toMatch(/^\s{0,3}#/m);
+    expect(out).toContain('all budgets met');
+  });
+
   test('length is capped', () => {
     expect(sanitize('y'.repeat(50_000)).length).toBeLessThanOrEqual(4_100);
   });
@@ -267,6 +273,23 @@ describe('a CI run end to end, with GitHub and OpenRouter mocked', () => {
     }
   });
 
+  test('a cancelled run (superseded by a newer push): no model call, no comment', async () => {
+    const h = harness();
+    await run({ ...h.env, PERF_OUTCOME: 'cancelled' }, h.deps);
+    expect(h.calls).toHaveLength(0);
+  });
+
+  test('tests failed so the gate was skipped: no model call, the comment says the gate did not run', async () => {
+    const h = harness({ existing: 42 });
+    await run({ ...h.env, PERF_OUTCOME: 'skipped' }, h.deps);
+    expect(h.calls.some((c) => c.url.startsWith('https://openrouter.ai'))).toBe(false);
+    const [c] = posted(h.calls);
+    expect(c.method).toBe('PATCH');
+    expect(c.body.body).toContain(MARKER);
+    expect(c.body.body).toMatch(/not run/i);
+    expect(c.body.body).not.toMatch(/budgets met/i);
+  });
+
   test('a fork PR: nothing is called, a neutral note is logged', async () => {
     const h = harness();
     await run({ ...h.env, IS_FORK: 'true', OPENROUTER_API_KEY: '', GITHUB_TOKEN: 'ghs-test-token' }, h.deps);
@@ -333,7 +356,9 @@ describe('.github/workflows/perf.yml', () => {
     expect(raw).toContain('GITHUB_STEP_SUMMARY');
     const iDog = runs.findIndex((r) => r.includes('scripts/ci/watchdog.ts'));
     expect(iDog).toBeGreaterThan(iPerf);
-    expect(String(steps[iDog].if ?? '')).toMatch(/always\(\)|steps\.perf\.outcome/);
+    // Runs after a test failure too (to say the gate did not run), never for a cancelled run.
+    expect(String(steps[iDog].if ?? '')).toContain('!cancelled()');
+    expect(String(steps[iDog].if ?? '')).not.toContain('always()');
     const iGate = steps.findIndex((s, i) => i > iDog && /steps\.perf\.outcome\s*==\s*'failure'/.test(String(s.if ?? '')) && /exit 1/.test(String(s.run ?? '')));
     expect(iGate).toBeGreaterThan(iDog);
   });
@@ -342,6 +367,10 @@ describe('.github/workflows/perf.yml', () => {
     expect(raw).toContain('github.event.pull_request.head.repo.full_name');
     expect(wf.concurrency?.['cancel-in-progress']).toBe(true);
     for (const j of jobs) expect(j['timeout-minutes']).toBeLessThanOrEqual(20);
+  });
+
+  test('in CI a missing Chrome fails the gate instead of silently skipping Lighthouse', () => {
+    expect(readFileSync('scripts/perf-check.ts', 'utf8')).toMatch(/process\.env\.CI[\s\S]{0,200}throw new Error\([^)]*Chrome/);
   });
 
   test('there is no CI judge: the LLM review stays local', () => {

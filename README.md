@@ -22,20 +22,31 @@ bun run build    # regenerates CV, llms.txt and OG card, then builds the site
 
 ## Performance budgets
 
-Speed is part of the point of this site, so every `git push` has to prove it's still fast. There's no CI. Instead, a pre-push hook (`.githooks/pre-push`) checks out each pushed branch, exactly as pushed, into a throwaway worktree and runs `bun run perf` on it. That builds the site, checks the bytes in `dist/` (HTML, inline CSS, JS, preloaded fonts) and runs Lighthouse 3× mobile and 3× desktop against `astro preview`, judging the median. A form factor that breaches gets 5 more runs before it fails the push, because Lighthouse is noisy. The whole thing takes about a minute and needs local Chrome; without Chrome it checks bytes only and says Lighthouse was NOT run. Pushes of tags, deletions and docs-only changes skip the gate.
+Speed is part of the point of this site, so every PR has to prove it's still fast. `bun run perf` builds the site, checks the bytes in `dist/` (HTML, inline CSS, JS, preloaded fonts) and runs Lighthouse 3× mobile and 3× desktop against `astro preview`, judging the median. A form factor that breaches gets 5 more runs before it fails, because Lighthouse is noisy. It takes about a minute and needs Chrome; without Chrome it checks bytes only and says Lighthouse was NOT run. CI runs it on every PR (see [CI](#ci)).
 
-`bun install` wires the hook up: the `prepare` script sets `core.hooksPath` to `.githooks`, which overrides `.git/hooks` and any global `core.hooksPath` for this repo.
-
-All budgets live in `perf-budgets.json`; `tests/perf-budget.test.ts` reads the same file. If a budget breaks, the push is blocked, the full report lands in `.perf/last-report.md`, and if the `claude` CLI is installed the read-only `perf-watchdog` agent (`.claude/agents/perf-watchdog.md`) reads it with the pushed diff and says what got slower and the smallest fix.
+All budgets live in `perf-budgets.json`; `tests/perf-budget.test.ts` reads the same file. The full report lands in `.perf/last-report.md`.
 
 ```bash
 bun run perf                          # the full gate on the working tree
 PERF_SKIP_LIGHTHOUSE=1 bun run perf   # bytes only, ~1s
 PERF_RUNS=5 bun run perf              # more Lighthouse runs per form factor
-PERF_SKIP_LIGHTHOUSE=1 git push       # push with the byte budgets only
-PERF_NO_AGENT=1 git push              # gate without the agent's diagnosis
-git push --no-verify                  # skip the gate entirely
 ```
+
+## CI
+
+`.github/workflows/perf.yml` runs on every PR that touches what ships (`src/`, `public/`, `scripts/`, `tests/`, config, `package.json`, `bun.lock`, `perf-budgets.json`). Docs-only PRs skip it. It runs `bun test`, then `bun run perf`: the build, the byte budgets and Lighthouse 3× mobile and 3× desktop. The report goes to the job summary, and the check fails if any budget is breached.
+
+The watchdog (`scripts/ci/watchdog.ts`) keeps one sticky comment on the PR and updates it on every push: a short budget table when everything is green. On a breach it sends the report and the PR diff (without lockfiles, binaries and generated files) to a model on [OpenRouter](https://openrouter.ai), which names the change behind each breach and the smallest fix. The comment shows the answer with the model and the cost. The model gets no tools, and its answer is rendered as plain text: no links, images, HTML or @mentions. If OpenRouter is down or the key is missing, the comment says the watchdog is unavailable and the gate still decides.
+
+The model is `anthropic/claude-haiku-5.5` by default. To change it, set a repo variable `WATCHDOG_MODEL` to any OpenRouter model id: Settings → Secrets and variables → Actions → Variables.
+
+Cost: the model is called only on a breach, once per push. The input is capped (report plus at most 60 KB of diff and 8 KB of diff stat, about 20k tokens) and so is the answer (1200 tokens), so a breach costs at most about $0.003 on Haiku 5.5 ($0.10/M in, $0.50/M out, November 2026), usually less. Green runs, test failures and runs cancelled by a newer push cost nothing. Actions minutes are free on a public repo.
+
+The check is not a required status check, and should not be made one as is: docs-only PRs never run it, so a required `perf` would wait on them forever.
+
+PRs from forks get the gate but no comment: GitHub gives them no secrets and a read-only token.
+
+The key lives only in the `OPENROUTER_API_KEY` repo secret. To rotate it: create a new key on openrouter.ai with a spend limit, update the `OPENROUTER_API_KEY` secret (Settings → Secrets and variables → Actions → Secrets), then delete the old key on OpenRouter.
 
 ## Analytics
 
