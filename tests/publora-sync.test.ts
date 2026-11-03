@@ -761,6 +761,35 @@ describe('src/data/linkedin-backfill.json fills in what Publora never published'
     expect(written(h)!.find((p) => p.slug === 'velocity-is-a-waiting-problem')!.body?.en).toBe(cleanSource(NEW_TEXT));
   });
 
+  test('a broken backfill file is logged and skipped; Publora posts still land', async () => {
+    for (const bad of [() => ({}) as any, () => 'x' as any, () => [null, 42, { activityId: NEW_ID }] as any, () => { throw new SyntaxError('Unexpected token'); }]) {
+      const h = harness();
+      (h.deps as any).readBackfill = bad;
+      const out = await run(h.env, h.deps);
+      expect(out.status).toBe('added');
+      expect(written(h)!.length).toBe(BLOG_POSTS.length + 2);
+    }
+  });
+
+  test('a backfill url that is not a LinkedIn url never reaches the model', async () => {
+    const h = harness({ groups: [] });
+    (h.deps as any).readBackfill = () => [{ activityId: NEW_ID, url: `https://evil.example/share-${NEW_ID}`, text: NEW_TEXT }];
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('none');
+    expect(toModel(h).length).toBe(0);
+  });
+
+  test('over the cap, the newest posts go first; the PR says how many wait for the run after it is merged', async () => {
+    const ids = Array.from({ length: 10 }, (_, i) => (BigInt(NEW_ID) + BigInt(i) * 1000n).toString());
+    const drafts = Object.fromEntries(ids.map((_, i) => [`Backfill post ${i} `, { ...DRAFT_NEW, slug: `backfill-post-${i}` }]));
+    const h = harness({ groups: [], drafts });
+    (h.deps as any).readBackfill = () => ids.map((id, i) => entry(id, `${NEW_TEXT}\n\nBackfill post ${i} closing line.`));
+    await run(h.env, h.deps);
+    const slugs = written(h)!.slice(0, 8).map((p) => p.slug);
+    expect(slugs).toEqual([9, 8, 7, 6, 5, 4, 3, 2].map((i) => `backfill-post-${i}`));
+    expect(h.writes['.publora/pr-body.md']).toMatch(/2 more .*after this PR is merged/i);
+  });
+
   test('one run makes at most 8 model calls in all, new posts first; the rest wait for the next run', async () => {
     const ids = Array.from({ length: 10 }, (_, i) => (BigInt(NEW_ID) + BigInt(i) * 1000n).toString());
     const drafts = Object.fromEntries(ids.map((_, i) => [`Backfill post ${i} `, { ...DRAFT_NEW, slug: `backfill-post-${i}` }]));
