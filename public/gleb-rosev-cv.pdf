@@ -19,7 +19,7 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>
 endobj
 7 0 obj
-<< /Length 13487 >>
+<< /Length 13559 >>
 stream
 0.973 0.965 0.945 rg
 0.00 0.00 595.28 841.89 re f
@@ -353,252 +353,258 @@ BT
 /F1 7.60 Tf
 0.220 0.220 0.220 rg
 44.00 280.89 Td
-(AI-powered multi-tenant B2B SaaS platform for wholesale. [12 Engineers Led / -80% Triage Time / Canary Releases]) Tj
+(AI-powered multi-tenant B2B SaaS platform for wholesale. [12 Engineers Led / -80% Feedback Analysis Time / Canary) Tj
+ET
+BT
+/F1 7.60 Tf
+0.220 0.220 0.220 rg
+44.00 271.39 Td
+(Releases]) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 271.39 Td
+46.00 261.89 Td
 (> Led a cross-functional team of up to 12 people while staying active in architecture and code.) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 261.99 Td
+46.00 252.49 Td
 (> Delivered multi-tenant catalog/order workflows with ERP/CRM syncs and feature-flagged trunk-based releases.) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 252.59 Td
+46.00 243.09 Td
 (> Built an LLM feedback pipeline converting Sales/CS input into product insights \(-80% analysis time\).) Tj
 ET
 0.040 0.040 0.040 rg
-36.00 235.69 4.00 10.00 re f
+36.00 226.19 4.00 10.00 re f
 BT
 /F2 9.00 Tf
 0.040 0.040 0.040 rg
-44.00 237.69 Td
+44.00 228.19 Td
 (Lead React Native Developer  @  Kernelics) Tj
 ET
 BT
 /F3 6.80 Tf
 0.250 0.250 0.250 rg
-424.64 237.69 Td
+424.64 228.19 Td
 (Feb 2023 -- Sep 2024 | London, UK) Tj
 ET
 BT
 /F1 7.60 Tf
 0.220 0.220 0.220 rg
-44.00 227.19 Td
+44.00 217.69 Td
 (Product engineering across fintech, crypto, AI & healthcare. [100K+ Downloads / 5 Engineers Led / Unified) Tj
 ET
 BT
 /F1 7.60 Tf
 0.220 0.220 0.220 rg
-44.00 217.69 Td
+44.00 208.19 Td
 (Monorepo]) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 208.19 Td
+46.00 198.69 Td
 (> Led a 5-person team across web and mobile product delivery in a shared monorepo.) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 198.79 Td
+46.00 189.29 Td
 (> Integrated native cryptographic modules into a flagship application with 100,000+ downloads.) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 189.39 Td
+46.00 179.89 Td
 (> Hardened CI/CD build pipelines and production runtime stability.) Tj
 ET
 0.040 0.040 0.040 rg
-36.00 172.49 4.00 10.00 re f
+36.00 162.99 4.00 10.00 re f
 BT
 /F2 9.00 Tf
 0.040 0.040 0.040 rg
-44.00 174.49 Td
+44.00 164.99 Td
 (Frontend Team Lead | RN Manager | Full-Stack  @  BattlePro & ITechArt) Tj
 ET
 BT
 /F3 6.80 Tf
 0.250 0.250 0.250 rg
-363.44 174.49 Td
+363.44 164.99 Td
 (Jan 2018 -- Feb 2023 | New York & New Jersey, US) Tj
 ET
 BT
 /F1 7.60 Tf
 0.220 0.220 0.220 rg
-44.00 163.99 Td
+44.00 154.49 Td
 (Sports tournament platform, full-stack cloud architectures & technical mentorship. [220ms TTFB \(25->55 SP\) / $10M+) Tj
 ET
 BT
 /F1 7.60 Tf
 0.220 0.220 0.220 rg
-44.00 154.49 Td
+44.00 144.99 Td
 (Raised Arch / 1,500+ Students/Yr]) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 144.99 Td
+46.00 135.49 Td
 (> Owned frontend architecture and hiring for a 5-engineer team at BattlePro; doubled velocity \(25 -> 55 SP\) and) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 135.59 Td
+46.00 126.09 Td
 (  hit 220ms TTFB / 1.7s TTI.) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 126.19 Td
+46.00 116.69 Td
 (> Architected a full-stack virtual networking platform at ITechArt that subsequently attracted $10M+ in) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 116.79 Td
+46.00 107.29 Td
 (  investment.) Tj
 ET
 BT
 /F1 7.80 Tf
 0.060 0.060 0.060 rg
-46.00 107.39 Td
+46.00 97.89 Td
 (> Delivered 150+ advanced React/JS lectures at TeachMeSkills; curriculum adopted by 1,500+ students/year.) Tj
 ET
 0.910 0.890 0.850 rg
-34.00 77.49 527.28 15.00 re f
+34.00 67.99 527.28 15.00 re f
 1.000 0.839 0.000 rg
-34.00 77.49 6.00 15.00 re f
+34.00 67.99 6.00 15.00 re f
 1.00 w
 0.040 0.040 0.040 RG
-34.00 77.49 527.28 15.00 re S
+34.00 67.99 527.28 15.00 re S
 BT
 /F2 8.50 Tf
 0.040 0.040 0.040 rg
-46.00 81.69 Td
+46.00 72.19 Td
 (03 // CORE CAPABILITIES & STACK MATRIX) Tj
 ET
 BT
 /F2 7.80 Tf
 0.040 0.040 0.040 rg
-38.00 69.49 Td
+38.00 59.99 Td
 (AI AGENTS & VOICE SYSTEMS: ) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 69.49 Td
+182.00 59.99 Td
 (Agent Teams & Harnesses | Agent Evaluation & Benchmarks | Self-Improving Loops | Sandboxed) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 59.99 Td
+182.00 50.49 Td
 (Code Runners | OpenAI / Claude / Gemini | LiveKit | Twilio | Speechmatics | MCP | RAG) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 50.49 Td
+182.00 40.99 Td
 (Pipelines) Tj
 ET
 BT
 /F2 7.80 Tf
 0.040 0.040 0.040 rg
-38.00 40.99 Td
+38.00 31.49 Td
 (ARCHITECTURE & CLOUD: ) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 40.99 Td
+182.00 31.49 Td
 (Distributed Systems | Multi-Tenant Isolation | Backend Services | GitHub & ERP/CRM) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 31.49 Td
+182.00 21.99 Td
 (Integrations | PostgreSQL | Redis | Kubernetes | Docker | AWS | GCP) Tj
 ET
 BT
 /F2 7.80 Tf
 0.040 0.040 0.040 rg
-38.00 21.99 Td
+38.00 12.49 Td
 (RELIABILITY & OPS: ) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 21.99 Td
+182.00 12.49 Td
 (Risk Radar & Early Warning | Observability | Incident Response | Runtime Diagnostics |) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 12.49 Td
+182.00 2.99 Td
 (Grafana | Loki | Mimir | Trunk-Based Delivery | Canary Releases | Feature Flags) Tj
 ET
 BT
 /F2 7.80 Tf
 0.040 0.040 0.040 rg
-38.00 2.99 Td
+38.00 -6.51 Td
 (FULL-STACK & MOBILE: ) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 2.99 Td
+182.00 -6.51 Td
 (TypeScript | Node.js | NestJS | React | React Native | Next.js | PostgreSQL | MongoDB |) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 -6.51 Td
+182.00 -16.01 Td
 (Playwright | Cypress | Jest | Monorepos) Tj
 ET
 BT
 /F2 7.80 Tf
 0.040 0.040 0.040 rg
-38.00 -16.01 Td
+38.00 -25.51 Td
 (LEADERSHIP: ) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 -16.01 Td
+182.00 -25.51 Td
 (Teams of 5-12 Engineers | Customer Pilots & Demos | Technical Hiring | System Architecture |) Tj
 ET
 BT
 /F1 7.60 Tf
 0.120 0.120 0.120 rg
-182.00 -25.51 Td
+182.00 -35.01 Td
 (Mentoring \(150+ Lectures\) | Product Strategy) Tj
 ET
 0.910 0.890 0.850 rg
-34.00 -54.01 527.28 15.00 re f
+34.00 -63.51 527.28 15.00 re f
 1.000 0.333 0.000 rg
-34.00 -54.01 6.00 15.00 re f
+34.00 -63.51 6.00 15.00 re f
 1.00 w
 0.040 0.040 0.040 RG
-34.00 -54.01 527.28 15.00 re S
+34.00 -63.51 527.28 15.00 re S
 BT
 /F2 8.50 Tf
 0.040 0.040 0.040 rg
-46.00 -49.81 Td
+46.00 -59.31 Td
 (04 // EDUCATION & LANGUAGES) Tj
 ET
 BT
 /F2 8.10 Tf
 0.040 0.040 0.040 rg
-38.00 -62.01 Td
+38.00 -71.51 Td
 (Belarusian State University -- Medicine \(2015 -- 2019\)    |    Languages: English \(C1 Advanced\)  /  Russian \(Native\)) Tj
 ET
 0.050 0.050 0.070 rg
@@ -653,9 +659,9 @@ xref
 0000000370 00000 n 
 0000000472 00000 n 
 0000000572 00000 n 
-0000014112 00000 n 
+0000014184 00000 n 
 trailer
 << /Size 9 /Root 1 0 R /Info 8 0 R >>
 startxref
-14798
+14870
 %%EOF
