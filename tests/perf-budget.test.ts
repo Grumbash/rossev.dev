@@ -1,12 +1,10 @@
-// Speed is part of what this site claims about its author, and there is no CI to notice when
-// a change makes it slower. These tests hold the built page to byte budgets from one file,
-// perf-budgets.json, prove the checker behind the pre-push hook really fails on a regression,
-// pin the hook wiring so a push runs it, and pin which pushes the hook measures (the pushed
-// commits, not the working tree; nothing for tags, deletions or docs-only pushes).
+// Speed is part of what this site claims about its author. These tests hold the built page to
+// byte budgets from one file, perf-budgets.json, and prove the checker behind the CI perf gate
+// really fails on a regression. The CI wiring itself is pinned in tests/ci.test.ts.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execSync } from 'node:child_process';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import budgets from '../perf-budgets.json';
@@ -156,103 +154,5 @@ describe('the checker fails on a regression', () => {
     const report = readFileSync(join(dir, '.perf', 'last-report.md'), 'utf8');
     expect(report).toContain('ERROR: build:');
     expect(report).not.toContain('stale');
-  });
-});
-
-describe('which pushes get measured (scripts/push-range.sh)', () => {
-  const Z = '0'.repeat(40);
-  let repo = '';
-  const git = (args: string) =>
-    execSync(`git -c user.name=t -c user.email=t@t -c core.hooksPath=/dev/null ${args}`, { cwd: repo }).toString().trim();
-  const commit = (file: string) => {
-    mkdirSync(join(repo, file, '..'), { recursive: true });
-    writeFileSync(join(repo, file), String(Math.random()));
-    git(`add -A`);
-    git(`commit -qm "${file}"`);
-    return git('rev-parse HEAD');
-  };
-  const ranges = (stdin: string, remote = 'origin') =>
-    execSync(`sh ${resolve('scripts/push-range.sh')} ${remote}`, { cwd: repo, input: stdin }).toString().trim();
-
-  let main = '';
-  beforeAll(() => {
-    repo = mkdtempSync(join(tmpdir(), 'push-range-'));
-    execSync('git init -q -b main', { cwd: repo });
-    main = commit('src/index.astro');
-    git('update-ref refs/remotes/origin/main HEAD');
-  });
-
-  test('a new branch is measured from its merge-base with <remote>/main', () => {
-    git('checkout -qb feat');
-    const a = commit('src/a.astro');
-    const b = commit('src/b.astro');
-    expect(ranges(`refs/heads/feat ${b} refs/heads/feat ${Z}\n`)).toBe(`${b} ${main}..${b}`);
-    // An update is measured from what the remote already has.
-    expect(ranges(`refs/heads/feat ${b} refs/heads/feat ${a}\n`)).toBe(`${b} ${a}..${b}`);
-  });
-
-  test('without <remote>/main, a new branch starts after the commits the remote already has', () => {
-    git('checkout -qb other main');
-    git('update-ref refs/remotes/origin/other main');
-    git('update-ref -d refs/remotes/origin/main');
-    const c = commit('public/c.txt');
-    expect(ranges(`refs/heads/other ${c} refs/heads/other ${Z}\n`)).toBe(`${c} ${main}..${c}`);
-    git('update-ref refs/remotes/origin/main main');
-  });
-
-  test('deletions, tags and docs-only pushes are skipped', () => {
-    git('checkout -qb docs main');
-    const d = commit('README.md');
-    expect(ranges(`(delete) ${Z} refs/heads/feat ${main}\n`)).toBe('');
-    expect(ranges(`refs/tags/v1 ${main} refs/tags/v1 ${Z}\n`)).toBe('');
-    expect(ranges(`refs/heads/docs ${d} refs/heads/docs ${main}\n`)).toBe('');
-    expect(ranges('')).toBe('');
-  });
-
-  test('budgets, lockfile and config changes count as site changes', () => {
-    git('checkout -qb cfg main');
-    const e = commit('perf-budgets.json');
-    expect(ranges(`refs/heads/cfg ${e} refs/heads/cfg ${main}\n`)).toBe(`${e} ${main}..${e}`);
-  });
-});
-
-describe('a push runs the gate', () => {
-  test('.githooks/pre-push exists, is executable and runs bun run perf', () => {
-    const hook = '.githooks/pre-push';
-    expect(statSync(hook).mode & 0o111).toBeGreaterThan(0);
-    expect(readFileSync(hook, 'utf8')).toContain('bun run perf');
-  });
-
-  test('the hook measures the pushed commit in a throwaway worktree, not the working tree', () => {
-    const hook = readFileSync('.githooks/pre-push', 'utf8');
-    expect(hook).toContain('scripts/push-range.sh');
-    expect(hook).toContain('git worktree add --detach');
-    expect(hook).toMatch(/trap /);
-  });
-
-  test('the agent is read-only, bounded in turns and time, and only called when there is a report', () => {
-    const hook = readFileSync('.githooks/pre-push', 'utf8');
-    expect(hook).toContain('--max-turns 15');
-    expect(hook).toContain('--disallowedTools="Edit,Write,NotebookEdit"');
-    // --allowedTools/--disallowedTools are variadic: a space-separated value swallows a trailing
-    // prompt and claude then waits on the hook's stdin until the timeout. The prompt goes first,
-    // and stdin is closed so the agent never reads the pushed refs.
-    expect(hook).not.toMatch(/--(dis)?allowedTools "/);
-    expect(hook).toMatch(/claude -p "\$prompt" --agent perf-watchdog/);
-    expect(hook).toMatch(/<\s*\/dev\/null/);
-    expect(hook).toContain('Bash(git show:*)');
-    expect(hook).toMatch(/180/);
-    expect(hook).toMatch(/\[ -f "?\$?[^\]]*last-report\.md/);
-    const agent = readFileSync('.claude/agents/perf-watchdog.md', 'utf8');
-    const tools = agent.match(/^tools:(.*)$/m)![1];
-    expect(tools).not.toMatch(/Bash\s*(,|$)/);
-    expect(tools).toContain('Bash(git show:*)');
-  });
-
-  test('package.json points git at .githooks and defines the perf script', () => {
-    const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
-    // '|| true' keeps bun install working where there is no .git (e.g. a deploy from an upload).
-    expect(pkg.scripts.prepare).toStartWith('git config core.hooksPath .githooks');
-    expect(pkg.scripts.perf).toBe('bun scripts/perf-check.ts');
   });
 });
