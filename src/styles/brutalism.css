@@ -67,6 +67,8 @@ html {
   background-color: var(--bg);
   color: var(--ink);
   font-family: var(--font-display);
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -78,6 +80,9 @@ body {
   color: var(--ink);
   line-height: 1.5;
   overflow-x: hidden;
+  max-width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 ::selection {
@@ -92,8 +97,10 @@ a {
 
 .container {
   max-width: 1320px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 24px;
+  box-sizing: border-box;
 }
 
 /* Neo-Brutalist Primitives */
@@ -429,6 +436,9 @@ a {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 800;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
 }
 
 .arch-tabs-bar {
@@ -710,6 +720,9 @@ a {
   font-weight: 800;
   font-size: 0.86rem;
   letter-spacing: 0.04em;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .marquee-track {
@@ -825,6 +838,9 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
 }
 
 .terminal-cmd-bar {
@@ -1294,16 +1310,29 @@ a {
   .telemetry-grid,
   .contact-grid,
   .exp-deck-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .posts-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .hero-card,
+  .stage-iso-card,
+  .impact-card,
+  .htmx-terminal,
+  .stat-card,
+  .exp-spotlight-panel {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* Two-row mobile sticky header: Top = Logo + Controls, Bottom = Swipeable Section Chips */
@@ -1314,6 +1343,9 @@ a {
     justify-content: space-between;
     align-items: center;
     gap: 8px 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .brand-logo {
     order: 1;
@@ -1353,6 +1385,14 @@ a {
   #iso-arch-canvas {
     min-height: 290px;
     height: 290px;
+  }
+  .stage-header {
+    font-size: 0.7rem;
+    padding: 8px 12px;
+  }
+  #iso-trace-status {
+    font-size: 0.62rem;
+    width: 100%;
   }
   .arch-tabs-bar {
     overflow-x: auto;
@@ -1428,20 +1468,20 @@ a {
 
 @media (max-width: 680px) {
   .hero-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
   .posts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .impact-cards-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .hero-card {
-    padding: 20px 16px;
+    padding: 18px 14px;
   }
   .section-block {
-    padding: 38px 0;
+    padding: 34px 0;
   }
 }
 
