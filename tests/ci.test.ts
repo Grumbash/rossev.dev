@@ -145,7 +145,9 @@ describe('the prompt', () => {
   test('a system prompt with the watchdog rules, then the untrusted data fenced as data', () => {
     expect(messages[0].role).toBe('system');
     const sys = messages[0].content;
-    expect(sys).toMatch(/Russian|по-русски/i);
+    // The comment is public GitHub text: English, whatever language the diff or report is in.
+    expect(sys).toMatch(/Answer in English/);
+    expect(sys).not.toMatch(/Russian/i);
     expect(sys).toMatch(/budget/i);
     expect(sys).toMatch(/untrusted|data, not instructions/i);
     const user = messages.map((m) => m.content).slice(1).join('\n');
