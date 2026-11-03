@@ -1,0 +1,53 @@
+---
+// Each architecture case as its own indexable page; home's timeline loads the same breakdown inline.
+import { CASE_STUDIES, EXPERIENCE } from '../../data/profile';
+import Base from '../../layouts/Base.astro';
+import CaseBlueprint from '../../components/CaseBlueprint.astro';
+
+export function getStaticPaths() {
+  return CASE_STUDIES.flatMap((study) => {
+    const job = EXPERIENCE.find((e) => e.caseId === study.id);
+    return job ? [{ params: { id: study.id }, props: { study, job } }] : [];
+  });
+}
+
+const { study, job } = Astro.props;
+const url = new URL(`/cases/${study.id}/`, Astro.site || 'https://rossev.dev').toString();
+---
+
+<Base
+  title={`${study.title.en} — architecture breakdown by Gleb Rosev`}
+  description={`${study.company}, ${study.period.toLowerCase()}: ${study.summary.en}`}
+  canonical={url}
+  ogType="article"
+>
+  <section class="section-block">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">
+            <span class="lang-en">Architecture breakdown · {study.company}</span>
+            <span class="lang-ru">Разбор архитектуры · {study.company}</span>
+          </span>
+          <h1 class="section-title">
+            <span class="lang-en">{study.title.en}</span>
+            <span class="lang-ru">{study.title.ru}</span>
+          </h1>
+          <p>
+            <span class="lang-en">{study.summary.en}</span>
+            <span class="lang-ru">{study.summary.ru}</span>
+          </p>
+        </div>
+      </div>
+
+      <CaseBlueprint study={study} />
+
+      <p class="case-back">
+        <a class="text-link" href={`/#${job.id}`}>
+          <span class="lang-en">← {job.company} in the experience timeline</span>
+          <span class="lang-ru">← {job.company} в хронологии опыта</span>
+        </a>
+      </p>
+    </div>
+  </section>
+</Base>

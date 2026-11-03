@@ -288,73 +288,13 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
       COPIED TO CLIPBOARD
     </div>
 
-    <script is:inline>
-      // 1. Language & Theme Switcher
-      window.setSiteLang = function (lang) {
-        document.documentElement.setAttribute('data-lang', lang);
-        document.documentElement.setAttribute('lang', lang);
-        localStorage.setItem('rosev_lang', lang);
-        const btnEn = document.getElementById('btn-lang-en');
-        const btnRu = document.getElementById('btn-lang-ru');
-        if (btnEn && btnRu) {
-          btnEn.classList.toggle('active-lang', lang === 'en');
-          btnRu.classList.toggle('active-lang', lang === 'ru');
-        }
-        if (window.updateIsoHudText) {
-          window.updateIsoHudText();
-        }
-      };
-
-      window.toggleSiteTheme = function () {
-        const cur = document.documentElement.getAttribute('data-theme') || 'light';
-        const next = cur === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('rosev_theme', next);
-      };
-
-      (function syncLangButtons() {
-        const savedLang = document.documentElement.getAttribute('data-lang') || 'en';
-        const btnEn = document.getElementById('btn-lang-en');
-        const btnRu = document.getElementById('btn-lang-ru');
-        if (btnEn && btnRu) {
-          btnEn.classList.toggle('active-lang', savedLang === 'en');
-          btnRu.classList.toggle('active-lang', savedLang === 'ru');
-        }
-      })();
-
-      // URL query parameter helper for deep-linking cases and posts
-      window.setUrlParam = function (key, val) {
-        try {
-          const url = new URL(window.location.href);
-          if (val === null || val === undefined || val === '') {
-            url.searchParams.delete(key);
-          } else {
-            url.searchParams.set(key, val);
-          }
-          window.history.replaceState({}, '', url.toString());
-        } catch (e) {}
-      };
-
-      // 2. Clipboard
-      window.copyToClipboard = function (text, label) {
-        const ru = document.documentElement.getAttribute('data-lang') === 'ru';
-        const msg = (ru ? 'Скопировано: ' : 'Copied: ') + (label || text);
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).catch(() => {});
-        }
-        const toast = document.getElementById('brutal-toast');
-        if (toast) {
-          toast.textContent = msg;
-          toast.classList.add('show');
-          setTimeout(() => toast.classList.remove('show'), 2400);
-        }
-      };
-    </script>
     <slot name="scripts" />
 
-    <!-- Funnel analytics (Umami custom events) -->
+    <!-- Global helpers (language, theme, URL params, clipboard) and funnel analytics (Umami custom events) -->
     <script>
+      import { initSite } from '../scripts/site';
       import { initAnalytics } from '../scripts/analytics';
+      initSite();
       initAnalytics();
     </script>
     <!-- Vercel Web Analytics & Speed Insights -->
