@@ -15,20 +15,67 @@ import SpeedInsights from '@vercel/speed-insights/astro';
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://rossev.dev').toString();
 const ogImageUrl = new URL('/og-card.png', Astro.site || 'https://rossev.dev').toString();
 
+const SITE = 'https://rossev.dev/';
+const PERSON_ID = `${SITE}#person`;
+const WEBSITE_ID = `${SITE}#website`;
+
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Gleb Rosev',
-  jobTitle: 'Founding Engineer, AI Agents',
-  worksFor: {
-    '@type': 'Organization',
-    name: 'YAGNI',
-    url: 'https://yagni.app'
-  },
-  description:
-    'Founding Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. Ex-Staff Harness Engineer at Sully.ai (healthcare voice AI).',
-  email: 'mailto:rossevgleb@gmail.com',
-  sameAs: ['https://www.linkedin.com/in/rossev/', 'https://github.com/Grumbash']
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': WEBSITE_ID,
+      url: SITE,
+      name: 'Gleb Rosev',
+      inLanguage: ['en', 'ru'],
+      publisher: { '@id': PERSON_ID },
+      about: { '@id': PERSON_ID }
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': `${SITE}#profilepage`,
+      url: SITE,
+      isPartOf: { '@id': WEBSITE_ID },
+      mainEntity: { '@id': PERSON_ID }
+    },
+    {
+      '@type': 'Person',
+      '@id': PERSON_ID,
+      name: 'Gleb Rosev',
+      alternateName: ['Gleb Rossev', 'Глеб Росев'],
+      url: SITE,
+      image: ogImageUrl,
+      jobTitle: 'Founding Engineer, AI Agents',
+      worksFor: {
+        '@type': 'Organization',
+        name: 'YAGNI',
+        url: 'https://yagni.app'
+      },
+      description:
+        'Founding Engineer at YAGNI (yagni.app) making AI agent teams dependable in production. Ex-Staff Harness Engineer at Sully.ai (healthcare voice AI).',
+      email: 'mailto:rossevgleb@gmail.com',
+      knowsAbout: [
+        'Agent Teams & Harnesses',
+        'Agent Evaluation & Benchmarks',
+        'Self-Improving Loops',
+        'Sandboxed Code Runners',
+        'MCP',
+        'RAG Pipelines',
+        'Voice AI',
+        'Distributed Systems',
+        'Multi-Tenant Isolation',
+        'Observability',
+        'Incident Response',
+        'TypeScript',
+        'Node.js',
+        'React',
+        'PostgreSQL',
+        'Kubernetes'
+      ],
+      alumniOf: { '@type': 'CollegeOrUniversity', name: 'Belarusian State University' },
+      sameAs: ['https://www.linkedin.com/in/rossev/', 'https://github.com/Grumbash']
+    }
+  ]
 };
 ---
 
@@ -175,6 +222,11 @@ const jsonLd = {
                 <span class="lang-en">{PROFILE.tagline.en}</span>
                 <span class="lang-ru">{PROFILE.tagline.ru}</span>
               </div>
+
+              <p class="hero-summary" style="font-size: 0.85rem; line-height: 1.5; margin: 0 0 12px; max-width: 60ch; color: var(--ink-muted);">
+                <span class="lang-en">{PROFILE.summaryThirdPerson.en}</span>
+                <span class="lang-ru">{PROFILE.summaryThirdPerson.ru}</span>
+              </p>
 
               <p class="hero-bio">
                 <span class="lang-en">{PROFILE.bio.en}</span>
