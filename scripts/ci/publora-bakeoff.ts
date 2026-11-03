@@ -15,7 +15,19 @@ import POSTS from '../../src/data/posts.json';
 import BACKFILL from '../../src/data/linkedin-backfill.json';
 import type { BlogPost } from '../../src/data/profile';
 
-export const MODELS = ['deepseek/deepseek-v4.1-flash', 'mistralai/mistral-small-2603', 'qwen/qwen3.8-flash', 'anthropic/claude-haiku-5.5'];
+// Round 1 (deepseek v4.1 flash, mistral small, qwen 3.8 flash, claude haiku 5.5): haiku and deepseek valid,
+// the others failed. Round 2: less obvious picks (free, translation-tuned, batch, new flash models).
+export const MODELS = [
+  'google/gemma-4-31b-it:free',
+  'google/gemma-4-31b-it',
+  'tencent/hy-mt2-30b-a3b',
+  'anthropic/claude-haiku-5.5:batch',
+  'openai/gpt-6-luna',
+  'minimax/minimax-m3.1-flash',
+  'xiaomi/mimo-v2.6-flash',
+  'bytedance-seed/seed-2.0-mini',
+  'z-ai/glm-5.3-flash',
+];
 const PUBLORA = 'https://api.publora.com/api/v1';
 // The two posts the models are compared on: the top post by far and a longer story (texts from the backfill).
 const BAKEOFF_POSTS = ['7522992144504995840', '7521565265558462464'];
@@ -143,7 +155,7 @@ async function tryModel(env: Record<string, string | undefined>, deps: Deps, mod
       temperature: 0.2,
       responseFormat: RESPONSE_FORMAT,
       title: 'rossev.dev publora bakeoff',
-      timeoutMs: 120_000,
+      timeoutMs: 75_000, // 9 models x 2 posts inside the job's 15 minutes
     });
     const v = validateDraft(r.text.trim().replace(/^```(?:json)?\s*\n([\s\S]*)\n```$/, '$1'), source);
     let draft: any;
