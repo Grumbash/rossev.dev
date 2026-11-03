@@ -1286,7 +1286,7 @@ a {
   transform: translateY(0);
 }
 
-/* Responsive */
+/* Mobile-First & Responsive Enhancements */
 @media (max-width: 1024px) {
   .hero-grid,
   .impact-terminal-grid,
@@ -1301,9 +1301,135 @@ a {
   }
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Two-row mobile sticky header: Top = Logo + Controls, Bottom = Swipeable Section Chips */
+  .nav-inner {
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px 12px;
+  }
+  .brand-logo {
+    order: 1;
+    font-size: 0.95rem;
+  }
+  .nav-controls {
+    order: 2;
+    gap: 4px;
+  }
+  .ctrl-btn {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding: 2px 0 4px 0;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-link {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+  }
+
+  /* Compact 3D Isometric Stage on Mobile */
+  .iso-canvas-container,
+  #iso-arch-canvas {
+    min-height: 290px;
+    height: 290px;
+  }
+  .arch-tabs-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .arch-tabs-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .mode-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    padding: 4px 8px;
+  }
+
+  /* Swipeable Career Deck Tabs on Mobile (No massive vertical stack) */
+  .exp-tabs-col {
+    flex-direction: row;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-bottom: 6px;
+  }
+  .exp-tabs-col::-webkit-scrollbar {
+    display: none;
+  }
+  .exp-tab-btn {
+    flex-shrink: 0;
+    width: auto;
+    min-width: 150px;
+    padding: 10px 12px;
+  }
+
+  /* Swipeable Terminal & Essay Filter Chips */
+  .terminal-cmd-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 10px 12px;
+    gap: 6px;
+  }
+  .terminal-cmd-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .cmd-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 6px;
+    gap: 6px;
+  }
+  .filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-bar .brutal-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
 @media (max-width: 680px) {
   .hero-stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
   .posts-grid {
     grid-template-columns: 1fr;
@@ -1312,7 +1438,68 @@ a {
     grid-template-columns: 1fr;
   }
   .hero-card {
-    padding: 22px;
+    padding: 20px 16px;
+  }
+  .section-block {
+    padding: 38px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .hero-role {
+    font-size: 1.05rem;
+  }
+  .hero-bio {
+    font-size: 0.9rem;
+  }
+  .sticker-row {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .draggable-sticker {
+    font-size: 0.65rem;
+    padding: 4px 7px;
+  }
+  .stat-card {
+    padding: 8px;
+  }
+  .stat-val {
+    font-size: 1.15rem;
+  }
+  .stat-lbl {
+    font-size: 0.68rem;
+  }
+  .hero-action-row,
+  .contact-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero-action-row .brutal-btn,
+  .contact-actions .brutal-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .toast-notification {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    text-align: center;
+  }
+  .blueprint-body {
+    padding: 16px;
+  }
+}
+
+/* Prevent sticky hover effects on mobile touch devices */
+@media (hover: none) {
+  .brutal-box-hover:hover,
+  .brutal-btn:hover,
+  .exp-tab-btn:hover,
+  .cmd-btn:hover {
+    transform: none !important;
   }
 }
 

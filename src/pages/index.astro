@@ -17,6 +17,8 @@ import {
 import BlogGrid from '../components/BlogGrid.astro';
 import CaseBlueprint from '../components/CaseBlueprint.astro';
 import TerminalOutput from '../components/TerminalOutput.astro';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://rossev.dev').toString();
 const ogImageUrl = new URL('/og-card.png', Astro.site || 'https://rossev.dev').toString();
@@ -1284,6 +1286,7 @@ const jsonLd = {
           let offsetX = 0, offsetY = 0;
 
           sticker.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'touch') return; // Keep native touch scrolling on mobile
             isDragging = true;
             startX = e.clientX - offsetX;
             startY = e.clientY - offsetY;
@@ -1310,5 +1313,8 @@ const jsonLd = {
       import { initIsoArchitectureEngine } from '../scripts/iso-engine';
       document.addEventListener('DOMContentLoaded', initIsoArchitectureEngine);
     </script>
+    <!-- Vercel Web Analytics & Speed Insights -->
+    <Analytics />
+    <SpeedInsights />
   </body>
 </html>
