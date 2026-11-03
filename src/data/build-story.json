@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-03T21:56:14.816Z",
-  "throughSha": "e3c59ab47cf19fd272cda4847ec08c262544e1bd",
+  "generatedAt": "2026-11-03T22:09:05.019Z",
+  "throughSha": "a001a1a2d34ad7833c85a079435194e3dc9a73f1",
   "prs": [
     {
       "number": 1,
@@ -535,6 +535,76 @@
         "sha": "f01970d4970f7208c8025471769deed4dbbc39b8",
         "subject": "Add /booked: a cal.com booking becomes booking_confirmed{source} with no booking PII",
         "url": "https://github.com/Grumbash/rossev.dev/commit/f01970d4970f7208c8025471769deed4dbbc39b8"
+      }
+    },
+    {
+      "number": 14,
+      "title": "Show how this site was built: every merged PR with its red test, what was caught and what I decided",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/14",
+      "mergedAt": "2026-11-03T22:08:10Z",
+      "branch": "build-story-aa094e",
+      "additions": 1775,
+      "deletions": 10,
+      "changedFiles": 15,
+      "redTest": {
+        "sha": "48938f7e7dd84babd6e054ed37db0d8ddcf1baf7",
+        "subject": "Add a failing test that /how-its-built/ shows every merged PR with its red test, judge findings and human decision, and derives every number from the data",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/48938f7e7dd84babd6e054ed37db0d8ddcf1baf7"
+      },
+      "commits": [
+        {
+          "sha": "48938f7e7dd84babd6e054ed37db0d8ddcf1baf7",
+          "subject": "Add a failing test that /how-its-built/ shows every merged PR with its red test, judge findings and human decision, and derives every number from the data",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/48938f7e7dd84babd6e054ed37db0d8ddcf1baf7"
+        },
+        {
+          "sha": "a5acd79503175c3194e31900e9356803c57a1e9c",
+          "subject": "Red test: the build story keeps appended CI verdicts on regeneration and checks freshness only up to the main commit it was generated through",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a5acd79503175c3194e31900e9356803c57a1e9c"
+        },
+        {
+          "sha": "37af6d8820ae058c1b46234a80e5524258c26cab",
+          "subject": "Add /how-its-built/: every merged PR of this site with its red test, findings and human decision, every number derived from a generated build-story.json",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+        }
+      ],
+      "visitorChange": {
+        "en": "This page: every merged PR of the site with its red test, what was caught before merge and what I decided. Every number on it is computed from the data.",
+        "ru": "Эта страница: каждый смерженный PR сайта с красным тестом, тем, что поймали до мержа, и тем, что решил я. Каждое число на ней посчитано из данных."
+      },
+      "humanDecision": {
+        "en": "Only this site’s PRs count here: the hero’s 28 PRs are YAGNI’s, and the page says so. Each card also shows what the human decided, not only what was caught.",
+        "ru": "Здесь считаются только PR этого сайта: 28 PR из hero — это YAGNI, и страница так и говорит. В каждой карточке есть и то, что решил человек, а не только то, что поймали."
+      },
+      "findings": [
+        {
+          "en": "The hero link sat right after the YAGNI numbers and read as proof of them. Now it says it is the same loop on this site’s own PRs.",
+          "ru": "Ссылка в hero стояла сразу после цифр YAGNI и читалась как их доказательство. Теперь она говорит, что это тот же цикл на PR этого сайта.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+        },
+        {
+          "en": "The page claimed a judge step for every PR, but only three PR descriptions record a review. Now a card mentions a review only where its PR says one ran.",
+          "ru": "Страница приписывала шаг судьи каждому PR, хотя ревью записано только в трёх описаниях. Теперь карточка упоминает ревью, только если о нём сказано в PR.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+        },
+        {
+          "en": "The freshness test would have turned main red after every merge. Now the data records the main commit it covers.",
+          "ru": "Тест свежести ронял бы main после каждого мержа. Теперь данные помнят, по какой коммит main они собраны.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/a5acd79503175c3194e31900e9356803c57a1e9c"
+        }
+      ],
+      "ciVerdicts": [],
+      "review": {
+        "en": "Written by an independent writer agent and reviewed by an independent judge pass: ship after fixes. Its findings were fixed before merge.",
+        "ru": "Код написал независимый агент, дифф проверил независимый судья: «можно мержить после правок». Его замечания исправлены до мержа."
+      },
+      "green": {
+        "sha": "37af6d8820ae058c1b46234a80e5524258c26cab",
+        "subject": "Add /how-its-built/: every merged PR of this site with its red test, findings and human decision, every number derived from a generated build-story.json",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
       }
     }
   ]
