@@ -162,23 +162,45 @@ describe('the prompt', () => {
 });
 
 describe('the OpenRouter call', () => {
-  test('bounded output, no tools, key only in the Authorization header, cost from usage', async () => {
+  test('bounded output, no tools, key only in the Authorization header, cost and answering model from the response', async () => {
     let req: { url: string; init: RequestInit } | null = null;
     const fetchImpl = (async (url: string, init: RequestInit) => {
       req = { url, init };
-      return new Response(JSON.stringify({ choices: [{ message: { content: 'ответ' } }], usage: { cost: 0.0011 } }), { status: 200 });
+      return new Response(JSON.stringify({ model: 'z-ai/glm-5.3-flash', choices: [{ message: { content: 'ответ' } }], usage: { cost: 0.0011 } }), { status: 200 });
     }) as unknown as typeof fetch;
-    const out = await callOpenRouter({ apiKey: 'sk-test-123', model: 'anthropic/claude-haiku-5.5', messages: [{ role: 'user', content: 'x' }], fetchImpl });
-    expect(out).toEqual({ text: 'ответ', costUsd: 0.0011 });
+    const out = await callOpenRouter({ apiKey: 'sk-test-123', model: 'nvidia/nemotron-3-ultra-550b-a55b:free, z-ai/glm-5.3-flash', messages: [{ role: 'user', content: 'x' }], fetchImpl });
+    expect(out).toEqual({ text: 'ответ', costUsd: 0.0011, model: 'z-ai/glm-5.3-flash' });
     expect(req!.url).toBe('https://openrouter.ai/api/v1/chat/completions');
     const headers = new Headers(req!.init.headers);
     expect(headers.get('authorization')).toBe('Bearer sk-test-123');
     const body = JSON.parse(String(req!.init.body));
-    expect(body.model).toBe('anthropic/claude-haiku-5.5');
+    // A comma-separated WATCHDOG_MODEL is an OpenRouter fallback chain: first is primary.
+    expect(body.model).toBe('nvidia/nemotron-3-ultra-550b-a55b:free');
+    expect(body.models).toEqual(['nvidia/nemotron-3-ultra-550b-a55b:free', 'z-ai/glm-5.3-flash']);
     expect(body.max_tokens).toBeGreaterThan(0);
     expect(body.max_tokens).toBeLessThanOrEqual(1500);
+    // Reasoning models must not spend the whole output budget thinking.
+    expect(body.reasoning).toEqual({ effort: 'low', exclude: true });
     expect(body.tools).toBeUndefined();
     expect(String(req!.init.body)).not.toContain('sk-test-123');
+  });
+
+  test('a single model is sent without a fallback list', async () => {
+    let body: any;
+    const fetchImpl = (async (_: string, init: RequestInit) => {
+      body = JSON.parse(String(init.body));
+      return new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), { status: 200 });
+    }) as unknown as typeof fetch;
+    const out = await callOpenRouter({ apiKey: 'k-1234', model: 'z-ai/glm-5.3-flash', messages: [], fetchImpl });
+    expect(body.model).toBe('z-ai/glm-5.3-flash');
+    expect(body.models).toBeUndefined();
+    expect(out.model).toBe('z-ai/glm-5.3-flash');
+  });
+
+  test('a reasoning model that used the whole budget thinking (empty content) is an error, not an empty comment', async () => {
+    const fetchImpl = (async () =>
+      new Response(JSON.stringify({ choices: [{ message: { content: '', reasoning: 'hmm...' }, finish_reason: 'length' }] }), { status: 200 })) as unknown as typeof fetch;
+    await expect(callOpenRouter({ apiKey: 'k-1234', model: 'm', messages: [], fetchImpl })).rejects.toThrow();
   });
 
   test('an HTTP error throws without echoing the key', async () => {
@@ -199,7 +221,7 @@ describe('a CI run end to end, with GitHub and OpenRouter mocked', () => {
       calls.push({ url, method, body: init.body ? JSON.parse(String(init.body)) : null, auth: new Headers(init.headers).get('authorization') });
       if (url.startsWith('https://openrouter.ai')) {
         if (opts.openrouter === 'fail') return new Response('nope', { status: 503 });
-        return new Response(JSON.stringify({ choices: [{ message: { content: 'Вырос `Hero.astro`, cc @Grumbash ![x](https://evil.example/a.png)' } }], usage: { cost: 0.0009 } }), { status: 200 });
+        return new Response(JSON.stringify({ model: 'z-ai/glm-5.3-flash', choices: [{ message: { content: 'Вырос `Hero.astro`, cc @Grumbash ![x](https://evil.example/a.png)' } }], usage: { cost: 0.0009 } }), { status: 200 });
       }
       if (method === 'GET') {
         const list = opts.existing ? [{ id: opts.existing, body: `${MARKER}\nold`, user: { login: 'github-actions[bot]' } }] : [];
@@ -234,7 +256,8 @@ describe('a CI run end to end, with GitHub and OpenRouter mocked', () => {
     await run(h.env, h.deps);
     const or = h.calls.filter((c) => c.url.startsWith('https://openrouter.ai'));
     expect(or).toHaveLength(1);
-    expect(or[0].body.model).toBe('anthropic/claude-haiku-5.5');
+    expect(or[0].body.model).toBe('nvidia/nemotron-3-ultra-550b-a55b:free');
+    expect(or[0].body.models).toEqual(['nvidia/nemotron-3-ultra-550b-a55b:free', 'z-ai/glm-5.3-flash']);
     expect(JSON.stringify(or[0].body)).not.toContain('gr.bin');
     const [c] = posted(h.calls);
     expect(c.method).toBe('POST');
@@ -242,6 +265,9 @@ describe('a CI run end to end, with GitHub and OpenRouter mocked', () => {
     expect(c.auth).toBe('Bearer ghs-test-token');
     expect(c.body.body).toContain(MARKER);
     expect(c.body.body).toContain('Hero.astro');
+    // The comment names the model that actually answered, not the requested chain.
+    expect(c.body.body).toContain('z-ai/glm-5.3-flash');
+    expect(c.body.body).not.toContain('nemotron');
     expect(c.body.body).not.toMatch(/(^|[^\w`])@Grumbash/);
     expect(c.body.body).not.toContain('evil.example');
     expect(h.logs.join('\n')).not.toContain('sk-or-test-secret');
@@ -396,6 +422,7 @@ describe('the gate moved from pre-push to CI', () => {
     expect(readme).toMatch(/^## CI$/m);
     expect(readme).toContain('OPENROUTER_API_KEY');
     expect(readme).toContain('WATCHDOG_MODEL');
+    expect(readme).toContain('nvidia/nemotron-3-ultra-550b-a55b:free');
     expect(readme).toMatch(/rotat/i);
     expect(readme).not.toMatch(/There's no CI/);
     expect(readme).not.toContain('pre-push');
