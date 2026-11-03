@@ -90,8 +90,13 @@ describe('runtime (initAnalytics)', () => {
 
   const listen = (map: Record<string, L[]>) => (type: string, fn: any, opt?: any) =>
     (map[type] ??= []).push({ fn, capture: opt === true || !!opt?.capture });
-  const tagged = (dataset: Record<string, string>) => {
-    const e: any = { dataset, closest: (sel: string) => (sel === '[data-track]' ? e : null) };
+  // `link` makes it an <a href>, so it also matches closest('a') / closest('a[href]').
+  const tagged = (dataset: Record<string, string>, link = false) => {
+    const e: any = {
+      dataset,
+      tagName: link ? 'A' : 'BUTTON',
+      closest: (sel: string) => (sel === '[data-track]' || (link && /^a\b/.test(sel)) ? e : null),
+    };
     return e;
   };
   // Capture listeners, then the element's own onclick, then bubble listeners.
@@ -154,10 +159,26 @@ describe('runtime (initAnalytics)', () => {
 
   test('middle-click on a tracked link counts; right-click does not', async () => {
     await boot();
-    const cta = tagged({ track: 'cta_book', trackPlacement: 'hero' });
+    const cta = tagged({ track: 'cta_book', trackPlacement: 'hero' }, true);
     dispatch('auxclick', { type: 'auxclick', target: cta, button: 1 });
     dispatch('auxclick', { type: 'auxclick', target: cta, button: 2 });
     expect(calls).toEqual([['cta_book', { placement: 'hero', lang: 'en' }]]);
+  });
+
+  test('middle-click on a button does nothing, so nothing is sent', async () => {
+    await boot();
+    for (const ds of [
+      { track: 'theme_switch' },
+      { track: 'email_copy', trackPlacement: 'footer' },
+      { track: 'lang_switch', trackTo: 'ru' },
+      { track: 'topology_interact', trackAction: 'xray' },
+    ]) {
+      dispatch('auxclick', { type: 'auxclick', target: tagged(ds), button: 1 });
+    }
+    expect(calls).toEqual([]);
+    // the once-per-view slot for xray is still free
+    click(tagged({ track: 'topology_interact', trackAction: 'xray' }));
+    expect(calls).toEqual([['topology_interact', { action: 'xray' }]]);
   });
 
   test('lang_switch is not sent when the language does not change', async () => {
@@ -184,7 +205,8 @@ describe('runtime (initAnalytics)', () => {
     expect(observers.length).toBe(1);
     const { options, cb, targets } = observers[0];
     const t = Array.isArray(options.threshold) ? Math.min(...options.threshold) : options.threshold ?? 0;
-    const shrinksViewport = /-\d+%/.test(options.rootMargin ?? '');
+    const bottom = (options.rootMargin ?? '').trim().split(/\s+/)[2] ?? '0px';
+    const shrinksViewport = /^-\d+%$/.test(bottom) && parseInt(bottom, 10) <= -20;
     expect(t >= 0.2 || shrinksViewport).toBe(true);
     expect(targets.map((x: any) => x.id).sort()).toEqual(['contact', 'experience', 'writing']);
     const exp = targets.find((x: any) => x.id === 'experience');
