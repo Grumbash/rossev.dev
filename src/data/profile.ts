@@ -88,8 +88,8 @@ export const PROFILE = {
   },
   // Value line under the name: what I solve + proof. Every number must already be a fact on the page.
   valueLine: {
-    en: 'AI agents that hold up in production, not just in the demo: dead air at pickup on healthcare calls cut from 15 s to 0; 28 PRs merged in week one, almost all built by agents.',
-    ru: 'AI-агенты, которые держатся в продакшене, а не только на демо: тишина при ответе в медицинских звонках — 15 с → 0; 28 смерженных PR за первую неделю, почти все собрали агенты.'
+    en: 'AI agents that hold up in production, not just in the demo: dead air at pickup on healthcare calls cut from 15 s to 0; 28 PRs in week one: agents wrote 98% of the code, I did 97% of the planning.',
+    ru: 'AI-агенты, которые держатся в продакшене, а не только на демо: тишина при ответе в медицинских звонках — 15 с → 0; 28 PR за первую неделю: 98% кода написали агенты, 97% планирования — моё.'
   },
   // Short bio for the hero only (max 40 words EN). The long `bio` below feeds the CV PDF and llms.txt.
   bioShort: {
@@ -146,7 +146,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Именованные AI-агенты (разработчик, ревьюер, PM), работающие по утверждённому человеком плану с полным аудитом шагов, песочницей и бенчмарками.'
     },
     metrics: [
-      { value: '28 PRs', label: { en: 'Merged in the first week, almost all built by agents', ru: 'Смержено за первую неделю, почти все собрали агенты' } },
+      { value: '28 PRs', label: { en: 'Merged in the first week: 98% of the code by agents, 97% of the planning by me', ru: 'Смержено за первую неделю: 98% кода написали агенты, 97% планирования — моё' } },
       { value: '89%', label: { en: 'Of my PRs written by agents', ru: 'Моих PR написали агенты' } }
     ],
     stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Query Guards', 'Self-Healing Syncs', 'Risk Radar'],
