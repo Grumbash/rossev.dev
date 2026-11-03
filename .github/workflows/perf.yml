@@ -1,0 +1,87 @@
+# The perf gate on every PR that touches what ships: tests, then `bun run perf` (build, byte
+# budgets, Lighthouse 3x mobile and desktop against perf-budgets.json). The watchdog keeps one
+# sticky PR comment up to date and, on a breach, asks a model what grew. A breach fails the check.
+# Fork PRs run the gate but get no comment (no secrets, read-only token).
+name: perf
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'astro.config.*'
+      - 'package.json'
+      - 'bun.lock'
+      - 'perf-budgets.json'
+      - 'tsconfig.json'
+      - '.github/workflows/perf.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: perf-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the watchdog diffs base...head
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.3.0
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun test
+
+      # Ubuntu 24.04's AppArmor blocks the unprivileged user namespaces Chrome's sandbox needs,
+      # and Chrome then never opens its debugging port. Lift that on this throwaway VM instead of
+      # turning Chrome's own sandbox off.
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      # ubuntu-latest ships google-chrome, which scripts/perf-check.ts finds for Lighthouse.
+      - id: perf
+        run: bun run perf
+        continue-on-error: true
+
+      - if: always()
+        run: |
+          if [ -f .perf/last-report.md ]; then cat .perf/last-report.md >> "$GITHUB_STEP_SUMMARY"
+          else echo "No perf report was written; see the log of the perf step." >> "$GITHUB_STEP_SUMMARY"; fi
+
+      # Also after a test failure (perf skipped: the comment says the gate did not run); never
+      # for a run cancelled by a newer push.
+      - if: ${{ !cancelled() && steps.perf.outcome != 'cancelled' }}
+        run: bun scripts/ci/watchdog.ts
+        env:
+          PERF_OUTCOME: ${{ steps.perf.outcome }}
+          PERF_REPORT: .perf/last-report.md
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          IS_FORK: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          WATCHDOG_MODEL: ${{ vars.WATCHDOG_MODEL }}
+
+      - if: steps.perf.outcome == 'failure'
+        run: |
+          echo "Perf gate failed (a breached budget or an error); see the job summary."
+          exit 1

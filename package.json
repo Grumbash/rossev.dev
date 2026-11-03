@@ -9,7 +9,6 @@
     "start": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "bun scripts/generate-cv-and-og.ts && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "perf": "bun scripts/perf-check.ts",
     "build-story": "bun scripts/build-story.ts"
   },
