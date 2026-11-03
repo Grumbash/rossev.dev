@@ -19,6 +19,8 @@ function generateLlmsTxt(): void {
   const lines: string[] = [
     `# ${PROFILE.name.en} — Founding Engineer, AI Agents @ YAGNI (yagni.app)`,
     '',
+    PROFILE.summaryThirdPerson.en,
+    '',
     '> Making AI agents dependable in production, not just impressive in a demo.',
     '',
     `- **Current Role**: ${EXPERIENCE[0].role.en} at ${EXPERIENCE[0].company} (\`https://yagni.app\`) — ${EXPERIENCE[0].period.en} (core team, working with the founders)`,

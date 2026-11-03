@@ -326,16 +326,16 @@ export const ISO_DOMAINS: Record<'yagni' | 'voice' | 'saas', TopologyDomain> = {
         guard: { en: 'GUARDRAIL: Stampede protection & deterministic cache invalidation.', ru: 'ГАРДРЕЙЛ: Защита от пробоя кеша и мгновенный сброс устаревших цен.' }
       },
       {
-        num: '07', code: '07 · LLM INSIGHTS', short: 'LLM TRIAGE', metric: 'ORBITAL L+1',
+        num: '07', code: '07 · LLM INSIGHTS', short: 'LLM FEEDBACK', metric: 'ORBITAL L+1',
         stratum: 1, baseY: 74, x: -135, z: -185, w: 18, d: 18, h: 38, type: 'tower',
         top: '#FF3385', left: '#C72466', right: '#8C1444',
-        spec: { en: 'Automated LLM Sales/CS Feedback Pipeline (-80% Manual Triage Time)', ru: 'Орбитальный LLM-конвейер (L+1): анализ фидбека от Sales и CS (-80% времени)' },
+        spec: { en: 'Automated LLM Sales/CS Feedback Pipeline (-80% Feedback Analysis Time)', ru: 'Орбитальный LLM-конвейер (L+1): анализ фидбека от Sales и CS (-80% времени)' },
         layers: [
           { tag: 'L3 · PRODUCT SIGNALS', desc: { en: 'Ranks feature requests by revenue impact', ru: 'Ранжирование продуктовых запросов по влиянию на выручку' } },
           { tag: 'L2 · STRUCTURED EXTRACT', desc: { en: 'Turns raw call notes & tickets into typed schemas', ru: 'Превращение сырых заметок и тикетов в типизированные отчёты' } },
           { tag: 'L1 · CS / SALES INGEST', desc: { en: 'Automated ingestion from CRM & support channels', ru: 'Автоматический сбор обращений из CRM и каналов поддержки' } }
         ],
-        guard: { en: 'GUARDRAIL: Cut manual feedback triage time by 80% for product leadership.', ru: 'ГАРДРЕЙЛ: Сокращение ручной обработки фидбека на 80%.' }
+        guard: { en: 'GUARDRAIL: Cut feedback analysis time by 80% for product leadership.', ru: 'ГАРДРЕЙЛ: Время анализа фидбека сокращено на 80%.' }
       },
       {
         num: '08', code: '08 · GRAFANA & LOKI SLO', short: 'SLO RADAR', metric: '99.95% SLA',
