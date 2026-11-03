@@ -107,7 +107,7 @@ describe('the card tells a 3-step story', () => {
     expect(btn).toContain('data-track-action="heal"');
   });
 
-  test('the final step opens the YAGNI case, even without JS', () => {
+  test('the final step is a real link to the YAGNI case (works with modifier/middle click and without JS)', () => {
     const at = card.search(/\bdata-story-case\b/);
     const a = tagWith(card, 'data-story-case');
     expect(a.startsWith('<a')).toBe(true);
@@ -178,7 +178,8 @@ describe.skipIf(!existsSync(CHROME))('layout', () => {
   const PROBE = `<script>(async()=>{
     const q = new URLSearchParams(location.search);
     document.documentElement.setAttribute('data-lang', q.get('lang') || 'en');
-    const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    // rAF stalls inside an iframe under --virtual-time-budget; a timeout is enough to get layout.
+    const frame = () => new Promise((r) => setTimeout(r, 50));
     await document.fonts.ready;
     await new Promise((r) => setTimeout(r, 300));
     const card = document.querySelector('.stage-iso-card');
@@ -189,18 +190,53 @@ describe.skipIf(!existsSync(CHROME))('layout', () => {
       next: shown('[data-story-next]'), cmd: [...card.querySelectorAll('*')].some((e) => e.children.length === 0 &&
         e.textContent.includes('⌘') && e.getBoundingClientRect().height > 0),
       h: Math.round(card.getBoundingClientRect().height) });
+    const $ = (sel) => card.querySelector(sel);
+    const H = () => card.getBoundingClientRect().height;
+    // Which story control has focus, and is it on screen.
+    const act = () => { const a = document.activeElement; if (!a || a === document.body) return 'body';
+      const name = ['prev', 'next', 'break', 'case', 'explore', 'play'].find((n) => a.hasAttribute('data-story-' + n)) || a.tagName;
+      const r = a.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(a).visibility !== 'hidden' ? name : name + ':hidden'; };
+    const press = async (sel) => { const b = $(sel); b?.focus(); b?.click(); await frame(); };
     const out = { initial: snap() };
-    card.querySelector('[data-story-play]')?.click(); await frame();
-    card.querySelector('[data-story-next]')?.click(); await frame();
-    out.afterNext = snap();
-    card.querySelector('[data-story-explore]')?.click(); await frame();
-    out.afterExplore = snap();
+    if (q.get('rm')) {
+      // Reduced motion: the whole story with the keyboard; the card never changes height.
+      $('[data-story-play]')?.click(); await frame();
+      out.h = [H()];
+      await press('[data-story-next]'); out.h.push(H());
+      await press('[data-story-prev]'); out.focusAfterPrev = act();
+      await press('[data-story-next]');
+      await press('[data-story-next]'); out.h.push(H()); out.focusAtStep3 = act();
+      await press('[data-story-break]'); out.h.push(H());
+      out.caseShown = shown('[data-story-case]'); out.focusAfterHeal = act();
+      // Modifier clicks on the case links must stay the browser's (new tab/window); a plain click opens in place.
+      const prevented = (el, init) => { let r = null;
+        const spy = (e) => { r = e.defaultPrevented; e.preventDefault(); };
+        window.addEventListener('click', spy); el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, ...init }));
+        window.removeEventListener('click', spy); return r; };
+      const links = [$('[data-story-case]'), document.querySelector('.nca-bridge a')];
+      out.modPrevented = links.flatMap((el) => [{ metaKey: true }, { ctrlKey: true }, { shiftKey: true }, { altKey: true }].map((m) => prevented(el, m)));
+      out.plainPrevented = links.map((el) => prevented(el, {}));
+    } else {
+      out.rafBeforePlay = window.__raf;
+      $('[data-story-play]')?.click(); await frame();
+      out.rafAfterPlay = window.__raf - out.rafBeforePlay;
+      $('[data-story-next]')?.click(); await frame();
+      out.afterNext = snap();
+      $('[data-story-explore]')?.click(); await frame();
+      out.afterExplore = snap();
+    }
     out.sw = document.documentElement.scrollWidth; out.vw = innerWidth;
     const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(out);
     document.body.appendChild(pre);
   })();</script>`;
-  const FRAME = (lang: string, w: number) => `<!doctype html><body style="margin:0">
-    <iframe src="/?lang=${lang}" width="${w}" height="900" style="border:0;display:block"></iframe>
+  // Window and iframe are tall so the card is on screen from the start: the engine only draws while it is
+  // (IntersectionObserver, measured against the top window), and in this harness the observer does not update after load.
+  // First thing in <head>: count the page's requestAnimationFrame calls. Frames run on a 16 ms timer,
+  // because real rAF stalls inside an iframe under --virtual-time-budget.
+  const RAF = `<script>window.__raf=0;window.requestAnimationFrame=(cb)=>{window.__raf++;return setTimeout(()=>cb(performance.now()),16)};
+    window.cancelAnimationFrame=(id)=>clearTimeout(id);</script>`;
+  const FRAME = (lang: string, w: number, rm: boolean) => `<!doctype html><body style="margin:0">
+    <iframe src="/?lang=${lang}${rm ? '&rm=1' : ''}" width="${w}" height="2400" style="border:0;display:block"></iframe>
     <script>const t=setInterval(()=>{const p=document.querySelector('iframe').contentDocument?.getElementById('__probe');
       if(p){clearInterval(t);const o=document.createElement('pre');o.id='__result';o.textContent=p.textContent;document.body.appendChild(o);}},100);</script>`;
   let server: ReturnType<typeof Bun.serve>;
@@ -212,11 +248,11 @@ describe.skipIf(!existsSync(CHROME))('layout', () => {
         const url = new URL(req.url);
         const path = url.pathname;
         if (path === '/frame') {
-          return new Response(FRAME(url.searchParams.get('lang') ?? 'en', Number(url.searchParams.get('w') ?? 375)), {
+          return new Response(FRAME(url.searchParams.get('lang') ?? 'en', Number(url.searchParams.get('w') ?? 375), url.searchParams.has('rm')), {
             headers: { 'content-type': 'text/html' },
           });
         }
-        if (path === '/') return new Response(html.replace('</body>', `${PROBE}</body>`), { headers: { 'content-type': 'text/html' } });
+        if (path === '/') return new Response(html.replace('<head>', `<head>${RAF}`).replace('</body>', `${PROBE}</body>`), { headers: { 'content-type': 'text/html' } });
         const file = Bun.file(join('dist', path));
         return (await file.exists()) ? new Response(file) : new Response('', { status: 404 });
       },
@@ -224,10 +260,11 @@ describe.skipIf(!existsSync(CHROME))('layout', () => {
   });
   afterAll(() => server?.stop(true));
 
-  async function probe(lang: 'en' | 'ru', w: number) {
+  async function probe(lang: 'en' | 'ru', w: number, rm = false) {
     const proc = Bun.spawn(
-      [CHROME, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', `--window-size=${Math.max(w + 40, 500)},1000`,
-        '--virtual-time-budget=8000', '--dump-dom', `http://localhost:${server.port}/frame?lang=${lang}&w=${w}`],
+      [CHROME, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', `--window-size=${Math.max(w + 40, 500)},2600`,
+        ...(rm ? ['--force-prefers-reduced-motion'] : []),
+        '--virtual-time-budget=8000', '--dump-dom', `http://localhost:${server.port}/frame?lang=${lang}&w=${w}${rm ? '&rm=1' : ''}`],
       { stdout: 'pipe', stderr: 'ignore' },
     );
     const dom = await new Response(proc.stdout).text();
@@ -252,6 +289,24 @@ describe.skipIf(!existsSync(CHROME))('layout', () => {
       expect(r.initial.h).toBeLessThanOrEqual(420);
       expect(r.afterNext).toMatchObject({ s2: true, rail: false });
       expect(r.sw).toBeLessThanOrEqual(375);
+      // A still poster: at most a couple of frames before Play (the poster frame itself), a running loop after.
+      expect(r.rafBeforePlay).toBeLessThanOrEqual(3);
+      expect(r.rafAfterPlay).toBeGreaterThan(0);
     });
+
+    for (const w of [375, 1440]) {
+      test(`${lang} at ${w}, reduced motion: keyboard through the story to the case, card height never changes`, async () => {
+        const r = await probe(lang, w, true);
+        expect(r.h.length).toBe(4);
+        for (const h of r.h) expect(Math.abs(h - r.h[0])).toBeLessThanOrEqual(1);
+        expect(r.focusAfterPrev).toBe('next');
+        expect(r.focusAtStep3).toBe('break');
+        expect(r.caseShown).toBe(true);
+        expect(r.focusAfterHeal).toBe('case');
+        expect(r.modPrevented).toEqual(new Array(8).fill(false));
+        expect(r.plainPrevented).toEqual([true, true]);
+        expect(r.sw).toBeLessThanOrEqual(w);
+      });
+    }
   }
 });
