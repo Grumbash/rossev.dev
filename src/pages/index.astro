@@ -190,8 +190,6 @@ const jsonLd = {
               </div>
             </dl>
             <div class="contact-meta">
-              <a class="text-link" href={`tel:${PROFILE.phone.replace(/\s/g, '')}`}>{PROFILE.phone}</a>
-              <span aria-hidden="true">·</span>
               <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(', ')}</span>
               <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(', ')}</span>
               <span aria-hidden="true">·</span>
@@ -676,8 +674,8 @@ const jsonLd = {
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
               >
-                <span class="lang-en">AI & agents</span>
-                <span class="lang-ru">AI и агенты</span>
+                <span class="lang-en">AI systems</span>
+                <span class="lang-ru">AI-системы</span>
               </button>
               <button
                 type="button"
@@ -718,8 +716,8 @@ const jsonLd = {
                 hx-swap="innerHTML transition:true"
                 onclick="window.activateFilterBtn(this)"
               >
-                <span class="lang-en">Ownership</span>
-                <span class="lang-ru">Ответственность</span>
+                <span class="lang-en">Delivery</span>
+                <span class="lang-ru">Поставка</span>
               </button>
             </div>
 
