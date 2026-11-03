@@ -74,6 +74,17 @@ describe('generator (pure functions on real gh output)', () => {
     expect(e.ciVerdicts).toEqual([]);
   });
 
+  test('regenerating keeps CI verdicts already appended to the data', async () => {
+    const { toEntry, carryCiVerdicts } = await gen();
+    const h = { visitorChange: { en: 'x', ru: 'х' }, humanDecision: { en: 'x', ru: 'х' }, findings: [] };
+    const verdict = { kind: 'judge', verdict: 'SHIP', summary: { en: 'ok', ru: 'ок' }, url: `${GH}/pull/12#issuecomment-1`, at: '2026-11-05T00:00:00Z' };
+    const old = { repo: REPO, prs: [{ ...toEntry(fixture(12), h, REPO), ciVerdicts: [verdict] }] };
+    const fresh = [toEntry(fixture(12), h, REPO), toEntry(fixture(3), h, REPO)];
+    const out = carryCiVerdicts(old, fresh);
+    expect(out.find((p: any) => p.number === 12).ciVerdicts).toEqual([verdict]);
+    expect(out.find((p: any) => p.number === 3).ciVerdicts).toEqual([]);
+  });
+
   test('stats are computed, never typed: PRs, red-test-first, findings fixed, commits', async () => {
     const { toEntry, computeStats } = await gen();
     const base = { visitorChange: { en: 'x', ru: 'х' }, humanDecision: { en: 'x', ru: 'х' } };
@@ -118,8 +129,13 @@ describe('committed data (src/data/build-story.json)', () => {
     expect(validate(story)).toEqual([]);
   });
 
-  test('every PR merged into this branch is in the data: regenerate after each merge', () => {
-    const merged = execSync('git log --merges --format=%s HEAD', { encoding: 'utf8' })
+  // The data says which main commit it was generated through. Every PR merged up to that commit
+  // must be in it. Merges after it make the page stale, not main red: otherwise every merge would
+  // fail `bun test` (and CI on every open PR) until someone regenerated the data.
+  test('every PR merged up to the commit the data was generated through is in the data', () => {
+    expect(story.throughSha).toMatch(/^[0-9a-f]{40}$/);
+    execSync(`git merge-base --is-ancestor ${story.throughSha} HEAD`);
+    const merged = execSync(`git log --merges --format=%s ${story.throughSha}`, { encoding: 'utf8' })
       .split('\n')
       .map((s) => s.match(/^Merge pull request #(\d+) from /)?.[1])
       .filter(Boolean)
