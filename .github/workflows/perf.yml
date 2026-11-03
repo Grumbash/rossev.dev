@@ -53,7 +53,7 @@ jobs:
 
       # Ubuntu 24.04's AppArmor blocks the unprivileged user namespaces Chrome's sandbox needs,
       # and Chrome then never opens its debugging port. Lift that on this throwaway VM instead of
-      # running Chrome with --no-sandbox.
+      # turning Chrome's own sandbox off.
       - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       # ubuntu-latest ships google-chrome, which scripts/perf-check.ts finds for Lighthouse.
