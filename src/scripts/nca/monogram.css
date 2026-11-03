@@ -1,0 +1,12 @@
+/* GR monogram styles that only matter once it is live (interaction); its box and
+   text styles are critical CSS in brutalism.css, so nothing moves when this arrives. */
+.nca-canvas {
+  cursor: crosshair;
+  /* Vertical swipes still scroll the page; taps and horizontal drags erase. */
+  touch-action: pan-y;
+}
+
+.nca-canvas:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
