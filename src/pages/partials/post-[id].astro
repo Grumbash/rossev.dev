@@ -181,15 +181,14 @@ const note = POST_NOTES[post.id] || POST_NOTES['post-3'];
 ---
 
 <div class="brutal-box post-reader-drawer" style="margin-bottom: 24px; background: var(--surface); border-color: var(--border);">
-  <div class="blueprint-header" style={`background: ${post.color}; color: #0A0A0A;`}>
+  <div class="blueprint-header">
     <span>
       <span class="lang-en">// ENGINEERING NOTE BRIEF // {post.categoryLabel.en} · {post.readTime.en}</span>
       <span class="lang-ru">// КОНСПЕКТ ИНЖЕНЕРНОЙ ЗАМЕТКИ // {post.categoryLabel.ru} · {post.readTime.ru}</span>
     </span>
     <button
       type="button"
-      class="brutal-btn"
-      style="padding: 3px 10px; font-size: 0.72rem; background: #0A0A0A; color: #FFFFFF;"
+      class="brutal-btn brutal-btn-sm"
       onclick="document.getElementById('post-reader-slot').innerHTML = ''; window.setUrlParam && window.setUrlParam('post', null)"
     >
       <span class="lang-en">CLOSE ×</span><span class="lang-ru">ЗАКРЫТЬ ×</span>

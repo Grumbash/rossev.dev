@@ -12,10 +12,7 @@ declare global {
     setIsoDomain: (domain: 'yagni' | 'voice' | 'saas', btn?: HTMLElement | null) => void;
     fireIsoPacket: () => void;
     openDomainBlueprint: () => void;
-    switchSectionDeck: (deckId: string, btnEl?: HTMLElement | null, updateUrl?: boolean) => void;
-    htmx?: {
-      ajax: (method: string, url: string, target: string) => void;
-    };
+    openCaseBreakdown: (caseId: string) => void;
   }
 }
 
@@ -349,14 +346,7 @@ export function initIsoArchitectureEngine(): void {
   };
 
   window.openDomainBlueprint = function () {
-    const caseId = ISO_DOMAINS[currentDomain].caseId;
-    window.switchSectionDeck('systems');
-    if (window.htmx) {
-      window.htmx.ajax('GET', '/partials/case-' + caseId, '#arch-blueprint-slot');
-    }
-    setTimeout(() => {
-      document.getElementById('arch-blueprint-slot')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 150);
+    window.openCaseBreakdown(ISO_DOMAINS[currentDomain].caseId);
   };
 
   function isNodeConnected(a: number, b: number): boolean {
@@ -1220,24 +1210,33 @@ export function initIsoArchitectureEngine(): void {
     });
   }
 
-  function render() {
+  // Animation constants were tuned at 60 fps. `frames` scales each step by how many
+  // 60 fps frames actually elapsed, so pacing stays the same at 120 Hz or under load.
+  let lastFrameTs: number | null = null;
+  const ease = (rate: number, frames: number) => 1 - Math.pow(1 - rate, frames);
+
+  function render(ts: number) {
     if (!isCanvasVisible || document.hidden) {
       rafId = null;
+      lastFrameTs = null;
       return;
     }
 
-    clock++;
+    const frames = lastFrameTs === null ? 1 : Math.min((ts - lastFrameTs) / (1000 / 60), 4);
+    lastFrameTs = ts;
+    clock += frames;
 
     if (!isDragging && lockedNode === -1 && !faultSim.active && !prefersReducedMotion) {
-      targetYaw += Math.sin(clock * 0.006) * 0.0004;
+      targetYaw += Math.sin(clock * 0.006) * 0.0004 * frames;
     }
 
-    camYaw += (targetYaw - camYaw) * 0.12;
-    camPitch += (targetPitch - camPitch) * 0.12;
-    camZoom += (targetZoom - camZoom) * 0.12;
-    camFocusX += (targetFocusX - camFocusX) * 0.12;
-    camFocusY += (targetFocusY - camFocusY) * 0.12;
-    camFocusZ += (targetFocusZ - camFocusZ) * 0.12;
+    const camEase = ease(0.12, frames);
+    camYaw += (targetYaw - camYaw) * camEase;
+    camPitch += (targetPitch - camPitch) * camEase;
+    camZoom += (targetZoom - camZoom) * camEase;
+    camFocusX += (targetFocusX - camFocusX) * camEase;
+    camFocusY += (targetFocusY - camFocusY) * camEase;
+    camFocusZ += (targetFocusZ - camFocusZ) * camEase;
 
     ctx?.clearRect(0, 0, width, height);
 
@@ -1247,12 +1246,12 @@ export function initIsoArchitectureEngine(): void {
 
     for (let i = 0; i < nodes.length; i++) {
       const targetExp = lockedNode === i ? 1.0 : 0.0;
-      nodeExplode[i] += (targetExp - nodeExplode[i]) * 0.14;
-      nodeFlash[i] *= 0.9;
+      nodeExplode[i] += (targetExp - nodeExplode[i]) * ease(0.14, frames);
+      nodeFlash[i] *= Math.pow(0.9, frames);
     }
 
     if (faultSim.active) {
-      faultSim.progress += 0.0042;
+      faultSim.progress += 0.0042 * frames;
       const p = faultSim.progress;
       const statusEl = document.getElementById('iso-trace-status');
       if (p < 0.22) {
@@ -1284,7 +1283,7 @@ export function initIsoArchitectureEngine(): void {
     }
 
     if (traceWave.active) {
-      traceWave.progress += 0.015;
+      traceWave.progress += 0.015 * frames;
       const activeNodeIdx = Math.min(nodes.length - 1, Math.floor(traceWave.progress * nodes.length));
       nodeFlash[activeNodeIdx] = 1.0;
       selectedNode = activeNodeIdx;
@@ -1324,7 +1323,7 @@ export function initIsoArchitectureEngine(): void {
 
     if (!prefersReducedMotion || traceWave.active || faultSim.active) {
       edgePackets.forEach((p) => {
-        p.t = (p.t + p.speed) % 1;
+        p.t = (p.t + p.speed * frames) % 1;
       });
     }
 
