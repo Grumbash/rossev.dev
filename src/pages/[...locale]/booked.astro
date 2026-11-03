@@ -1,0 +1,53 @@
+---
+// cal.com's "Redirect on booking" target. The redirect forwards our utm_content plus the booking itself
+// (uid, email, name, phone...). The head script keeps only the placement on <html data-booking-source>
+// (initAnalytics sends booking_confirmed) and strips the query before Umami and Vercel read the URL.
+import { BLOG_POSTS, PROFILE, postPath } from '../../data/profile';
+import Base from '../../layouts/Base.astro';
+import { PLACEMENTS, bookingSource } from '../../scripts/analytics';
+import { localeOf, localePath, localeStaticPaths, t } from '../../i18n';
+
+// cal.com redirects to /booked/; /ru/booked/ is its Russian twin for the language switch.
+export const getStaticPaths = localeStaticPaths;
+const lang = localeOf(Astro.params.locale);
+const d = t(lang);
+const post = BLOG_POSTS.find((p) => p.slug === 'the-new-ai-bottleneck')!;
+
+// Classic and inline, so it runs during parsing, before the deferred trackers. It is bookingSource() itself:
+// its source is inlined, with PLACEMENTS declared beside it for its default argument.
+const strip = `(function () {
+  var q = location.search;
+  if (!q) return;
+  try {
+    var PLACEMENTS = ${JSON.stringify(PLACEMENTS)};
+    var s = (${bookingSource.toString()})(q);
+    if (s) document.documentElement.setAttribute('data-booking-source', s);
+  } catch (e) {}
+  try { history.replaceState(history.state, '', location.pathname + location.hash); } catch (e) {}
+})();`;
+---
+
+<Base
+  title={d.meta.bookedTitle}
+  description={d.meta.bookedDescription}
+  cta={false}
+>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex" />
+    <script is:inline set:html={strip} />
+  </Fragment>
+
+  <section class="section-block">
+    <div class="container">
+      <span class="section-kicker">{d.booked.kicker}</span>
+      <h1 class="section-title">{d.booked.title}</h1>
+      <p class="footer-lead">{d.booked.lead}</p>
+      <div class="footer-links">
+        <a class="text-link" href={localePath(lang, '/?case=yagni#experience')}>{d.booked.yagni}</a>
+        <a class="text-link" href={localePath(lang, postPath(post))}>{post.title[lang]} →</a>
+        <a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+      </div>
+      <p class="footer-lead">{d.booked.reply}</p>
+    </div>
+  </section>
+</Base>

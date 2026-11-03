@@ -77,9 +77,8 @@ export function initTopologyStory(): void {
     if (gone) (showCase ? caseLink : visible(brk) ? brk : next)?.focus();
 
     if (announce && live) {
-      const lang = document.documentElement.getAttribute('data-lang') === 'ru' ? 'ru' : 'en';
       const current = showCase ? caseLink : card.querySelector(`[data-story-step="${s.step}"]`);
-      live.textContent = current?.querySelector(`.lang-${lang}`)?.textContent?.trim() ?? '';
+      live.textContent = current?.textContent?.trim() ?? '';
     }
   }
 

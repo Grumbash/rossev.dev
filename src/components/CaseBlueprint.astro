@@ -1,22 +1,23 @@
 ---
 import type { CaseStudy } from '../data/profile';
+import { t, type Locale } from '../i18n';
 
 interface Props {
   study: CaseStudy;
+  lang: Locale;
   // The timeline already lists outcomes as job bullets; skip them there.
   showOutcomes?: boolean;
 }
 
-const { study, showOutcomes = true } = Astro.props;
+const { study, lang, showOutcomes = true } = Astro.props;
+const d = t(lang).blueprint;
+const arch = study.architecture[lang];
 ---
 
 <div class="blueprint-inspector">
   <div class="blueprint-header">
     <div>
-      <span>
-        <span class="lang-en">SYSTEM ARCHITECTURE //</span>
-        <span class="lang-ru">АРХИТЕКТУРА СИСТЕМЫ //</span>
-      </span>
+      <span>{d.header}</span>
       <span style="margin-left: 8px; text-decoration: underline;">{study.company}</span>
     </div>
     <div style="font-size: 0.78rem;">
@@ -25,64 +26,33 @@ const { study, showOutcomes = true } = Astro.props;
   </div>
 
   <div class="blueprint-body">
-    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 16px; color: #C8FF00;">
-      <span class="lang-en">{study.title.en}</span>
-      <span class="lang-ru">{study.title.ru}</span>
-    </h3>
+    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 16px; color: #C8FF00;">{study.title[lang]}</h3>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px;">
       <div style="background: #161922; border: 2px solid #3A3F52; padding: 16px;">
-        <div style="font-family: var(--font-mono); font-size: 0.76rem; color: #FF5500; font-weight: 800; margin-bottom: 6px;">
-          <span class="lang-en">PROBLEM & CONSTRAINTS</span>
-          <span class="lang-ru">ЗАДАЧА И ОГРАНИЧЕНИЯ</span>
-        </div>
-        <p style="font-size: 0.92rem; color: #E2E0D8;">
-          <span class="lang-en">{study.architecture.en.challenge}</span>
-          <span class="lang-ru">{study.architecture.ru.challenge}</span>
-        </p>
+        <div style="font-family: var(--font-mono); font-size: 0.76rem; color: #FF5500; font-weight: 800; margin-bottom: 6px;">{d.problem}</div>
+        <p style="font-size: 0.92rem; color: #E2E0D8;">{arch.challenge}</p>
       </div>
 
       <div style="background: #161922; border: 2px solid #3A3F52; padding: 16px;">
-        <div style="font-family: var(--font-mono); font-size: 0.76rem; color: #00E5FF; font-weight: 800; margin-bottom: 6px;">
-          <span class="lang-en">ARCHITECTURAL SOLUTION</span>
-          <span class="lang-ru">АРХИТЕКТУРНОЕ РЕШЕНИЕ</span>
-        </div>
-        <p style="font-size: 0.92rem; color: #E2E0D8;">
-          <span class="lang-en">{study.architecture.en.solution}</span>
-          <span class="lang-ru">{study.architecture.ru.solution}</span>
-        </p>
+        <div style="font-family: var(--font-mono); font-size: 0.76rem; color: #00E5FF; font-weight: 800; margin-bottom: 6px;">{d.solution}</div>
+        <p style="font-size: 0.92rem; color: #E2E0D8;">{arch.solution}</p>
       </div>
     </div>
 
     <div class="topology-diagram">
-      <div style="color: #FFD600; font-weight: 800; margin-bottom: 8px;">
-        <span class="lang-en">PRODUCTION DATA & CONTROL FLOW:</span>
-        <span class="lang-ru">ПОТОКИ ДАННЫХ И УПРАВЛЕНИЯ В ПРОДАКШЕНЕ:</span>
-      </div>
-      <div class="lang-en">
-        {study.architecture.en.topology.map((line) => (
-          <div style="margin-bottom: 4px;">{line}</div>
-        ))}
-      </div>
-      <div class="lang-ru">
-        {study.architecture.ru.topology.map((line) => (
+      <div style="color: #FFD600; font-weight: 800; margin-bottom: 8px;">{d.flow}</div>
+      <div>
+        {arch.topology.map((line) => (
           <div style="margin-bottom: 4px;">{line}</div>
         ))}
       </div>
     </div>
 
     {showOutcomes && <div style="margin-top: 16px;">
-      <div style="font-family: var(--font-mono); font-size: 0.78rem; color: #C8FF00; font-weight: 800; margin-bottom: 10px;">
-        <span class="lang-en">KEY PRODUCTION OUTCOMES:</span>
-        <span class="lang-ru">КЛЮЧЕВЫЕ РЕЗУЛЬТАТЫ В ПРОДАКШЕНЕ:</span>
-      </div>
-      <ul class="lang-en" style="list-style: none; display: grid; gap: 8px;">
-        {study.architecture.en.outcomes.map((item) => (
-          <li style="font-size: 0.92rem;">▸ {item}</li>
-        ))}
-      </ul>
-      <ul class="lang-ru" style="list-style: none; display: grid; gap: 8px;">
-        {study.architecture.ru.outcomes.map((item) => (
+      <div style="font-family: var(--font-mono); font-size: 0.78rem; color: #C8FF00; font-weight: 800; margin-bottom: 10px;">{d.outcomes}</div>
+      <ul style="list-style: none; display: grid; gap: 8px;">
+        {arch.outcomes.map((item) => (
           <li style="font-size: 0.92rem;">▸ {item}</li>
         ))}
       </ul>

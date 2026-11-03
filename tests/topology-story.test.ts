@@ -70,22 +70,29 @@ describe('step logic', () => {
 let html = '';
 let card = '';
 let css = '';
+// EN at /, RU at /ru/: the same card per locale.
+const pages = { en: '', ru: '' };
+const cards = { en: '', ru: '' };
+const topologyCard = (page: string) => {
+  const start = page.indexOf('stage-iso-card');
+  return page.slice(start, page.indexOf('id="experience"', start));
+};
 
 const text = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-// Inner text of the first `.lang-xx` span after `at` in `src`.
-function langAt(src: string, at: number, lang: 'en' | 'ru'): string {
-  if (at < 0) return '';
-  const m = src.slice(at).match(new RegExp(`<span class="lang-${lang}">([\\s\\S]*?)</span>`));
-  return m ? text(m[1]) : '';
+// Text of the element whose opening tag carries `attr`, in `src`.
+function textOf(src: string, attr: string): string {
+  const m = src.match(new RegExp(`<(\\w+)\\b[^>]*\\b${attr}[^>]*>([\\s\\S]*?)</\\1>`));
+  return m ? text(m[2]) : '';
 }
 // The opening tag that carries `attr` (e.g. data-story-play).
 const tagWith = (src: string, attr: string) => src.match(new RegExp(`<(a|button)\\b[^>]*\\b${attr}\\b[^>]*>`))?.[0] ?? '';
 
 beforeAll(() => {
   if (!existsSync('dist/index.html') || !process.env.SKIP_BUILD) execSync('bun run build', { stdio: 'ignore' });
-  html = readFileSync('dist/index.html', 'utf8');
-  const start = html.indexOf('stage-iso-card');
-  card = html.slice(start, html.indexOf('id="experience"', start));
+  html = pages.en = readFileSync('dist/index.html', 'utf8');
+  pages.ru = readFileSync('dist/ru/index.html', 'utf8');
+  card = cards.en = topologyCard(pages.en);
+  cards.ru = topologyCard(pages.ru);
   const dir = 'dist/_astro';
   css = readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => readFileSync(join(dir, f), 'utf8')).join('\n');
   css += [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n');
@@ -94,10 +101,8 @@ beforeAll(() => {
 describe('the card tells a 3-step story', () => {
   test('each step has a caption in EN and RU', () => {
     for (const step of [1, 2, 3]) {
-      const at = card.search(new RegExp(`data-story-step="${step}"`));
-      expect(at).toBeGreaterThan(-1);
-      expect(langAt(card, at, 'en').length).toBeGreaterThan(20);
-      expect(langAt(card, at, 'ru').length).toBeGreaterThan(20);
+      expect(textOf(cards.en, `data-story-step="${step}"`).length).toBeGreaterThan(20);
+      expect(textOf(cards.ru, `data-story-step="${step}"`)).toMatch(/[А-Яа-яЁё]{4}/);
     }
   });
 
@@ -108,13 +113,13 @@ describe('the card tells a 3-step story', () => {
   });
 
   test('the final step is a real link to the YAGNI case (works with modifier/middle click and without JS)', () => {
-    const at = card.search(/\bdata-story-case\b/);
     const a = tagWith(card, 'data-story-case');
     expect(a.startsWith('<a')).toBe(true);
     expect(a).toMatch(/href="[^"]*case=yagni/);
     expect(a).toContain('data-track-action="case"');
-    expect(langAt(card, at, 'en')).toContain('YAGNI');
-    expect(langAt(card, at, 'ru')).toContain('YAGNI');
+    expect(textOf(cards.en, 'data-story-case')).toContain('YAGNI');
+    expect(textOf(cards.ru, 'data-story-case')).toContain('YAGNI');
+    expect(tagWith(cards.ru, 'data-story-case')).toMatch(/href="\/ru\/[^"]*case=yagni/);
   });
 
   test('free play sits behind an Explore toggle that starts closed', () => {
@@ -153,13 +158,15 @@ describe('the card tells a 3-step story', () => {
 
 describe('the GR monogram bridges to production', () => {
   test('a bridge line links to the YAGNI case in EN and RU', () => {
-    const nca = html.slice(html.indexOf('class="nca-section"'));
-    const at = nca.search(/class="[^"]*\bnca-bridge\b/);
-    expect(at).toBeGreaterThan(-1);
-    const block = nca.slice(at, nca.indexOf('</p>', at));
-    expect(langAt(block, 0, 'en').length).toBeGreaterThan(30);
-    expect(langAt(block, 0, 'ru').length).toBeGreaterThan(30);
-    const links = [...block.matchAll(/<a\b[^>]*>/g)].map((m) => m[0]);
+    const bridge = (page: string) => {
+      const nca = page.slice(page.indexOf('class="nca-section"'));
+      const at = nca.search(/class="[^"]*\bnca-bridge\b/);
+      expect(at).toBeGreaterThan(-1);
+      return nca.slice(at, nca.indexOf('</p>', at));
+    };
+    expect(text(bridge(pages.en)).length).toBeGreaterThan(30);
+    expect(text(bridge(pages.ru))).toMatch(/[А-Яа-яЁё]{4}/);
+    const links = [bridge(pages.en), bridge(pages.ru)].flatMap((block) => [...block.matchAll(/<a\b[^>]*>/g)].map((m) => m[0]));
     expect(links.length).toBe(2);
     for (const a of links) {
       expect(a).toMatch(/href="[^"]*case=yagni/);
@@ -177,7 +184,6 @@ describe('the GR monogram bridges to production', () => {
 describe.skipIf(!existsSync(CHROME))('layout', () => {
   const PROBE = `<script>(async()=>{
     const q = new URLSearchParams(location.search);
-    document.documentElement.setAttribute('data-lang', q.get('lang') || 'en');
     // rAF stalls inside an iframe under --virtual-time-budget; a timeout is enough to get layout.
     const frame = () => new Promise((r) => setTimeout(r, 50));
     await document.fonts.ready;
@@ -236,7 +242,7 @@ describe.skipIf(!existsSync(CHROME))('layout', () => {
   const RAF = `<script>window.__raf=0;window.requestAnimationFrame=(cb)=>{window.__raf++;return setTimeout(()=>cb(performance.now()),16)};
     window.cancelAnimationFrame=(id)=>clearTimeout(id);</script>`;
   const FRAME = (lang: string, w: number, rm: boolean) => `<!doctype html><body style="margin:0">
-    <iframe src="/?lang=${lang}${rm ? '&rm=1' : ''}" width="${w}" height="2400" style="border:0;display:block"></iframe>
+    <iframe src="${lang === 'ru' ? '/ru/' : '/'}${rm ? '?rm=1' : ''}" width="${w}" height="2400" style="border:0;display:block"></iframe>
     <script>const t=setInterval(()=>{const p=document.querySelector('iframe').contentDocument?.getElementById('__probe');
       if(p){clearInterval(t);const o=document.createElement('pre');o.id='__result';o.textContent=p.textContent;document.body.appendChild(o);}},100);</script>`;
   let server: ReturnType<typeof Bun.serve>;
@@ -252,7 +258,10 @@ describe.skipIf(!existsSync(CHROME))('layout', () => {
             headers: { 'content-type': 'text/html' },
           });
         }
-        if (path === '/') return new Response(html.replace('<head>', `<head>${RAF}`).replace('</body>', `${PROBE}</body>`), { headers: { 'content-type': 'text/html' } });
+        if (path === '/' || path === '/ru/') {
+          const page = path === '/' ? pages.en : pages.ru;
+          return new Response(page.replace('<head>', `<head>${RAF}`).replace('</body>', `${PROBE}</body>`), { headers: { 'content-type': 'text/html' } });
+        }
         const file = Bun.file(join('dist', path));
         return (await file.exists()) ? new Response(file) : new Response('', { status: 404 });
       },
