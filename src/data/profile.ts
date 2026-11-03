@@ -114,6 +114,11 @@ export const blogPostingLd = (post: BlogPost, url: string, image: string): Recor
   image
 });
 
+// Home and its grid partials show this many posts, newest first; /writing/ lists them all.
+export const HOME_POST_COUNT = 6;
+export const latestPosts = (posts: BlogPost[], n = HOME_POST_COUNT) =>
+  [...posts].sort((a, b) => b.published.localeCompare(a.published)).slice(0, n);
+
 export const PROFILE = {
   name: {
     en: 'Gleb Rosev',
