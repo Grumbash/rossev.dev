@@ -36,6 +36,8 @@ const CATEGORY_LABELS: Record<Category, { en: string; ru: string }> = {
 };
 const FALLBACK_PALETTE = ['var(--lime)', 'var(--yellow)', 'var(--cyan)', 'var(--orange)', 'var(--pink)'];
 const WORDS_PER_MINUTE = 230;
+// Full-text fills per run: each is a model call of up to 2 min, and the job has 20.
+export const MAX_FILLS = 5;
 
 // --- LinkedIn ids, urls, dates ---------------------------------------------------------------
 
@@ -573,14 +575,20 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
 
     // Posts already on the site without their full text: the original plus a Russian adaptation; the brief stays.
     const filled: BlogPost[] = [];
-    for (const t of stubs.values()) {
+    const queue = [...stubs.values()];
+    if (queue.length > MAX_FILLS) log(`${queue.length - MAX_FILLS} more brief-only post(s) get their full text on the next run.`);
+    for (const t of queue.slice(0, MAX_FILLS)) {
       const skip = (reason: string) => {
         skipped.push({ url: t.url, reason: `full text: ${reason}` });
         log(`skip full text for ${t.url}: ${reason}`);
       };
       const source = cleanSource(t.content);
       const i = posts.findIndex((p) => activityId(p.url) === t.activityId);
-      if (!source || i < 0) continue;
+      if (i < 0) continue;
+      if (!source) {
+        skip('the post has no text');
+        continue;
+      }
       let answer: string;
       try {
         answer = await ask(bodyMessages(source), BODY_FORMAT);
@@ -595,6 +603,11 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
       }
       const { color, ...rest } = posts[i];
       const entry: BlogPost = { ...rest, body: { en: source, ru: v.bodyRu }, color }; // key order as in buildEntry
+      const problems = checkEntry(entry);
+      if (problems.length) {
+        skip(problems.join('; '));
+        continue;
+      }
       posts = posts.map((p, j) => (j === i ? entry : p));
       filled.push(entry);
       log(`full text for ${entry.id} /writing/${entry.slug}/`);

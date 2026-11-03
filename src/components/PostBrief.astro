@@ -1,7 +1,7 @@
 ---
 // The 30-second brief and the reader footer, one markup for the inline reader (HTMX partial)
 // and the post page. The footer is the next step: next post, share, follow, one soft CTA.
-import { BLOG_POSTS, PROFILE, postPath, type BlogPost } from '../data/profile';
+import { BLOG_POSTS, PROFILE, fullPostLink, linkedinLabel, postPath, type BlogPost } from '../data/profile';
 import { calUrl } from '../scripts/analytics';
 
 interface Props {
@@ -13,6 +13,8 @@ interface Props {
 const { post, inline = false } = Astro.props;
 const next = BLOG_POSTS[(BLOG_POSTS.indexOf(post) + 1) % BLOG_POSTS.length];
 const pageUrl = new URL(postPath(post), Astro.site ?? 'https://rossev.dev').toString();
+const linkedin = linkedinLabel(post);
+const fullPost = fullPostLink(post, inline);
 const paragraphs = (s: string) => s.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
 // Same contract as the grid cards: a real href for crawlers and new tabs, hx-get for the inline swap.
@@ -55,6 +57,13 @@ const nextInline = inline
   </div>
 )}
 
+{fullPost && (
+  <a href={fullPost.href} class="brutal-btn" style="display: inline-flex; margin-bottom: 18px; padding: 8px 14px; font-size: 0.78rem;" data-track="post_open" data-track-id={post.id}>
+    <span class="lang-en">{fullPost.en}</span>
+    <span class="lang-ru">{fullPost.ru}</span>
+  </a>
+)}
+
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 2px dashed var(--border); padding-top: 14px;">
   <div style="display: flex; gap: 6px; flex-wrap: wrap;">
     {post.tags.map((t) => (
@@ -70,17 +79,8 @@ const nextInline = inline
     class="brutal-btn brutal-btn-lime"
     style="padding: 8px 14px; font-size: 0.78rem;"
   >
-    {post.body ? (
-      <>
-        <span class="lang-en">ALSO ON LINKEDIN ↗</span>
-        <span class="lang-ru">ТАКЖЕ В LINKEDIN ↗</span>
-      </>
-    ) : (
-      <>
-        <span class="lang-en">ORIGINAL POST ON LINKEDIN ↗</span>
-        <span class="lang-ru">ОРИГИНАЛ В LINKEDIN ↗</span>
-      </>
-    )}
+    <span class="lang-en">{linkedin.en}</span>
+    <span class="lang-ru">{linkedin.ru}</span>
   </a>
 </div>
 

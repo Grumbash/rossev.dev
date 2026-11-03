@@ -77,6 +77,43 @@ export const readTimeLabel = (post: BlogPost) =>
 
 export const postPath = (post: BlogPost) => `/writing/${post.slug}/`;
 
+// The grid card's read time: the same idea, shorter.
+export const cardReadTime = (post: BlogPost) =>
+  post.body
+    ? { en: `${post.originalMinutes}-MIN FULL POST`, ru: `ПОЛНЫЙ ТЕКСТ ${post.originalMinutes} МИН` }
+    : { en: `${post.originalMinutes}-MIN ORIGINAL`, ru: `ОРИГИНАЛ ${post.originalMinutes} МИН` };
+
+// With the full text on the site, LinkedIn is where the post was also published, not the original.
+export const linkedinLabel = (post: BlogPost) =>
+  post.body ? { en: 'ALSO ON LINKEDIN ↗', ru: 'ТАКЖЕ В LINKEDIN ↗' } : { en: 'ORIGINAL POST ON LINKEDIN ↗', ru: 'ОРИГИНАЛ В LINKEDIN ↗' };
+
+// The inline reader shows the brief only; when the page has the full text, it links there.
+export const fullPostLink = (post: BlogPost, inline: boolean) =>
+  inline && post.body ? { href: postPath(post), en: 'READ THE FULL POST →', ru: 'ЧИТАТЬ ПОЛНОСТЬЮ →' } : null;
+
+const SITE_URL = 'https://rossev.dev/';
+
+// The BlogPosting node of a post page. Without a body the LinkedIn post is the original
+// (isBasedOn); with the full text here this page is the original and LinkedIn another copy (sameAs).
+export const blogPostingLd = (post: BlogPost, url: string, image: string): Record<string, unknown> => ({
+  '@type': 'BlogPosting',
+  '@id': `${url}#post`,
+  headline: post.title.en,
+  alternativeHeadline: post.title.ru,
+  description: post.takeaway.en,
+  url,
+  mainEntityOfPage: { '@id': url },
+  datePublished: post.published,
+  author: { '@id': `${SITE_URL}#person` },
+  publisher: { '@id': `${SITE_URL}#person` },
+  isPartOf: { '@id': `${SITE_URL}#website` },
+  ...(post.body ? {} : { isBasedOn: post.url }),
+  sameAs: post.url,
+  inLanguage: ['en', 'ru'],
+  keywords: post.tags,
+  image
+});
+
 export const PROFILE = {
   name: {
     en: 'Gleb Rosev',

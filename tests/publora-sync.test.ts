@@ -689,3 +689,21 @@ describe('the stubs already on the site get their full text through the same imp
     expect(toModel(h).length).toBe(0);
   });
 });
+
+describe('one run stays well inside the job timeout', () => {
+  test('at most 5 brief-only posts get their full text per run; the rest come the next day', async () => {
+    const stubs = (BLOG_POSTS as BlogPost[]).slice(0, 7);
+    const groups = stubs.map((p, i) => ({
+      postGroupId: `g-stub-${i}`,
+      status: 'published',
+      posts: [li(`urn:li:share:${activityId(p.url)}`, 'published', `Stub number ${i} text for the page, long enough to adapt.`)],
+    })) as Group[];
+    const drafts = Object.fromEntries(stubs.map((_, i) => [`Stub number ${i}`, { bodyRu: `Текст заметки номер ${i} для страницы, достаточно длинный для адаптации.` }]));
+    const h = harness({ groups, posts: BLOG_POSTS as BlogPost[], drafts });
+    await run(h.env, h.deps);
+    expect(toModel(h).length).toBe(5);
+    expect(written(h)!.filter((p) => p.body).length).toBe(5);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^added=5$/m);
+    expect(h.logs.join('\n')).toMatch(/2 .*next run/i);
+  });
+});
