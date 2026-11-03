@@ -1,5 +1,7 @@
 # Gleb Rosev — Founding Engineer, AI Agents @ YAGNI (yagni.app)
 
+Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in Tbilisi, building production AI agent teams; previously Staff Harness Engineer at Sully.ai; 8+ years in engineering; medical degree.
+
 > Making AI agents dependable in production, not just impressive in a demo.
 
 - **Current Role**: Founding Engineer, AI Agents at YAGNI (yagni.app) (`https://yagni.app`) — Nov 2026 — Present (core team, working with the founders)
@@ -41,7 +43,7 @@ AI receptionist platform for healthcare: voice and text agents for scheduling, c
 - Built high-volume stress testing with headless LiveKit participants, Loki and Mimir validation, and runtime health checks; found and fixed the memory cascade behind burst failures.
 
 ### Kingpin (Sep 2024 — Sep 2025) — Engineering Manager / Senior Full-Stack
-*Location*: Dubai, UAE | *Focus*: 12 Engineers Led · -80% Triage Time · Canary Releases
+*Location*: Dubai, UAE | *Focus*: 12 Engineers Led · -80% Feedback Analysis Time · Canary Releases
 AI-powered multi-tenant B2B SaaS platform for wholesale.
 - Led a cross-functional team of up to 12 people while staying active in architecture and code.
 - Delivered multi-tenant catalog/order workflows with ERP/CRM syncs and feature-flagged trunk-based releases.
