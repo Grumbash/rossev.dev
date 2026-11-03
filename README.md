@@ -10,6 +10,8 @@ Built in two evenings with Gemini Argon. Astro 5, TypeScript, HTMX for the parti
 
 The GR monogram at the top of "Beyond the CV" is a neural cellular automaton ([Mordvintsev et al., 2020](https://distill.pub/2020/growing-ca/)) trained from scratch by `scripts/nca/train.py` (PyTorch, run it in a throwaway venv; see the header) and run in a Web Worker by `src/scripts/nca/`. The page only ships a ~0.4 KB loader up front; the model code and float16 weights (`public/nca/gr.bin`) load when the block nears the screen, and never on Save-Data or 2G, where a static SVG of the monogram stays. `bun test tests/nca.test.ts` checks the shipped weights still grow and heal.
 
+`/how-its-built/` shows every merged PR of this repo with its receipts: the test committed red first, what was caught before merge, what I decided. It renders `src/data/build-story.json`, which `bun run build-story` makes from `gh pr view` plus the hand-written `src/data/build-story-highlights.json` (one entry per PR; the script refuses to write if a PR has no entry, no red test and no reason, untranslated copy, or a finding that doesn't point at that PR or one of its commits). The JSON records `throughSha`, the main commit it was generated through, and `bun test` only requires the PRs merged up to that commit. So rerun `bun run build-story` after merges and commit the JSON: a stale page doesn't turn main red, it just lags. Regenerating keeps any `ciVerdicts` CI has appended, and the script fails if a red-test commit touches anything outside `tests/`. It is not part of `bun run build`, because Vercel has no GitHub token.
+
 ## Run it
 
 ```bash
@@ -45,7 +47,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 
 | Event | Props | Fires on |
 | --- | --- | --- |
-| `cta_book` | `placement` (nav, hero, footer, reader), `lang` | cal.com link |
+| `cta_book` | `placement` (nav, hero, footer, reader, build-story), `lang` | cal.com link |
 | `email_copy` / `email_click` | `placement` (hero, footer) | copy-email button / mailto link |
 | `cv_download` | `placement` (hero, footer) | CV PDF link |
 | `linkedin_click` | `placement` (hero, writing, footer) | LinkedIn profile link |
@@ -57,7 +59,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset) | GR monogram in Beyond the CV, once per action per view |
 | `lang_switch` / `theme_switch` | `to` | EN/RU (only on an actual change), THEME |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |
-| `booking_confirmed` | `source` (nav, hero, footer, reader, unknown) | `/booked` after a cal.com redirect carrying a booking `uid`, once per booking |
+| `booking_confirmed` | `source` (nav, hero, footer, reader, build-story, unknown) | `/booked` after a cal.com redirect carrying a booking `uid`, once per booking |
 
 `section_view` also fires for sections passed on the way: a nav jump to `#contact` smooth-scrolls past Experience and Writing, so they count too.
 
@@ -67,7 +69,7 @@ Every cal.com link carries `?utm_source=rossev.dev&utm_medium=site&utm_content=<
 
 cal.com sends visitors to `/booked` after they book: event type → Advanced → Redirect on booking → `https://rossev.dev/booked/`, with "Forward parameters" on. Without forwarding there is no `uid` and no `utm_content`, so no `booking_confirmed` is sent. The forwarded query also carries the booking (email, name, phone, guests...). A classic inline script in the page's `<head>` keeps only whether a `uid` is present and the `utm_content` placement (`bookingSource()`), then strips the whole query before the deferred Umami and Vercel scripts read the URL. Vercel's server logs still see the full redirect URL. Reschedules are not counted: cal.com forwards the booking page's `rescheduleUid`, and a non-empty one means no event.
 
-Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` bookings start on `/writing/*`, so a `/` (path) first step makes it a home-only funnel; prepend it only for that.
+Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` and `build-story` bookings start on `/writing/*` and `/how-its-built/`, so a `/` (path) first step makes it a home-only funnel; prepend it only for that.
 
 ## License
 
