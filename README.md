@@ -2,7 +2,7 @@
 
 Source for my personal site, [rossev.dev](https://rossev.dev).
 
-Everything about me lives in one file, `src/data/profile.ts`. The site, the PDF CV (`public/gleb-rosev-cv.pdf`), `/llms.txt` and the OG card are all generated from it, so they can't drift apart. Change a date there and it changes everywhere on the next build.
+Everything about me lives in one file, `src/data/profile.ts` (the LinkedIn posts sit next to it in `src/data/posts.json`, so a script can add to them). The site, the PDF CV (`public/gleb-rosev-cv.pdf`), `/llms.txt` and the OG card are all generated from it, so they can't drift apart. Change a date there and it changes everywhere on the next build.
 
 `/llms.txt` is the same profile as plain Markdown, for people who read the site through an AI assistant.
 
@@ -49,6 +49,49 @@ The check is not a required status check, and should not be made one as is: docs
 PRs from forks get the gate but no comment: GitHub gives them no secrets and a read-only token.
 
 The key lives only in the `OPENROUTER_API_KEY` repo secret. To rotate it: create a new key on openrouter.ai with a spend limit, update the `OPENROUTER_API_KEY` secret (Settings → Secrets and variables → Actions → Secrets), then delete the old key on OpenRouter.
+
+## Publora sync
+
+I publish on LinkedIn through [Publora](https://publora.com). Once a day (06:17 UTC) `.github/workflows/publora-sync.yml` runs `scripts/ci/publora-sync.ts`: it lists my published LinkedIn posts in Publora, skips the ones already on the site, and turns each new one into an entry in `src/data/posts.json`. Then `bun test` and `bun run build`, and one PR from `bot/publora-sync`. Nothing new means no commit and no PR. It never pushes to `main`: I review the entry on the PR's Vercel preview, edit it in the PR if needed, and merge.
+
+- A post counts once LinkedIn has it (`published` on the LinkedIn target, also in partially published groups) and its date is on or after `PUBLORA_SINCE` (repo variable, default `2026-10-13`). Older posts were added by hand.
+- "Already on the site" is matched by the numeric LinkedIn activity id, since the site keeps vanity URLs and Publora returns URNs. The date comes from the same id.
+- The post page carries the full text, so the site is the original and LinkedIn is linked as "also on LinkedIn". The English text is the LinkedIn original, cleaned without a model (mentions become names, trailing hashtags go). The model writes the card (title, takeaway, quote, 3 bullets in EN and RU) and the Russian adaptation of the full text.
+- Posts already on the site with only a brief get their full text the same way, once Publora or the backfill has them: the original in English, a Russian adaptation, and a brief regenerated from that text (the old hand-written briefs could contradict it). The url, slug, id, date and color stay; the PR shows the old title next to the new one.
+- For a carousel, the site gets the caption only; the slides stay on LinkedIn.
+- Posts I published without Publora come from `src/data/linkedin-backfill.json` (LinkedIn id, vanity url, full text), taken once from my feed. Publora's copy wins when both have a post. Same rules otherwise: a new post counts from `PUBLORA_SINCE` and unless it is on the ignore list (the ignore list is about importing; it does not stop a post already on the site from getting its full text).
+- One run makes at most 8 model calls (the newest new posts first, then up to 5 full-text fills), so it stays well inside the job timeout. The bot branch is rebuilt from `main` on every run, so the rest come in the first run after the open PR is merged; the PR says how many are waiting.
+- The model answers under a strict JSON schema, gets no tools, and sees the post as data. Its answer is checked field by field: exact shape, Russian where Russian belongs, and no number the post never said. A post that fails is skipped, listed in the PR with the reason, and retried the next day; the others still land.
+- New posts go on top of the grid, with the next `post-N` id, the category label the site already uses and the next color.
+- A post I don't want on the site: add its LinkedIn id (the PR lists it) to `src/data/publora-ignore.json` on `main` and close the PR. Closing alone would bring it back the next day.
+
+The model is `anthropic/claude-haiku-5.5,z-ai/glm-5.3-flash` by default (`DEFAULT_MODEL` in the script): Haiku first, GLM-5.3 Flash as OpenRouter's fallback when Haiku errors or is rate-limited. Both were picked in a bake-off of 13 cheap models on two real posts, judged on the Russian adaptation and on passing the validator. To change it, set a repo variable `PUBLORA_SYNC_MODEL` to any OpenRouter model id that supports structured outputs. It uses the same `OPENROUTER_API_KEY` as the watchdog, through the same client (`scripts/ci/openrouter.ts`).
+
+Cost: about $0.001 per post with Haiku (measured $0.0009–0.0010), about $0.0005 when GLM answers. The PR shows the model and the exact cost of the run. Days with nothing new make no model call.
+
+Secrets:
+
+```bash
+gh secret set PUBLORA_API_KEY --repo Grumbash/rossev.dev      # Publora → Settings → API keys
+gh secret set PUBLORA_SYNC_TOKEN --repo Grumbash/rossev.dev   # fine-grained PAT, see below
+```
+
+`PUBLORA_SYNC_TOKEN` is a fine-grained personal access token for this repo only, with Contents and Pull requests set to read and write. It is needed because a PR opened with the default `GITHUB_TOKEN` does not trigger `perf.yml`, and the repo does not let GitHub Actions create PRs. Give it an expiry and rotate it like the OpenRouter key.
+
+Run it now instead of waiting for the schedule:
+
+```bash
+gh workflow run publora-sync.yml --repo Grumbash/rossev.dev
+```
+
+Local dry run (writes `src/data/posts.json` and `.publora/pr-body.md` in the working tree, pushes nothing):
+
+```bash
+PUBLORA_API_KEY=... OPENROUTER_API_KEY=... PR_BODY_PATH=.publora/pr-body.md bun scripts/ci/publora-sync.ts
+git diff src/data/posts.json            # look, then `git checkout src/data/posts.json` to drop it
+```
+
+If I edit the entry in the PR, the next run leaves the branch alone: it only rewrites `bot/publora-sync` while every commit on it is the bot's.
 
 ## Analytics
 

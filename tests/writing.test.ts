@@ -5,7 +5,7 @@
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { BLOG_POSTS, PROFILE } from '../src/data/profile';
+import { BLOG_POSTS, PROFILE, blogPostingLd, cardReadTime, fullPostLink, linkedinLabel, readTimeLabel } from '../src/data/profile';
 import budgets from '../perf-budgets.json';
 import { evaluateBytes, type Check } from '../scripts/perf-check';
 
@@ -46,8 +46,9 @@ const text = (html: string) =>
   decode(html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ');
 
 // LinkedIn activity ids are snowflakes: the top bits are the ms timestamp of publication.
+// Vanity urls carry it as share-<id>; feed urls of synced posts as urn:li:share:<id>.
 const linkedinDate = (url: string) => {
-  const id = url.match(/(?:share|ugcPost|activity)-(\d{15,})/)?.[1];
+  const id = url.match(/(?:share|ugcPost|activity)[-:](\d{15,})/)?.[1];
   return id ? new Date(Number(BigInt(id) >> 22n)).toISOString().slice(0, 10) : undefined;
 };
 
@@ -101,6 +102,43 @@ beforeAll(() => {
 });
 
 describe('post data', () => {
+  // No post has a body yet (the Publora sync adds them), so the page logic is pinned here on a fixture.
+  test('with the full text here, every label and the JSON-LD treat the site as the original', () => {
+    const stub = { ...BLOG_POSTS[0], body: undefined };
+    const full = { ...BLOG_POSTS[0], body: { en: 'The text.', ru: 'Текст.' } };
+    const n = stub.originalMinutes;
+    expect(cardReadTime(stub)).toEqual({ en: `${n}-MIN ORIGINAL`, ru: `ОРИГИНАЛ ${n} МИН` });
+    expect(cardReadTime(full)).toEqual({ en: `${n}-MIN FULL POST`, ru: `ПОЛНЫЙ ТЕКСТ ${n} МИН` });
+    expect(linkedinLabel(stub)).toEqual({ en: 'ORIGINAL POST ON LINKEDIN ↗', ru: 'ОРИГИНАЛ В LINKEDIN ↗' });
+    expect(linkedinLabel(full)).toEqual({ en: 'ALSO ON LINKEDIN ↗', ru: 'ТАКЖЕ В LINKEDIN ↗' });
+    // The inline reader shows the brief only, so it links to the page that has the text.
+    expect(fullPostLink(full, true)).toEqual({ href: pagePath(full.slug), en: 'READ THE FULL POST →', ru: 'ЧИТАТЬ ПОЛНОСТЬЮ →' });
+    expect(fullPostLink(full, false)).toBeNull();
+    expect(fullPostLink(stub, true)).toBeNull();
+    const url = `${SITE}${pagePath(full.slug)}`;
+    const ldStub = blogPostingLd(stub, url, `${SITE}/og-card.png`);
+    const ldFull = blogPostingLd(full, url, `${SITE}/og-card.png`);
+    expect(ldStub.isBasedOn).toBe(stub.url);
+    expect(ldFull.isBasedOn).toBeUndefined();
+    expect(ldFull.sameAs).toBe(full.url);
+    expect(ldFull.author).toEqual({ '@id': PERSON });
+    expect(ldFull.url).toBe(url);
+  });
+
+  test('the templates take those labels and the JSON-LD from the shared helpers', () => {
+    expect(read('src/components/BlogGrid.astro')).toContain('cardReadTime(post)');
+    expect(read('src/components/BlogGrid.astro')).not.toMatch(/MIN ORIGINAL/);
+    expect(read('src/components/PostBrief.astro')).toContain('linkedinLabel(post)');
+    expect(read('src/components/PostBrief.astro')).toContain('fullPostLink(post, inline)');
+    expect(read('src/pages/writing/[slug].astro')).toContain('blogPostingLd(post');
+  });
+
+  test('the read time is honest about where the text is: the original on LinkedIn, or the full post here', () => {
+    const stub = BLOG_POSTS[0];
+    expect(readTimeLabel({ ...stub, body: undefined })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ОРИГИНАЛ` });
+    expect(readTimeLabel({ ...stub, body: { en: 'a', ru: 'б' } })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN FULL POST`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ПОЛНЫЙ ТЕКСТ` });
+  });
+
   test('slugs are unique, url-safe, and every post has a publication date matching its LinkedIn id', () => {
     const slugs = BLOG_POSTS.map((p) => p.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
@@ -143,6 +181,8 @@ describe('every post has an indexable page', () => {
         expect(post.headline).toBe(p.title.en);
         expect(post.datePublished).toBe((p as any).published);
         expect([post.isBasedOn, post.sameAs].flat()).toContain(p.url);
+        // With the full text here, this page is the original and LinkedIn a copy of it.
+        if ((p as any).body) expect(post.isBasedOn).toBeUndefined();
       });
 
       test('shows the brief in both languages with an honest read time', () => {
@@ -153,9 +193,17 @@ describe('every post has an indexable page', () => {
         // The minutes describe the LinkedIn original, so they come from the data, not a constant.
         const min = (p as any).originalMinutes;
         expect(min).toBeGreaterThan(0);
-        expect(t).toMatch(new RegExp(`${min}-min original`, 'i'));
         expect(t).toMatch(/30 сек/i);
         expect(t).toMatch(new RegExp(`${min} мин`, 'i'));
+        const body = (p as any).body as { en: string; ru: string } | undefined;
+        if (body) {
+          // The full text is on this page; LinkedIn is where it was also posted.
+          expect(t).toMatch(new RegExp(`${min}-min full post`, 'i'));
+          expect(t).not.toMatch(/original post on linkedin/i);
+          expect(t).toMatch(/also on linkedin/i);
+          expect(t).toMatch(/также в linkedin/i);
+          for (const para of [body.en, body.ru].map((b) => b.split(/\n\s*\n/)[0].trim())) expect(t).toContain(para.replace(/\s+/g, ' '));
+        } else expect(t).toMatch(new RegExp(`${min}-min original`, 'i'));
         // One source for the brief: the inline reader and the page render the same bullets.
         const bullets = [...partials[p.id].matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => text(m[1]).trim());
         expect(bullets.length).toBeGreaterThan(0);
@@ -234,9 +282,10 @@ describe('old ?post= links', () => {
     expect(home).toMatch(/post-\\d\+/);
   });
 
-  test('vercel 301-redirects each /?post=<id> to its page, matching the id exactly', () => {
+  // Only post-1..9 ever had ?post= links; posts added later (the Publora sync) never did.
+  test('vercel 301-redirects each legacy /?post=<id> to its page, matching the id exactly', () => {
     const cfg = JSON.parse(read('vercel.json'));
-    for (const p of BLOG_POSTS) {
+    for (const p of BLOG_POSTS.filter((p) => Number(p.id.replace('post-', '')) <= 9)) {
       const r = (cfg.redirects ?? []).find(
         (x: any) => x.source === '/' && x.has?.some((h: any) => h.type === 'query' && h.key === 'post' && h.value === `^${p.id}$`),
       );
