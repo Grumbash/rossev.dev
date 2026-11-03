@@ -12,3 +12,8 @@ dist/
 .env.*
 .vercel
 .env*
+
+# Editors
+.idea/
+.vscode/
+*.swp
