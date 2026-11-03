@@ -27,7 +27,6 @@ function generateLlmsTxt(): void {
     `- **Location**: ${PROFILE.location.en}`,
     `- **Experience**: 8+ years building production software systems, leading teams of 5–12 engineers`,
     `- **Email**: ${PROFILE.email}`,
-    `- **Phone**: ${PROFILE.phone}`,
     `- **GitHub**: ${PROFILE.github}`,
     `- **LinkedIn**: ${PROFILE.linkedin}`,
     `- **Programmatic CV (PDF)**: /gleb-rosev-cv.pdf`,

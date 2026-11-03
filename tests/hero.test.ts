@@ -96,7 +96,7 @@ describe('the call to action says what the call is for', () => {
 });
 
 describe('contacts are compact', () => {
-  test('email (with copy), LinkedIn and GitHub stay as rows; phone, languages, place go to one meta line', () => {
+  test('email (with copy), LinkedIn and GitHub stay as rows; languages and place go to one meta line', () => {
     const list = card.slice(pos('contact-list'));
     expect((list.match(/class="contact-row"/g) ?? []).length).toBe(3);
     expect(list).toContain('data-track="email_copy"');
@@ -104,7 +104,6 @@ describe('contacts are compact', () => {
     expect(list).toContain(PROFILE.github);
     const meta = list.slice(list.search(/class="[^"]*\bcontact-meta\b/));
     expect(meta.length).toBeLessThan(list.length);
-    expect(meta).toContain(`tel:${PROFILE.phone.replace(/\s/g, '')}`);
     expect(meta).toContain(PROFILE.timezone);
     expect(meta).toContain('C1');
   });
