@@ -1,0 +1,174 @@
+{
+  "1": {
+    "visitorChange": {
+      "en": "The first screen shows who I am, what I do and how to reach me. Only clickable things cast a shadow. Four sections that repeated each other became one experience timeline.",
+      "ru": "Первый экран сразу говорит, кто я, чем занимаюсь и как со мной связаться. Тень есть только у того, на что можно нажать. Четыре раздела, которые повторяли друг друга, стали одной лентой опыта."
+    },
+    "humanDecision": {
+      "en": "Acted on two outside reviews: a friend's UX notes and a WebGL engineer's. Kept the 3D topology in the hero, cut the sections that repeated each other.",
+      "ru": "Взял в работу два внешних ревью: UX-заметки друга и отзыв WebGL-инженера. 3D-топологию в hero оставил, повторяющиеся разделы убрал."
+    },
+    "findings": [
+      {
+        "en": "The writing filters had no aria-pressed.",
+        "ru": "У фильтров блога не было aria-pressed.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/1"
+      },
+      {
+        "en": "Closing an architecture breakdown left ?case= in the address bar.",
+        "ru": "После закрытия разбора архитектуры в адресе оставался ?case=.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/1"
+      },
+      {
+        "en": "The Now label had too little contrast.",
+        "ru": "У метки Now был слабый контраст.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/1"
+      }
+    ],
+    "preLoop": {
+      "en": "One commit, made before this loop existed: no red test first.",
+      "ru": "Один коммит, сделанный до появления этого цикла: красного теста первым нет."
+    },
+    "review": {
+      "en": "An independent review found no blockers; its confirmed findings were fixed before merge.",
+      "ru": "Независимое ревью блокеров не нашло; подтверждённые замечания исправлены до мержа."
+    }
+  },
+  "2": {
+    "visitorChange": {
+      "en": "The page, its JSON-LD and llms.txt now say the same things about me: both spellings of the name, one third-person sentence, the same numbers.",
+      "ru": "Страница, её JSON-LD и llms.txt теперь говорят обо мне одно и то же: оба написания имени, одна фраза в третьем лице, одни и те же цифры."
+    },
+    "humanDecision": {
+      "en": "One name per fact: the Kingpin −80% is feedback analysis time everywhere, and the 28 YAGNI PRs are the first week, not the first 8 days.",
+      "ru": "У каждого факта одно название: −80% в Kingpin везде время анализа фидбека, а 28 PR в YAGNI — первая неделя, а не первые 8 дней."
+    },
+    "findings": [
+      {
+        "en": "The red test pinned one name for the Kingpin −80%: it was triage time in some places and feedback analysis in others.",
+        "ru": "Красный тест закрепил одно название для −80% в Kingpin: где-то это было время триажа, где-то анализ фидбека.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/33a22dda47abcaa950660dfc9c10b333ba7aafcc"
+      }
+    ],
+    "green": "33a22dda47abcaa950660dfc9c10b333ba7aafcc"
+  },
+  "3": {
+    "visitorChange": {
+      "en": "Nothing visible. Clicks on book-a-call, email, CV and LinkedIn became countable events, and every cal.com link says where it was clicked. Extra tests pin the edge cases, such as a middle-click on a button sending nothing.",
+      "ru": "Внешне ничего. Клики по созвону, почте, CV и LinkedIn стали событиями, а каждая ссылка на cal.com говорит, где на неё нажали. Пограничные случаи закреплены отдельными тестами: например, клик колёсиком по кнопке ничего не отправляет."
+    },
+    "humanDecision": {
+      "en": "Events go to Umami Cloud: Vercel Hobby has no custom events and keeps data for a month.",
+      "ru": "События отправляются в Umami Cloud: в Vercel Hobby нет своих событий, а данные хранятся месяц."
+    },
+    "findings": [],
+    "green": "bc1eae53ff23d385a7345ed592f42666e8b815a3"
+  },
+  "4": {
+    "visitorChange": {
+      "en": "The site stays fast: a push that breaks a byte or Lighthouse budget is blocked before it reaches production.",
+      "ru": "Сайт остаётся быстрым: пуш, который пробивает бюджет по байтам или Lighthouse, блокируется до прода."
+    },
+    "humanDecision": {
+      "en": "No GitHub Actions: the gate runs on git push and blocks it.",
+      "ru": "Без GitHub Actions: проверка стоит на git push и блокирует его."
+    },
+    "findings": [],
+    "green": "9b45487e2bc7a8d1ae12874c239d9725e05a2a58"
+  },
+  "5": {
+    "visitorChange": {
+      "en": "On a phone, the first screen says what I do, backs it with numbers and offers a 30-minute intro call.",
+      "ru": "На телефоне первый экран говорит, чем я занимаюсь, подкрепляет это цифрами и предлагает 30-минутный созвон."
+    },
+    "humanDecision": {
+      "en": "The 28 YAGNI PRs say who did what: agents wrote 98% of the code, I did 97% of the planning.",
+      "ru": "28 PR в YAGNI теперь говорят, кто что сделал: 98% кода написали агенты, 97% планирования — моё."
+    },
+    "findings": [],
+    "green": "b20962dc980572959d28ce4d0b246d1627a97011"
+  },
+  "6": {
+    "visitorChange": {
+      "en": "With reduced motion on, the hero canvas stops redrawing once nothing moves: 180 frames per 3 seconds at rest became 0.",
+      "ru": "С включённым reduced motion канвас в hero перестаёт перерисовываться, когда ничего не движется: в покое было 180 кадров за 3 секунды, стало 0."
+    },
+    "humanDecision": {
+      "en": "Kept the scope to reduced motion. Two side issues, a right-click drag and the canvas font fallback, are written down in the PR, not fixed.",
+      "ru": "Ограничил задачу режимом reduced motion. Две побочные проблемы, перетаскивание правой кнопкой и запасной шрифт на канвасе, записаны в PR, но не исправлены."
+    },
+    "findings": [],
+    "review": {
+      "en": "An independent review also checked the wake-ups under reduced motion: fault and drag run to the end and then idle, and the canvas is redrawn after resize.",
+      "ru": "Независимое ревью отдельно проверило пробуждения при reduced motion: сбой и перетаскивание доигрывают до конца и затихают, а после resize канвас перерисовывается."
+    },
+    "green": "e4db380b17f1db72905332063eee6b330b4e71c9"
+  },
+  "7": {
+    "visitorChange": {
+      "en": "Every post has its own page with a title and a link you can share, and each brief ends with a next step: the next post, LinkedIn or an intro call.",
+      "ru": "У каждого поста своя страница с заголовком и ссылкой, которой можно поделиться, а каждый конспект заканчивается следующим шагом: следующий пост, LinkedIn или созвон."
+    },
+    "humanDecision": {
+      "en": "Post pages keep one book-a-call link, the reader's. No link from home to /writing/ yet: that section was being changed in another branch.",
+      "ru": "На страницах постов одна ссылка на созвон, в конце конспекта. Ссылки с главной на /writing/ пока нет: этот раздел менялся в другой ветке."
+    },
+    "findings": [],
+    "green": "6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8"
+  },
+  "8": {
+    "visitorChange": {
+      "en": "The YAGNI card no longer claims 89% of my PRs were written by agents. One agent share is left: 98% of the code.",
+      "ru": "Карточка YAGNI больше не утверждает, что 89% моих PR написали агенты. Осталась одна доля агентов: 98% кода."
+    },
+    "humanDecision": {
+      "en": "Dropped the 89%: it counted agent/ branch names, so it couldn't be backed up, and it contradicted the 98%.",
+      "ru": "Убрал 89%: эта цифра считала имена веток agent/, подтвердить её нечем, и она спорила с 98%."
+    },
+    "findings": [],
+    "green": "7b74687b647452b723dddcb0b56c3469dae19619"
+  },
+  "11": {
+    "visitorChange": {
+      "en": "Beyond the CV opens with a GR monogram grown by a small neural network. Cut it or tap it and it heals.",
+      "ru": "Раздел «Вне резюме» начинается с монограммы GR, которую выращивает маленькая нейросеть. Разрежьте её или коснитесь — и она заживёт."
+    },
+    "humanDecision": {
+      "en": "Merged with the limit written down: 11 of 720 healing checks still miss the bar, and Reset recovers. A sharper WebGL version stays a follow-up.",
+      "ru": "Смержил с записанным ограничением: 11 из 720 проверок заживления всё ещё не проходят порог, Reset это исправляет. Более чёткая версия на WebGL — на потом."
+    },
+    "findings": [
+      {
+        "en": "A vertical cut made the G grow back as an R. Fixed by training on strokes, not only round bites.",
+        "ru": "После вертикального разреза G отрастала как R. Исправлено обучением на штрихах, а не только на круглых укусах.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/7f6064e500dfd45c1268f82e4d13912fb4b5d087"
+      },
+      {
+        "en": "A full wipe left a dead blank square. Now it re-seeds.",
+        "ru": "После полного стирания оставался мёртвый пустой квадрат. Теперь монограмма растёт заново.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/7f6064e500dfd45c1268f82e4d13912fb4b5d087"
+      },
+      {
+        "en": "Training could overwrite better weights. Now it only saves a checkpoint that beats the shipped one.",
+        "ru": "Обучение могло перезаписать более удачные веса. Теперь оно сохраняет только чекпойнт, который лучше текущего.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/fdd511cefd16e805b2fa49a947190bb63d42610b"
+      }
+    ],
+    "review": {
+      "en": "Written by an independent writer agent and reviewed by three independent judge passes; every confirmed finding was fixed.",
+      "ru": "Код написал независимый агент, дифф прошли три независимые проверки-судьи; каждое подтверждённое замечание исправлено."
+    }
+  },
+  "12": {
+    "visitorChange": {
+      "en": "After booking a call you land on /booked. The booking counts in analytics, credited to the link that led to it.",
+      "ru": "После брони созвона открывается /booked. Бронь засчитывается в аналитике и привязывается к ссылке, с которой пришли."
+    },
+    "humanDecision": {
+      "en": "Count booked calls, not just clicks on Book a call, and keep none of the booking details: only the link it came from survives.",
+      "ru": "Считать забронированные созвоны, а не только клики по кнопке, и не хранить данные брони: сохраняется только то, с какой ссылки пришли."
+    },
+    "findings": [],
+    "green": "f01970d4970f7208c8025471769deed4dbbc39b8"
+  }
+}

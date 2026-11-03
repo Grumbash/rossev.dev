@@ -1,0 +1,541 @@
+{
+  "repo": "Grumbash/rossev.dev",
+  "generatedAt": "2026-11-03T21:56:14.816Z",
+  "throughSha": "e3c59ab47cf19fd272cda4847ec08c262544e1bd",
+  "prs": [
+    {
+      "number": 1,
+      "title": "Restructure the site so a visitor sees who, what and how to reach me first, and can tell what is clickable",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/1",
+      "mergedAt": "2026-11-03T16:09:27Z",
+      "branch": "portfolio-structure-ux-0d08ef",
+      "additions": 1001,
+      "deletions": 1661,
+      "changedFiles": 10,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "c754c4a0f8deb8dd374d4b2427f45fd9de952131",
+          "subject": "Restructure the site so a visitor sees who, what and how to reach me first, and can tell what is clickable",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c754c4a0f8deb8dd374d4b2427f45fd9de952131"
+        }
+      ],
+      "visitorChange": {
+        "en": "The first screen shows who I am, what I do and how to reach me. Only clickable things cast a shadow. Four sections that repeated each other became one experience timeline.",
+        "ru": "Первый экран сразу говорит, кто я, чем занимаюсь и как со мной связаться. Тень есть только у того, на что можно нажать. Четыре раздела, которые повторяли друг друга, стали одной лентой опыта."
+      },
+      "humanDecision": {
+        "en": "Acted on two outside reviews: a friend's UX notes and a WebGL engineer's. Kept the 3D topology in the hero, cut the sections that repeated each other.",
+        "ru": "Взял в работу два внешних ревью: UX-заметки друга и отзыв WebGL-инженера. 3D-топологию в hero оставил, повторяющиеся разделы убрал."
+      },
+      "findings": [
+        {
+          "en": "The writing filters had no aria-pressed.",
+          "ru": "У фильтров блога не было aria-pressed.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/1"
+        },
+        {
+          "en": "Closing an architecture breakdown left ?case= in the address bar.",
+          "ru": "После закрытия разбора архитектуры в адресе оставался ?case=.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/1"
+        },
+        {
+          "en": "The Now label had too little contrast.",
+          "ru": "У метки Now был слабый контраст.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/1"
+        }
+      ],
+      "ciVerdicts": [],
+      "preLoop": {
+        "en": "One commit, made before this loop existed: no red test first.",
+        "ru": "Один коммит, сделанный до появления этого цикла: красного теста первым нет."
+      },
+      "review": {
+        "en": "An independent review found no blockers; its confirmed findings were fixed before merge.",
+        "ru": "Независимое ревью блокеров не нашло; подтверждённые замечания исправлены до мержа."
+      }
+    },
+    {
+      "number": 2,
+      "title": "Make the page, its JSON-LD and llms.txt agree on who I am and on the numbers",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/2",
+      "mergedAt": "2026-11-03T18:32:28Z",
+      "branch": "facts-identity-9b51a7",
+      "additions": 154,
+      "deletions": 23,
+      "changedFiles": 7,
+      "redTest": {
+        "sha": "9beb4f1c30163ddca07c2627e9132c980a581ef5",
+        "subject": "Add a failing test that the page, its JSON-LD and llms.txt agree on who Gleb is and on the numbers",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/9beb4f1c30163ddca07c2627e9132c980a581ef5"
+      },
+      "commits": [
+        {
+          "sha": "9beb4f1c30163ddca07c2627e9132c980a581ef5",
+          "subject": "Add a failing test that the page, its JSON-LD and llms.txt agree on who Gleb is and on the numbers",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9beb4f1c30163ddca07c2627e9132c980a581ef5"
+        },
+        {
+          "sha": "33a22dda47abcaa950660dfc9c10b333ba7aafcc",
+          "subject": "Make the page, its JSON-LD and llms.txt agree on who Gleb is and on the numbers",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/33a22dda47abcaa950660dfc9c10b333ba7aafcc"
+        }
+      ],
+      "visitorChange": {
+        "en": "The page, its JSON-LD and llms.txt now say the same things about me: both spellings of the name, one third-person sentence, the same numbers.",
+        "ru": "Страница, её JSON-LD и llms.txt теперь говорят обо мне одно и то же: оба написания имени, одна фраза в третьем лице, одни и те же цифры."
+      },
+      "humanDecision": {
+        "en": "One name per fact: the Kingpin −80% is feedback analysis time everywhere, and the 28 YAGNI PRs are the first week, not the first 8 days.",
+        "ru": "У каждого факта одно название: −80% в Kingpin везде время анализа фидбека, а 28 PR в YAGNI — первая неделя, а не первые 8 дней."
+      },
+      "findings": [
+        {
+          "en": "The red test pinned one name for the Kingpin −80%: it was triage time in some places and feedback analysis in others.",
+          "ru": "Красный тест закрепил одно название для −80% в Kingpin: где-то это было время триажа, где-то анализ фидбека.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/33a22dda47abcaa950660dfc9c10b333ba7aafcc"
+        }
+      ],
+      "ciVerdicts": [],
+      "green": {
+        "sha": "33a22dda47abcaa950660dfc9c10b333ba7aafcc",
+        "subject": "Make the page, its JSON-LD and llms.txt agree on who Gleb is and on the numbers",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/33a22dda47abcaa950660dfc9c10b333ba7aafcc"
+      }
+    },
+    {
+      "number": 3,
+      "title": "Make the conversion funnel measurable: Umami events + UTM on cal.com",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/3",
+      "mergedAt": "2026-11-03T19:03:00Z",
+      "branch": "analytics-events-b194ef",
+      "additions": 591,
+      "deletions": 14,
+      "changedFiles": 6,
+      "redTest": {
+        "sha": "a4c533200c2d981d3ff209abda7597e78af3f4e6",
+        "subject": "Add a failing test for funnel events: tracked controls, cal.com UTM, Umami helper",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/a4c533200c2d981d3ff209abda7597e78af3f4e6"
+      },
+      "commits": [
+        {
+          "sha": "a4c533200c2d981d3ff209abda7597e78af3f4e6",
+          "subject": "Add a failing test for funnel events: tracked controls, cal.com UTM, Umami helper",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a4c533200c2d981d3ff209abda7597e78af3f4e6"
+        },
+        {
+          "sha": "5452fd078f5ebedbfda1133301a78815a2f2d006",
+          "subject": "Pin runtime behaviour of funnel events: deep-linked cases, section share, real drags, middle-click, no-op language clicks",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5452fd078f5ebedbfda1133301a78815a2f2d006"
+        },
+        {
+          "sha": "18ba943a2a3b277f875b6c00bd84d8978a003371",
+          "subject": "Pin that a middle-click on a button sends nothing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/18ba943a2a3b277f875b6c00bd84d8978a003371"
+        },
+        {
+          "sha": "bc1eae53ff23d385a7345ed592f42666e8b815a3",
+          "subject": "Make the conversion funnel measurable with Umami events and UTM on cal.com links",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/bc1eae53ff23d385a7345ed592f42666e8b815a3"
+        }
+      ],
+      "visitorChange": {
+        "en": "Nothing visible. Clicks on book-a-call, email, CV and LinkedIn became countable events, and every cal.com link says where it was clicked. Extra tests pin the edge cases, such as a middle-click on a button sending nothing.",
+        "ru": "Внешне ничего. Клики по созвону, почте, CV и LinkedIn стали событиями, а каждая ссылка на cal.com говорит, где на неё нажали. Пограничные случаи закреплены отдельными тестами: например, клик колёсиком по кнопке ничего не отправляет."
+      },
+      "humanDecision": {
+        "en": "Events go to Umami Cloud: Vercel Hobby has no custom events and keeps data for a month.",
+        "ru": "События отправляются в Umami Cloud: в Vercel Hobby нет своих событий, а данные хранятся месяц."
+      },
+      "findings": [],
+      "ciVerdicts": [],
+      "green": {
+        "sha": "bc1eae53ff23d385a7345ed592f42666e8b815a3",
+        "subject": "Make the conversion funnel measurable with Umami events and UTM on cal.com links",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/bc1eae53ff23d385a7345ed592f42666e8b815a3"
+      }
+    },
+    {
+      "number": 5,
+      "title": "Give the hero a 5-second hook: value line, stats and an intro-call CTA above the fold",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/5",
+      "mergedAt": "2026-11-03T19:30:58Z",
+      "branch": "hero-hook-1e6f8e",
+      "additions": 350,
+      "deletions": 105,
+      "changedFiles": 5,
+      "redTest": {
+        "sha": "4b5df6f176cbf288a7ee914809c659c4af7841be",
+        "subject": "Add a failing test that the hero says what, proves it and asks for the call above the fold on a phone",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/4b5df6f176cbf288a7ee914809c659c4af7841be"
+      },
+      "commits": [
+        {
+          "sha": "4b5df6f176cbf288a7ee914809c659c4af7841be",
+          "subject": "Add a failing test that the hero says what, proves it and asks for the call above the fold on a phone",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4b5df6f176cbf288a7ee914809c659c4af7841be"
+        },
+        {
+          "sha": "b20962dc980572959d28ce4d0b246d1627a97011",
+          "subject": "Give the hero a 5-second hook: value line, stats and an intro-call CTA above the fold",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b20962dc980572959d28ce4d0b246d1627a97011"
+        },
+        {
+          "sha": "f1ef05ea7572556479c374d06783b6e500e85d2d",
+          "subject": "Say who wrote the code and who planned it for the 28 YAGNI PRs: 98% agents, 97% me",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f1ef05ea7572556479c374d06783b6e500e85d2d"
+        }
+      ],
+      "visitorChange": {
+        "en": "On a phone, the first screen says what I do, backs it with numbers and offers a 30-minute intro call.",
+        "ru": "На телефоне первый экран говорит, чем я занимаюсь, подкрепляет это цифрами и предлагает 30-минутный созвон."
+      },
+      "humanDecision": {
+        "en": "The 28 YAGNI PRs say who did what: agents wrote 98% of the code, I did 97% of the planning.",
+        "ru": "28 PR в YAGNI теперь говорят, кто что сделал: 98% кода написали агенты, 97% планирования — моё."
+      },
+      "findings": [],
+      "ciVerdicts": [],
+      "green": {
+        "sha": "b20962dc980572959d28ce4d0b246d1627a97011",
+        "subject": "Give the hero a 5-second hook: value line, stats and an intro-call CTA above the fold",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/b20962dc980572959d28ce4d0b246d1627a97011"
+      }
+    },
+    {
+      "number": 4,
+      "title": "Gate every push on performance budgets, with a perf-watchdog agent",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/4",
+      "mergedAt": "2026-11-03T19:31:46Z",
+      "branch": "vibrant-ritchie-db3422",
+      "additions": 1040,
+      "deletions": 9,
+      "changedFiles": 10,
+      "redTest": {
+        "sha": "1475db1832be15795b0c33b4af4ff1b08e3d31d1",
+        "subject": "Add a failing test that the site stays within its performance budgets and a push is gated on them",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/1475db1832be15795b0c33b4af4ff1b08e3d31d1"
+      },
+      "commits": [
+        {
+          "sha": "1475db1832be15795b0c33b4af4ff1b08e3d31d1",
+          "subject": "Add a failing test that the site stays within its performance budgets and a push is gated on them",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1475db1832be15795b0c33b4af4ff1b08e3d31d1"
+        },
+        {
+          "sha": "9b45487e2bc7a8d1ae12874c239d9725e05a2a58",
+          "subject": "Gate every push on byte and Lighthouse budgets, and ask a perf-watchdog agent what got slower when it fails",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9b45487e2bc7a8d1ae12874c239d9725e05a2a58"
+        },
+        {
+          "sha": "91a795f6c67a652665b768e22f19e2a5f844ff62",
+          "subject": "Merge remote-tracking branch 'origin/main' into vibrant-ritchie-db3422",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/91a795f6c67a652665b768e22f19e2a5f844ff62"
+        }
+      ],
+      "visitorChange": {
+        "en": "The site stays fast: a push that breaks a byte or Lighthouse budget is blocked before it reaches production.",
+        "ru": "Сайт остаётся быстрым: пуш, который пробивает бюджет по байтам или Lighthouse, блокируется до прода."
+      },
+      "humanDecision": {
+        "en": "No GitHub Actions: the gate runs on git push and blocks it.",
+        "ru": "Без GitHub Actions: проверка стоит на git push и блокирует его."
+      },
+      "findings": [],
+      "ciVerdicts": [],
+      "green": {
+        "sha": "9b45487e2bc7a8d1ae12874c239d9725e05a2a58",
+        "subject": "Gate every push on byte and Lighthouse budgets, and ask a perf-watchdog agent what got slower when it fails",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/9b45487e2bc7a8d1ae12874c239d9725e05a2a58"
+      }
+    },
+    {
+      "number": 6,
+      "title": "Idle the hero canvas loop under reduced motion",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/6",
+      "mergedAt": "2026-11-03T19:42:59Z",
+      "branch": "epic-dijkstra-c28423",
+      "additions": 116,
+      "deletions": 1,
+      "changedFiles": 3,
+      "redTest": {
+        "sha": "55e51ef4d00e4817a9e7e88627f7c154d33fa2a4",
+        "subject": "Add a failing test for idling the hero canvas loop under reduced motion",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/55e51ef4d00e4817a9e7e88627f7c154d33fa2a4"
+      },
+      "commits": [
+        {
+          "sha": "55e51ef4d00e4817a9e7e88627f7c154d33fa2a4",
+          "subject": "Add a failing test for idling the hero canvas loop under reduced motion",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/55e51ef4d00e4817a9e7e88627f7c154d33fa2a4"
+        },
+        {
+          "sha": "e4db380b17f1db72905332063eee6b330b4e71c9",
+          "subject": "Idle the hero canvas loop under reduced motion once the scene settles",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e4db380b17f1db72905332063eee6b330b4e71c9"
+        }
+      ],
+      "visitorChange": {
+        "en": "With reduced motion on, the hero canvas stops redrawing once nothing moves: 180 frames per 3 seconds at rest became 0.",
+        "ru": "С включённым reduced motion канвас в hero перестаёт перерисовываться, когда ничего не движется: в покое было 180 кадров за 3 секунды, стало 0."
+      },
+      "humanDecision": {
+        "en": "Kept the scope to reduced motion. Two side issues, a right-click drag and the canvas font fallback, are written down in the PR, not fixed.",
+        "ru": "Ограничил задачу режимом reduced motion. Две побочные проблемы, перетаскивание правой кнопкой и запасной шрифт на канвасе, записаны в PR, но не исправлены."
+      },
+      "findings": [],
+      "ciVerdicts": [],
+      "review": {
+        "en": "An independent review also checked the wake-ups under reduced motion: fault and drag run to the end and then idle, and the canvas is redrawn after resize.",
+        "ru": "Независимое ревью отдельно проверило пробуждения при reduced motion: сбой и перетаскивание доигрывают до конца и затихают, а после resize канвас перерисовывается."
+      },
+      "green": {
+        "sha": "e4db380b17f1db72905332063eee6b330b4e71c9",
+        "subject": "Idle the hero canvas loop under reduced motion once the scene settles",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/e4db380b17f1db72905332063eee6b330b4e71c9"
+      }
+    },
+    {
+      "number": 7,
+      "title": "Give every post its own indexable page and end the brief with a next step",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/7",
+      "mergedAt": "2026-11-03T20:08:51Z",
+      "branch": "post-pages-97ca9c",
+      "additions": 1381,
+      "deletions": 552,
+      "changedFiles": 18,
+      "redTest": {
+        "sha": "f0b541b23ad5b070f76ad65dcb9eeccc67a7389a",
+        "subject": "Add a failing test that every post has an indexable page and the reader gets a next step",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/f0b541b23ad5b070f76ad65dcb9eeccc67a7389a"
+      },
+      "commits": [
+        {
+          "sha": "f0b541b23ad5b070f76ad65dcb9eeccc67a7389a",
+          "subject": "Add a failing test that every post has an indexable page and the reader gets a next step",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f0b541b23ad5b070f76ad65dcb9eeccc67a7389a"
+        },
+        {
+          "sha": "6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8",
+          "subject": "Give every post its own page, link cards to it, and end the brief with a next step",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8"
+        }
+      ],
+      "visitorChange": {
+        "en": "Every post has its own page with a title and a link you can share, and each brief ends with a next step: the next post, LinkedIn or an intro call.",
+        "ru": "У каждого поста своя страница с заголовком и ссылкой, которой можно поделиться, а каждый конспект заканчивается следующим шагом: следующий пост, LinkedIn или созвон."
+      },
+      "humanDecision": {
+        "en": "Post pages keep one book-a-call link, the reader's. No link from home to /writing/ yet: that section was being changed in another branch.",
+        "ru": "На страницах постов одна ссылка на созвон, в конце конспекта. Ссылки с главной на /writing/ пока нет: этот раздел менялся в другой ветке."
+      },
+      "findings": [],
+      "ciVerdicts": [],
+      "green": {
+        "sha": "6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8",
+        "subject": "Give every post its own page, link cards to it, and end the brief with a next step",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8"
+      }
+    },
+    {
+      "number": 8,
+      "title": "The YAGNI card stops claiming 89% of PRs were agent-written; 98% of the code is the one figure",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/8",
+      "mergedAt": "2026-11-03T20:24:07Z",
+      "branch": "drop-89-metric-98547b",
+      "additions": 19,
+      "deletions": 2,
+      "changedFiles": 2,
+      "redTest": {
+        "sha": "db2be2b013742f035b0cef0be7390e01040fa0f2",
+        "subject": "Add a failing test that the YAGNI card never claims 89% of PRs and gives 98% as the one code share",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/db2be2b013742f035b0cef0be7390e01040fa0f2"
+      },
+      "commits": [
+        {
+          "sha": "db2be2b013742f035b0cef0be7390e01040fa0f2",
+          "subject": "Add a failing test that the YAGNI card never claims 89% of PRs and gives 98% as the one code share",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/db2be2b013742f035b0cef0be7390e01040fa0f2"
+        },
+        {
+          "sha": "7b74687b647452b723dddcb0b56c3469dae19619",
+          "subject": "The YAGNI card drops the unprovable 89% of PRs; 98% of the code is the one agent share",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7b74687b647452b723dddcb0b56c3469dae19619"
+        }
+      ],
+      "visitorChange": {
+        "en": "The YAGNI card no longer claims 89% of my PRs were written by agents. One agent share is left: 98% of the code.",
+        "ru": "Карточка YAGNI больше не утверждает, что 89% моих PR написали агенты. Осталась одна доля агентов: 98% кода."
+      },
+      "humanDecision": {
+        "en": "Dropped the 89%: it counted agent/ branch names, so it couldn't be backed up, and it contradicted the 98%.",
+        "ru": "Убрал 89%: эта цифра считала имена веток agent/, подтвердить её нечем, и она спорила с 98%."
+      },
+      "findings": [],
+      "ciVerdicts": [],
+      "green": {
+        "sha": "7b74687b647452b723dddcb0b56c3469dae19619",
+        "subject": "The YAGNI card drops the unprovable 89% of PRs; 98% of the code is the one agent share",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/7b74687b647452b723dddcb0b56c3469dae19619"
+      }
+    },
+    {
+      "number": 11,
+      "title": "A neural cellular automaton grows the GR monogram in Beyond the CV and heals it after the visitor cuts or bites it",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/11",
+      "mergedAt": "2026-11-03T20:56:01Z",
+      "branch": "neural-ca",
+      "additions": 1598,
+      "deletions": 5,
+      "changedFiles": 19,
+      "redTest": {
+        "sha": "6151777add1a736c719b97cef9adf95b434208ff",
+        "subject": "Red test: a neural cellular automaton grows GR from one cell and regrows it after damage",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/6151777add1a736c719b97cef9adf95b434208ff"
+      },
+      "commits": [
+        {
+          "sha": "6151777add1a736c719b97cef9adf95b434208ff",
+          "subject": "Red test: a neural cellular automaton grows GR from one cell and regrows it after damage",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6151777add1a736c719b97cef9adf95b434208ff"
+        },
+        {
+          "sha": "662bf5800a68368eae63308271d2947c92cd2d94",
+          "subject": "Red test: the GR automaton heals drag strokes, not only round bites",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/662bf5800a68368eae63308271d2947c92cd2d94"
+        },
+        {
+          "sha": "7f6064e500dfd45c1268f82e4d13912fb4b5d087",
+          "subject": "A neural cellular automaton grows the GR monogram in Beyond the CV and heals it after the visitor cuts or bites it",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7f6064e500dfd45c1268f82e4d13912fb4b5d087"
+        },
+        {
+          "sha": "ef8595ea25ccf9665974ed92a95c28b4500994e1",
+          "subject": "Track the GR monogram: one nca_interact event per action (drag, key, reset) per view",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ef8595ea25ccf9665974ed92a95c28b4500994e1"
+        },
+        {
+          "sha": "fdd511cefd16e805b2fa49a947190bb63d42610b",
+          "subject": "The GR monogram runs one tick loop, never lets training clobber better weights, and keeps phone spacing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/fdd511cefd16e805b2fa49a947190bb63d42610b"
+        },
+        {
+          "sha": "1ec619b48d465c37127f6f4d5e29531c10018a31",
+          "subject": "Red test: the GR monogram costs almost nothing before it is reached and nothing on Save-Data",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1ec619b48d465c37127f6f4d5e29531c10018a31"
+        },
+        {
+          "sha": "fe4c869550022ded81249cea4d965e222f7b4553",
+          "subject": "The GR monogram loads on demand: a 0.4 KB loader, float16 weights, and a static GR on Save-Data",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/fe4c869550022ded81249cea4d965e222f7b4553"
+        },
+        {
+          "sha": "25ea5af968670f73bce36ac08eab39b51b428054",
+          "subject": "The GR monogram's copy is styled on every path, first view swaps a grown GR for the static one, and training scores what ships",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/25ea5af968670f73bce36ac08eab39b51b428054"
+        }
+      ],
+      "visitorChange": {
+        "en": "Beyond the CV opens with a GR monogram grown by a small neural network. Cut it or tap it and it heals.",
+        "ru": "Раздел «Вне резюме» начинается с монограммы GR, которую выращивает маленькая нейросеть. Разрежьте её или коснитесь — и она заживёт."
+      },
+      "humanDecision": {
+        "en": "Merged with the limit written down: 11 of 720 healing checks still miss the bar, and Reset recovers. A sharper WebGL version stays a follow-up.",
+        "ru": "Смержил с записанным ограничением: 11 из 720 проверок заживления всё ещё не проходят порог, Reset это исправляет. Более чёткая версия на WebGL — на потом."
+      },
+      "findings": [
+        {
+          "en": "A vertical cut made the G grow back as an R. Fixed by training on strokes, not only round bites.",
+          "ru": "После вертикального разреза G отрастала как R. Исправлено обучением на штрихах, а не только на круглых укусах.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/7f6064e500dfd45c1268f82e4d13912fb4b5d087"
+        },
+        {
+          "en": "A full wipe left a dead blank square. Now it re-seeds.",
+          "ru": "После полного стирания оставался мёртвый пустой квадрат. Теперь монограмма растёт заново.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/7f6064e500dfd45c1268f82e4d13912fb4b5d087"
+        },
+        {
+          "en": "Training could overwrite better weights. Now it only saves a checkpoint that beats the shipped one.",
+          "ru": "Обучение могло перезаписать более удачные веса. Теперь оно сохраняет только чекпойнт, который лучше текущего.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/fdd511cefd16e805b2fa49a947190bb63d42610b"
+        }
+      ],
+      "ciVerdicts": [],
+      "review": {
+        "en": "Written by an independent writer agent and reviewed by three independent judge passes; every confirmed finding was fixed.",
+        "ru": "Код написал независимый агент, дифф прошли три независимые проверки-судьи; каждое подтверждённое замечание исправлено."
+      }
+    },
+    {
+      "number": 12,
+      "title": "Add /booked so a real cal.com booking becomes a funnel step, without leaking booking PII",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/12",
+      "mergedAt": "2026-11-03T21:20:24Z",
+      "branch": "booked-page-687733",
+      "additions": 323,
+      "deletions": 3,
+      "changedFiles": 5,
+      "redTest": {
+        "sha": "e432063bcacce952161f7f1e47adbdd8d3927dcf",
+        "subject": "Add a failing test that /booked counts a real booking by placement and leaks no booking PII",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/e432063bcacce952161f7f1e47adbdd8d3927dcf"
+      },
+      "commits": [
+        {
+          "sha": "e432063bcacce952161f7f1e47adbdd8d3927dcf",
+          "subject": "Add a failing test that /booked counts a real booking by placement and leaks no booking PII",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e432063bcacce952161f7f1e47adbdd8d3927dcf"
+        },
+        {
+          "sha": "f01970d4970f7208c8025471769deed4dbbc39b8",
+          "subject": "Add /booked: a cal.com booking becomes booking_confirmed{source} with no booking PII",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f01970d4970f7208c8025471769deed4dbbc39b8"
+        }
+      ],
+      "visitorChange": {
+        "en": "After booking a call you land on /booked. The booking counts in analytics, credited to the link that led to it.",
+        "ru": "После брони созвона открывается /booked. Бронь засчитывается в аналитике и привязывается к ссылке, с которой пришли."
+      },
+      "humanDecision": {
+        "en": "Count booked calls, not just clicks on Book a call, and keep none of the booking details: only the link it came from survives.",
+        "ru": "Считать забронированные созвоны, а не только клики по кнопке, и не хранить данные брони: сохраняется только то, с какой ссылки пришли."
+      },
+      "findings": [],
+      "ciVerdicts": [],
+      "green": {
+        "sha": "f01970d4970f7208c8025471769deed4dbbc39b8",
+        "subject": "Add /booked: a cal.com booking becomes booking_confirmed{source} with no booking PII",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/f01970d4970f7208c8025471769deed4dbbc39b8"
+      }
+    }
+  ]
+}
