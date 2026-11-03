@@ -3,13 +3,15 @@ import type { CaseStudy } from '../data/profile';
 
 interface Props {
   study: CaseStudy;
+  // The timeline already lists outcomes as job bullets; skip them there.
+  showOutcomes?: boolean;
 }
 
-const { study } = Astro.props;
+const { study, showOutcomes = true } = Astro.props;
 ---
 
 <div class="blueprint-inspector">
-  <div class="blueprint-header" style={`background: ${study.color};`}>
+  <div class="blueprint-header">
     <div>
       <span>
         <span class="lang-en">SYSTEM ARCHITECTURE //</span>
@@ -69,7 +71,7 @@ const { study } = Astro.props;
       </div>
     </div>
 
-    <div style="margin-top: 16px;">
+    {showOutcomes && <div style="margin-top: 16px;">
       <div style="font-family: var(--font-mono); font-size: 0.78rem; color: #C8FF00; font-weight: 800; margin-bottom: 10px;">
         <span class="lang-en">KEY PRODUCTION OUTCOMES:</span>
         <span class="lang-ru">КЛЮЧЕВЫЕ РЕЗУЛЬТАТЫ В ПРОДАКШЕНЕ:</span>
@@ -84,6 +86,6 @@ const { study } = Astro.props;
           <li style="font-size: 0.92rem;">▸ {item}</li>
         ))}
       </ul>
-    </div>
+    </div>}
   </div>
 </div>
