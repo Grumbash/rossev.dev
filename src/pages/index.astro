@@ -231,100 +231,19 @@ const jsonLd = {
       <section class="hero-section container">
         <div class="hero-grid">
           <div class="brutal-box hero-card">
-            <div>
-              <h1 class="hero-title">
-                <span class="lang-en">GLEB <span class="hero-title-highlight">ROSEV</span></span>
-                <span class="lang-ru">ГЛЕБ <span class="hero-title-highlight">РОСЕВ</span></span>
-              </h1>
+            <h1 class="hero-title">
+              <span class="lang-en">GLEB <span class="hero-title-highlight">ROSEV</span></span>
+              <span class="lang-ru">ГЛЕБ <span class="hero-title-highlight">РОСЕВ</span></span>
+            </h1>
 
-              <div class="hero-role">
-                <span class="lang-en">{PROFILE.tagline.en}</span>
-                <span class="lang-ru">{PROFILE.tagline.ru}</span>
-              </div>
+            <p class="hero-value">
+              <span class="lang-en">{PROFILE.valueLine.en}</span>
+              <span class="lang-ru">{PROFILE.valueLine.ru}</span>
+            </p>
 
-              <p class="hero-summary" style="font-size: 0.85rem; line-height: 1.5; margin: 0 0 12px; max-width: 60ch; color: var(--ink-muted);">
-                <span class="lang-en">{PROFILE.summaryThirdPerson.en}</span>
-                <span class="lang-ru">{PROFILE.summaryThirdPerson.ru}</span>
-              </p>
-
-              <p class="hero-bio">
-                <span class="lang-en">{PROFILE.bio.en}</span>
-                <span class="lang-ru">{PROFILE.bio.ru}</span>
-              </p>
-
-              <div class="med-twist-box">
-                <span class="lang-en">{PROFILE.medToAiStory.en}</span>
-                <span class="lang-ru">{PROFILE.medToAiStory.ru}</span>
-              </div>
-
-              <div class="hero-actions">
-                <a
-                  href={calUrl('hero')}
-                  data-track="cta_book"
-                  data-track-placement="hero"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="brutal-btn brutal-btn-lime"
-                >
-                  <span class="lang-en">BOOK A 30-MIN CALL ↗</span>
-                  <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН ↗</span>
-                </a>
-                <a
-                  href="/gleb-rosev-cv.pdf"
-                  target="_blank"
-                  download="Gleb_Rosev_Staff_Engineer_CV.pdf"
-                  class="brutal-btn"
-                  data-track="cv_download"
-                  data-track-placement="hero"
-                >
-                  <span class="lang-en">DOWNLOAD CV ↓</span>
-                  <span class="lang-ru">СКАЧАТЬ CV ↓</span>
-                </a>
-              </div>
-
-              <dl class="contact-list">
-                <div class="contact-row">
-                  <dt class="label">Email</dt>
-                  <dd>
-                    <a class="text-link" href={`mailto:${PROFILE.email}`} data-track="email_click" data-track-placement="hero">{PROFILE.email}</a>
-                    <button
-                      type="button"
-                      class="copy-btn"
-                      onclick={`window.copyToClipboard('${PROFILE.email}')`}
-                      data-track="email_copy"
-                      data-track-placement="hero"
-                    >
-                      <span class="lang-en">copy</span><span class="lang-ru">копировать</span>
-                    </button>
-                  </dd>
-                </div>
-                <div class="contact-row">
-                  <dt class="label">LinkedIn</dt>
-                  <dd><a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" data-track="linkedin_click" data-track-placement="hero">in/rossev ↗</a></dd>
-                </div>
-                <div class="contact-row">
-                  <dt class="label">GitHub</dt>
-                  <dd><a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">Grumbash ↗</a></dd>
-                </div>
-                <div class="contact-row">
-                  <dt class="label"><span class="lang-en">Phone</span><span class="lang-ru">Телефон</span></dt>
-                  <dd><a class="text-link" href={`tel:${PROFILE.phone.replace(/\s/g, '')}`}>{PROFILE.phone}</a></dd>
-                </div>
-                <div class="contact-row">
-                  <dt class="label"><span class="lang-en">Languages</span><span class="lang-ru">Языки</span></dt>
-                  <dd>
-                    <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(' · ')}</span>
-                    <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(' · ')}</span>
-                  </dd>
-                </div>
-                <div class="contact-row">
-                  <dt class="label"><span class="lang-en">Based</span><span class="lang-ru">Где</span></dt>
-                  <dd>
-                    <span class="lang-en">{PROFILE.location.en} · Remote · {PROFILE.timezone}</span>
-                    <span class="lang-ru">{PROFILE.location.ru} · удалённо · {PROFILE.timezone}</span>
-                  </dd>
-                </div>
-              </dl>
+            <div class="hero-role">
+              <span class="lang-en">{PROFILE.tagline.en}</span>
+              <span class="lang-ru">{PROFILE.tagline.ru}</span>
             </div>
 
             <div class="hero-stats-grid">
@@ -337,6 +256,86 @@ const jsonLd = {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div class="hero-actions">
+              <a
+                href={calUrl('hero')}
+                data-track="cta_book"
+                data-track-placement="hero"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="brutal-btn brutal-btn-lime"
+              >
+                <span class="lang-en">BOOK A 30-MIN INTRO CALL ↗</span>
+                <span class="lang-ru">СОЗВОН-ЗНАКОМСТВО, 30 МИН ↗</span>
+              </a>
+              <a
+                href="/gleb-rosev-cv.pdf"
+                target="_blank"
+                download="Gleb_Rosev_Founding_Engineer_CV.pdf"
+                class="brutal-btn"
+                data-track="cv_download"
+                data-track-placement="hero"
+              >
+                <span class="lang-en">DOWNLOAD CV ↓</span>
+                <span class="lang-ru">СКАЧАТЬ CV ↓</span>
+              </a>
+            </div>
+
+            <p class="hero-cta-note">
+              <span class="lang-en">Hiring for AI agents or platform? Tell me the problem — I reply within 24h.</span>
+              <span class="lang-ru">Нанимаете под AI-агентов или платформу? Опишите задачу — отвечу в течение 24 ч.</span>
+            </p>
+
+            <p class="hero-bio">
+              <span class="lang-en">{PROFILE.bioShort.en}</span>
+              <span class="lang-ru">{PROFILE.bioShort.ru}</span>
+            </p>
+
+            <p class="hero-summary">
+              <span class="lang-en">{PROFILE.summaryThirdPerson.en}</span>
+              <span class="lang-ru">{PROFILE.summaryThirdPerson.ru}</span>
+            </p>
+
+            <dl class="contact-list">
+              <div class="contact-row">
+                <dt class="label">Email</dt>
+                <dd>
+                  <a class="text-link" href={`mailto:${PROFILE.email}`} data-track="email_click" data-track-placement="hero">{PROFILE.email}</a>
+                  <button
+                    type="button"
+                    class="copy-btn"
+                    onclick={`window.copyToClipboard('${PROFILE.email}')`}
+                    data-track="email_copy"
+                    data-track-placement="hero"
+                  >
+                    <span class="lang-en">copy</span><span class="lang-ru">копировать</span>
+                  </button>
+                </dd>
+              </div>
+              <div class="contact-row">
+                <dt class="label">LinkedIn</dt>
+                <dd><a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" data-track="linkedin_click" data-track-placement="hero">in/rossev ↗</a></dd>
+              </div>
+              <div class="contact-row">
+                <dt class="label">GitHub</dt>
+                <dd><a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">Grumbash ↗</a></dd>
+              </div>
+            </dl>
+            <div class="contact-meta">
+              <a class="text-link" href={`tel:${PROFILE.phone.replace(/\s/g, '')}`}>{PROFILE.phone}</a>
+              <span aria-hidden="true">·</span>
+              <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(', ')}</span>
+              <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(', ')}</span>
+              <span aria-hidden="true">·</span>
+              <span class="lang-en">{PROFILE.location.en} · Remote · {PROFILE.timezone}</span>
+              <span class="lang-ru">{PROFILE.location.ru} · удалённо · {PROFILE.timezone}</span>
+            </div>
+
+            <div class="med-twist-box">
+              <span class="lang-en">{PROFILE.medToAiStory.en}</span>
+              <span class="lang-ru">{PROFILE.medToAiStory.ru}</span>
             </div>
           </div>
 
@@ -855,7 +854,7 @@ const jsonLd = {
                 <a class="text-link" href={`mailto:${PROFILE.email}`} data-track="email_click" data-track-placement="footer">{PROFILE.email}</a>
                 <a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" data-track="linkedin_click" data-track-placement="footer">LinkedIn ↗</a>
                 <a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-                <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Staff_Engineer_CV.pdf" data-track="cv_download" data-track-placement="footer">
+                <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Founding_Engineer_CV.pdf" data-track="cv_download" data-track-placement="footer">
                   <span class="lang-en">CV (PDF) ↓</span><span class="lang-ru">CV (PDF) ↓</span>
                 </a>
                 <a class="text-link" href="/llms.txt" target="_blank" title="Plain-text Markdown context for AI Agents & LLMs">/llms.txt ↗</a>
