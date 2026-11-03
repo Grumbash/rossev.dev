@@ -92,6 +92,18 @@ export function evaluateBytes(distDir: string, b: ByteBudgets): Check[] {
   out.push(check('preloaded-fonts', fontBytes, b.preloadedFonts, 'B', fonts));
   out.push(check('preloaded-font-count', fonts.length, b.preloadedFontCount, 'files', fonts));
 
+  // The writing index and post pages share the home page's HTML budget, one check per page
+  // (after the index.html checks).
+  const writingDir = join(distDir, 'writing');
+  const writingIndex = existsSync(join(writingDir, 'index.html')) ? ['writing/index.html'] : [];
+  const posts = existsSync(writingDir)
+    ? readdirSync(writingDir, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && existsSync(join(writingDir, d.name, 'index.html')))
+        .map((d) => `writing/${d.name}/index.html`)
+        .sort()
+    : [];
+  for (const p of [...writingIndex, ...posts]) out.push(check('html-gzip', gz(readFileSync(join(distDir, p))), b.htmlGzip, 'B', [p]));
+
   return out;
 }
 
@@ -143,7 +155,9 @@ export function formatCheck(c: Check) {
 }
 
 export function table(checks: Check[]) {
-  const rows = [['metric', 'actual', 'budget', ''], ...checks.map((c) => [c.name, fmt(c.actual, c.unit), `${c.kind === 'min' ? '>=' : '<='} ${fmt(c.limit, c.unit)}`, c.ok ? 'ok' : 'FAIL'])];
+  // A budget checked per file (html-gzip on each post page) names the file to tell the rows apart.
+  const repeated = (c: Check) => checks.filter((x) => x.name === c.name).length > 1 && c.files.length === 1;
+  const rows = [['metric', 'actual', 'budget', ''], ...checks.map((c) => [repeated(c) ? `${c.name} ${c.files[0]}` : c.name, fmt(c.actual, c.unit), `${c.kind === 'min' ? '>=' : '<='} ${fmt(c.limit, c.unit)}`, c.ok ? 'ok' : 'FAIL'])];
   const w = rows[0].map((_, i) => Math.max(...rows.map((r) => r[i].length)));
   return rows.map((r) => r.map((cell, i) => cell.padEnd(w[i])).join('  ').trimEnd()).join('\n');
 }
