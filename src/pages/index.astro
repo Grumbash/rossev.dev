@@ -6,17 +6,9 @@ import '../styles/brutalism.css';
 import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import groteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
 import syneLatin from '@fontsource-variable/syne/files/syne-latin-wght-normal.woff2?url';
-import {
-  PROFILE,
-  CASE_STUDIES,
-  EXPERIENCE,
-  CAPABILITIES,
-  BLOG_POSTS,
-  BLOG_MOMENTUM,
-} from '../data/profile';
+import { PROFILE, CASE_STUDIES, EXPERIENCE, CAPABILITIES, SKILL_USAGE, BLOG_POSTS } from '../data/profile';
 import BlogGrid from '../components/BlogGrid.astro';
 import CaseBlueprint from '../components/CaseBlueprint.astro';
-import TerminalOutput from '../components/TerminalOutput.astro';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 
@@ -103,79 +95,27 @@ const jsonLd = {
     <script src="/htmx.min.js" defer></script>
   </head>
   <body>
-    <!-- TOP STICKY NEO-BRUTALIST NAVBAR & SECTION DECK SWITCHER -->
+    <!-- TOP NAV: text links scroll, buttons act -->
     <header class="top-nav">
       <div class="nav-inner">
-        <a href="#top" class="brand-logo" onclick="window.switchSectionDeck('all')">
+        <a href="#top" class="brand-logo">
           <span class="brand-badge">GR</span>
           <span>GLEB ROSEV</span>
-          <span class="status-dot" title="Founding Engineer @ YAGNI (yagni.app)"></span>
         </a>
 
-        <nav class="nav-links" aria-label="Section Deck Switcher">
-          <button
-            type="button"
-            class="nav-link active-deck"
-            data-deck-btn="all"
-            onclick="window.switchSectionDeck('all', this)"
-          >
-            <span class="lang-en">ALL</span>
-            <span class="lang-ru">ВСЕ</span>
-          </button>
-          <button
-            type="button"
-            class="nav-link"
-            data-deck-btn="impact"
-            onclick="window.switchSectionDeck('impact', this)"
-          >
-            <span class="lang-en">01. NOW & IMPACT</span>
-            <span class="lang-ru">01. СЕЙЧАС И ИМПАКТ</span>
-          </button>
-          <button
-            type="button"
-            class="nav-link"
-            data-deck-btn="systems"
-            onclick="window.switchSectionDeck('systems', this)"
-          >
-            <span class="lang-en">02. SYSTEMS</span>
-            <span class="lang-ru">02. КЕЙСЫ</span>
-          </button>
-          <button
-            type="button"
-            class="nav-link"
-            data-deck-btn="experience"
-            onclick="window.switchSectionDeck('experience', this)"
-          >
-            <span class="lang-en">03. CAREER</span>
-            <span class="lang-ru">03. ОПЫТ</span>
-          </button>
-          <button
-            type="button"
-            class="nav-link"
-            data-deck-btn="capabilities"
-            onclick="window.switchSectionDeck('capabilities', this)"
-          >
-            <span class="lang-en">04. STACK</span>
-            <span class="lang-ru">04. СТЕК</span>
-          </button>
-          <button
-            type="button"
-            class="nav-link"
-            data-deck-btn="writing"
-            onclick="window.switchSectionDeck('writing', this)"
-          >
-            <span class="lang-en">05. WRITING</span>
-            <span class="lang-ru">05. БЛОГ</span>
-          </button>
-          <button
-            type="button"
-            class="nav-link"
-            data-deck-btn="contact"
-            onclick="window.switchSectionDeck('contact', this)"
-          >
-            <span class="lang-en">06. CONTACT</span>
-            <span class="lang-ru">06. КОНТАКТЫ</span>
-          </button>
+        <nav class="nav-links" aria-label="Sections">
+          <a class="nav-link" href="#experience">
+            <span class="lang-en">Experience</span>
+            <span class="lang-ru">Опыт</span>
+          </a>
+          <a class="nav-link" href="#writing">
+            <span class="lang-en">Writing</span>
+            <span class="lang-ru">Блог</span>
+          </a>
+          <a class="nav-link" href="#contact">
+            <span class="lang-en">Contact</span>
+            <span class="lang-ru">Контакты</span>
+          </a>
         </nav>
 
         <div class="nav-controls">
@@ -204,44 +144,28 @@ const jsonLd = {
             onclick="window.toggleSiteTheme()"
             title="Toggle Light / Dark Mode"
           >
-            THEME
+            <span class="lang-en">THEME</span>
+            <span class="lang-ru">ТЕМА</span>
           </button>
           <a
-            href="#contact"
-            class="ctrl-btn brutal-btn-lime"
-            onclick="window.switchSectionDeck('contact')"
-            title="Book an appointment / Contact"
-            style="color: #0A0A0A; font-weight: 800; border-color: var(--border);"
+            href={PROFILE.calendar}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="brutal-btn brutal-btn-lime brutal-btn-sm"
           >
-            <span class="lang-en">BOOK</span>
-            <span class="lang-ru">СОЗВОН</span>
+            <span class="lang-en">BOOK A CALL ↗</span>
+            <span class="lang-ru">СОЗВОН ↗</span>
           </a>
         </div>
       </div>
     </header>
 
     <main id="top">
-      <!-- HERO SECTION -->
-      <section class="hero-section container" data-deck-section="hero">
+      <!-- HERO: who, what, how to reach me. Topology stays on the right. -->
+      <section class="hero-section container">
         <div class="hero-grid">
-          <!-- Left: Concise Hero Copy & Badges -->
           <div class="brutal-box hero-card">
             <div>
-              <div class="sticker-row">
-                <span class="draggable-sticker" style="background: var(--lime);" title="Drag me">
-                  FOUNDING ENGINEER @ YAGNI.APP
-                </span>
-                <span class="draggable-sticker" style="background: var(--yellow);" title="Drag me">
-                  8+ YRS IN PROD
-                </span>
-                <span class="draggable-sticker" style="background: var(--cyan);" title="Drag me">
-                  AGENT TEAMS & EVALS
-                </span>
-                <span class="draggable-sticker" style="background: var(--orange); color: #fff;" title="Drag me">
-                  TBILISI · REMOTE
-                </span>
-              </div>
-
               <h1 class="hero-title">
                 <span class="lang-en">GLEB <span class="hero-title-highlight">ROSEV</span></span>
                 <span class="lang-ru">ГЛЕБ <span class="hero-title-highlight">РОСЕВ</span></span>
@@ -264,44 +188,13 @@ const jsonLd = {
 
               <div class="hero-actions">
                 <a
-                  href="#contact"
-                  class="brutal-btn brutal-btn-lime"
-                  onclick="window.switchSectionDeck('contact')"
-                  style="border-color: #0A0A0A; font-weight: 800;"
-                >
-                  <span class="lang-en">BOOK A CHAT ↘</span>
-                  <span class="lang-ru">ЗАБРОНИРОВАТЬ ЗВОНОК ↘</span>
-                </a>
-                <button
-                  type="button"
-                  class="brutal-btn brutal-btn-surface"
-                  onclick="window.switchSectionDeck('systems')"
-                >
-                  <span class="lang-en">SYSTEMS & CASES ↘</span>
-                  <span class="lang-ru">СИСТЕМЫ И КЕЙСЫ ↘</span>
-                </button>
-                <button
-                  type="button"
-                  class="brutal-btn brutal-btn-yellow"
-                  onclick="window.switchSectionDeck('writing')"
-                >
-                  <span class="lang-en">WRITING</span>
-                  <span class="lang-ru">БЛОГ</span>
-                </button>
-                <button
-                  type="button"
-                  class="brutal-btn brutal-btn-cyan"
-                  onclick="window.copyToClipboard('rossevgleb@gmail.com', 'Email copied: rossevgleb@gmail.com')"
-                >
-                  <span>rossevgleb@gmail.com</span>
-                </button>
-                <a
-                  href={PROFILE.github}
+                  href={PROFILE.calendar}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="brutal-btn brutal-btn-surface"
+                  class="brutal-btn brutal-btn-lime"
                 >
-                  <span>GITHUB / GRUMBASH ↗</span>
+                  <span class="lang-en">BOOK A 30-MIN CALL ↗</span>
+                  <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН ↗</span>
                 </a>
                 <a
                   href="/gleb-rosev-cv.pdf"
@@ -309,17 +202,58 @@ const jsonLd = {
                   download="Gleb_Rosev_Staff_Engineer_CV.pdf"
                   class="brutal-btn"
                 >
-                  <span class="lang-en">PDF CV ↓</span>
-                  <span class="lang-ru">CV (PDF) ↓</span>
+                  <span class="lang-en">DOWNLOAD CV ↓</span>
+                  <span class="lang-ru">СКАЧАТЬ CV ↓</span>
                 </a>
               </div>
+
+              <dl class="contact-list">
+                <div class="contact-row">
+                  <dt class="label">Email</dt>
+                  <dd>
+                    <a class="text-link" href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+                    <button
+                      type="button"
+                      class="copy-btn"
+                      onclick={`window.copyToClipboard('${PROFILE.email}')`}
+                    >
+                      <span class="lang-en">copy</span><span class="lang-ru">копировать</span>
+                    </button>
+                  </dd>
+                </div>
+                <div class="contact-row">
+                  <dt class="label">LinkedIn</dt>
+                  <dd><a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer">in/rossev ↗</a></dd>
+                </div>
+                <div class="contact-row">
+                  <dt class="label">GitHub</dt>
+                  <dd><a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">Grumbash ↗</a></dd>
+                </div>
+                <div class="contact-row">
+                  <dt class="label"><span class="lang-en">Phone</span><span class="lang-ru">Телефон</span></dt>
+                  <dd><a class="text-link" href={`tel:${PROFILE.phone.replace(/\s/g, '')}`}>{PROFILE.phone}</a></dd>
+                </div>
+                <div class="contact-row">
+                  <dt class="label"><span class="lang-en">Languages</span><span class="lang-ru">Языки</span></dt>
+                  <dd>
+                    <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(' · ')}</span>
+                    <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(' · ')}</span>
+                  </dd>
+                </div>
+                <div class="contact-row">
+                  <dt class="label"><span class="lang-en">Based</span><span class="lang-ru">Где</span></dt>
+                  <dd>
+                    <span class="lang-en">{PROFILE.location.en} · Remote · {PROFILE.timezone}</span>
+                    <span class="lang-ru">{PROFILE.location.ru} · удалённо · {PROFILE.timezone}</span>
+                  </dd>
+                </div>
+              </dl>
             </div>
 
-            <!-- 4 Hero Stats -->
             <div class="hero-stats-grid">
               {PROFILE.heroStats.map((st) => (
                 <div class="stat-card">
-                  <span class="stat-val" style={`background: ${st.color};`}>{st.value}</span>
+                  <span class="stat-val">{st.value}</span>
                   <div class="stat-lbl">
                     <span class="lang-en">{st.label.en}</span>
                     <span class="lang-ru">{st.label.ru}</span>
@@ -496,266 +430,107 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- KINETIC MARQUEE TICKER -->
-      <div class="marquee-bar" aria-hidden="true">
-        <div class="marquee-track">
-          <span>
-            // FOUNDING ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
-          </span>
-          <span>
-            // FOUNDING ENGINEER @ YAGNI (YAGNI.APP) // AGENT TEAMS MANAGED LIKE YOUR ENGINEERING TEAM // PROPOSAL TO MERGED GITHUB PR // REALISTIC AGENT BENCHMARKS & SELF-IMPROVING LOOPS // RISK RADAR & SANDBOXED RUNNERS // EX-STAFF AI @ SULLY.AI (400+ HEALTHCARE ORGS) // HANDS-ON LEADERSHIP (5–12 ENGINEERS) //
-          </span>
-        </div>
-      </div>
-
-      <!-- 01. EXECUTIVE IMPACT & INTERACTIVE DOSSIER -->
-      <section id="impact" class="section-block" data-deck-section="impact">
+      <!-- EXPERIENCE: one chronology. Each job carries its story, numbers, stack and architecture. -->
+      <section id="experience" class="section-block">
         <div class="container">
           <div class="section-head">
             <div>
               <span class="section-kicker">
-                <span class="lang-en">01 // NOW & EXECUTIVE IMPACT</span>
-                <span class="lang-ru">01 // ТЕКУЩАЯ РОЛЬ И ИМПАКТ</span>
+                <span class="lang-en">Experience · 2018 — now</span>
+                <span class="lang-ru">Опыт · 2018 — сейчас</span>
               </span>
               <h2 class="section-title">
-                <span class="lang-en">DEPENDABLE AI AGENTS & PRODUCTION LEADERSHIP</span>
-                <span class="lang-ru">НАДЁЖНЫЕ AI-АГЕНТЫ И ЛИДЕРСТВО В ПРОДАКШЕНЕ</span>
+                <span class="lang-en">8+ years in production</span>
+                <span class="lang-ru">8+ лет в продакшене</span>
               </h2>
             </div>
           </div>
 
-          <div class="impact-terminal-grid">
-            <div class="impact-cards-grid">
-              {PROFILE.selectedImpact.map((item) => (
-                <div class="brutal-box brutal-box-hover impact-card" data-tilt>
-                  <div>
-                    <span class="impact-code" style={`background: ${item.color};`}>
-                      <span class="lang-en">{item.tag.en}</span>
-                      <span class="lang-ru">{item.tag.ru}</span>
-                    </span>
-                    <h3>
-                      <span class="lang-en">{item.title.en}</span>
-                      <span class="lang-ru">{item.title.ru}</span>
-                    </h3>
-                    <p style="font-size: 0.9rem; color: var(--ink-muted);">
-                      <span class="lang-en">{item.text.en}</span>
-                      <span class="lang-ru">{item.text.ru}</span>
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <!-- Interactive Dossier -->
-            <div class="brutal-box htmx-terminal">
-              <div class="terminal-topbar">
-                <span>
-                  <span class="lang-en">ENGINEERING DOSSIER</span>
-                  <span class="lang-ru">ИНЖЕНЕРНОЕ ДОСЬЕ</span>
+          <div class="toolbox" id="toolbox">
+            <div class="toolbox-intro">
+              <div>
+                <span class="label">
+                  <span class="lang-en">Toolbox · for skimmers and screeners</span>
+                  <span class="lang-ru">Инструменты · для тех, кто сканирует</span>
                 </span>
-                <span>GLEB ROSEV</span>
-              </div>
-
-              <div class="terminal-cmd-bar" role="group" aria-label="Profile Focus Areas">
-                <button
-                  type="button"
-                  class="cmd-btn active"
-                  hx-get="/partials/terminal-status"
-                  hx-target="#htmx-terminal-output"
-                  hx-swap="innerHTML transition:true"
-                  onclick="window.activateGroupBtn(this)"
-                >
-                  <span class="lang-en">Now @ YAGNI</span>
-                  <span class="lang-ru">Сейчас в YAGNI</span>
-                </button>
-                <button
-                  type="button"
-                  class="cmd-btn"
-                  hx-get="/partials/terminal-ai-harness"
-                  hx-target="#htmx-terminal-output"
-                  hx-swap="innerHTML transition:true"
-                  onclick="window.activateGroupBtn(this)"
-                >
-                  <span class="lang-en">Agents & Voice AI</span>
-                  <span class="lang-ru">Агенты и Voice AI</span>
-                </button>
-                <button
-                  type="button"
-                  class="cmd-btn"
-                  hx-get="/partials/terminal-leadership"
-                  hx-target="#htmx-terminal-output"
-                  hx-swap="innerHTML transition:true"
-                  onclick="window.activateGroupBtn(this)"
-                >
-                  <span class="lang-en">Leadership</span>
-                  <span class="lang-ru">Лидерство</span>
-                </button>
-                <button
-                  type="button"
-                  class="cmd-btn"
-                  hx-get="/partials/terminal-med-to-ai"
-                  hx-target="#htmx-terminal-output"
-                  hx-swap="innerHTML transition:true"
-                  onclick="window.activateGroupBtn(this)"
-                >
-                  <span class="lang-en">How I Work</span>
-                  <span class="lang-ru">Подход к работе</span>
-                </button>
-              </div>
-
-              <div id="htmx-terminal-output" class="terminal-screen" aria-live="polite">
-                <TerminalOutput cmd="status" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 02. PRODUCTION SYSTEMS & CASE STUDIES -->
-      <section id="systems" class="section-block" data-deck-section="systems">
-        <div class="container">
-          <div class="section-head">
-            <div>
-              <span class="section-kicker" style="background: var(--lime);">
-                <span class="lang-en">02 // PRODUCTION SYSTEMS</span>
-                <span class="lang-ru">02 // ПРОДАКШЕН-СИСТЕМЫ</span>
-              </span>
-              <h2 class="section-title">
-                <span class="lang-en">SELECTED ARCHITECTURE CASE STUDIES</span>
-                <span class="lang-ru">КЛЮЧЕВЫЕ ИНЖЕНЕРНЫЕ КЕЙСЫ</span>
-              </h2>
-            </div>
-          </div>
-
-          <div class="cases-grid">
-            {CASE_STUDIES.map((cs) => (
-              <article class="brutal-box brutal-box-hover case-card" data-tilt>
-                <div>
-                  <div class="case-meta-top">
-                    <span class="case-badge" style={`background: ${cs.color};`}>
-                      <span class="lang-en">{cs.badge.en}</span>
-                      <span class="lang-ru">{cs.badge.ru}</span>
-                    </span>
-                    <span class="case-period">{cs.company} · {cs.period}</span>
-                  </div>
-
-                  <h3 class="case-title">
-                    <span class="lang-en">{cs.title.en}</span>
-                    <span class="lang-ru">{cs.title.ru}</span>
-                  </h3>
-
-                  <p class="case-summary">
-                    <span class="lang-en">{cs.summary.en}</span>
-                    <span class="lang-ru">{cs.summary.ru}</span>
-                  </p>
-
-                  <div class="case-metrics-row">
-                    {cs.metrics.map((m) => (
-                      <div class="case-metric-box">
-                        <span class="case-metric-val">{m.value}</span>
-                        <span class="case-metric-lbl">
-                          <span class="lang-en">{m.label.en}</span>
-                          <span class="lang-ru">{m.label.ru}</span>
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div class="stack-pills">
-                    {cs.stack.map((tech) => (
-                      <span class="brutal-tag">{tech}</span>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  class="brutal-btn"
-                  style={`background: ${cs.color}; color: #0A0A0A; width: 100%; justify-content: space-between;`}
-                  hx-get={`/partials/case-${cs.id}`}
-                  hx-target="#arch-blueprint-slot"
-                  hx-swap="innerHTML transition:true"
-                  onclick={`window.setUrlParam && window.setUrlParam('case', '${cs.id}'); document.getElementById('arch-blueprint-slot')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })`}
-                >
-                  <span>
-                    <span class="lang-en">VIEW ARCHITECTURE</span>
-                    <span class="lang-ru">СХЕМА АРХИТЕКТУРЫ</span>
+                <p class="toolbox-lead">
+                  <span class="lang-en">
+                    Every keyword in one place, for recruiters who skim and the ATS and LLMs that parse.
+                    Click a skill to see where I used it. The same list lives in
                   </span>
-                  <span>↓</span>
-                </button>
-              </article>
-            ))}
-          </div>
-
-          <div id="arch-blueprint-slot" aria-live="polite">
-            <CaseBlueprint study={CASE_STUDIES[0]} />
-          </div>
-        </div>
-      </section>
-
-      <!-- 03. CONCISE INTERACTIVE CAREER DECK -->
-      <section id="experience" class="section-block" data-deck-section="experience">
-        <div class="container">
-          <div class="section-head">
-            <div>
-              <span class="section-kicker" style="background: var(--cyan);">
-                <span class="lang-en">03 // CAREER TRACK RECORD</span>
-                <span class="lang-ru">03 // КАРЬЕРНЫЙ ТРЕК</span>
-              </span>
-              <h2 class="section-title">
-                <span class="lang-en">8+ YEARS IN PRODUCTION (2018 — PRESENT)</span>
-                <span class="lang-ru">8+ ЛЕТ В ПРОДАКШЕНЕ (2018 — НАСТ. ВРЕМЯ)</span>
-              </h2>
-            </div>
-          </div>
-
-          <!-- Interactive 2-Column Career Switcher -->
-          <div class="exp-deck-grid">
-            <div class="exp-tabs-col" role="tablist" aria-label="Select Company">
-              {EXPERIENCE.map((exp, idx) => (
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={idx === 0 ? 'true' : 'false'}
-                  aria-controls={`panel-${exp.id}`}
-                  id={`tab-${exp.id}`}
-                  class={`exp-tab-btn ${idx === 0 ? 'active-exp' : ''}`}
-                  data-exp-btn={exp.id}
-                  onclick={`window.selectExperienceTab('${exp.id}', this)`}
-                >
-                  <div>
-                    <span class="exp-tab-company">{exp.company}</span>
-                    <span class="exp-tab-period">
-                      <span class="lang-en">{exp.period.en}</span>
-                      <span class="lang-ru">{exp.period.ru}</span>
-                    </span>
-                  </div>
-                  <span class="exp-tab-dot" style={`background: ${exp.color};`}></span>
-                </button>
-              ))}
+                  <span class="lang-ru">
+                    Все ключевые слова в одном месте: для рекрутеров, которые пробегают глазами, и для ATS и LLM, которые парсят.
+                    Нажмите на навык, чтобы увидеть, где я его применял. Тот же список лежит в
+                  </span>
+                  <a class="text-link" href="/llms.txt" target="_blank">/llms.txt</a>.
+                </p>
+              </div>
+              <button type="button" class="brutal-btn brutal-btn-sm" onclick="window.copyToolbox()">
+                <span class="lang-en">COPY AS TEXT</span>
+                <span class="lang-ru">СКОПИРОВАТЬ ТЕКСТОМ</span>
+              </button>
             </div>
 
-            <div>
-              {EXPERIENCE.map((exp, idx) => (
-                <article
-                  id={`panel-${exp.id}`}
-                  role="tabpanel"
-                  aria-labelledby={`tab-${exp.id}`}
-                  class={`brutal-box exp-spotlight-panel ${idx === 0 ? 'active-exp-panel' : ''}`}
-                >
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;">
-                    <div>
-                      <span
-                        style={`background: ${exp.color}; color: #0A0A0A; font-family: var(--font-mono); font-weight: 800; padding: 4px 10px; border: 2px solid #0A0A0A; display: inline-block; margin-bottom: 8px;`}
+            {CAPABILITIES.map((cap) => (
+              <div class="toolbox-row" data-toolbox-row>
+                <span class="toolbox-head">
+                  <span class="lang-en">{cap.title.en}</span>
+                  <span class="lang-ru">{cap.title.ru}</span>
+                </span>
+                <span class="toolbox-skills">
+                  {cap.skills.map((skill) =>
+                    SKILL_USAGE[skill] ? (
+                      <button
+                        type="button"
+                        class="skill-link"
+                        data-skill={skill}
+                        data-jobs={SKILL_USAGE[skill].join(' ')}
+                        aria-pressed="false"
+                        aria-controls="experience-timeline"
+                        onclick="window.selectSkill(this)"
                       >
-                        {exp.company}
-                      </span>
-                      <h3 style="font-size: 1.4rem; font-weight: 800;">
+                        {skill}
+                      </button>
+                    ) : (
+                      <span class="skill-plain">{skill}</span>
+                    )
+                  )}
+                </span>
+              </div>
+            ))}
+
+            <div class="toolbox-result" id="toolbox-result" aria-live="polite" hidden></div>
+          </div>
+
+          <ol class="timeline" id="experience-timeline">
+            {EXPERIENCE.map((exp, idx) => {
+              const cs = CASE_STUDIES.find((c) => c.id === exp.caseId);
+              const numbers = cs ? cs.metrics.filter((m) => /\d/.test(m.value)) : [];
+              return (
+                <li class="brutal-box job-card" id={exp.id} data-company={exp.company}>
+                  <div class="job-head">
+                    <div>
+                      <div class="job-company">
+                        {exp.url ? (
+                          <a class="text-link" href={exp.url} target="_blank" rel="noopener noreferrer">
+                            {exp.company} ↗
+                          </a>
+                        ) : (
+                          <span>{exp.company}</span>
+                        )}
+                        {idx === 0 && (
+                          <span class="label label-now">
+                            <span class="lang-en">Now</span>
+                            <span class="lang-ru">Сейчас</span>
+                          </span>
+                        )}
+                      </div>
+                      <h3 class="job-role">
                         <span class="lang-en">{exp.role.en}</span>
                         <span class="lang-ru">{exp.role.ru}</span>
                       </h3>
                     </div>
-                    <div style="font-family: var(--font-mono); font-size: 0.78rem; text-align: right; color: var(--ink-muted);">
+                    <div class="job-meta">
                       <div>
                         <span class="lang-en">{exp.period.en}</span>
                         <span class="lang-ru">{exp.period.ru}</span>
@@ -767,19 +542,24 @@ const jsonLd = {
                     </div>
                   </div>
 
-                  <!-- Key Focus Strip -->
-                  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
-                    {exp.metrics.map((m) => (
-                      <span class="brutal-tag" style={`background: ${exp.color}; color: #0A0A0A;`}>
-                        {m}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div style="font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; padding: 8px 12px; background: var(--surface-alt); border-left: 4px solid var(--border); margin-bottom: 14px;">
+                  <p class="job-domain">
                     <span class="lang-en">{exp.domain.en}</span>
                     <span class="lang-ru">{exp.domain.ru}</span>
-                  </div>
+                  </p>
+
+                  {numbers.length > 0 && (
+                    <div class="job-metrics">
+                      {numbers.map((m) => (
+                        <div class="job-metric">
+                          <span class="job-metric-val">{m.value}</span>
+                          <span class="job-metric-lbl">
+                            <span class="lang-en">{m.label.en}</span>
+                            <span class="lang-ru">{m.label.ru}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   <ul class="exp-bullets lang-en">
                     {exp.highlights.en.map((bullet) => (
@@ -791,327 +571,209 @@ const jsonLd = {
                       <li>{bullet}</li>
                     ))}
                   </ul>
-                </article>
-              ))}
-            </div>
-          </div>
+
+                  <div class="job-stack">
+                    <span class="label"><span class="lang-en">Stack</span><span class="lang-ru">Стек</span></span>
+                    {exp.stack.map((tech) => (
+                      <span class="brutal-tag">{tech}</span>
+                    ))}
+                  </div>
+
+                  {cs && (
+                    <details class="job-case" id={`case-${cs.id}`}>
+                      <summary class="brutal-btn">
+                        <span class="lang-en">ARCHITECTURE BREAKDOWN</span>
+                        <span class="lang-ru">РАЗБОР АРХИТЕКТУРЫ</span>
+                      </summary>
+                      <CaseBlueprint study={cs} showOutcomes={false} />
+                    </details>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+
         </div>
       </section>
 
-      <!-- 04. CORE CAPABILITIES & EDUCATION -->
-      <section id="capabilities" class="section-block" data-deck-section="capabilities">
-        <div class="container">
-          <div class="section-head">
-            <div>
-              <span class="section-kicker" style="background: var(--orange); color: #fff;">
-                <span class="lang-en">04 // TECHNICAL RADAR</span>
-                <span class="lang-ru">04 // ТЕХНИЧЕСКИЙ СТЕК</span>
-              </span>
-              <h2 class="section-title">
-                <span class="lang-en">CORE CAPABILITIES MATRIX</span>
-                <span class="lang-ru">ЯДРО ТЕХНОЛОГИЙ И ЛИДЕРСТВА</span>
-              </h2>
+      <!-- BEYOND THE CV: essays live in their own visual zone -->
+      <div class="zone-beyond">
+        <section id="writing" class="section-block">
+          <div class="container">
+            <div class="zone-divider">
+              <span class="lang-en">Beyond the CV</span>
+              <span class="lang-ru">Вне резюме</span>
             </div>
-          </div>
-
-          <div class="cap-grid">
-            {CAPABILITIES.map((cap) => (
-              <div class="brutal-box brutal-box-hover cap-card" data-tilt>
-                <span class="cap-head" style={`background: ${cap.color};`}>
-                  <span class="lang-en">{cap.title.en}</span>
-                  <span class="lang-ru">{cap.title.ru}</span>
+            <div class="section-head">
+              <div>
+                <span class="section-kicker">
+                  <span class="lang-en">Writing</span>
+                  <span class="lang-ru">Блог</span>
                 </span>
-                <div class="cap-skills">
-                  {cap.skills.map((skill) => (
-                    <span class="skill-chip">{skill}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div class="brutal-box" style="margin-top: 22px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; background: var(--surface-alt);">
-            <div>
-              <span class="brutal-tag" style="background: var(--yellow); color: #0A0A0A; margin-bottom: 4px;">
-                <span class="lang-en">EDUCATION</span>
-                <span class="lang-ru">ОБРАЗОВАНИЕ</span>
-              </span>
-              <h3 style="font-size: 1.12rem; font-weight: 800;">
-                <span class="lang-en">Belarusian State University — Medicine (2015 — 2019)</span>
-                <span class="lang-ru">Белорусский государственный университет — Медицинское дело (2015 — 2019)</span>
-              </h3>
-            </div>
-
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <div class="brutal-box" style="padding: 8px 14px; background: var(--lime); color: #0A0A0A; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 800;">
-                ENGLISH: C1
-              </div>
-              <div class="brutal-box" style="padding: 8px 14px; background: var(--cyan); color: #0A0A0A; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 800;">
-                RUSSIAN: NATIVE
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 05. ENGINEERING BLOG & FIELD NOTES -->
-      <section id="writing" class="section-block" data-deck-section="writing">
-        <div class="container">
-          <div class="section-head">
-            <div>
-              <span class="section-kicker" style="background: var(--pink); color: #fff;">
-                <span class="lang-en">05 // FIELD NOTES & ESSAYS</span>
-                <span class="lang-ru">05 // ИНЖЕНЕРНЫЙ БЛОГ</span>
-              </span>
-              <h2 class="section-title">
-                <span class="lang-en">WRITING ON AI, SYSTEMS & LEADERSHIP</span>
-                <span class="lang-ru">ЗАМЕТКИ ОБ AI, СИСТЕМАХ И МЕНЕДЖМЕНТЕ</span>
-              </h2>
-            </div>
-            <a
-              href={PROFILE.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="brutal-btn brutal-btn-lime"
-            >
-              <span class="lang-en">FOLLOW ON LINKEDIN ↗</span>
-              <span class="lang-ru">ЧИТАТЬ В LINKEDIN ↗</span>
-            </a>
-          </div>
-
-          <div class="brutal-box telemetry-banner">
-            <div class="telemetry-grid">
-              <div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
-                  {BLOG_MOMENTUM.coreThemes.map((th) => (
-                    <div class="stat-card" style="background: var(--surface-alt);">
-                      <div style={`height: 5px; background: ${th.color}; border: 1.5px solid #0A0A0A; margin-bottom: 6px;`}></div>
-                      <div style="font-weight: 800; font-size: 0.84rem; margin-bottom: 2px;">
-                        <span class="lang-en">{th.title.en}</span>
-                        <span class="lang-ru">{th.title.ru}</span>
-                      </div>
-                      <div class="stat-lbl" style="color: var(--ink-muted);">
-                        <span class="lang-en">{th.desc.en}</span>
-                        <span class="lang-ru">{th.desc.ru}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-                  {BLOG_MOMENTUM.audienceBreakdown.map((aud) => (
-                    <div style="border: 2px solid var(--border); padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.72rem;">
-                      <span>
-                        <span class="lang-en">{aud.label.en}</span>
-                        <span class="lang-ru">{aud.label.ru}</span>
-                      </span>
-                      <strong style="background: var(--yellow); color: #0A0A0A; padding: 1px 6px; border: 1.5px solid #0A0A0A; font-size: 0.66rem;">
-                        <span class="lang-en">{aud.badge.en}</span>
-                        <span class="lang-ru">{aud.badge.ru}</span>
-                      </strong>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div style="font-family: var(--font-mono); font-size: 0.74rem; font-weight: 800; margin-bottom: 6px; display: flex; justify-content: space-between;">
-                  <span>
-                    <span class="lang-en">PUBLISHING CADENCE & MOMENTUM</span>
-                    <span class="lang-ru">ДИНАМИКА ПУБЛИКАЦИЙ И ОХВАТА</span>
-                  </span>
-                  <span style="color: var(--orange);">↗</span>
-                </div>
-                <div class="chart-bars" role="img" aria-label="Publishing momentum trend">
-                  {BLOG_MOMENTUM.pulseSeries.map((pt) => (
-                    <div class="chart-bar-col">
-                      <div class="chart-bar" style={`height: ${pt.pct}%;`}></div>
-                      <span class="chart-date">{pt.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="filter-bar" role="group" aria-label="Filter Essays by Topic">
-            <button
-              type="button"
-              class="brutal-btn brutal-btn-lime active"
-              hx-get="/partials/posts-all"
-              hx-target="#blog-posts-container"
-              hx-swap="innerHTML transition:true"
-              onclick="window.activateFilterBtn(this)"
-            >
-              <span class="lang-en">ALL</span>
-              <span class="lang-ru">ВСЕ</span>
-            </button>
-            <button
-              type="button"
-              class="brutal-btn"
-              hx-get="/partials/posts-ai"
-              hx-target="#blog-posts-container"
-              hx-swap="innerHTML transition:true"
-              onclick="window.activateFilterBtn(this)"
-            >
-              <span class="lang-en">AI & AGENTS</span>
-              <span class="lang-ru">AI И АГЕНТЫ</span>
-            </button>
-            <button
-              type="button"
-              class="brutal-btn"
-              hx-get="/partials/posts-leadership"
-              hx-target="#blog-posts-container"
-              hx-swap="innerHTML transition:true"
-              onclick="window.activateFilterBtn(this)"
-            >
-              <span class="lang-en">LEADERSHIP</span>
-              <span class="lang-ru">ЛИДЕРСТВО</span>
-            </button>
-            <button
-              type="button"
-              class="brutal-btn"
-              hx-get="/partials/posts-systems"
-              hx-target="#blog-posts-container"
-              hx-swap="innerHTML transition:true"
-              onclick="window.activateFilterBtn(this)"
-            >
-              <span class="lang-en">RELIABILITY</span>
-              <span class="lang-ru">НАДЁЖНОСТЬ</span>
-            </button>
-            <button
-              type="button"
-              class="brutal-btn"
-              hx-get="/partials/posts-delivery"
-              hx-target="#blog-posts-container"
-              hx-swap="innerHTML transition:true"
-              onclick="window.activateFilterBtn(this)"
-            >
-              <span class="lang-en">OWNERSHIP</span>
-              <span class="lang-ru">ОУНЕРШИП</span>
-            </button>
-          </div>
-
-          <!-- HTMX On-Site Post Reader Slot -->
-          <div id="post-reader-slot" aria-live="polite"></div>
-
-          <div id="blog-posts-container" aria-live="polite">
-            <BlogGrid posts={BLOG_POSTS} />
-          </div>
-        </div>
-      </section>
-
-      <!-- 06. DIRECT CONTACT & FOOTER -->
-      <footer id="contact" class="section-block" data-deck-section="contact" style="border-bottom: none; padding-bottom: 72px;">
-        <div class="container">
-          <div class="brutal-box" style="padding: 36px; background: var(--surface);">
-            <div class="contact-grid">
-              <div>
-                <span class="section-kicker" style="background: var(--lime);">
-                  <span class="lang-en">06 // DIRECT CONTACT</span>
-                  <span class="lang-ru">06 // ПРЯМАЯ СВЯЗЬ</span>
-                </span>
-                <h2 class="section-title" style="margin-bottom: 12px;">
-                  <span class="lang-en">LET’S BUILD DEPENDABLE AI & DISTRIBUTED SYSTEMS</span>
-                  <span class="lang-ru">ДАВАЙТЕ СТРОИТЬ НАДЁЖНЫЕ AI И СИСТЕМЫ</span>
+                <h2 class="section-title">
+                  <span class="lang-en">Field notes on AI, systems & leadership</span>
+                  <span class="lang-ru">Заметки об AI, системах и менеджменте</span>
                 </h2>
-                <p style="font-size: 0.98rem; color: var(--ink-muted); margin-bottom: 20px; max-width: 54ch;">
-                  <span class="lang-en">
-                    Always happy to connect with founders, engineering leaders, and builders working on production AI agents and distributed systems.
-                  </span>
-                  <span class="lang-ru">
-                    Всегда рад общению с фаундерами, техлидами и инженерами, создающими AI-агентов и сложные продакшен-системы.
-                  </span>
-                </p>
-
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                  <a
-                    href="https://cal.com/rossev"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="brutal-btn brutal-btn-lime"
-                    style="border-color: #0A0A0A; font-weight: 900; box-shadow: var(--shadow-md);"
-                  >
-                    <span class="lang-en">SCHEDULE 30-MIN CALL (CAL.COM) ↗</span>
-                    <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН (CAL.COM) ↗</span>
-                  </a>
-                  <button
-                    type="button"
-                    class="brutal-btn brutal-btn-surface"
-                    onclick="window.copyToClipboard('rossevgleb@gmail.com', 'Copied: rossevgleb@gmail.com')"
-                  >
-                    rossevgleb@gmail.com
-                  </button>
-                  <button
-                    type="button"
-                    class="brutal-btn brutal-btn-yellow"
-                    onclick="window.copyToClipboard('+995591908180', 'Copied: +995 591 90 81 80')"
-                  >
-                    +995 591 90 81 80
-                  </button>
-                  <a
-                    href={PROFILE.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="brutal-btn brutal-btn-cyan"
-                  >
-                    LINKEDIN.COM/IN/ROSSEV ↗
-                  </a>
-                  <a
-                    href={PROFILE.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="brutal-btn brutal-btn-surface"
-                  >
-                    GITHUB.COM/GRUMBASH ↗
-                  </a>
-                  <a
-                    href="/gleb-rosev-cv.pdf"
-                    target="_blank"
-                    download="Gleb_Rosev_Staff_Engineer_CV.pdf"
-                    class="brutal-btn"
-                  >
-                    <span class="lang-en">DOWNLOAD CV (PDF) ↓</span>
-                    <span class="lang-ru">СКАЧАТЬ CV (PDF) ↓</span>
-                  </a>
-                  <a
-                    href="/llms.txt"
-                    target="_blank"
-                    class="brutal-btn brutal-btn-surface"
-                    title="Plain-text Markdown context for AI Agents & LLMs"
-                  >
-                    /LLMS.TXT ↗
-                  </a>
-                </div>
               </div>
+              <a
+                href={PROFILE.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="brutal-btn"
+              >
+                <span class="lang-en">FOLLOW ON LINKEDIN ↗</span>
+                <span class="lang-ru">ЧИТАТЬ В LINKEDIN ↗</span>
+              </a>
+            </div>
 
-              <div class="brutal-box" style="padding: 22px; background: #0D0E12; color: #F4F0EA; font-family: var(--font-mono); font-size: 0.8rem;">
-                <div style="color: #C8FF00; font-weight: 800; margin-bottom: 10px;">
-                  <span class="lang-en">// LOCATION & CURRENT ROLE</span>
-                  <span class="lang-ru">// ЛОКАЦИЯ И ТЕКУЩАЯ РОЛЬ</span>
-                </div>
-                <p style="margin-bottom: 6px;">
-                  ▸ <strong><span class="lang-en">NAME:</span><span class="lang-ru">ИМЯ:</span></strong>
-                  <span class="lang-en">Gleb Rosev</span>
-                  <span class="lang-ru">Глеб Росев</span>
-                </p>
-                <p style="margin-bottom: 6px;">
-                  ▸ <strong><span class="lang-en">NOW:</span><span class="lang-ru">СЕЙЧАС:</span></strong>
-                  <span class="lang-en">Founding Engineer @ YAGNI (yagni.app)</span>
-                  <span class="lang-ru">Founding Engineer в YAGNI (yagni.app)</span>
-                </p>
-                <p style="margin-bottom: 6px;">
-                  ▸ <strong><span class="lang-en">BASE:</span><span class="lang-ru">ЛОКАЦИЯ:</span></strong>
-                  <span class="lang-en">Tbilisi, Georgia</span>
-                  <span class="lang-ru">Тбилиси, Грузия · Удалённо с США</span>
-                </p>
-                <p style="margin-bottom: 6px; color: #C8FF00; font-size: 0.72rem;">
-                  ▸ <strong>CV COMPILER:</strong> Auto-built from <code>profile.ts</code> (LLM Canary <code>#YAGNI-42</code>)
-                </p>
-                <p style="color: #00E5FF; margin-top: 12px;">
-                  © {new Date().getFullYear()} <span class="lang-en">Gleb Rosev.</span><span class="lang-ru">Глеб Росев.</span>
-                </p>
+            <div class="filter-bar" role="group" aria-label="Filter Essays by Topic">
+              <button
+                type="button"
+                class="filter-tab active"
+                aria-pressed="true"
+                hx-get="/partials/posts-all"
+                hx-target="#blog-posts-container"
+                hx-swap="innerHTML transition:true"
+                onclick="window.activateFilterBtn(this)"
+              >
+                <span class="lang-en">All</span>
+                <span class="lang-ru">Все</span>
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                aria-pressed="false"
+                hx-get="/partials/posts-ai"
+                hx-target="#blog-posts-container"
+                hx-swap="innerHTML transition:true"
+                onclick="window.activateFilterBtn(this)"
+              >
+                <span class="lang-en">AI & agents</span>
+                <span class="lang-ru">AI и агенты</span>
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                aria-pressed="false"
+                hx-get="/partials/posts-leadership"
+                hx-target="#blog-posts-container"
+                hx-swap="innerHTML transition:true"
+                onclick="window.activateFilterBtn(this)"
+              >
+                <span class="lang-en">Leadership</span>
+                <span class="lang-ru">Лидерство</span>
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                aria-pressed="false"
+                hx-get="/partials/posts-systems"
+                hx-target="#blog-posts-container"
+                hx-swap="innerHTML transition:true"
+                onclick="window.activateFilterBtn(this)"
+              >
+                <span class="lang-en">Reliability</span>
+                <span class="lang-ru">Надёжность</span>
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                aria-pressed="false"
+                hx-get="/partials/posts-delivery"
+                hx-target="#blog-posts-container"
+                hx-swap="innerHTML transition:true"
+                onclick="window.activateFilterBtn(this)"
+              >
+                <span class="lang-en">Ownership</span>
+                <span class="lang-ru">Ответственность</span>
+              </button>
+            </div>
+
+            <!-- HTMX On-Site Post Reader Slot -->
+            <div id="post-reader-slot" aria-live="polite"></div>
+
+            <div id="blog-posts-container" aria-live="polite">
+              <BlogGrid posts={BLOG_POSTS} />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- CONTACT & FOOTER -->
+      <footer id="contact" class="section-block site-footer">
+        <div class="container">
+          <div class="contact-grid">
+            <div>
+              <span class="section-kicker">
+                <span class="lang-en">Contact</span>
+                <span class="lang-ru">Контакты</span>
+              </span>
+              <h2 class="section-title" style="margin-bottom: 12px;">
+                <span class="lang-en">Let’s talk</span>
+                <span class="lang-ru">Давайте поговорим</span>
+              </h2>
+              <p class="footer-lead">
+                <span class="lang-en">
+                  Always happy to connect with founders, engineering leaders, and builders working on production AI agents and distributed systems.
+                </span>
+                <span class="lang-ru">
+                  Всегда рад общению с фаундерами, техлидами и инженерами, создающими AI-агентов и сложные продакшен-системы.
+                </span>
+              </p>
+              <div class="hero-actions">
+                <a href={PROFILE.calendar} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime">
+                  <span class="lang-en">BOOK A 30-MIN CALL ↗</span>
+                  <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН ↗</span>
+                </a>
+                <button
+                  type="button"
+                  class="brutal-btn"
+                  onclick={`window.copyToClipboard('${PROFILE.email}')`}
+                >
+                  <span class="lang-en">COPY EMAIL</span>
+                  <span class="lang-ru">СКОПИРОВАТЬ EMAIL</span>
+                </button>
               </div>
+              <div class="footer-links">
+                <a class="text-link" href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+                <a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                <a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Staff_Engineer_CV.pdf">
+                  <span class="lang-en">CV (PDF) ↓</span><span class="lang-ru">CV (PDF) ↓</span>
+                </a>
+                <a class="text-link" href="/llms.txt" target="_blank" title="Plain-text Markdown context for AI Agents & LLMs">/llms.txt ↗</a>
+              </div>
+            </div>
+
+            <div class="footer-facts">
+              <dl>
+              <div class="contact-row">
+                <dt class="label"><span class="lang-en">Education</span><span class="lang-ru">Образование</span></dt>
+                <dd>
+                  <span class="lang-en">Belarusian State University — Medicine (2015 — 2019)</span>
+                  <span class="lang-ru">БГУ — Медицинское дело (2015 — 2019)</span>
+                </dd>
+              </div>
+              <div class="contact-row">
+                <dt class="label"><span class="lang-en">Languages</span><span class="lang-ru">Языки</span></dt>
+                <dd>
+                  <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(' · ')}</span>
+                  <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(' · ')}</span>
+                </dd>
+              </div>
+              <div class="contact-row">
+                <dt class="label"><span class="lang-en">Based</span><span class="lang-ru">Где</span></dt>
+                <dd>
+                  <span class="lang-en">{PROFILE.location.en} · Remote · {PROFILE.timezone}</span>
+                  <span class="lang-ru">{PROFILE.location.ru} · удалённо · {PROFILE.timezone}</span>
+                </dd>
+              </div>
+              </dl>
+              <p class="footer-fineprint">
+                <span class="lang-en">CV auto-built from</span><span class="lang-ru">CV собирается из</span>
+                <code>profile.ts</code> (LLM Canary <code>#YAGNI-42</code>)
+                · © {new Date().getFullYear()} <span class="lang-en">Gleb Rosev</span><span class="lang-ru">Глеб Росев</span>
+              </p>
             </div>
           </div>
         </div>
@@ -1157,55 +819,15 @@ const jsonLd = {
         }
       })();
 
-      // 2. Spatial Section Deck Switcher with URL Deep-Linking
-      window.switchSectionDeck = function (targetSection, clickedBtn, updateUrl = true) {
-        document.querySelectorAll('[data-deck-btn]').forEach((b) => {
-          b.classList.toggle('active-deck', b.getAttribute('data-deck-btn') === targetSection);
-        });
-        const sections = document.querySelectorAll('.section-block[data-deck-section]');
-        sections.forEach((sec) => {
-          const secKey = sec.getAttribute('data-deck-section');
-          if (targetSection === 'all' || secKey === targetSection) {
-            sec.classList.remove('deck-hidden');
-          } else {
-            sec.classList.add('deck-hidden');
-          }
-        });
-        if (updateUrl) {
-          try {
-            const url = new URL(window.location.href);
-            url.hash = targetSection === 'all' ? '' : targetSection;
-            window.history.replaceState({}, '', url.toString());
-          } catch (e) {}
-        }
-        if (targetSection !== 'all') {
-          const targetEl = document.getElementById(targetSection);
-          if (targetEl) {
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }
+      // 2. Open a job's architecture breakdown, e.g. from ?case=sully or the topology.
+      window.openCaseBreakdown = function (caseId) {
+        const details = document.getElementById('case-' + caseId);
+        if (!details) return;
+        details.open = true;
+        setTimeout(() => details.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
       };
 
-      // 3. Interactive Experience Career Deck Switcher with ARIA & URL Deep-Linking
-      window.selectExperienceTab = function (expId, btn, updateUrl = true) {
-        document.querySelectorAll('[data-exp-btn]').forEach((b) => {
-          const isMatch = b.getAttribute('data-exp-btn') === expId;
-          b.classList.toggle('active-exp', isMatch);
-          b.setAttribute('aria-selected', isMatch ? 'true' : 'false');
-        });
-        document.querySelectorAll('.exp-spotlight-panel').forEach((p) => {
-          p.classList.toggle('active-exp-panel', p.id === 'panel-' + expId);
-        });
-        if (updateUrl) {
-          try {
-            const url = new URL(window.location.href);
-            url.searchParams.set('exp', expId);
-            window.history.replaceState({}, '', url.toString());
-          } catch (e) {}
-        }
-      };
-
-      // URL query parameter helper for deep-linking cases, posts, and tabs
+      // URL query parameter helper for deep-linking cases and posts
       window.setUrlParam = function (key, val) {
         try {
           const url = new URL(window.location.href);
@@ -1218,27 +840,13 @@ const jsonLd = {
         } catch (e) {}
       };
 
-      // Restore Section Hash, Experience Tab, Case Study & Blog Brief from URL on Load
+      // Restore case study & blog brief from URL on load
       document.addEventListener('DOMContentLoaded', () => {
         try {
-          const hash = window.location.hash.replace('#', '');
-          const validDecks = ['impact', 'systems', 'experience', 'capabilities', 'writing', 'contact'];
-          if (validDecks.includes(hash)) {
-            window.switchSectionDeck(hash, null, false);
-          }
           const params = new URLSearchParams(window.location.search);
-          const expParam = params.get('exp');
-          if (expParam && document.getElementById('panel-' + expParam)) {
-            window.selectExperienceTab(expParam, null, false);
-          }
           const caseParam = params.get('case');
-          if (caseParam && ['yagni', 'sully', 'kingpin', 'battlepro'].includes(caseParam) && caseParam !== 'yagni') {
-            fetch(`/partials/case-${caseParam}`)
-              .then((r) => (r.ok ? r.text() : ''))
-              .then((html) => {
-                const slot = document.getElementById('arch-blueprint-slot');
-                if (slot && html) slot.innerHTML = html;
-              });
+          if (caseParam && /^[a-z]+$/.test(caseParam)) {
+            window.openCaseBreakdown(caseParam);
           }
           const postParam = params.get('post');
           if (postParam && /^post-[1-9]$/.test(postParam)) {
@@ -1250,12 +858,25 @@ const jsonLd = {
               });
           }
         } catch (e) {}
+
+        document.querySelectorAll('.job-case').forEach((d) => {
+          d.addEventListener('toggle', () => {
+            const caseId = d.id.replace('case-', '');
+            if (d.open) {
+              window.setUrlParam('case', caseId);
+            } else if (new URLSearchParams(window.location.search).get('case') === caseId) {
+              window.setUrlParam('case', null);
+            }
+          });
+        });
       });
 
-      // 4. Clipboard & Button Helpers
-      window.copyToClipboard = function (text, msg) {
+      // 3. Clipboard & Button Helpers
+      window.copyToClipboard = function (text, label) {
+        const ru = document.documentElement.getAttribute('data-lang') === 'ru';
+        const msg = (ru ? 'Скопировано: ' : 'Copied: ') + (label || text);
         if (navigator.clipboard) {
-          navigator.clipboard.writeText(text);
+          navigator.clipboard.writeText(text).catch(() => {});
         }
         const toast = document.getElementById('brutal-toast');
         if (toast) {
@@ -1265,76 +886,74 @@ const jsonLd = {
         }
       };
 
-      window.activateGroupBtn = function (btn) {
-        const parent = btn.parentElement;
-        if (!parent) return;
-        parent.querySelectorAll('.cmd-btn').forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-      };
-
       window.activateFilterBtn = function (btn) {
         const parent = btn.parentElement;
         if (!parent) return;
-        parent.querySelectorAll('.brutal-btn').forEach((b) => {
-          b.classList.remove('active', 'brutal-btn-lime');
+        parent.querySelectorAll('.filter-tab').forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
         });
-        btn.classList.add('active', 'brutal-btn-lime');
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+      };
+      // 4. Toolbox: copy as plain text, and click a skill to light up the jobs that used it
+      window.copyToolbox = function () {
+        const lines = ['Gleb Rosev — toolbox (' + location.origin + ')'];
+        document.querySelectorAll('[data-toolbox-row]').forEach((row) => {
+          const head = row.querySelector('.toolbox-head .lang-en')?.textContent.trim();
+          const skills = [...row.querySelectorAll('.toolbox-skills > *')].map((el) => el.textContent.trim());
+          lines.push(head + ': ' + skills.join(', '));
+        });
+        window.copyToClipboard(lines.join('\n'), 'toolbox');
       };
 
-      // 5. 3D Perspective Tilt Effect on Neo-Brutalist Cards
-      function initTiltCards() {
-        const cards = document.querySelectorAll('[data-tilt]');
-        cards.forEach((card) => {
-          if (card.dataset.tiltBound) return;
-          card.dataset.tiltBound = 'true';
-          card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const xc = rect.width / 2;
-            const yc = rect.height / 2;
-            const dx = (x - xc) / xc;
-            const dy = (y - yc) / yc;
-            card.style.transform = `perspective(900px) rotateX(${(-dy * 3.5).toFixed(2)}deg) rotateY(${(dx * 3.5).toFixed(2)}deg) translate(-2px, -2px)`;
-          });
-          card.addEventListener('mouseleave', () => {
-            card.style.transform = '';
-          });
+      window.clearSkill = function () {
+        document.querySelectorAll('.skill-link').forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
         });
-      }
+        document.querySelectorAll('.job-card').forEach((c) => c.classList.remove('job-dim', 'job-match'));
+        const result = document.getElementById('toolbox-result');
+        if (result) {
+          result.hidden = true;
+          result.innerHTML = '';
+        }
+      };
 
-      document.addEventListener('DOMContentLoaded', initTiltCards);
-      document.body.addEventListener('htmx:afterSwap', initTiltCards);
-
-      // 6. Draggable Neo-Brutalist Stickers
-      document.addEventListener('DOMContentLoaded', () => {
-        const stickers = document.querySelectorAll('.draggable-sticker');
-        stickers.forEach((sticker) => {
-          let isDragging = false;
-          let startX = 0, startY = 0;
-          let offsetX = 0, offsetY = 0;
-
-          sticker.addEventListener('pointerdown', (e) => {
-            if (e.pointerType === 'touch') return; // Keep native touch scrolling on mobile
-            isDragging = true;
-            startX = e.clientX - offsetX;
-            startY = e.clientY - offsetY;
-            sticker.setPointerCapture(e.pointerId);
-            sticker.style.zIndex = '50';
-          });
-
-          sticker.addEventListener('pointermove', (e) => {
-            if (!isDragging) return;
-            offsetX = e.clientX - startX;
-            offsetY = e.clientY - startY;
-            sticker.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(-3deg)`;
-          });
-
-          sticker.addEventListener('pointerup', () => {
-            isDragging = false;
-          });
+      window.selectSkill = function (btn) {
+        const wasActive = btn.classList.contains('active');
+        window.clearSkill();
+        if (wasActive) return;
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        const jobs = (btn.getAttribute('data-jobs') || '').split(' ');
+        const links = [];
+        document.querySelectorAll('.job-card').forEach((card) => {
+          const match = jobs.includes(card.id);
+          card.classList.toggle('job-match', match);
+          card.classList.toggle('job-dim', !match);
+          if (match) {
+            const a = document.createElement('a');
+            a.className = 'text-link';
+            a.href = '#' + card.id;
+            a.textContent = card.getAttribute('data-company') + ' ↓';
+            links.push(a);
+          }
         });
-      });
+        const result = document.getElementById('toolbox-result');
+        if (!result) return;
+        result.innerHTML =
+          '<strong></strong> <span class="lang-en">— used at</span><span class="lang-ru">— где применял:</span> ';
+        result.querySelector('strong').textContent = btn.getAttribute('data-skill');
+        links.forEach((a) => result.append(a, ' '));
+        const clear = document.createElement('button');
+        clear.type = 'button';
+        clear.className = 'copy-btn';
+        clear.innerHTML = '<span class="lang-en">clear ×</span><span class="lang-ru">сбросить ×</span>';
+        clear.onclick = window.clearSkill;
+        result.append(clear);
+        result.hidden = false;
+      };
     </script>
 
     <!-- Bundled TypeScript 3D Multi-Stratum Topology Engine -->
