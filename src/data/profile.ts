@@ -1,3 +1,5 @@
+import POSTS from './posts.json';
+
 export interface CaseStudy {
   id: string;
   company: string;
@@ -66,13 +68,51 @@ export interface BlogPost {
   color: string;
 }
 
-// "30-SEC BRIEF · 3-MIN ORIGINAL": what the reader gets here vs. on LinkedIn.
-export const readTimeLabel = (post: BlogPost) => ({
-  en: `30-SEC BRIEF · ${post.originalMinutes}-MIN ORIGINAL`,
-  ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ОРИГИНАЛ`
-});
+// "30-SEC BRIEF · 3-MIN ORIGINAL": what the reader gets here vs. on LinkedIn. With a body the
+// full post is on the page itself, so the minutes describe that.
+export const readTimeLabel = (post: BlogPost) =>
+  post.body
+    ? { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN FULL POST`, ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ПОЛНЫЙ ТЕКСТ` }
+    : { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ОРИГИНАЛ` };
 
 export const postPath = (post: BlogPost) => `/writing/${post.slug}/`;
+
+// The grid card's read time: the same idea, shorter.
+export const cardReadTime = (post: BlogPost) =>
+  post.body
+    ? { en: `${post.originalMinutes}-MIN FULL POST`, ru: `ПОЛНЫЙ ТЕКСТ ${post.originalMinutes} МИН` }
+    : { en: `${post.originalMinutes}-MIN ORIGINAL`, ru: `ОРИГИНАЛ ${post.originalMinutes} МИН` };
+
+// With the full text on the site, LinkedIn is where the post was also published, not the original.
+export const linkedinLabel = (post: BlogPost) =>
+  post.body ? { en: 'ALSO ON LINKEDIN ↗', ru: 'ТАКЖЕ В LINKEDIN ↗' } : { en: 'ORIGINAL POST ON LINKEDIN ↗', ru: 'ОРИГИНАЛ В LINKEDIN ↗' };
+
+// The inline reader shows the brief only; when the page has the full text, it links there.
+export const fullPostLink = (post: BlogPost, inline: boolean) =>
+  inline && post.body ? { href: postPath(post), en: 'READ THE FULL POST →', ru: 'ЧИТАТЬ ПОЛНОСТЬЮ →' } : null;
+
+const SITE_URL = 'https://rossev.dev/';
+
+// The BlogPosting node of a post page. Without a body the LinkedIn post is the original
+// (isBasedOn); with the full text here this page is the original and LinkedIn another copy (sameAs).
+export const blogPostingLd = (post: BlogPost, url: string, image: string): Record<string, unknown> => ({
+  '@type': 'BlogPosting',
+  '@id': `${url}#post`,
+  headline: post.title.en,
+  alternativeHeadline: post.title.ru,
+  description: post.takeaway.en,
+  url,
+  mainEntityOfPage: { '@id': url },
+  datePublished: post.published,
+  author: { '@id': `${SITE_URL}#person` },
+  publisher: { '@id': `${SITE_URL}#person` },
+  isPartOf: { '@id': `${SITE_URL}#website` },
+  ...(post.body ? {} : { isBasedOn: post.url }),
+  sameAs: post.url,
+  inLanguage: ['en', 'ru'],
+  keywords: post.tags,
+  image
+});
 
 export const PROFILE = {
   name: {
@@ -624,338 +664,6 @@ export const SKILL_USAGE: Record<string, string[]> = {
   'Product Strategy': ['exp-yagni', 'exp-kingpin']
 };
 
-export const BLOG_POSTS: BlogPost[] = [
-  {
-    id: 'post-1',
-    slug: 'engineering-management-systems-thinking',
-    published: '2026-10-13',
-    category: 'leadership',
-    categoryLabel: { en: 'LEADERSHIP', ru: 'ЛИДЕРСТВО' },
-    originalMinutes: 3,
-    url: 'https://www.linkedin.com/posts/rossev_engineeringmanagement-systemsthinking-leadership-share-7515722598857650176-H9N0',
-    title: {
-      en: 'Engineering Management Is Applied Systems Thinking',
-      ru: 'Инженерный менеджмент — это прикладное системное мышление'
-    },
-    takeaway: {
-      en: 'Debug your team’s feedback loops, handoffs, and queue depth just like a distributed system.',
-      ru: 'Отлаживайте циклы обратной связи и очереди в команде так же, как в распределённой системе.'
-    },
-    tags: ['Systems Thinking', 'Org Design'],
-    brief: {
-      quote: {
-        en: 'An engineering organization is a distributed system where the nodes happen to be humans and AI agents.',
-        ru: 'Инженерная организация — это распределённая система, где узлами выступают люди и AI-агенты.'
-      },
-      bullets: {
-        en: [
-          'Treat PR review queues, handoff delays, and context-switching like backpressure in a distributed message bus.',
-          'When delivery slows down, inspect the system topology (ownership boundaries, approval gates, CI feedback time) before blaming individual throughput.',
-          'Design small, autonomous loops with explicit interfaces so engineers spend time shipping rather than synchronizing.'
-        ],
-        ru: [
-          'Рассматривайте очереди на код-ревью, задержки передачи задач и переключение контекста как backpressure в распределённой шине.',
-          'Когда поставка замедляется, ищите узкие места в топологии процессов (границы ответственности, время прогона CI), а не в людях.',
-          'Стройте автономные контуры с чёткими контрактами, чтобы команда тратила время на поставку, а не на бесконечные синхронизации.'
-        ]
-      }
-    },
-    color: 'var(--lime)'
-  },
-  {
-    id: 'post-2',
-    slug: 'every-engineering-estimate-is-two-things',
-    published: '2026-10-19',
-    category: 'delivery',
-    categoryLabel: { en: 'DELIVERY', ru: 'ПОСТАВКА' },
-    originalMinutes: 3,
-    url: 'https://www.linkedin.com/posts/rossev_every-engineering-estimate-is-actually-two-share-7517918772553461760-fDtV',
-    title: {
-      en: 'Every Engineering Estimate Is Actually Two Separate Things',
-      ru: 'Любая инженерная оценка состоит из двух разных вещей'
-    },
-    takeaway: {
-      en: 'Separate probability sizing from deterministic business commitments.',
-      ru: 'Разделяйте вероятностную оценку сложности и твёрдое обязательство к дате.'
-    },
-    tags: ['Estimates', 'Ownership'],
-    brief: {
-      quote: {
-        en: 'Commit to outcomes and interfaces; keep scope modular behind feature flags.',
-        ru: 'Берите обязательства по результату и контрактам, а объём держите модульным за фича-флагами.'
-      },
-      bullets: {
-        en: [
-          'Every estimate mixes two orthogonal concepts: (1) probabilistic discovery of unknown complexity and (2) a deterministic calendar commitment.',
-          'Conflating the two forces engineers to pad estimates defensively or cut architectural corners to hit an arbitrary date.',
-          'Scope the commitment around a core milestone with feature-flagged progressive depth so dates stay reliable without sacrificing quality.'
-        ],
-        ru: [
-          'Любая оценка смешивает две разные вещи: (1) вероятностный прогноз неизвестной сложности и (2) твёрдое бизнесовое обязательство к дате.',
-          'Когда их путают, инженеры либо перезакладываются втрое, либо режут углы в архитектуре ради дедлайна.',
-          'Фиксируйте дату для ядра функциональности, а дополнительные сценарии закрывайте итеративно за фича-флагами.'
-        ]
-      }
-    },
-    color: 'var(--yellow)'
-  },
-  {
-    id: 'post-3',
-    slug: 'the-new-ai-bottleneck',
-    published: '2026-10-19',
-    category: 'ai',
-    categoryLabel: { en: 'AI SYSTEMS', ru: 'AI-СИСТЕМЫ' },
-    originalMinutes: 4,
-    url: 'https://www.linkedin.com/posts/rossev_the-new-ai-bottleneck-ugcPost-7517920896150536192-7TGN',
-    title: {
-      en: 'The New AI Bottleneck Isn’t Generation — It’s Verification',
-      ru: 'Новое узкое место AI — не генерация кода, а его верификация'
-    },
-    takeaway: {
-      en: 'Harnesses, automated evals, and runtime observability separate AI toys from production.',
-      ru: 'Именно харнессы, эвалы и observability отличают прототип от боевого продакшена.'
-    },
-    tags: ['AI Harnesses', 'Verification'],
-    brief: {
-      quote: {
-        en: 'Making AI agents dependable in production is an evaluation and systems-hardening problem.',
-        ru: 'Надёжность AI-агентов в продакшене — это задача верификации, песочниц и системной инженерии.'
-      },
-      bullets: {
-        en: [
-          'Generating code with LLMs is cheap; proving that generated code is safe, isolated, and regression-free under production load is the real bottleneck.',
-          'Production AI requires deterministic harnesses: sandboxed code runners, realistic task benchmarks, and a second independent "judge" review pass.',
-          'Autonomy is earned through a measurable track record on real engineering benchmarks, never assumed from a single demo.'
-        ],
-        ru: [
-          'Генерация кода стала дешёвой; настоящее узкое место — доказать, что этот код безопасен, изолирован и не ломает прод.',
-          'Боевой AI требует жёсткого харнесса: изолированных песочниц, реалистичных бенчмарков и независимой проверки вторым агентом-судьёй.',
-          'Автономность агента зарабатывается статистикой успешных прогонов, а не эффектным демо.'
-        ]
-      }
-    },
-    color: 'var(--cyan)'
-  },
-  {
-    id: 'post-4',
-    slug: 'ai-agents-30-percent-more-code',
-    published: '2026-10-23',
-    category: 'ai',
-    categoryLabel: { en: 'AI SYSTEMS', ru: 'AI-СИСТЕМЫ' },
-    originalMinutes: 3,
-    url: 'https://www.linkedin.com/posts/rossev_ai-agents-helped-developers-write-30-more-share-7519300584580087809-F6Qp',
-    title: {
-      en: 'AI Agents Helped Write 30% More Code. Then What?',
-      ru: 'AI-агенты помогли писать на 30% больше кода. Что дальше?'
-    },
-    takeaway: {
-      en: 'More code is a vanity metric if PR queues and incident rates spike alongside it.',
-      ru: 'Больше строк кода — метрика тщеславия, если растут очереди на ревью и инциденты.'
-    },
-    tags: ['Agents', 'SDLC'],
-    brief: {
-      quote: {
-        en: 'Code volume is a cost center; verified merged behavior is the asset.',
-        ru: 'Объём кода — это издержки; актив — это проверенное поведение в продакшене.'
-      },
-      bullets: {
-        en: [
-          'Writing 30% more lines of code only creates 30% more review debt if the verification and merge pipeline stays manual and unguarded.',
-          'Agent teams must own the whole loop from proposal to tested PR under a human-approved plan — including running tests and fixing their own failures.',
-          'Measure end-to-end merged value and production stability, not raw token or LOC output.'
-        ],
-        ru: [
-          'Плюс 30% сгенерированного кода превращаются в +30% долга на ревью, если конвейер проверки остаётся прежним.',
-          'Команды агентов должны проходить весь цикл от утверждённого плана до протестированного PR, сами исправляя падения тестов в песочнице.',
-          'Измеряйте доставленную в прод ценность и стабильность релизов, а не количество написанных строк.'
-        ]
-      }
-    },
-    color: 'var(--lime)'
-  },
-  {
-    id: 'post-5',
-    slug: 'attackers-kept-attacking-opencode',
-    published: '2026-10-23',
-    category: 'systems',
-    categoryLabel: { en: 'RELIABILITY', ru: 'НАДЁЖНОСТЬ' },
-    originalMinutes: 4,
-    url: 'https://www.linkedin.com/posts/rossev_the-attackers-kept-attacking-opencodes-share-7519304575242207233-RIlc',
-    title: {
-      en: 'When Attackers Keep Hitting Your Infrastructure',
-      ru: 'Когда инфраструктуру атакуют без остановки: закалка продакшена'
-    },
-    takeaway: {
-      en: 'Blast-radius isolation, rate limiting, and anomaly telemetry must exist from day one.',
-      ru: 'Изоляция радиуса поражения и телеметрия аномалий должны быть заложены с первого дня.'
-    },
-    tags: ['Resilience', 'Security'],
-    brief: {
-      quote: {
-        en: 'Security and reliability are architectural boundaries, not after-the-fact patches.',
-        ru: 'Безопасность и надёжность — это физические границы архитектуры, а не патчи задним числом.'
-      },
-      bullets: {
-        en: [
-          'Production runners and public endpoints face continuous automated probing, runaway payloads, and noisy-neighbor spikes.',
-          'Hardening means ephemeral sandboxes, strict egress allowlists, per-organization data isolation, and an early-warning risk radar.',
-          'Detect stalled or anomalous runs before the customer notices and isolate the blast radius to a single ephemeral container.'
-        ],
-        ru: [
-          'Боевые раннеры и API постоянно сталкиваются с аномальными нагрузками, зависшими процессами и попытками пробить изоляцию.',
-          'Защита строится на одноразовых песочницах, строгом разделении данных организаций и радаре раннего предупреждения.',
-          'Ловите зависшие сборки раньше клиента и запирайте радиус поражения внутри одного изолированного контейнера.'
-        ]
-      }
-    },
-    color: 'var(--orange)'
-  },
-  {
-    id: 'post-6',
-    slug: 'technical-seniority-is-dead',
-    published: '2026-10-18',
-    category: 'leadership',
-    categoryLabel: { en: 'LEADERSHIP', ru: 'ЛИДЕРСТВО' },
-    originalMinutes: 3,
-    url: 'https://www.linkedin.com/posts/rossev_technical-seniority-is-dead-ugcPost-7517626785531011072-jLGL',
-    title: {
-      en: 'Traditional Technical Seniority Is Dead — Ownership Remains',
-      ru: 'Старый «сеньоритет» мёртв — остаётся только оунершип'
-    },
-    takeaway: {
-      en: 'Seniority today is system design, trade-off judgment, and end-to-end outcome ownership.',
-      ru: 'Настоящий сеньоритет сегодня — это архитектура, выбор компромиссов и ответственность за результат.'
-    },
-    tags: ['Seniority', 'Ownership'],
-    brief: {
-      quote: {
-        en: 'Syntax is automated; architectural judgment and ownership are more valuable than ever.',
-        ru: 'Синтаксис автоматизирован — архитектурное суждение и оунершип ценятся как никогда.'
-      },
-      bullets: {
-        en: [
-          'Memorizing framework syntax is no longer a differentiator when AI agents can scaffold boilerplate in seconds.',
-          'True Staff/Senior leverage lies in problem framing, boundary design, failure-mode anticipation, and owning the production outcome.',
-          'The best engineers operate as architects and judges: they define the plan, delegate execution to agents, and verify the critical invariants.'
-        ],
-        ru: [
-          'Знание синтаксиса фреймворков больше не отличает сеньора, когда агент генерирует бойлерплейт за секунды.',
-          'Настоящий уровень Staff/Senior сегодня — это постановка задачи, проектирование границ, предвидение сбоев и ответственность за прод.',
-          'Сильные инженеры работают как архитекторы и судьи: утверждают план, делегируют рутину агентам и верифицируют ключевые инварианты.'
-        ]
-      }
-    },
-    color: 'var(--yellow)'
-  },
-  {
-    id: 'post-7',
-    slug: 'god-damn-5k-if-else',
-    published: '2026-10-19',
-    category: 'systems',
-    categoryLabel: { en: 'RELIABILITY', ru: 'НАДЁЖНОСТЬ' },
-    originalMinutes: 3,
-    url: 'https://www.linkedin.com/posts/rossev_god-damn-5k-if-else-ugcPost-7517921822798016512-hRGL',
-    title: {
-      en: 'Anatomy of a 5,000-Line If-Else Monster in Production',
-      ru: 'Анатомия монстра из 5 000 строк if-else в продакшене'
-    },
-    takeaway: {
-      en: 'Without explicit domain boundaries and state machines, entropy always wins.',
-      ru: 'Без чётких доменных границ и конечных автоматов энтропия всегда побеждает.'
-    },
-    tags: ['State Machines', 'Architecture'],
-    brief: {
-      quote: {
-        en: 'Explicit state machines turn 5,000 lines of defensive branching into an auditable graph.',
-        ru: 'Явный конечный автомат превращает 5 000 строк хрупких условий в проверяемый граф.'
-      },
-      bullets: {
-        en: [
-          'Every 5,000-line if-else monolith starts as "just one quick special case" added without an explicit state machine.',
-          'In complex workflows (clinical voice intake, multi-tenant B2B pricing, agent handoffs), implicit flags create impossible-to-test state explosions.',
-          'Replace nested branching with explicit finite state machines (FSM), typed contracts, and deterministic transition guards.'
-        ],
-        ru: [
-          'Любой монстр из 5 000 строк if-else начинается с «одного маленького исключения», добавленного в обход конечного автомата.',
-          'В сложных процессах (голосовой AI для клиник, оптовый B2B-прайсинг, оркестрация агентов) неявные флаги вызывают комбинаторный взрыв состояний.',
-          'Заменяйте вложенные условия явными конечными автоматами (FSM), типизированными контрактами и детерминированными переходами.'
-        ]
-      }
-    },
-    color: 'var(--cyan)'
-  },
-  {
-    id: 'post-8',
-    slug: 'stop-using-llms-as-expensive-regex',
-    published: '2026-10-16',
-    category: 'ai',
-    categoryLabel: { en: 'AI SYSTEMS', ru: 'AI-СИСТЕМЫ' },
-    originalMinutes: 3,
-    url: 'https://www.linkedin.com/posts/rossev_stop-using-llms-as-the-worlds-most-expensive-share-7516812934384152576-B7GT',
-    title: {
-      en: 'Stop Using LLMs as the World’s Most Expensive Regex',
-      ru: 'Хватит использовать LLM как самую дорогую регулярку'
-    },
-    takeaway: {
-      en: 'Combine fast deterministic code guardrails with LLMs only where ambiguity exists.',
-      ru: 'Сочетайте детерминированный код с LLM только там, где реально есть нечёткость.'
-    },
-    tags: ['LLM Latency', 'Guardrails'],
-    brief: {
-      quote: {
-        en: 'Let deterministic code guard the boundaries; let models handle the ambiguity inside.',
-        ru: 'Пусть детерминированный код держит границы, а модели решают неоднозначность внутри них.'
-      },
-      bullets: {
-        en: [
-          'Routing deterministic parsing, validation, or schema checks through an LLM burns latency, money, and reliability.',
-          'Use strict code (Zod schemas, AST parsers, state machines) for everything deterministic, and reserve LLM calls strictly for semantic reasoning.',
-          'Hybrid architectures deliver sub-second latency and predictable production behavior.'
-        ],
-        ru: [
-          'Гонять детерминированный парсинг, валидацию или маршрутизацию через LLM — значит сжигать задержку, бюджет и надёжность.',
-          'Используйте строгий код (схемы, парсеры, автоматы) для всего предсказуемого, оставляя LLM только там, где нужно семантическое решение.',
-          'Гибридная архитектура даёт минимальную задержку и предсказуемое поведение в бою.'
-        ]
-      }
-    },
-    color: 'var(--pink)'
-  },
-  {
-    id: 'post-9',
-    slug: 'explanation-vs-ownership',
-    published: '2026-06-13',
-    category: 'delivery',
-    categoryLabel: { en: 'DELIVERY', ru: 'ПОСТАВКА' },
-    originalMinutes: 3,
-    url: 'https://www.linkedin.com/posts/rossev_explanation-vs-ownership-theres-a-massive-share-7471699825135308800-MENb',
-    title: {
-      en: 'Explanation vs. Ownership: Problems vs. Decisions',
-      ru: 'Объяснения против Оунершипа: Проблемы против Решений'
-    },
-    takeaway: {
-      en: 'Don’t escalate raw problems — bring trade-offs, options, and a recommended decision.',
-      ru: 'Не приносите просто проблемы — приносите варианты, компромиссы и решение.'
-    },
-    tags: ['Decision Making', 'Execution'],
-    brief: {
-      quote: {
-        en: 'Ownership means closing the loop with a permanent architectural fix.',
-        ru: 'Оунершип — это закрытие цикла постоянным архитектурным превентивным фиксом.'
-      },
-      bullets: {
-        en: [
-          'Explaining why something failed is reporting; proposing three concrete recovery options with trade-offs and executing the fix is ownership.',
-          'In early-stage startups and core platform teams, leaders value engineers who compress the loop from "incident detected" to "root cause resolved".',
-          'Every post-mortem should end with a systemic guardrail or benchmark so the same class of failure cannot recur.'
-        ],
-        ru: [
-          'Объяснить, почему всё упало — это отчёт; принести варианты решения с компромиссами и закрыть проблему — это оунершип.',
-          'В продуктовых и платформенных командах ценятся инженеры, которые сжимают путь от обнаружения сбоя до системного фикса.',
-          'Каждый разбор инцидента должен заканчиваться новым автотестом, бенчмарком или гардрейлом.'
-        ]
-      }
-    },
-    color: 'var(--orange)'
-  }
-];
+// The posts live in posts.json so the Publora sync (scripts/ci/publora-sync.ts) can prepend new
+// ones with a small, machine-made diff. Array order is the home grid order; the sync prepends.
+export const BLOG_POSTS: BlogPost[] = POSTS as BlogPost[];
