@@ -54,7 +54,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `post_open` / `post_linkedin` | `id` | READ BRIEF / LinkedIn original |
 | `post_filter` | `filter` (all, ai, leadership, systems, delivery) | writing filter tab |
 | `topology_interact` | `action` (domain, fault, xray, reset, packet, stratum, step, blueprint; drag = horizontal drag on the canvas) | topology, once per action per view |
-| `nca_interact` | `action` (drag, key, reset) | GR monogram in Beyond the CV, once per action per view |
+| `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset) | GR monogram in Beyond the CV, once per action per view |
 | `lang_switch` / `theme_switch` | `to` | EN/RU (only on an actual change), THEME |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |
 

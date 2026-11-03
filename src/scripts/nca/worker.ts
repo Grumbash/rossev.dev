@@ -3,6 +3,7 @@
 // a few milliseconds per step on a laptop and several times that on a phone, so
 // the page only receives finished frames and never steps the model itself.
 import { NeuralCA, type NcaWeights } from './model';
+import { createTicker } from './ticker';
 
 export type ToWorker =
   | { type: 'init'; weightsUrl: string; reducedMotion: boolean }
@@ -33,7 +34,6 @@ let visible = false;
 let budget = 0;
 let owed = 0;
 let lastTick = 0;
-let timer: ReturnType<typeof setTimeout> | undefined;
 
 // Frame buffers: one RGBA float buffer, and pixel buffers that travel to the
 // page (transferred, not copied) and come back via 'recycle'.
@@ -73,16 +73,17 @@ function shouldRun(): boolean {
   return ca !== null && visible && budget > 0;
 }
 
+/** Starts the loop if it should run and isn't already; the only way ticks get scheduled. */
 function wake(): void {
-  if (timer !== undefined || !shouldRun()) return;
+  if (ticker.pending || !shouldRun()) return;
   lastTick = performance.now();
   owed = 0;
-  timer = setTimeout(tick, TICK_MS);
+  ticker.wake();
 }
 
-function tick(): void {
-  timer = undefined;
-  if (!ca || !shouldRun()) return;
+/** One loop iteration; returns whether to keep going. */
+function tick(): boolean {
+  if (!ca || !shouldRun()) return false;
   const now = performance.now();
   owed = Math.min(owed + ((now - lastTick) / 1000) * STEPS_PER_SECOND, MAX_STEPS_PER_TICK);
   lastTick = now;
@@ -91,10 +92,12 @@ function tick(): void {
     ca.step(n);
     owed -= n;
     budget -= n;
-    showOrRestart();
+    showOrRestart(); // may reset(), which wakes the ticker; it stays a single chain
   }
-  if (shouldRun()) timer = setTimeout(tick, TICK_MS);
+  return shouldRun();
 }
+
+const ticker = createTicker(tick, TICK_MS);
 
 function reset(): void {
   if (!ca) return;
