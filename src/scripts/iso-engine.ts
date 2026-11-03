@@ -12,6 +12,9 @@ declare global {
     triggerIsoFault: (keepFocus?: boolean) => void;
     setIsoDomain: (domain: 'yagni' | 'voice' | 'saas', btn?: HTMLElement | null) => void;
     fireIsoPacket: () => void;
+    playIso: () => void;
+    clearIsoFault: () => void;
+    getIsoDomain: () => 'yagni' | 'voice' | 'saas';
     openDomainBlueprint: () => void;
     openCaseBreakdown: (caseId: string) => void;
   }
@@ -75,6 +78,9 @@ export function initIsoArchitectureEngine(): void {
   let isCanvasVisible = true;
   let rafId: number | null = null;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Phones get a still poster: one frame per change, no rAF loop until Play (or a story step).
+  const posterQuery = window.matchMedia('(max-width: 480px)');
+  let playing = !posterQuery.matches;
 
   const traceWave = { active: false, progress: 0 };
   const faultSim = {
@@ -301,6 +307,8 @@ export function initIsoArchitectureEngine(): void {
     faultSim.progress = 0;
     faultSim.targetIdx = target;
     faultSim.stage = 1;
+    // A run that has to play out (fault, trace) needs the loop, poster or not.
+    playing = true;
 
     const btn = document.getElementById('btn-iso-fault');
     if (btn) btn.classList.add('active');
@@ -321,8 +329,7 @@ export function initIsoArchitectureEngine(): void {
     currentDomain = domain;
     lockedNode = -1;
     selectedNode = 1;
-    faultSim.active = false;
-    document.getElementById('btn-iso-fault')?.classList.remove('active');
+    window.clearIsoFault();
     window.resetIsoCamera();
     document.querySelectorAll('[data-iso-domain]').forEach((b) => {
       b.classList.toggle('active', b.getAttribute('data-iso-domain') === domain);
@@ -340,13 +347,35 @@ export function initIsoArchitectureEngine(): void {
     window.updateIsoHudText();
   };
 
+  // Stop a fault run before it heals. The guided story listens for iso:aborted to leave "healing".
+  window.clearIsoFault = function () {
+    if (!faultSim.active) return;
+    faultSim.active = false;
+    document.getElementById('btn-iso-fault')?.classList.remove('active');
+    window.dispatchEvent(new CustomEvent('iso:aborted'));
+    ensureLoopRunning();
+  };
+
   window.fireIsoPacket = function () {
     traceWave.active = true;
     traceWave.progress = 0;
+    playing = true;
     const statusEl = document.getElementById('iso-trace-status');
     if (statusEl) statusEl.textContent = 'TRACING 3-DECK TOPOLOGY...';
     ensureLoopRunning();
   };
+
+  window.playIso = function () {
+    if (playing) return;
+    playing = true;
+    ensureLoopRunning();
+  };
+  // Growing past phone width: no Play button there, so start the loop.
+  posterQuery.addEventListener?.('change', (e) => {
+    if (!e.matches) window.playIso();
+  });
+
+  window.getIsoDomain = () => currentDomain;
 
   window.openDomainBlueprint = function () {
     window.openCaseBreakdown(ISO_DOMAINS[currentDomain].caseId);
@@ -1285,6 +1314,8 @@ export function initIsoArchitectureEngine(): void {
         faultSim.active = false;
         document.getElementById('btn-iso-fault')?.classList.remove('active');
         if (statusEl) statusEl.textContent = 'INCIDENT RESOLVED · ZERO CUSTOMER IMPACT';
+        // The guided story waits for this to show its case link.
+        window.dispatchEvent(new CustomEvent('iso:healed'));
       }
     }
 
@@ -1347,6 +1378,7 @@ export function initIsoArchitectureEngine(): void {
       lockedNode
     );
     if (
+      playing &&
       shouldKeepAnimating({
         reducedMotion: prefersReducedMotion,
         dragging: isDragging,
@@ -1388,17 +1420,8 @@ export function initIsoArchitectureEngine(): void {
     }
   });
 
-  // Restore initial domain from URL query if present
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const domParam = params.get('domain');
-    if (domParam === 'yagni' || domParam === 'voice' || domParam === 'saas') {
-      currentDomain = domParam;
-      document.querySelectorAll('[data-iso-domain]').forEach((b) => {
-        b.classList.toggle('active', b.getAttribute('data-iso-domain') === domParam);
-      });
-    }
-  } catch {}
+  // A ?domain= deep link is applied by the guided story when Explore opens (topology-story-dom.ts):
+  // the card always opens on the YAGNI story, so nothing switches after first paint.
 
   window.updateIsoHudText();
   ensureLoopRunning();

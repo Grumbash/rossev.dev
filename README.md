@@ -53,8 +53,8 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `skill_click` / `toolbox_copy` | `skill` / none | toolbox |
 | `post_open` / `post_linkedin` | `id` | READ BRIEF / LinkedIn original |
 | `post_filter` | `filter` (all, ai, leadership, systems, delivery) | writing filter tab |
-| `topology_interact` | `action` (domain, fault, xray, reset, packet, stratum, step, blueprint; drag = horizontal drag on the canvas) | topology, once per action per view |
-| `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset) | GR monogram in Beyond the CV, once per action per view |
+| `topology_interact` | `action` (free play behind Explore: domain, fault, xray, reset, packet, stratum, step, blueprint; drag = horizontal drag on the canvas; guided story: step2, step3 = arrived at that step, heal = Break & heal, case = YAGNI case link, play = phone Play, explore = Explore toggle) | topology, once per action per view |
+| `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset, case = bridge link to the YAGNI case) | GR monogram in Beyond the CV, once per action per view |
 | `lang_switch` / `theme_switch` | `to` | EN/RU (only on an actual change), THEME |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |
 | `booking_confirmed` | `source` (nav, hero, footer, reader, unknown) | `/booked` after a cal.com redirect carrying a booking `uid`, once per booking |
