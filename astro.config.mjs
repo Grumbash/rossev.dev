@@ -9,7 +9,10 @@ export default defineConfig({
     inlineStylesheets: 'always'
   },
   // HTMX fragments are not pages: they stay out of the sitemap (and carry noindex, see vercel.json).
-  integrations: [sitemap({ filter: (page) => !page.includes('/partials/') })],
+  // Neither is /booked, cal.com's after-booking redirect (noindex in its <head>).
+  integrations: [
+    sitemap({ filter: (page) => !page.includes('/partials/') && !/^\/booked\/?$/.test(new URL(page).pathname) })
+  ],
   devToolbar: {
     enabled: false
   }
