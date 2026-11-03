@@ -65,10 +65,9 @@ I publish on LinkedIn through [Publora](https://publora.com). Once a day (06:17 
 - New posts go on top of the grid, with the next `post-N` id, the category label the site already uses and the next color.
 - A post I don't want on the site: add its LinkedIn id (the PR lists it) to `src/data/publora-ignore.json` on `main` and close the PR. Closing alone would bring it back the next day.
 
-The model is `deepseek/deepseek-v4.1-flash` by default (`DEFAULT_MODEL` in the script). To change it, set a repo variable `PUBLORA_SYNC_MODEL` to any OpenRouter model id that supports structured outputs. It uses the same `OPENROUTER_API_KEY` as the watchdog, through the same client (`scripts/ci/openrouter.ts`).
+The model is `anthropic/claude-haiku-5.5,z-ai/glm-5.3-flash` by default (`DEFAULT_MODEL` in the script): Haiku first, GLM-5.3 Flash as OpenRouter's fallback when Haiku errors or is rate-limited. Both were picked in a bake-off of 13 cheap models on two real posts, judged on the Russian adaptation and on passing the validator. To change it, set a repo variable `PUBLORA_SYNC_MODEL` to any OpenRouter model id that supports structured outputs. It uses the same `OPENROUTER_API_KEY` as the watchdog, through the same client (`scripts/ci/openrouter.ts`).
 
-<!-- cost -->
-Cost: about $0.001 per post. The PR shows the model and the exact cost of the run. Days with nothing new make no model call.
+Cost: about $0.001 per post with Haiku (measured $0.0009–0.0010), about $0.0005 when GLM answers. The PR shows the model and the exact cost of the run. Days with nothing new make no model call.
 
 Secrets:
 
