@@ -707,3 +707,68 @@ describe('one run stays well inside the job timeout', () => {
     expect(h.logs.join('\n')).toMatch(/2 .*next run/i);
   });
 });
+
+// --- posts that never went through Publora --------------------------------------------------------
+
+describe('src/data/linkedin-backfill.json fills in what Publora never published', () => {
+  const BACKFILL = 'src/data/linkedin-backfill.json';
+  const entry = (id: string, text: string, slug = 'x') => ({ activityId: id, url: `https://www.linkedin.com/posts/rossev_${slug}-share-${id}-AbCd`, text });
+
+  test('the file holds only id, LinkedIn url and text: one entry per post, ids matching the urls, no scraper leftovers', () => {
+    const b = readJson(BACKFILL) as { activityId: string; url: string; text: string }[];
+    expect(b.length).toBeGreaterThan(0);
+    for (const e of b) {
+      expect(Object.keys(e).sort()).toEqual(['activityId', 'text', 'url']);
+      expect(activityId(e.url)).toBe(e.activityId);
+      expect(e.url).toMatch(/^https:\/\/www\.linkedin\.com\/posts\/rossev_/);
+      expect(e.text.length).toBeGreaterThan(100);
+      expect(e.text).not.toMatch(/…\s*more\s*$/);
+      expect(e.text).not.toContain('media.licdn.com');
+    }
+    expect(new Set(b.map((e) => e.activityId)).size).toBe(b.length);
+    expect(b.map((e) => e.activityId)).toEqual([...b.map((e) => e.activityId)].sort((x, y) => (BigInt(x) < BigInt(y) ? -1 : 1)));
+    expect(readFileSync(BACKFILL, 'utf8')).toBe(JSON.stringify(b, null, 2) + '\n');
+  });
+
+  test('a backfill post missing from Publora and from the site becomes a new entry with its vanity url', async () => {
+    const h = harness({ groups: [] });
+    (h.deps as any).readBackfill = () => [entry(NEW_ID, NEW_TEXT, 'velocity')];
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('added');
+    const p = written(h)![0];
+    expect(p.slug).toBe('velocity-is-a-waiting-problem');
+    expect(p.url).toBe(`https://www.linkedin.com/posts/rossev_velocity-share-${NEW_ID}-AbCd`);
+    expect(p.published).toBe('2026-11-02');
+    expect(p.body?.en).toBe(cleanSource(NEW_TEXT));
+  });
+
+  test('a backfill post already on the site without its text gives it the full text', async () => {
+    const h = harness({ groups: [], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': { bodyRu: 'Инженерный менеджмент — это прикладное системное мышление, и команду стоит отлаживать как распределённую систему.' } } });
+    (h.deps as any).readBackfill = () => [entry(ON_SITE_ID, 'Engineering management is applied systems thinking.')];
+    await run(h.env, h.deps);
+    expect(written(h)!.find((p) => p.id === 'post-1')!.body?.en).toBe('Engineering management is applied systems thinking.');
+  });
+
+  test("Publora's copy wins over the backfill for the same post; PUBLORA_SINCE and the ignore list apply to both", async () => {
+    const h = harness();
+    (h.deps as any).readBackfill = () => [entry(NEW_ID, 'A stale scraped copy of the waiting problem post.'), entry(OLD_ID, 'Old one, before the cutoff.'), entry('7523353283788812399', 'Ignored one, never to be imported.')];
+    (h.deps as any).readIgnored = () => ['7523353283788812399'];
+    await run(h.env, h.deps);
+    const asked = toModel(h).map((c) => String(c.body.messages.at(-1).content)).join('\n');
+    expect(asked).not.toContain('stale scraped copy');
+    expect(asked).not.toContain('before the cutoff');
+    expect(asked).not.toContain('never to be imported');
+    expect(written(h)!.find((p) => p.slug === 'velocity-is-a-waiting-problem')!.body?.en).toBe(cleanSource(NEW_TEXT));
+  });
+
+  test('one run makes at most 8 model calls in all, new posts first; the rest wait for the next run', async () => {
+    const ids = Array.from({ length: 10 }, (_, i) => (BigInt(NEW_ID) + BigInt(i) * 1000n).toString());
+    const drafts = Object.fromEntries(ids.map((_, i) => [`Backfill post ${i} `, { ...DRAFT_NEW, slug: `backfill-post-${i}` }]));
+    const h = harness({ groups: [], drafts });
+    (h.deps as any).readBackfill = () => ids.map((id, i) => entry(id, `${NEW_TEXT}\n\nBackfill post ${i} closing line.`));
+    await run(h.env, h.deps);
+    expect(toModel(h).length).toBe(8);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^added=8$/m);
+    expect(h.logs.join('\n')).toMatch(/2 .*next run/i);
+  });
+});

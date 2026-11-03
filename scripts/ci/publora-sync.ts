@@ -24,6 +24,9 @@ export const DEFAULT_SINCE = '2026-10-13';
 export const POSTS_JSON = 'src/data/posts.json';
 // LinkedIn activity ids Gleb decided not to put on the site: closing the bot PR alone would bring them back daily.
 export const IGNORE_JSON = 'src/data/publora-ignore.json';
+// Posts published on LinkedIn without Publora (or before it): id, vanity url and the full text.
+export const BACKFILL_JSON = 'src/data/linkedin-backfill.json';
+export type BackfillEntry = { activityId: string; url: string; text: string };
 const PUBLORA = 'https://api.publora.com/api/v1';
 const CATEGORIES = ['ai', 'leadership', 'systems', 'delivery'] as const;
 type Category = (typeof CATEGORIES)[number];
@@ -36,7 +39,9 @@ const CATEGORY_LABELS: Record<Category, { en: string; ru: string }> = {
 };
 const FALLBACK_PALETTE = ['var(--lime)', 'var(--yellow)', 'var(--cyan)', 'var(--orange)', 'var(--pink)'];
 const WORDS_PER_MINUTE = 230;
-// Full-text fills per run: each is a model call of up to 2 min, and the job has 20.
+// Model calls per run (new posts first, then at most MAX_FILLS full-text fills): each can take up
+// to 2 min, and the job has 20. The rest wait for the next run.
+export const MAX_CALLS = 8;
 export const MAX_FILLS = 5;
 
 // --- LinkedIn ids, urls, dates ---------------------------------------------------------------
@@ -424,6 +429,7 @@ export type Deps = {
   fetch: typeof fetch;
   readPosts: () => BlogPost[];
   readIgnored?: () => string[]; // ids from IGNORE_JSON
+  readBackfill?: () => BackfillEntry[]; // BACKFILL_JSON
   writeFile: (path: string, content: string) => void; // GITHUB_OUTPUT is appended to, the rest replaced
   log: (s: string) => void;
 };
@@ -485,6 +491,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     let failed = 0;
     let noId = 0;
     let skippedByList = 0;
+    const seen = new Map<string, Target>();
     for (const g of groups.values()) {
       // The list already says per platform whether LinkedIn went out; skip the detail call when it did not.
       if (Array.isArray(g.platforms) && !g.platforms.some((p) => p?.platform === 'linkedin' && p.status === 'published')) continue;
@@ -499,27 +506,37 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
       const targets = linkedinTargets(detail);
       const publishedOnLinkedin = ((detail as any)?.posts ?? []).filter((p: any) => p?.platform === 'linkedin' && p.status === 'published').length;
       noId += Math.max(0, publishedOnLinkedin - targets.length);
-      for (const t of targets) {
-        if (onSite.has(t.activityId)) {
-          known++;
-          if (bodyless.has(t.activityId)) stubs.set(t.activityId, t);
-        }
-        else if (ignored.has(t.activityId)) skippedByList++;
-        else if (publishedDate(t.activityId) < since) old++;
-        else fresh.set(t.activityId, t);
-      }
+      for (const t of targets) seen.set(t.activityId, t);
+    }
+    // Publora's copy wins; the backfill only adds posts it never had.
+    let backfilled = 0;
+    for (const e of deps.readBackfill?.() ?? []) {
+      const id = String(e?.activityId ?? '');
+      if (!/^\d{15,}$/.test(id) || activityId(String(e.url)) !== id || typeof e.text !== 'string' || seen.has(id)) continue;
+      seen.set(id, { postGroupId: 'linkedin-backfill', activityId: id, postedId: '', content: e.text, url: e.url });
+      backfilled++;
+    }
+    for (const t of seen.values()) {
+      if (onSite.has(t.activityId)) {
+        known++;
+        if (bodyless.has(t.activityId)) stubs.set(t.activityId, t);
+      } else if (ignored.has(t.activityId)) skippedByList++;
+      else if (publishedDate(t.activityId) < since) old++;
+      else fresh.set(t.activityId, t);
     }
     if (noId) log(`${noId} published LinkedIn post(s) without a LinkedIn id in postedId; Publora's format may have changed.`);
     if (!fresh.size && !stubs.size) {
       log(
-        `0 new posts (${groups.size} group(s) listed, ${known} already on the site, ${old} before ${since}, ${skippedByList} on the ignore list, ${failed} unreadable).`,
+        `0 new posts (${groups.size} group(s) listed, ${backfilled} from the backfill, ${known} already on the site, ${old} before ${since}, ${skippedByList} on the ignore list, ${failed} unreadable).`,
       );
       output(0);
       return { status: 'none' as const, added: 0 };
     }
 
     // Oldest first: each is prepended, so the newest ends up on top with the highest id.
-    const targets = [...fresh.values()].sort((a, b) => (BigInt(a.activityId) < BigInt(b.activityId) ? -1 : 1));
+    const allNew = [...fresh.values()].sort((a, b) => (BigInt(a.activityId) < BigInt(b.activityId) ? -1 : 1));
+    const targets = allNew.slice(0, MAX_CALLS);
+    if (allNew.length > MAX_CALLS) log(`${allNew.length - MAX_CALLS} more new post(s) wait for the next run.`);
     const example = posts.find((p) => p.slug === 'every-engineering-estimate-is-two-things') ?? posts[0];
     const added: BlogPost[] = [];
     const skipped: Skipped[] = [];
@@ -576,8 +593,9 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     // Posts already on the site without their full text: the original plus a Russian adaptation; the brief stays.
     const filled: BlogPost[] = [];
     const queue = [...stubs.values()];
-    if (queue.length > MAX_FILLS) log(`${queue.length - MAX_FILLS} more brief-only post(s) get their full text on the next run.`);
-    for (const t of queue.slice(0, MAX_FILLS)) {
+    const fills = Math.min(MAX_FILLS, Math.max(0, MAX_CALLS - targets.length));
+    if (queue.length > fills) log(`${queue.length - fills} more brief-only post(s) get their full text on the next run.`);
+    for (const t of queue.slice(0, fills)) {
       const skip = (reason: string) => {
         skipped.push({ url: t.url, reason: `full text: ${reason}` });
         log(`skip full text for ${t.url}: ${reason}`);
@@ -641,6 +659,7 @@ if (import.meta.main) {
     fetch,
     readPosts: () => JSON.parse(readFileSync(POSTS_JSON, 'utf8')),
     readIgnored: () => (existsSync(IGNORE_JSON) ? JSON.parse(readFileSync(IGNORE_JSON, 'utf8')) : []),
+    readBackfill: () => (existsSync(BACKFILL_JSON) ? JSON.parse(readFileSync(BACKFILL_JSON, 'utf8')) : []),
     writeFile: (p, s) => {
       mkdirSync(dirname(p), { recursive: true });
       if (p === process.env.GITHUB_OUTPUT) appendFileSync(p, s);
