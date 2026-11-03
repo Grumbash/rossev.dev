@@ -639,32 +639,59 @@ describe('nothing is half-written', () => {
 
 // --- full text for the posts already on the site ---------------------------------------------------
 
-describe('the stubs already on the site get their full text through the same importer', () => {
-  const BODY_RU = 'Инженерный менеджмент — это прикладное системное мышление, и команду стоит отлаживать как распределённую систему.';
+// A full draft for a post already on the site: the stub's hand-written brief is regenerated from the real text.
+const BODY_RU = 'Инженерный менеджмент — это прикладное системное мышление, и команду стоит отлаживать как распределённую систему.';
+const stubDraft = (bodyRu = BODY_RU, slug = 'systems-thinking-for-managers') => ({
+  slug,
+  category: 'leadership',
+  tags: ['Systems Thinking', 'Management'],
+  title: { en: 'Management Is Systems Thinking Applied', ru: 'Менеджмент — это прикладное системное мышление' },
+  takeaway: { en: 'Debug a team the way you would debug a distributed system.', ru: 'Отлаживайте команду так же, как распределённую систему.' },
+  quote: { en: 'Engineering management is applied systems thinking.', ru: 'Инженерный менеджмент — это системное мышление.' },
+  bullets: {
+    en: ['Treat the team as a system with feedback loops.', 'Look at the topology before blaming people.', 'Fix the loops, not the individuals.'],
+    ru: ['Смотрите на команду как на систему с обратными связями.', 'Сначала топология процессов, потом люди.', 'Чините контуры, а не отдельных людей.'],
+  },
+  bodyRu,
+});
 
-  test('a site post without a body, found in Publora, gets body.en = the original and body.ru = an adaptation; its brief stays', async () => {
-    const h = harness({ posts: BLOG_POSTS as BlogPost[], drafts: { 'waiting problem': DRAFT_NEW, 'Ownership is not on-call': DRAFT_PARTIAL, 'applied systems thinking': { bodyRu: BODY_RU } } });
+describe('the stubs already on the site get their full text and a brief regenerated from it', () => {
+  test('a site post without a body gets body.en = the original, a new brief and body.ru from the model; id, slug, url, date and color stay', async () => {
+    const h = harness({ posts: BLOG_POSTS as BlogPost[], drafts: { 'waiting problem': DRAFT_NEW, 'Ownership is not on-call': DRAFT_PARTIAL, 'applied systems thinking': stubDraft() } });
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('added');
     const posts = written(h)!;
     expect(posts.length).toBe(BLOG_POSTS.length + 2);
     const p1 = posts.find((p) => p.id === 'post-1')!;
-    const before = BLOG_POSTS.find((p) => p.id === 'post-1')!;
+    const before = BLOG_POSTS.find((p) => p.id === 'post-1')! as BlogPost;
+    const d = stubDraft();
     expect(p1.body).toEqual({ en: 'Engineering management is applied systems thinking.', ru: BODY_RU });
-    expect({ ...p1, body: undefined }).toEqual({ ...before, body: undefined });
+    expect(p1.title).toEqual(d.title);
+    expect(p1.takeaway).toEqual(d.takeaway);
+    expect(p1.tags).toEqual(d.tags);
+    expect(p1.brief).toEqual({ quote: d.quote, bullets: d.bullets });
+    expect(p1.category).toBe('leadership');
+    expect(p1.categoryLabel).toEqual(before.categoryLabel);
+    // The canonical url and everything that identifies the post stay; the model's slug is ignored.
+    for (const k of ['id', 'slug', 'published', 'url', 'color', 'originalMinutes'] as const) expect(p1[k]).toEqual(before[k]);
+    expect(Object.keys(p1)).toEqual(Object.keys(posts[0]));
     expect(checkEntry(p1)).toEqual([]);
     // The other stubs are not in this Publora fixture, so they stay as they are.
     for (const p of posts.filter((p) => p.id !== 'post-1' && BLOG_POSTS.some((b) => b.id === p.id))) expect(p).toEqual(BLOG_POSTS.find((b) => b.id === p.id) as BlogPost);
-    // The body-only call asks for bodyRu alone, under its own strict schema.
-    const bodyCall = toModel(h).find((c) => String(c.body.messages.at(-1).content).includes('applied systems thinking'))!;
-    expect(Object.keys(bodyCall.body.response_format.json_schema.schema.properties)).toEqual(['bodyRu']);
+    // Same prompt and schema as a new post.
+    const stubCall = toModel(h).find((c) => String(c.body.messages.at(-1).content).includes('applied systems thinking'))!;
+    expect(stubCall.body.response_format.json_schema.schema.required).toContain('bullets');
     expect(h.writes['/tmp/gh-output']).toMatch(/^added=3$/m);
-    expect(h.writes['.publora/pr-body.md']).toMatch(/full text/i);
-    expect(h.writes['.publora/pr-body.md']).toContain(before.title.en);
+    const body = h.writes['.publora/pr-body.md'];
+    expect(body).toMatch(/full text/i);
+    expect(body).toMatch(/brief.*regenerated/i);
+    // The PR shows what the old title was, so a reviewer sees the change.
+    expect(body).toContain(before.title.en);
+    expect(body).toContain(d.title.en);
   });
 
   test('only full text for old posts, nothing new: still one PR', async () => {
-    const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': { bodyRu: BODY_RU } } });
+    const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': stubDraft() } });
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('added');
     expect(written(h)!.length).toBe(BLOG_POSTS.length);
@@ -672,11 +699,11 @@ describe('the stubs already on the site get their full text through the same imp
     expect(h.writes['/tmp/gh-output']).toMatch(/^title=.*full text/im);
   });
 
-  test('the adaptation is validated like any draft: Russian, no new numbers, not a fragment', async () => {
-    for (const bodyRu of ['Engineering management is applied systems thinking.', 'Менеджмент — это на 40% системное мышление и распределённые системы.', 'Коротко.']) {
-      const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': { bodyRu } } });
+  test('the draft is validated like any other: Russian, no new numbers, not a fragment', async () => {
+    for (const draft of [stubDraft('Engineering management is applied systems thinking.'), stubDraft('Менеджмент — это на 40% системное мышление и распределённые системы.'), stubDraft('Коротко.'), { bodyRu: BODY_RU }]) {
+      const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': draft } });
       const out = await run(h.env, h.deps);
-      expect(out.status, bodyRu).toBe('none');
+      expect(out.status, JSON.stringify(draft).slice(0, 60)).toBe('none');
       expect(h.writes[POSTS_JSON]).toBeUndefined();
       expect(h.logs.join('\n')).toMatch(/skip/i);
     }
@@ -698,7 +725,7 @@ describe('one run stays well inside the job timeout', () => {
       status: 'published',
       posts: [li(`urn:li:share:${activityId(p.url)}`, 'published', `Stub number ${i} text for the page, long enough to adapt.`)],
     })) as Group[];
-    const drafts = Object.fromEntries(stubs.map((_, i) => [`Stub number ${i}`, { bodyRu: `Текст заметки номер ${i} для страницы, достаточно длинный для адаптации.` }]));
+    const drafts = Object.fromEntries(stubs.map((_, i) => [`Stub number ${i}`, stubDraft(`Текст заметки номер ${i} для страницы, достаточно длинный для адаптации.`)]));
     const h = harness({ groups, posts: BLOG_POSTS as BlogPost[], drafts });
     await run(h.env, h.deps);
     expect(toModel(h).length).toBe(5);
@@ -743,7 +770,7 @@ describe('src/data/linkedin-backfill.json fills in what Publora never published'
   });
 
   test('a backfill post already on the site without its text gives it the full text', async () => {
-    const h = harness({ groups: [], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': { bodyRu: 'Инженерный менеджмент — это прикладное системное мышление, и команду стоит отлаживать как распределённую систему.' } } });
+    const h = harness({ groups: [], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': stubDraft() } });
     (h.deps as any).readBackfill = () => [entry(ON_SITE_ID, 'Engineering management is applied systems thinking.')];
     await run(h.env, h.deps);
     expect(written(h)!.find((p) => p.id === 'post-1')!.body?.en).toBe('Engineering management is applied systems thinking.');
