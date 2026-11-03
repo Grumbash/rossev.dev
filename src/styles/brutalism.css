@@ -379,6 +379,15 @@ a {
   margin-bottom: 10px;
 }
 
+/* Small print under body copy: a mono, muted note that explains, not a control */
+.fine-print {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  margin: 10px 0 16px;
+}
+
 /* Who the call is for and when I reply: plain text, not a control */
 .hero-cta-note {
   font-family: var(--font-mono);
@@ -1170,6 +1179,7 @@ a {
 
 /* "Beyond the CV" zone: inverted palette so it reads as a different part of the page */
 .zone-beyond {
+  padding-top: 52px; /* the monogram section has no .section-block padding of its own */
   --bg: #0E0F12;
   --bg-grid: rgba(255, 255, 255, 0.06);
   --surface: #181A20;
@@ -1195,6 +1205,42 @@ html[data-theme="dark"] .zone-beyond {
   --ink-muted: #383838;
   --border: #0A0A0A;
   --shadow: #0A0A0A;
+}
+
+/* GR monogram (top of "Beyond the CV"): only its box is critical CSS. The rest of
+   its styles (src/scripts/nca/monogram.css) arrive with the lazy chunk. The canvas
+   and the static SVG that holds its place share .nca-canvas, so swapping them, or
+   the lazy CSS arriving, moves nothing. Two columns when there's room, else one. */
+.nca-block {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(228px, max-content));
+  align-items: center;
+  gap: 18px 28px;
+  max-width: 816px;
+  min-height: 232px; /* the copy column runs ~229 px at desktop widths */
+}
+
+.nca-canvas {
+  /* 56 cells at 4 px each keep the upscale crisp; the border sits outside that. */
+  box-sizing: content-box;
+  width: 224px;
+  height: 224px;
+  border: 2px solid var(--border);
+  /* Black GR with a lime block: it sits on the light page colour in both themes. */
+  background: #F4F0EA;
+  image-rendering: pixelated;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .zone-divider {
@@ -1413,6 +1459,9 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
   }
   .section-block {
     padding: 34px 0;
+  }
+  .zone-beyond {
+    padding-top: 34px;
   }
 }
 
