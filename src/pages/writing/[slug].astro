@@ -1,8 +1,7 @@
 ---
 // One indexable, shareable page per post: the same brief as the inline reader, plus `body`
-// when a post has one. Without a body the LinkedIn post is the original (isBasedOn); with the full
-// text here this page is the original and LinkedIn only another copy of it (sameAs).
-import { BLOG_POSTS, postPath, readTimeLabel, type BlogPost } from '../../data/profile';
+// when a post has one (then this page, not LinkedIn, is the original: see blogPostingLd).
+import { BLOG_POSTS, blogPostingLd, postPath, readTimeLabel, type BlogPost } from '../../data/profile';
 import Base from '../../layouts/Base.astro';
 import PostBrief from '../../components/PostBrief.astro';
 
@@ -25,24 +24,7 @@ const title = `${post.title.en} — Gleb Rosev`;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    {
-      '@type': 'BlogPosting',
-      '@id': `${url}#post`,
-      headline: post.title.en,
-      alternativeHeadline: post.title.ru,
-      description: post.takeaway.en,
-      url,
-      mainEntityOfPage: { '@id': url },
-      datePublished: post.published,
-      author: { '@id': PERSON_ID },
-      publisher: { '@id': PERSON_ID },
-      isPartOf: { '@id': `${SITE}#website` },
-      ...(post.body ? {} : { isBasedOn: post.url }),
-      sameAs: post.url,
-      inLanguage: ['en', 'ru'],
-      keywords: post.tags,
-      image: ogImageUrl
-    },
+    blogPostingLd(post, url, ogImageUrl),
     // The full Person node lives on home; this is enough to resolve the @id here.
     {
       '@type': 'Person',

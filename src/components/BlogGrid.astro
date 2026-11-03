@@ -1,5 +1,5 @@
 ---
-import { postPath, type BlogPost } from '../data/profile';
+import { cardReadTime, postPath, type BlogPost } from '../data/profile';
 
 interface Props {
   posts: BlogPost[];
@@ -18,8 +18,8 @@ const { posts } = Astro.props;
             <span class="lang-ru">{post.categoryLabel.ru}</span>
           </span>
           <span class="post-stats">
-            <span class="lang-en">{post.originalMinutes}-MIN ORIGINAL</span>
-            <span class="lang-ru">ОРИГИНАЛ {post.originalMinutes} МИН</span>
+            <span class="lang-en">{cardReadTime(post).en}</span>
+            <span class="lang-ru">{cardReadTime(post).ru}</span>
           </span>
         </div>
 

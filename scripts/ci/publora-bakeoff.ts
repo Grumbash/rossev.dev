@@ -79,7 +79,7 @@ async function pickPosts(env: Record<string, string | undefined>, deps: Deps, n 
     .slice(0, n) };
 }
 
-/** Would the sync re-import posts already on the site? Publora's URN kinds vs the ids in the site's urls. */
+/** The LinkedIn export's posts against Publora and the site (ignores PUBLORA_SINCE and the ignore list). */
 function checklist(targets: Target[], documents: Set<string>) {
   const inPublora = new Map(targets.map((t) => [t.activityId, t]));
   const site = new Map((POSTS as BlogPost[]).map((p) => [activityId(p.url), p]));
@@ -96,6 +96,7 @@ function checklist(targets: Target[], documents: Set<string>) {
   return out.join('\n');
 }
 
+/** Would the sync re-import posts already on the site? Publora's URN kinds vs the ids in the site's urls. */
 function dedupeCheck(targets: Target[]) {
   const site = (POSTS as BlogPost[]).map((p) => ({ id: activityId(p.url), date: p.published, slug: p.slug }));
   const siteIds = new Set(site.map((p) => p.id));
