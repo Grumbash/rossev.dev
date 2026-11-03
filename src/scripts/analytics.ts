@@ -5,7 +5,7 @@ import { PROFILE } from '../data/profile';
 
 // Every event and its props (max 2). Add a control here before tagging it.
 export const EVENTS = {
-  // cal.com link clicked. placement: nav|hero|footer|reader; lang: page language at click time
+  // cal.com link clicked. placement: nav|hero|footer|reader|build-story; lang: page language at click time
   cta_book: ['placement', 'lang'],
   // "copy email" button. placement: hero|footer
   email_copy: ['placement'],
@@ -43,12 +43,12 @@ export const EVENTS = {
   // (every page renders the #contact footer; only home reports, see data-page in Base.astro)
   section_view: ['section'],
   // A call booked on cal.com: fires once on /booked after a redirect that carries a uid.
-  // source: nav|hero|footer|reader (the cal.com link's utm_content) | unknown
+  // source: nav|hero|footer|reader|build-story (the cal.com link's utm_content) | unknown
   booking_confirmed: ['source'],
 } as const;
 
 // Where a cal.com link sits. calUrl() tags links with it; /booked reads it back.
-export const PLACEMENTS = ['nav', 'hero', 'footer', 'reader'] as const;
+export const PLACEMENTS = ['nav', 'hero', 'footer', 'reader', 'build-story'] as const;
 export type Placement = (typeof PLACEMENTS)[number];
 
 export type EventName = keyof typeof EVENTS;

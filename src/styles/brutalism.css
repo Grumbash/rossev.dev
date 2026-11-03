@@ -332,6 +332,13 @@ a {
   margin-bottom: 14px;
 }
 
+/* Small proof link at the end of the value line: a link, so underlined, but quieter than the claim */
+.hero-value-link {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
 .hero-title-highlight {
   display: inline-block;
   background: var(--lime);
