@@ -4,8 +4,11 @@
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { NeuralCA, type NcaWeights } from '../src/scripts/nca/model';
+import { decodeWeights } from '../src/scripts/nca/weights';
 
-const weights: NcaWeights = JSON.parse(readFileSync('public/nca/gr.json', 'utf8'));
+// The page ships the weights as a compact binary; the tests run exactly what it decodes.
+const bin = readFileSync('public/nca/gr.bin');
+const weights: NcaWeights = decodeWeights(bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength));
 const target: { size: number; rgba: number[] } = JSON.parse(
   readFileSync('scripts/nca/target.json', 'utf8')
 );
@@ -113,6 +116,6 @@ describe('NeuralCA on the GR weights', () => {
   });
 
   test('the shipped weights stay small', () => {
-    expect(readFileSync('public/nca/gr.json').length).toBeLessThan(150_000);
+    expect(readFileSync('public/nca/gr.bin').length).toBeLessThan(150_000);
   });
 });
