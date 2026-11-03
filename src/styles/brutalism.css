@@ -704,7 +704,7 @@ a {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .iso-layer-spec {
@@ -712,7 +712,20 @@ a {
   align-items: center;
   gap: 8px;
   color: #C8FF00;
-  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+/* The node spec changes with every story step and trace: two lines, always, so the card never resizes. */
+#iso-hud-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  height: 2.7em;
+  line-height: 1.35;
+  min-width: 0;
 }
 
 .iso-spec-pill {
@@ -722,6 +735,115 @@ a {
   border: 1.5px solid #C8FF00;
   font-size: 0.68rem;
   font-weight: 800;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Guided story above the canvas. Captions and the case link stack in one grid cell:
+   the panel always fits the longest of them, so switching steps shifts nothing. */
+.iso-story {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #12141C;
+  border-bottom: 2px solid #232736;
+}
+
+.iso-story-captions {
+  display: grid;
+}
+
+.iso-story-caption {
+  grid-area: 1 / 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #F4F0EA;
+  visibility: hidden;
+}
+
+.iso-story-caption.is-current {
+  visibility: visible;
+}
+
+.iso-story-case {
+  color: #C8FF00;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  align-self: start;
+}
+
+.iso-story-case:hover,
+.iso-story-case:focus-visible {
+  color: #FFFFFF;
+}
+
+.iso-story-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.iso-story-count {
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  font-weight: 800;
+  color: #B8C0D4;
+  min-width: 2.4em;
+  text-align: center;
+}
+
+.iso-story-controls .mode-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.iso-story-explore {
+  margin-left: auto;
+}
+
+.iso-story-explore[aria-expanded="true"] {
+  border-color: #C8FF00;
+  color: #C8FF00;
+}
+
+/* The display rules above (flex buttons, the tabs bar) would otherwise beat [hidden]. */
+.stage-iso-card [hidden] {
+  display: none !important;
+}
+
+/* The deck rail and the dossier's fault button are free play: shown only under Explore
+   (in the story, breaking things is step 3's job). */
+.stage-iso-card:not(.is-exploring) .iso-stratum-rail,
+.stage-iso-card:not(.is-exploring) .iso-insp-btn-fault {
+  display: none;
+}
+
+.iso-story-controls .mode-btn[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Zoom/drag hint: only where there is a mouse or trackpad to use it. */
+.iso-hint-fine {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  color: #8A93AA;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .iso-hint-fine {
+    display: inline;
+  }
+}
+
+/* Phone poster's Play button: hidden at wider widths, where the loop runs from the start. */
+.iso-play {
+  display: none;
 }
 
 /* Sections */
@@ -1321,6 +1443,24 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
 }
 
 /* Mobile-First & Responsive Enhancements */
+/* The status line narrates the engine and changes all the time: one line, cut with an ellipsis,
+   so the header height never changes (the narrow layout gives it its own full-width line). */
+#iso-trace-status {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+@media (min-width: 769px) {
+  .stage-header {
+    flex-wrap: nowrap;
+  }
+  .stage-header > span:first-child {
+    flex-shrink: 0;
+  }
+}
+
 @media (max-width: 1024px) {
   .hero-grid,
   .contact-grid {
@@ -1513,6 +1653,46 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
   }
   .blueprint-body {
     padding: 16px;
+  }
+
+  /* Topology on a phone: a short poster with Play; the caption and controls stay. */
+  .iso-canvas-container,
+  #iso-arch-canvas {
+    min-height: 200px;
+    height: 200px;
+  }
+  .iso-play {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 7;
+    font-size: 0.78rem;
+    padding: 8px 16px;
+  }
+  .stage-iso-card .iso-stratum-rail {
+    display: none;
+  }
+  /* The dossier would cover the whole short canvas; it is free-play detail anyway. */
+  .stage-iso-card:not(.is-exploring) .iso-inspector-card {
+    display: none;
+  }
+  .iso-story {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .iso-story-caption {
+    font-size: 0.84rem;
+  }
+  /* One line: the node badge and BLUEPRINT; the long spec line is desktop detail. */
+  .iso-bottom-hud {
+    padding: 6px 12px;
+    font-size: 0.7rem;
+    flex-wrap: nowrap;
+  }
+  #iso-hud-text {
+    display: none;
   }
 }
 
