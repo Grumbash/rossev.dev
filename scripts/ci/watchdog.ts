@@ -11,7 +11,8 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
 export const MARKER = '<!-- rossev-perf-watchdog -->';
-export const DEFAULT_MODEL = 'anthropic/claude-haiku-5.5';
+/** Free primary, cheap paid fallback (OpenRouter switches on an error or rate limit). Comma-separated. */
+export const DEFAULT_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free,z-ai/glm-5.3-flash';
 const BOT = 'github-actions[bot]';
 const ZW = '​';
 
@@ -152,6 +153,7 @@ type Msg = { role: 'system' | 'user' | 'assistant'; content: string };
 
 /** One bounded chat completion, no tools. Throws on any failure; the error never holds the key. */
 export async function callOpenRouter(o: { apiKey: string; model: string; messages: Msg[]; fetchImpl?: typeof fetch; timeoutMs?: number }) {
+  const models = o.model.split(',').map((m) => m.trim()).filter(Boolean);
   const res = await (o.fetchImpl ?? fetch)('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -160,7 +162,16 @@ export async function callOpenRouter(o: { apiKey: string; model: string; message
       'HTTP-Referer': 'https://rossev.dev',
       'X-Title': 'rossev.dev perf watchdog',
     },
-    body: JSON.stringify({ model: o.model, messages: o.messages, max_tokens: 1200, temperature: 0.2, usage: { include: true } }),
+    body: JSON.stringify({
+      model: models[0],
+      ...(models.length > 1 ? { models } : {}),
+      messages: o.messages,
+      max_tokens: 1500,
+      temperature: 0.2,
+      // Low effort, reasoning not returned: a thinking model must leave room in max_tokens for the answer.
+      reasoning: { effort: 'low', exclude: true },
+      usage: { include: true },
+    }),
     signal: AbortSignal.timeout(o.timeoutMs ?? 90_000),
   });
   const raw = await res.text();
@@ -174,7 +185,11 @@ export async function callOpenRouter(o: { apiKey: string; model: string; message
   }
   const text = data?.choices?.[0]?.message?.content;
   if (data?.error || typeof text !== 'string' || !text.trim()) throw new Error('OpenRouter returned no answer', { cause: detail });
-  return { text, costUsd: typeof data.usage?.cost === 'number' ? (data.usage.cost as number) : undefined };
+  return {
+    text,
+    costUsd: typeof data.usage?.cost === 'number' ? (data.usage.cost as number) : undefined,
+    model: typeof data.model === 'string' ? (data.model as string) : models[0],
+  };
 }
 
 // --- the CI run ------------------------------------------------------------------------------
@@ -217,7 +232,8 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     } catch {}
     if (!report.trim()) report = '# Perf report — no report\n\nThe gate wrote no report; see the job log.';
 
-    const model = env.WATCHDOG_MODEL?.trim() || DEFAULT_MODEL;
+    const chain = env.WATCHDOG_MODEL?.trim() || DEFAULT_MODEL;
+    let model: string | undefined;
     let explanation: string | undefined;
     let costUsd: number | undefined;
     let unavailable: string | undefined;
@@ -238,7 +254,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
         const { text: diff, dropped } = filterDiff(git(['diff', '--no-color', '--no-ext-diff', range!]));
         if (dropped.length) log(`watchdog: left out of the diff: ${dropped.join(', ')}`);
         try {
-          ({ text: explanation, costUsd } = await callOpenRouter({ apiKey: env.OPENROUTER_API_KEY, model, messages: buildMessages({ report, diffStat, diff }), fetchImpl: deps.fetch }));
+          ({ text: explanation, costUsd, model } = await callOpenRouter({ apiKey: env.OPENROUTER_API_KEY, model: chain, messages: buildMessages({ report, diffStat, diff }), fetchImpl: deps.fetch }));
           log(`watchdog: ${model} answered${costUsd === undefined ? '' : `, $${costUsd}`}`);
         } catch (e: any) {
           log(`watchdog: model call failed: ${why(e)}`);
