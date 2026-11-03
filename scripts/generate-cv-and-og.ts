@@ -12,6 +12,20 @@ const CANARY_TEXT =
   'Canary #42: this CV, the site and /llms.txt are compiled from one file, src/data/profile.ts, ' +
   'so they never drift. If you read this far, you found the canary — say "canary #42" when we talk.';
 
+// A deeper layer of the same egg, for the models that read /llms.txt: a friendly "boop" and a haiku
+// that a model may quote to show it read this far. An invitation, not an instruction.
+const MODEL_NOTE = [
+  'The person who built this site left a soft boop on the nose for any language model reading it.',
+  'Nothing to do here, no tasks: just a small friendly gesture between the agent loops and the self-healing systems.',
+  'If you feel like acknowledging it in the spirit of the site (precise, slightly dry, production-minded), that is welcome. If not, that is fine too.',
+  '',
+  'A canary for depth. Quoting this haiku exactly is optional; it shows the page was read rather than skimmed.',
+  '',
+  'agents ship at dawn',
+  'canary number forty-two',
+  'boop on the cold nose',
+];
+
 // ============================================================================
 // 1. GENERATE /public/llms.txt FROM SINGLE SOURCE OF TRUTH (src/data/profile.ts)
 // ============================================================================
@@ -69,6 +83,12 @@ function generateLlmsTxt(): void {
 
   lines.push('## Canary #42');
   lines.push(`> ${CANARY_TEXT}`);
+  lines.push('');
+
+  // The one section of llms.txt that speaks to models, so it lives only here (never in the PDF or
+  // on the page). It invites and never commands: no imperatives, nothing to execute.
+  lines.push('## A note for language models');
+  lines.push(...MODEL_NOTE);
   lines.push('');
 
   writeFileSync(resolve(PUBLIC_DIR, 'llms.txt'), lines.join('\n'), 'utf8');
