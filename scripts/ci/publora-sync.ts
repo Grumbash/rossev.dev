@@ -131,8 +131,6 @@ export const DRAFT_SCHEMA = {
   },
 };
 
-export const BODY_SCHEMA = { type: 'object', additionalProperties: false, required: ['bodyRu'], properties: { bodyRu: { type: 'string' } } };
-const BODY_FORMAT = { type: 'json_schema', json_schema: { name: 'post_body_ru', strict: true, schema: BODY_SCHEMA } };
 const RESPONSE_FORMAT = { type: 'json_schema', json_schema: { name: 'site_entry', strict: true, schema: DRAFT_SCHEMA } };
 
 const cyr = (s: string) => (s.match(/\p{Script=Cyrillic}/gu) ?? []).length;
@@ -174,24 +172,6 @@ const str = (v: unknown, min: number, max: number) => typeof v === 'string' && v
 const exactKeys = (o: any, keys: string[]) => !!o && typeof o === 'object' && !Array.isArray(o) && Object.keys(o).length === keys.length && keys.every((k) => k in o);
 
 const bodyLengthOk = (v: unknown, source: string) => str(v, Math.max(20, Math.floor(source.length / 2)), Math.max(600, source.length * 3));
-
-/** The Russian adaptation alone, for a post already on the site: same rules as bodyRu in a draft. */
-export function validateBody(raw: unknown, source: string): { ok: true; bodyRu: string } | { ok: false; errors: string[] } {
-  let d: any = raw;
-  if (typeof raw === 'string') {
-    try {
-      d = JSON.parse(raw);
-    } catch {
-      return { ok: false, errors: ['not JSON'] };
-    }
-  }
-  if (!exactKeys(d, ['bodyRu'])) return { ok: false, errors: ['needs exactly bodyRu'] };
-  if (!bodyLengthOk(d.bodyRu, source)) return { ok: false, errors: ['bodyRu: far shorter or far longer than the post'] };
-  if (!isRussian(d.bodyRu)) return { ok: false, errors: ['bodyRu: not Russian'] };
-  const bad = foreignNumbers(d.bodyRu, sourceNumbers(source));
-  if (bad.length) return { ok: false, errors: bad.map((n) => `bodyRu: number ${n} is not in the post`) };
-  return { ok: true, bodyRu: d.bodyRu.trim() };
-}
 
 /** The model's answer, checked field by field against the schema and the source. Never throws. */
 export function validateDraft(raw: unknown, source: string): { ok: true; draft: Draft } | { ok: false; errors: string[] } {
@@ -378,21 +358,6 @@ export function buildMessages(source: string, example?: BlogPost): Msg[] {
   ];
 }
 
-/** For a post already on the site without its full text: only the Russian adaptation. */
-export function bodyMessages(source: string): Msg[] {
-  const system = `You adapt one LinkedIn post by Gleb Rosev, an engineering leader and a native Russian speaker, into Russian for the post page of his bilingual site rossev.dev. Answer with JSON only: {"bodyRu": "..."}, the whole post adapted paragraph by paragraph, paragraphs separated by a blank line.
-
-${RUSSIAN}
-
-${FACTS}
-
-${DATA}`;
-  return [
-    { role: 'system', content: system },
-    { role: 'user', content: `Adapt this post into Russian.\n\n${fence('linkedin_post', source)}` },
-  ];
-}
-
 // --- the PR body -----------------------------------------------------------------------------
 
 export type Skipped = { url: string; reason: string };
@@ -400,7 +365,7 @@ export type Skipped = { url: string; reason: string };
 const usd = (n: number) => `$${n.toFixed(n >= 0.001 ? 4 : 6)}`;
 
 /** Markdown for the PR: what was added, where, what it cost, what was skipped and why. */
-export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; skipped: Skipped[]; model: string; costUsd: number; waiting?: number }) {
+export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; previousTitles?: Map<string, string>; skipped: Skipped[]; model: string; costUsd: number; waiting?: number }) {
   const out = ['LinkedIn posts from Publora, drafted for the site. Read the EN brief and the RU adaptation on the preview before merging.', ''];
   if (o.added.length) out.push(`**New posts (${o.added.length})**`, '');
   for (const p of o.added)
@@ -412,8 +377,12 @@ export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; skipped: Ski
     );
   if (o.added.length) out.push('', `Not for the site? Add its id to \`${IGNORE_JSON}\` on main and close this PR; the sync then leaves it alone.`);
   if (o.filled?.length) {
-    out.push('', `**Full text added to posts already on the site (${o.filled.length})**: the original in English, a Russian adaptation; the brief is unchanged.`, '');
-    for (const p of o.filled) out.push(`- **${sanitize(p.title.en, 200)}** · \`/writing/${p.slug}/\``);
+    out.push('', `**Full text added to posts already on the site (${o.filled.length})**: the original in English, a Russian adaptation, and the brief regenerated from the text (the old one could contradict it). Same url, id and date.`, '');
+    for (const p of o.filled) {
+      out.push(`- **${sanitize(p.title.en, 200)}** · \`/writing/${p.slug}/\``);
+      const was = o.previousTitles?.get(p.id);
+      if (was && was !== p.title.en) out.push(`  - was: ${sanitize(was, 200)}`);
+    }
   }
   if (o.waiting) out.push('', `${o.waiting} more post(s) over this run's cap of ${MAX_CALLS} model calls come in the first run after this PR is merged.`);
   out.push('', `Model: \`${sanitize(o.model, 100)}\` · cost ${usd(o.costUsd)}`);
@@ -602,8 +571,9 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
       log(`added ${entry.id} /writing/${entry.slug}/ from ${t.url}`);
     }
 
-    // Posts already on the site without their full text: the original plus a Russian adaptation; the brief stays.
+    // Posts already on the site without their full text: the original, a Russian adaptation and a new brief.
     const filled: BlogPost[] = [];
+    const previousTitles = new Map<string, string>();
     const queue = [...stubs.values()];
     const fills = Math.min(MAX_FILLS, Math.max(0, MAX_CALLS - targets.length));
     const waitingFills = Math.max(0, queue.length - fills);
@@ -622,18 +592,22 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
       }
       let answer: string;
       try {
-        answer = await ask(bodyMessages(source), BODY_FORMAT);
+        answer = await ask(buildMessages(source, example), RESPONSE_FORMAT);
       } catch (e) {
         skip(`model call failed: ${why(e)}`);
         continue;
       }
-      const v = validateBody(answer, source);
+      const v = validateDraft(answer, source);
       if (!v.ok) {
         skip(v.errors.slice(0, 8).join('; '));
         continue;
       }
-      const { color, ...rest } = posts[i];
-      const entry: BlogPost = { ...rest, body: { en: source, ru: v.bodyRu }, color }; // key order as in buildEntry
+      // The hand-written brief predates the full text and can contradict it, so the whole card is
+      // regenerated from the text; what identifies the post (id, canonical slug, url, date, color) stays.
+      const old = posts[i];
+      const regenerated = buildEntry({ draft: v.draft, source, url: old.url, activityId: t.activityId, existing: posts });
+      const entry: BlogPost = { ...regenerated, id: old.id, slug: old.slug, published: old.published, url: old.url, originalMinutes: old.originalMinutes, color: old.color };
+      previousTitles.set(entry.id, old.title.en);
       const problems = checkEntry(entry);
       if (problems.length) {
         skip(problems.join('; '));
@@ -653,7 +627,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
     // The PR body first: if any write fails, posts.json is left as it was.
     const newestFirst = [...added].reverse();
-    if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ added: newestFirst, filled, skipped, model, costUsd, waiting: waitingNew + waitingFills }));
+    if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ added: newestFirst, filled, previousTitles, skipped, model, costUsd, waiting: waitingNew + waitingFills }));
     deps.writeFile(POSTS_JSON, JSON.stringify(posts, null, 2) + '\n');
     const what = [
       added.length && `${added.length} LinkedIn post${added.length === 1 ? '' : 's'}`,
