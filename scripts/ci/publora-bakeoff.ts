@@ -16,6 +16,27 @@ import type { BlogPost } from '../../src/data/profile';
 
 export const MODELS = ['deepseek/deepseek-v4.1-flash', 'mistralai/mistral-small-2603', 'qwen/qwen3.8-flash', 'anthropic/claude-haiku-5.5'];
 const PUBLORA = 'https://api.publora.com/api/v1';
+// Posts since 2026-10-13 from Gleb's LinkedIn export (public post ids only; the export itself stays
+// out of the repo): did Publora publish each, and will the sync add it or fill its full text?
+const CHECKLIST: [string, string][] = [
+  ['7515722598857650176', 'Engineering management is applied systems thinking'],
+  ['7516584787743227905', 'Overpromising'],
+  ['7516812934384152576', 'Stop using LLMs as the most expensive…'],
+  ['7517626785531011072', 'Technical seniority is dead'],
+  ['7517918772553461760', 'Every engineering estimate is two things'],
+  ['7517919281213333504', 'The most expensive phrase in an engineering…'],
+  ['7517920896150536192', 'The new AI bottleneck'],
+  ['7517921822798016512', 'God damn 5k if-else'],
+  ['7519300584580087809', 'AI agents helped developers write 30% more'],
+  ['7519304575242207233', "The attackers kept attacking OpenCode's…"],
+  ['7520469595787304962', 'Management'],
+  ['7520925644172681218', 'Agent evals (carousel)'],
+  ['7521194148885073920', 'AI agent architecture (carousel)'],
+  ['7521565265558462464', 'In the 1920s a Soviet filmmaker… (Kuleshov)'],
+  ['7521917578601029632', "Three stories from this week's AI engineering"],
+  ['7522992144504995840', 'The team behind Claude Code deletes…'],
+  ['7523364618107432960', 'I got hacked'],
+];
 const RESPONSE_FORMAT = { type: 'json_schema', json_schema: { name: 'site_entry', strict: true, schema: DRAFT_SCHEMA } };
 
 type Deps = { fetch: typeof fetch; log: (s: string) => void; summary: (md: string) => void };
@@ -41,16 +62,40 @@ async function pickPosts(env: Record<string, string | undefined>, deps: Deps, n 
     }
   }
   const byId = new Map<string, Target>();
-  for (const id of new Set(ids)) for (const t of linkedinTargets(await get(`/get-post/${encodeURIComponent(id)}`))) byId.set(t.activityId, t);
+  const documents = new Set<string>(); // activity ids whose group carries a PDF (a LinkedIn carousel)
+  for (const id of new Set(ids)) {
+    const detail: any = await get(`/get-post/${encodeURIComponent(id)}`);
+    const hasPdf = (detail?.media ?? []).some((m: any) => m?.type === 'document');
+    for (const t of linkedinTargets(detail)) {
+      byId.set(t.activityId, t);
+      if (hasPdf) documents.add(t.activityId);
+    }
+  }
   const targets = [...byId.values()];
   deps.log(`bakeoff: ${ids.length} group(s), ${targets.length} published LinkedIn post(s)`);
-  return { targets, picked: targets
+  return { targets, documents, picked: targets
     .filter((t) => cleanSource(t.content).length >= 300)
     .sort((a, b) => (BigInt(b.activityId) > BigInt(a.activityId) ? 1 : -1))
     .slice(0, n) };
 }
 
 /** Would the sync re-import posts already on the site? Publora's URN kinds vs the ids in the site's urls. */
+function checklist(targets: Target[], documents: Set<string>) {
+  const inPublora = new Map(targets.map((t) => [t.activityId, t]));
+  const site = new Map((POSTS as BlogPost[]).map((p) => [activityId(p.url), p]));
+  const out = ['## Backfill checklist (LinkedIn export since 2026-10-13)', '', '| date | post | in Publora | on the site | the sync will |', '|---|---|---|---|---|'];
+  for (const [id, label] of CHECKLIST) {
+    const t = inPublora.get(id);
+    const p = site.get(id);
+    const len = t ? cleanSource(t.content).length : 0;
+    const will = !t ? '**nothing: not in Publora**' : p ? (p.body ? 'nothing' : 'add the full text') : 'add the post';
+    const pub = t ? `yes, ${len} chars${documents.has(id) ? ', PDF carousel' : ''}` : '**no**';
+    out.push(`| ${publishedDate(id)} | ${txt(label, 80)} | ${pub} | ${p ? (p.body ? 'with full text' : 'brief only') : 'no'} | ${will} |`);
+  }
+  out.push('');
+  return out.join('\n');
+}
+
 function dedupeCheck(targets: Target[]) {
   const site = (POSTS as BlogPost[]).map((p) => ({ id: activityId(p.url), date: p.published, slug: p.slug }));
   const siteIds = new Set(site.map((p) => p.id));
@@ -145,8 +190,8 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
   for (const k of ['PUBLORA_API_KEY', 'OPENROUTER_API_KEY']) if (!env[k]?.trim()) return log(`bakeoff: ${k} is not set`);
   const models = env.BAKEOFF_MODELS?.split(',').map((s) => s.trim()).filter(Boolean) ?? MODELS;
   try {
-    const { targets, picked } = await pickPosts(env, { ...deps, log });
-    const dedupe = dedupeCheck(targets);
+    const { targets, documents, picked } = await pickPosts(env, { ...deps, log });
+    const dedupe = checklist(targets, documents) + '\n' + dedupeCheck(targets);
     if (!picked.length) return summary(`# Publora bake-off\n\nNo published LinkedIn post with enough text found.\n\n${dedupe}`);
     const all: Result[][] = [];
     const parts: string[] = [];

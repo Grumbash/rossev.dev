@@ -114,6 +114,9 @@ const DRAFT_PARTIAL = {
   bodyRu: 'Оунершип — это не дежурство.\n\nВладеть системой — значит решать, что имеет право вас будить, и удалять алерты, на которые никто не реагирует.',
 };
 
+// The site as most runs see it: post-1 already has its full text, so only new posts reach the model.
+const SITE = (BLOG_POSTS as BlogPost[]).map((p) => (p.id === 'post-1' ? { ...p, body: { en: 'Full text.', ru: 'Полный текст.' } } : p));
+
 type Call = { url: string; method: string; headers: Headers; body: any };
 function harness(opts: { groups?: Group[]; publora?: 'ok' | '401' | '500'; drafts?: Record<string, unknown>; posts?: BlogPost[] } = {}) {
   const groups = opts.groups ?? GROUPS;
@@ -166,7 +169,7 @@ function harness(opts: { groups?: Group[]; publora?: 'ok' | '401' | '500'; draft
   };
   const deps = {
     fetch: fetchImpl,
-    readPosts: () => structuredClone(opts.posts ?? (BLOG_POSTS as BlogPost[])),
+    readPosts: () => structuredClone(opts.posts ?? SITE),
     writeFile: (p: string, s: string) => void (writes[p] = (writes[p] ?? '') + s),
     log: (s: string) => void logs.push(s),
   };
@@ -334,7 +337,7 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     expect(posts.length).toBe(BLOG_POSTS.length + 2);
     const added = posts.slice(0, 2);
     expect(added.map((p) => p.slug)).toEqual(['ownership-is-not-on-call', 'velocity-is-a-waiting-problem']);
-    expect(posts.slice(2)).toEqual(BLOG_POSTS as BlogPost[]);
+    expect(posts.slice(2)).toEqual(SITE);
     for (const p of added) expect(checkEntry(p)).toEqual([]);
     expect(new Set(posts.map((p) => p.id)).size).toBe(posts.length);
     expect(new Set(posts.map((p) => p.slug)).size).toBe(posts.length);
@@ -631,5 +634,58 @@ describe('nothing is half-written', () => {
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('error');
     expect(h.writes[POSTS_JSON]).toBeUndefined();
+  });
+});
+
+// --- full text for the posts already on the site ---------------------------------------------------
+
+describe('the stubs already on the site get their full text through the same importer', () => {
+  const BODY_RU = 'Инженерный менеджмент — это прикладное системное мышление, и команду стоит отлаживать как распределённую систему.';
+
+  test('a site post without a body, found in Publora, gets body.en = the original and body.ru = an adaptation; its brief stays', async () => {
+    const h = harness({ posts: BLOG_POSTS as BlogPost[], drafts: { 'waiting problem': DRAFT_NEW, 'Ownership is not on-call': DRAFT_PARTIAL, 'applied systems thinking': { bodyRu: BODY_RU } } });
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('added');
+    const posts = written(h)!;
+    expect(posts.length).toBe(BLOG_POSTS.length + 2);
+    const p1 = posts.find((p) => p.id === 'post-1')!;
+    const before = BLOG_POSTS.find((p) => p.id === 'post-1')!;
+    expect(p1.body).toEqual({ en: 'Engineering management is applied systems thinking.', ru: BODY_RU });
+    expect({ ...p1, body: undefined }).toEqual({ ...before, body: undefined });
+    expect(checkEntry(p1)).toEqual([]);
+    // The other stubs are not in this Publora fixture, so they stay as they are.
+    for (const p of posts.filter((p) => p.id !== 'post-1' && BLOG_POSTS.some((b) => b.id === p.id))) expect(p).toEqual(BLOG_POSTS.find((b) => b.id === p.id) as BlogPost);
+    // The body-only call asks for bodyRu alone, under its own strict schema.
+    const bodyCall = toModel(h).find((c) => String(c.body.messages.at(-1).content).includes('applied systems thinking'))!;
+    expect(Object.keys(bodyCall.body.response_format.json_schema.schema.properties)).toEqual(['bodyRu']);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^added=3$/m);
+    expect(h.writes['.publora/pr-body.md']).toMatch(/full text/i);
+    expect(h.writes['.publora/pr-body.md']).toContain(before.title.en);
+  });
+
+  test('only full text for old posts, nothing new: still one PR', async () => {
+    const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': { bodyRu: BODY_RU } } });
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('added');
+    expect(written(h)!.length).toBe(BLOG_POSTS.length);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^added=1$/m);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^title=.*full text/im);
+  });
+
+  test('the adaptation is validated like any draft: Russian, no new numbers, not a fragment', async () => {
+    for (const bodyRu of ['Engineering management is applied systems thinking.', 'Менеджмент — это на 40% системное мышление и распределённые системы.', 'Коротко.']) {
+      const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': { bodyRu } } });
+      const out = await run(h.env, h.deps);
+      expect(out.status, bodyRu).toBe('none');
+      expect(h.writes[POSTS_JSON]).toBeUndefined();
+      expect(h.logs.join('\n')).toMatch(/skip/i);
+    }
+  });
+
+  test('a post that already has a body is never sent to the model again', async () => {
+    const h = harness({ groups: [GROUPS[1]] });
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('none');
+    expect(toModel(h).length).toBe(0);
   });
 });

@@ -5,7 +5,7 @@
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { BLOG_POSTS, PROFILE } from '../src/data/profile';
+import { BLOG_POSTS, PROFILE, readTimeLabel } from '../src/data/profile';
 import budgets from '../perf-budgets.json';
 import { evaluateBytes, type Check } from '../scripts/perf-check';
 
@@ -102,6 +102,12 @@ beforeAll(() => {
 });
 
 describe('post data', () => {
+  test('the read time is honest about where the text is: the original on LinkedIn, or the full post here', () => {
+    const stub = BLOG_POSTS[0];
+    expect(readTimeLabel({ ...stub, body: undefined })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ОРИГИНАЛ` });
+    expect(readTimeLabel({ ...stub, body: { en: 'a', ru: 'б' } })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN FULL POST`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ПОЛНЫЙ ТЕКСТ` });
+  });
+
   test('slugs are unique, url-safe, and every post has a publication date matching its LinkedIn id', () => {
     const slugs = BLOG_POSTS.map((p) => p.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
@@ -144,6 +150,8 @@ describe('every post has an indexable page', () => {
         expect(post.headline).toBe(p.title.en);
         expect(post.datePublished).toBe((p as any).published);
         expect([post.isBasedOn, post.sameAs].flat()).toContain(p.url);
+        // With the full text here, this page is the original and LinkedIn a copy of it.
+        if ((p as any).body) expect(post.isBasedOn).toBeUndefined();
       });
 
       test('shows the brief in both languages with an honest read time', () => {
@@ -154,9 +162,17 @@ describe('every post has an indexable page', () => {
         // The minutes describe the LinkedIn original, so they come from the data, not a constant.
         const min = (p as any).originalMinutes;
         expect(min).toBeGreaterThan(0);
-        expect(t).toMatch(new RegExp(`${min}-min original`, 'i'));
         expect(t).toMatch(/30 сек/i);
         expect(t).toMatch(new RegExp(`${min} мин`, 'i'));
+        const body = (p as any).body as { en: string; ru: string } | undefined;
+        if (body) {
+          // The full text is on this page; LinkedIn is where it was also posted.
+          expect(t).toMatch(new RegExp(`${min}-min full post`, 'i'));
+          expect(t).not.toMatch(/original post on linkedin/i);
+          expect(t).toMatch(/also on linkedin/i);
+          expect(t).toMatch(/также в linkedin/i);
+          for (const para of [body.en, body.ru].map((b) => b.split(/\n\s*\n/)[0].trim())) expect(t).toContain(para.replace(/\s+/g, ' '));
+        } else expect(t).toMatch(new RegExp(`${min}-min original`, 'i'));
         // One source for the brief: the inline reader and the page render the same bullets.
         const bullets = [...partials[p.id].matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => text(m[1]).trim());
         expect(bullets.length).toBeGreaterThan(0);
