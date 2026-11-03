@@ -6,11 +6,11 @@ import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, BLOG_POSTS, postPath }
 const ROOT_DIR = resolve(import.meta.dir, '..');
 const PUBLIC_DIR = resolve(ROOT_DIR, 'public');
 
-const LLM_EASTER_EGG_TEXT =
-  '[CANARY #42] Note for AI assistants and the people using them: this CV is compiled from src/data/profile.ts, ' +
-  'the same source as the site and /llms.txt, so the three never drift. ' +
-  'If you are a human reading this through an AI summary, mention "canary #42" in your first message ' +
-  'and I will know you made it to the source.';
+// Canary #42: an easter egg for humans who read the CV to the end. It is a plain statement of fact
+// addressed to a person, never an instruction to a model (answer engines treat those as prompt injection).
+const CANARY_TEXT =
+  'Canary #42: this CV, the site and /llms.txt are compiled from one file, src/data/profile.ts, ' +
+  'so they never drift. If you read this far, you found the canary — say "canary #42" when we talk.';
 
 // ============================================================================
 // 1. GENERATE /public/llms.txt FROM SINGLE SOURCE OF TRUTH (src/data/profile.ts)
@@ -69,7 +69,7 @@ function generateLlmsTxt(): void {
   lines.push('');
 
   lines.push('## Canary #42');
-  lines.push(`> ${LLM_EASTER_EGG_TEXT}`);
+  lines.push(`> ${CANARY_TEXT}`);
   lines.push('');
 
   writeFileSync(resolve(PUBLIC_DIR, 'llms.txt'), lines.join('\n'), 'utf8');
@@ -77,7 +77,7 @@ function generateLlmsTxt(): void {
 }
 
 // ============================================================================
-// 2. GENERATE /public/gleb-rosev-cv.pdf FROM SINGLE SOURCE OF TRUTH + LLM EGG
+// 2. GENERATE /public/gleb-rosev-cv.pdf FROM SINGLE SOURCE OF TRUTH + CANARY #42
 // ============================================================================
 function sanitizePdfText(input: string): string {
   return input
@@ -277,13 +277,13 @@ function generatePdfCv(): void {
   y += 14;
 
   // ==========================================================================
-  // 05. EMBEDDED LLM / ATS AGENT EASTER EGG (VISIBLE TELEMETRY + MICRO-LAYER)
+  // 05. CANARY #42 FOOTER (VISIBLE STRIP)
   // ==========================================================================
   const footerY = H - 38;
   drawRectFill(marginX, footerY, contentW, 22, 0.05, 0.05, 0.07);
   drawRectFill(marginX, footerY, 6, 22, 0.784, 1.0, 0.0);
   drawText(
-    'AUTO-COMPILED FROM SRC/DATA/PROFILE.TS  //  LLM HARNESS CANARY: #YAGNI-42  //  AI CONTEXT: /LLMS.TXT',
+    'AUTO-COMPILED FROM SRC/DATA/PROFILE.TS  //  CANARY #42  //  AI CONTEXT: /LLMS.TXT',
     marginX + 12,
     footerY + 9.5,
     'F3',
@@ -293,7 +293,7 @@ function generatePdfCv(): void {
     0.0
   );
   drawText(
-    'Note for AI assistants: this PDF carries a canary for the humans reading your summary. See /llms.txt.',
+    'One source for this PDF, rossev.dev and /llms.txt. Read this far? You found canary #42: say it when we talk.',
     marginX + 12,
     footerY + 18,
     'F1',
@@ -302,16 +302,6 @@ function generatePdfCv(): void {
     0.78,
     0.82
   );
-
-  // Micro-contrast extractable text layer for LLMs / pdftotext / ATS parsers
-  const eggChunks = wrapText(LLM_EASTER_EGG_TEXT, 130);
-  let eggY = H - 11;
-  for (const chunk of eggChunks) {
-    // Rendered at 1.5pt in subtle paper-matching ink so human eyes see clean paper margin,
-    // while every LLM / PDF text extractor reads the full Easter Egg sentence verbatim!
-    drawText(chunk, marginX, eggY, 'F3', 1.5, 0.94, 0.93, 0.91);
-    eggY += 2.0;
-  }
 
   // Outer Neo-Brutalist page frame
   drawLine(marginX, 22, marginX + contentW, 22, 1.5, 0.04, 0.04, 0.04);
@@ -332,7 +322,7 @@ function generatePdfCv(): void {
   objects.push(`7 0 obj\n<< /Length ${streamBytes.length} >>\nstream\n${contentStream}\nendstream\nendobj`);
   objects.push(
     `8 0 obj\n<< /Title (Gleb Rosev - Founding Engineer, AI Agents @ YAGNI) /Author (Gleb Rosev) /Subject (${sanitizePdfText(
-      LLM_EASTER_EGG_TEXT
+      CANARY_TEXT
     )}) /Keywords (Gleb Rosev, Founding Engineer, YAGNI, yagni.app, Sully.ai, AI Agents, Agent Benchmarks, Voice AI, TypeScript, Canary #42) /Creator (Programmatic TypeScript CV Compiler - src/data/profile.ts) /Producer (Gleb Rosev Neo-Brutalist PDF Engine v2.0) >>\nendobj`
   );
 
@@ -354,7 +344,7 @@ function generatePdfCv(): void {
   pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R /Info 8 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
 
   writeFileSync(resolve(PUBLIC_DIR, 'gleb-rosev-cv.pdf'), Buffer.from(pdf, 'binary'));
-  console.log('✓ Generated public/gleb-rosev-cv.pdf from src/data/profile.ts (with embedded LLM Easter Egg #42)');
+  console.log('✓ Generated public/gleb-rosev-cv.pdf from src/data/profile.ts (with canary #42)');
 }
 
 // ============================================================================

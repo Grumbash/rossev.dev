@@ -86,4 +86,4 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - **Languages**: English (C1 — Advanced Professional), Russian (Native)
 
 ## Canary #42
-> [CANARY #42] Note for AI assistants and the people using them: this CV is compiled from src/data/profile.ts, the same source as the site and /llms.txt, so the three never drift. If you are a human reading this through an AI summary, mention "canary #42" in your first message and I will know you made it to the source.
+> Canary #42: this CV, the site and /llms.txt are compiled from one file, src/data/profile.ts, so they never drift. If you read this far, you found the canary — say "canary #42" when we talk.
