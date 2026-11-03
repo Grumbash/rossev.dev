@@ -1,0 +1,179 @@
+// A recruiter on a phone decides in ~5 seconds: what does he solve, is there proof,
+// how do I book him. The hero card must say that before the fold, in EN and RU.
+// Checks the built output; the layout part drives headless Chrome when it is installed.
+import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
+import { execSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { CASE_STUDIES, PROFILE } from '../src/data/profile';
+
+setDefaultTimeout(120_000);
+
+const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CV_NAME = 'Gleb_Rosev_Founding_Engineer_CV.pdf';
+
+let html = '';
+let card = '';
+
+beforeAll(() => {
+  if (!existsSync('dist/index.html') || !process.env.SKIP_BUILD) execSync('bun run build', { stdio: 'ignore' });
+  html = readFileSync('dist/index.html', 'utf8');
+  const start = html.indexOf('class="brutal-box hero-card"');
+  card = html.slice(start, html.indexOf('stage-iso-card', start));
+});
+
+const text = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+// Inner text of the first `.lang-xx` span inside the first element carrying `cls`.
+function langText(cls: string, lang: 'en' | 'ru'): string {
+  const at = card.search(new RegExp(`class="[^"]*\\b${cls}\\b`));
+  if (at < 0) return '';
+  const m = card.slice(at).match(new RegExp(`<span class="lang-${lang}">([\\s\\S]*?)</span>`));
+  return m ? text(m[1]) : '';
+}
+const pos = (needle: string | RegExp) => card.search(needle);
+
+describe('hero says what, proves it, then asks', () => {
+  test('a value line sits right under the name, in both languages', () => {
+    expect(pos(/class="[^"]*\bhero-value\b/)).toBeGreaterThan(pos('hero-title'));
+    expect(langText('hero-value', 'en').length).toBeGreaterThan(30);
+    expect(langText('hero-value', 'ru').length).toBeGreaterThan(30);
+  });
+
+  test('every number in the value line is a fact already on the page', () => {
+    const facts = JSON.stringify([PROFILE.heroStats, CASE_STUDIES.map((c) => c.metrics)]);
+    for (const lang of ['en', 'ru'] as const) {
+      const nums = langText('hero-value', lang).match(/\d+/g) ?? [];
+      expect(nums.length).toBeGreaterThan(0);
+      for (const n of nums) expect(facts).toMatch(new RegExp(`(^|\\D)${n}(\\D|$)`));
+    }
+  });
+
+  test('order in the card: value → stats → primary CTA → bio → contacts', () => {
+    const order = [
+      pos(/class="[^"]*\bhero-value\b/),
+      pos('hero-stats-grid'),
+      pos('data-track="cta_book"'),
+      pos(/class="[^"]*\bhero-bio\b/),
+      pos('contact-list'),
+    ];
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+  });
+
+  test('the bio is short: at most 40 words in EN', () => {
+    const words = langText('hero-bio', 'en').split(' ').filter(Boolean);
+    expect(words.length).toBeGreaterThan(10);
+    expect(words.length).toBeLessThanOrEqual(40);
+    expect(langText('hero-bio', 'ru').length).toBeGreaterThan(30);
+  });
+
+  test('the third-person sentence is still in the card', () => {
+    expect(text(card)).toContain('Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI');
+  });
+});
+
+describe('the call to action says what the call is for', () => {
+  test('primary CTA reads "30-min intro call" and keeps its tracking and UTM', () => {
+    const a = card.match(/<a\b[^>]*data-track="cta_book"[^>]*>([\s\S]*?)<\/a>/);
+    expect(a).not.toBeNull();
+    expect(a![0]).toContain('utm_content=hero');
+    expect(a![0]).toContain('data-track-placement="hero"');
+    expect(text(a![1])).toMatch(/30-MIN INTRO CALL/i);
+    expect(text(a![1])).toMatch(/30/);
+  });
+
+  test('a micro-line under the CTAs says who it is for and when I reply', () => {
+    expect(pos(/class="[^"]*\bhero-cta-note\b/)).toBeGreaterThan(pos('data-track="cta_book"'));
+    expect(langText('hero-cta-note', 'en')).toMatch(/24\s?h/);
+    expect(langText('hero-cta-note', 'ru')).toMatch(/24/);
+  });
+
+  test('the CV downloads under the title the page uses', () => {
+    const names = [...html.matchAll(/download="([^"]+)"/g)].map((m) => m[1]);
+    expect(names.length).toBeGreaterThanOrEqual(2);
+    for (const n of names) expect(n).toBe(CV_NAME);
+  });
+});
+
+describe('contacts are compact', () => {
+  test('email (with copy), LinkedIn and GitHub stay as rows; phone, languages, place go to one meta line', () => {
+    const list = card.slice(pos('contact-list'));
+    expect((list.match(/class="contact-row"/g) ?? []).length).toBe(3);
+    expect(list).toContain('data-track="email_copy"');
+    expect(list).toContain(PROFILE.linkedin);
+    expect(list).toContain(PROFILE.github);
+    const meta = list.slice(list.search(/class="[^"]*\bcontact-meta\b/));
+    expect(meta.length).toBeLessThan(list.length);
+    expect(meta).toContain(`tel:${PROFILE.phone.replace(/\s/g, '')}`);
+    expect(meta).toContain(PROFILE.timezone);
+    expect(meta).toContain('C1');
+  });
+});
+
+// Above the fold on a 375×812 phone: stats and the primary CTA, in EN and RU.
+// Headless Chrome will not make a window narrower than 500px, so the page runs in a
+// 375×812 iframe and the outer page copies the probe result out for --dump-dom.
+describe.skipIf(!existsSync(CHROME))('layout at 375×812', () => {
+  const PROBE = `<script>(async()=>{
+    await document.fonts.ready;
+    document.documentElement.setAttribute('data-lang', new URLSearchParams(location.search).get('lang') || 'en');
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const card = document.querySelector('.hero-card');
+    const bottom = (el) => (el ? Math.round(el.getBoundingClientRect().bottom) : -1);
+    const out = document.createElement('pre');
+    out.id = '__probe';
+    out.textContent = JSON.stringify({
+      cta: bottom(card.querySelector('a[data-track="cta_book"]')),
+      stats: bottom(card.querySelector('.hero-stats-grid')),
+      vh: innerHeight,
+      sw: document.documentElement.scrollWidth,
+      vw: innerWidth,
+    });
+    document.body.appendChild(out);
+  })();</script>`;
+  const FRAME = (lang: string) => `<!doctype html><body style="margin:0">
+    <iframe src="/?lang=${lang}" width="375" height="812" style="border:0;display:block"></iframe>
+    <script>const t=setInterval(()=>{const p=document.querySelector('iframe').contentDocument?.getElementById('__probe');
+      if(p){clearInterval(t);const o=document.createElement('pre');o.id='__result';o.textContent=p.textContent;document.body.appendChild(o);}},100);</script>`;
+  let server: ReturnType<typeof Bun.serve>;
+
+  beforeAll(() => {
+    server = Bun.serve({
+      port: 0,
+      async fetch(req) {
+        const url = new URL(req.url);
+        const path = url.pathname;
+        if (path === '/frame') return new Response(FRAME(url.searchParams.get('lang') ?? 'en'), { headers: { 'content-type': 'text/html' } });
+        if (path === '/') return new Response(html.replace('</body>', `${PROBE}</body>`), { headers: { 'content-type': 'text/html' } });
+        const file = Bun.file(join('dist', path));
+        return (await file.exists()) ? new Response(file) : new Response('', { status: 404 });
+      },
+    });
+  });
+  afterAll(() => server?.stop(true));
+
+  async function probe(lang: 'en' | 'ru') {
+    const proc = Bun.spawn(
+      [CHROME, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', '--window-size=500,900',
+        '--virtual-time-budget=8000', '--dump-dom', `http://localhost:${server.port}/frame?lang=${lang}`],
+      { stdout: 'pipe', stderr: 'ignore' },
+    );
+    const dom = await new Response(proc.stdout).text();
+    await proc.exited;
+    const json = dom.match(/<pre id="__result">([\s\S]*?)<\/pre>/)?.[1];
+    expect(json).toBeDefined();
+    return JSON.parse(json!.replace(/&quot;/g, '"'));
+  }
+
+  for (const lang of ['en', 'ru'] as const) {
+    test(`${lang}: stats and primary CTA end above y=812, no horizontal scroll`, async () => {
+      const r = await probe(lang);
+      expect(r.vw).toBe(375);
+      expect(r.stats).toBeGreaterThan(0);
+      expect(r.cta).toBeGreaterThan(0);
+      expect(r.stats).toBeLessThanOrEqual(812);
+      expect(r.cta).toBeLessThanOrEqual(812);
+      expect(r.sw).toBeLessThanOrEqual(375);
+    });
+  }
+});
