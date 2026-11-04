@@ -269,6 +269,17 @@ export const en = {
     cta: 'BOOK A 30-MIN CALL ↗',
     ctaLead: 'Tell me the problem on a call. I reply within 24h.'
   },
+  // /c: the card behind the QR code on the phone case
+  card: {
+    title: 'Gleb Rosev — contact card',
+    role: 'Founding Engineer at YAGNI. I make AI agent teams hold up in production.',
+    book: 'Book a 30-min call',
+    save: 'Save contact',
+    email: 'Email',
+    call: 'Call',
+    hire: 'Ways to work together →',
+    site: 'Full site →'
+  },
   build: {
     home: '← Home',
     kicker: 'Receipts',
