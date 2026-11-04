@@ -14,6 +14,8 @@ import { PALETTE, cut, encodeFrame, mulberry32, quantize } from '../../src/scrip
 const ROOT = resolve(import.meta.dir, '../..');
 const WEIGHTS = 'scripts/nca/gr-round1.bin';
 const OUT = 'public/replay/pr11-gr.json';
+/** sha256 of the round-1 float32 JSON that gr-round1.bin was converted from (train.py --to-bin). */
+const SOURCE_SHA256 = 'e8dfd08bc327021992adfc0464142fff6e266034bee1150d0ccc2cdf87df26eb';
 
 /** Seed 4 shows the mis-heal plainly; the shipped weights heal it (MSE ~2e-4 by the last frame). */
 const RNG_SEED = 4;
@@ -41,9 +43,10 @@ const rec = {
   palette: PALETTE,
   weights: WEIGHTS,
   source: {
-    en: "Pre-fix weights from PR #11, round 1 (recovered from the agent run's working files; not in git before)",
-    ru: 'Веса из первого раунда PR #11, до исправления (восстановлены из рабочих файлов прогона агентов; раньше их не было в git)',
+    en: "Pre-fix weights from PR #11, round 1, float16 copy (recovered from the agent run's working files; not in git before)",
+    ru: 'Веса из первого раунда PR #11, до исправления, копия во float16 (восстановлены из рабочих файлов прогона агентов; раньше их не было в git)',
   },
+  sourceSha256: SOURCE_SHA256,
   rngSeed: RNG_SEED,
   grow: GROW,
   cut: CUT,

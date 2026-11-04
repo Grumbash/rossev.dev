@@ -46,8 +46,9 @@
       },
       "lines": [
         "grows GR from a single seed cell",
-        "stays stable long after it has grown",
-        "the grid and the target are the same size"
+        "regrows after a bite out of the centre",
+        "regrows after a bite out of the left edge",
+        "stays stable long after it has grown"
       ]
     },
     {

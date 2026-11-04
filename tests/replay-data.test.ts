@@ -10,6 +10,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { NeuralCA } from '../src/scripts/nca/model';
 import { decodeWeights } from '../src/scripts/nca/weights';
+import type { Replay, ReplayEvent } from '../scripts/build-story';
 import { PALETTE, cut, decodeFrame, encodeFrame, mulberry32, quantize } from '../src/scripts/replay/frames';
 
 setDefaultTimeout(120_000);
@@ -31,19 +32,6 @@ function nameIn(src: string, name: string): boolean {
   }
   return false;
 }
-
-type L10n = { en: string; ru: string };
-type ReplayEvent = {
-  t: string;
-  kind: 'plan' | 'diff' | 'test' | 'catch' | 'fix' | 'merge';
-  node: number;
-  sha?: string;
-  caption: L10n;
-  lines?: string[];
-  reproduced?: boolean;
-  testsAt?: string;
-};
-type Replay = { pr: number; label: L10n; url: string; mergedAt: string; events: ReplayEvent[] };
 
 const REPLAY = 'src/data/replay-pr11.json';
 const FRAMES = 'public/replay/pr11-gr.json';
