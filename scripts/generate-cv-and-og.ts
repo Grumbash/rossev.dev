@@ -178,11 +178,15 @@ function wrapToWidth(text: string, font: Font, size: number, maxW: number): stri
 }
 
 // Info dictionary strings use PDFDocEncoding, where the dashes sit at other bytes than in WinAnsi.
+const PDF_DOC: Record<string, string> = { '•': '\x80', '—': '\x84', '–': '\x85', '“': '\x8D', '”': '\x8E', '‘': '\x8F', '’': '\x90' };
 const pdfDocString = (text: string) =>
-  normalizePdfText(text)
-    .replace(/—/g, '\x84')
-    .replace(/–/g, '\x85')
-    .replace(/[\\()]/g, (c) => `\\${c}`);
+  [...normalizePdfText(text)]
+    .map((c) => {
+      const out = PDF_DOC[c] ?? c;
+      if (out.charCodeAt(0) > 0xff) throw new Error(`CV PDF: no PDFDocEncoding byte for "${c}" in metadata`);
+      return out === '\\' || out === '(' || out === ')' ? `\\${out}` : out;
+    })
+    .join('');
 
 const enDashRange = (period: string) => period.replace(/\s*—\s*/g, ' – ');
 
@@ -287,8 +291,9 @@ function generatePdfCv(): void {
   y = headTop + headH + 26;
 
   // ---------- Building blocks ----------
-  const section = (title: string) => {
-    ensure(22 + LEADING * 3);
+  // A heading keeps `keepWith` points of what follows on its page, so it is never left orphaned.
+  const section = (title: string, keepWith = LEADING * 3) => {
+    ensure(20 + keepWith);
     fillRect(marginX, y - 8, 7, 7, LIME);
     text(title.toUpperCase(), marginX + 13, y, 'F2', 10.5, INK);
     hRule(y + 5, INK, 0.8);
@@ -296,6 +301,7 @@ function generatePdfCv(): void {
   };
   const paragraph = (s: string, x: number, width: number, font: Font, size: number, c: Rgb, leading: number) => {
     for (const line of wrapToWidth(s, font, size, width)) {
+      ensure(leading);
       text(line, x, y, font, size, c);
       y += leading;
     }
@@ -306,6 +312,7 @@ function generatePdfCv(): void {
     const lines = bulletLines(s);
     ensure(lines.length * LEADING);
     lines.forEach((line, i) => {
+      ensure(LEADING); // only a bullet taller than a whole page ever breaks here
       if (i === 0) text('•', marginX + 2, y, 'F1', BODY, INK);
       text(line, marginX + bulletIndent, y, 'F1', BODY, INK);
       y += LEADING;
@@ -319,17 +326,25 @@ function generatePdfCv(): void {
   y += 12;
 
   // ---------- Experience ----------
-  section('Experience');
+  // Role, company, context and the first bullet never split from each other.
+  const entryHead = (exp: (typeof EXPERIENCE)[number]) =>
+    14 +
+    13 +
+    wrapToWidth(exp.domain.en, 'F1', 9, contentW).length * 12 +
+    wrapToWidth(exp.metrics.join(' · '), 'F2', 8.5, contentW).length * 12 +
+    4 +
+    bulletLines(exp.highlights.en[0] ?? '').length * LEADING;
+  section('Experience', entryHead(EXPERIENCE[0]));
   EXPERIENCE.forEach((exp, idx) => {
-    const domainLines = wrapToWidth(exp.domain.en, 'F1', 9, contentW);
     const focus = exp.metrics.join(' · ');
-    const focusLines = wrapToWidth(focus, 'F2', 8.5, contentW);
-    const firstBullet = bulletLines(exp.highlights.en[0] ?? '').length;
-    // Role, company, context and the first bullet never split from each other.
-    ensure(14 + 13 + domainLines.length * 12 + focusLines.length * 12 + firstBullet * LEADING + 4);
+    ensure(entryHead(exp));
+    const period = enDashRange(exp.period.en);
+    if (textWidth(exp.role.en, 'F2', 10.5) + 16 > contentW - textWidth(period, 'F1', 9)) {
+      throw new Error(`CV PDF: role "${exp.role.en}" collides with its dates`);
+    }
 
     text(exp.role.en, marginX, y, 'F2', 10.5, INK);
-    textRight(enDashRange(exp.period.en), marginX + contentW, y, 'F1', 9, MUTED);
+    textRight(period, marginX + contentW, y, 'F1', 9, MUTED);
     y += 14;
     const companyW = text(exp.company, marginX, y, 'F2', 9.5, INK, exp.url);
     text(exp.location.en, marginX + companyW + 8, y, 'F1', 9, MUTED);
