@@ -267,7 +267,9 @@ export const en = {
     youGet: 'What you get',
     proof: 'Proof',
     cta: 'BOOK A 30-MIN CALL ↗',
-    ctaLead: 'Tell me the problem on a call. I reply within 24h.'
+    ctaLead: 'Tell me the problem on a call. I reply within 24h.',
+    qrCaption: 'On a laptop? Scan with your phone to save my contact or book from there.',
+    qrLabel: 'QR code: rossev.dev/c, my contact card'
   },
   // /c: the card behind the QR code on the phone case
   card: {
@@ -275,8 +277,9 @@ export const en = {
     role: 'Founding Engineer at YAGNI. I make AI agent teams hold up in production.',
     book: 'Book a 30-min call',
     save: 'Save contact',
+    saveHint: 'Adds my name, phone and email to your contacts (vCard).',
     email: 'Email',
-    call: 'Call',
+    phone: 'Phone',
     hire: 'Ways to work together →',
     site: 'Full site →'
   },

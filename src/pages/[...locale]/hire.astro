@@ -3,6 +3,7 @@
 // one booking link. No prices: the first step is a call. The JSON-LD lists the offers on the Person
 // (makesOffer), so search and answer engines can say what he can be brought in for.
 import Base from '../../layouts/Base.astro';
+import CaseQr from '../../components/CaseQr.astro';
 import { OFFERS } from '../../data/profile';
 import { calUrl } from '../../scripts/analytics';
 import { localeOf, localePath, localeStaticPaths, t } from '../../i18n';
@@ -96,17 +97,24 @@ const jsonLd = {
       </div>
 
       <div class="hire-cta">
-        <p class="hire-lead">{h.ctaLead}</p>
-        <a
-          href={calUrl('hire', lang)}
-          data-track="cta_book"
-          data-track-placement="hire"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="brutal-btn brutal-btn-lime"
-        >
-          {h.cta}
-        </a>
+        <div>
+          <p class="hire-lead">{h.ctaLead}</p>
+          <a
+            href={calUrl('hire', lang)}
+            data-track="cta_book"
+            data-track-placement="hire"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="brutal-btn brutal-btn-lime"
+          >
+            {h.cta}
+          </a>
+        </div>
+        {/* The case's code, for a laptop or a projector: people move to their phone by scanning it. */}
+        <figure class="hire-qr">
+          <CaseQr label={h.qrLabel} />
+          <figcaption>{h.qrCaption}</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -182,6 +190,38 @@ const jsonLd = {
     margin-top: 40px;
     border-top: 2px solid var(--border);
     padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .hire-qr {
+    margin: 0;
+    width: 180px;
+    flex: none;
+  }
+
+  .hire-qr :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--border);
+    box-shadow: 4px 4px 0 var(--shadow);
+  }
+
+  .hire-qr figcaption {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-muted);
+  }
+
+  /* Phones have no use for a code they would have to scan with themselves. */
+  @media (hover: none), (max-width: 760px) {
+    .hire-qr {
+      display: none;
+    }
   }
 
   @media (max-width: 640px) {
