@@ -20,10 +20,6 @@ export function targetBaseline() {
   return {
     size: target.size,
     alive: s.alive,
-    x0: s.x0,
-    y0: s.y0,
-    x1: s.x1,
-    y1: s.y1,
     occ: Array.from(s.occ),
     green: Array.from(s.green, round),
   };

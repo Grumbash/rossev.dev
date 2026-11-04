@@ -8,7 +8,7 @@ import { GR_BASELINE } from '../src/scripts/nca/baseline';
 import { targetBaseline } from '../scripts/nca/gen-baseline';
 import { NeuralCA } from '../src/scripts/nca/model';
 import { decodeWeights } from '../src/scripts/nca/weights';
-import { createHealer } from '../src/scripts/nca/healer';
+import { createHealer, GRID } from '../src/scripts/nca/healer';
 
 describe('the shipped GR baseline', () => {
   test('equals the signature recomputed from target.json at the model alive threshold', () => {
@@ -18,8 +18,8 @@ describe('the shipped GR baseline', () => {
   test('is a GR: two letters on a 56-cell grid, the R on a lime block', () => {
     expect(GR_BASELINE.size).toBe(56);
     expect(GR_BASELINE.alive).toBeGreaterThan(900);
-    const greenRight = GR_BASELINE.green.filter((_, k) => k % 4 >= 2).reduce((a, b) => a + b, 0);
-    const greenLeft = GR_BASELINE.green.filter((_, k) => k % 4 < 2).reduce((a, b) => a + b, 0);
+    const greenRight = GR_BASELINE.green.filter((_, k) => k % GRID >= GRID / 2).reduce((a, b) => a + b, 0);
+    const greenLeft = GR_BASELINE.green.filter((_, k) => k % GRID < GRID / 2).reduce((a, b) => a + b, 0);
     expect(greenRight).toBeGreaterThan(10 * greenLeft);
   });
 
