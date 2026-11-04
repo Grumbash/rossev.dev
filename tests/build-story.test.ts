@@ -288,7 +288,7 @@ describe('committed data (src/data/build-story.json)', () => {
       // Pending exactly when there is no highlight to show.
       expect(!!p.pending, `#${p.number} pending`).toBe(!h);
       if (!h) continue;
-      for (const k of ['visitorChange', 'humanDecision', 'findings', 'preLoop', 'noRedTest'])
+      for (const k of ['visitorChange', 'humanDecision', 'titleRu', 'findings', 'preLoop', 'noRedTest'])
         expect(p[k] ?? null, `#${p.number}.${k}`).toEqual(h[k] ?? null);
     }
     // No highlight is orphaned (e.g. #15's after it left the story).
@@ -371,8 +371,10 @@ describe(`built ${PATH}`, () => {
     const ru = text(read(`dist/ru${PATH}index.html`));
     for (const p of story.prs) {
       if (p.pending) continue;
-      expect(ru).toContain(p.visitorChange.ru);
-      expect(ru).toContain(p.humanDecision.ru);
+      // text() folds every whitespace run, no-break spaces in «35 758» included; fold the copy the same way.
+      expect(ru).toContain(p.visitorChange.ru.replace(/\s+/g, ' '));
+      expect(ru).toContain(p.humanDecision.ru.replace(/\s+/g, ' '));
+      if (p.titleRu) expect(ru).toContain(p.titleRu);
     }
   });
 

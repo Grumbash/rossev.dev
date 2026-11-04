@@ -160,8 +160,8 @@ describe('post data', () => {
 
   test('the read time is honest about where the text is: the original on LinkedIn, or the full post here', () => {
     const stub = BLOG_POSTS[0];
-    expect(readTimeLabel({ ...stub, body: undefined })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ОРИГИНАЛ` });
-    expect(readTimeLabel({ ...stub, body: { en: 'a', ru: 'б' } })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN FULL POST`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ПОЛНЫЙ ТЕКСТ` });
+    expect(readTimeLabel({ ...stub, body: undefined })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN ORIGINAL`, ru: `КОНСПЕКТ НА 30 СЕК · ОРИГИНАЛ ${stub.originalMinutes} МИН` });
+    expect(readTimeLabel({ ...stub, body: { en: 'a', ru: 'б' } })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN FULL POST`, ru: `КОНСПЕКТ НА 30 СЕК · ПОЛНЫЙ ТЕКСТ ${stub.originalMinutes} МИН` });
   });
 
   test('slugs are unique, url-safe, and every post has a publication date matching its LinkedIn id', () => {
