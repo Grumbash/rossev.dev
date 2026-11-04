@@ -235,7 +235,7 @@ export function validateDraft(raw: unknown, source: string): { ok: true; draft: 
   if (errors.length) return { ok: false, errors };
 
   for (const [k, v] of ru) if (!isRussian(v as string)) errors.push(`${k}: not Russian`);
-  for (const [k, v] of ru) for (const p of ruStyleProblems(v as string)) errors.push(`${k}: ${p}, see docs/ru-style.md`);
+  for (const [k, v] of ru) for (const p of ruStyleProblems(v as string)) errors.push(`${k}: ${p}, see src/i18n/ru-style.ts`);
   for (const [k, v] of en) if (!isEnglish(v as string)) errors.push(`${k}: not English`);
 
   const known = sourceNumbers(source);
@@ -349,8 +349,8 @@ export function sitePostLinkedFrom(content: string, posts: BlogPost[]): number {
 
 const fence = (tag: string, data: string) => `<${tag}>\n${data.replaceAll(`</${tag}>`, `<\\/${tag}>`)}\n</${tag}>`;
 
-// The rules of docs/ru-style.md the model needs; the banned forms are also checked by the validator.
-const RUSSIAN = `Russian (docs/ru-style.md of the site): write the way a Russian-speaking engineer writes for peers on Habr or in a work chat, not the way a translator does.
+// The rules of src/i18n/ru-style.ts the model needs; the banned forms are also checked by the validator.
+const RUSSIAN = `Russian: write the way a Russian-speaking engineer writes for peers on Habr or in a work chat, not the way a translator does.
 - Keep IT terms the way Russian engineers say them, in Latin script or transliterated: PR, CI, LLM, on-call, мерж, смержить, фидбек, фикс, гардрейл, харнесс, эвалы, фолбэк, тенант, деплой, прод, ревью, бэклог, фича-флаг, оунершип, сеньорность. Never swap them for "native" words nobody in IT uses: не «влить» (merge), не «защита» (guardrail), не «арендатор» (tenant), не «отзывы» (feedback).
 - What makes Russian sound translated is the structure, not the terms: rebuild each sentence in Russian word order; no calques like «нанимаете под», no Title Case in titles, no канцелярит (chains of verbal nouns or participles), no literal translations of English metaphors, no marketing words (молниеносный, радикально).
 - First person, short sentences, verbs over nouns. Address the reader as «вы», lowercase; never «ты».

@@ -1,4 +1,4 @@
-// The Russian copy follows docs/ru-style.md: IT terms stay as engineers say them (мерж, фидбек,
+// The Russian copy follows src/i18n/ru-style.ts: IT terms stay as engineers say them (мерж, фидбек,
 // гардрейл), and what the guide bans is the fake-Russian stand-ins, literal translations of the EN
 // scene metaphors and «ты». Checks every built file, scripts included: canvas captions and the
 // topology live in JS, and only the RU copy has Cyrillic, so EN pages cannot trip it.
@@ -40,7 +40,7 @@ describe('the banned list', () => {
   });
 });
 
-describe('RU copy follows docs/ru-style.md', () => {
+describe('RU copy follows src/i18n/ru-style.ts', () => {
   test('built pages contain Russian copy at all', () => {
     expect(readFileSync('dist/ru/index.html', 'utf8')).toMatch(/[а-яё]{4}/i);
   });
