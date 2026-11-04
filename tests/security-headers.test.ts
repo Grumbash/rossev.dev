@@ -7,6 +7,7 @@ import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { ACTIONS, initActions } from '../src/scripts/actions';
 
 type Rule = { source: string; headers: { key: string; value: string }[] };
 const vercel = JSON.parse(readFileSync('vercel.json', 'utf8')) as { headers?: Rule[] };
@@ -130,10 +131,63 @@ describe('the built site runs under that CSP', () => {
         expect(src, f).toMatch(/^(\/(?!\/)|https:\/\/cloud\.umami\.is\/)/);
   });
 
+  test('every data-action names a dispatched action, with an argument it accepts', () => {
+    const args: Record<string, (string | undefined)[]> = {
+      setIsoDomain: ['yagni', 'voice', 'saas'],
+      setIsoStratum: ['all', '1', '0', '-1'],
+      stepIsoNode: ['1', '-1'],
+      triggerIsoFault: [undefined, 'keep-focus'],
+    };
+    let seen = 0;
+    for (const f of files)
+      for (const [tag] of readFileSync(f, 'utf8').matchAll(/<[a-z][^>]*\sdata-action="[^"]*"[^>]*>/g)) {
+        seen++;
+        const name = tag.match(/data-action="([^"]*)"/)![1];
+        const arg = tag.match(/data-arg="([^"]*)"/)?.[1];
+        expect(Object.keys(ACTIONS), `${f}: ${tag}`).toContain(name);
+        expect(args[name] ?? [undefined], `${f}: ${tag}`).toContain(arg);
+        if (name === 'copy') expect(tag, f).toMatch(/data-copy="[^"]+"/);
+      }
+    expect(seen).toBeGreaterThan(20);
+  });
+
   test('the VAD tap worklet is a file on this origin, not a blob: URL', () => {
     const demo = readFileSync('src/scripts/vad/demo.ts', 'utf8');
     expect(demo).not.toContain('createObjectURL');
     expect(demo).toContain("addModule('/vad/tap-worklet.js')");
     expect(statSync('dist/vad/tap-worklet.js').isFile()).toBe(true);
+  });
+});
+
+describe('the data-action dispatcher', () => {
+  const setup = () => {
+    let listener: ((e: any) => void) | undefined;
+    const doc = { addEventListener: (_t: string, fn: (e: any) => void) => (listener = fn) } as unknown as Document;
+    initActions(doc);
+    const click = (dataset: Record<string, string>) => {
+      const el = { dataset } as any;
+      listener!({ target: { closest: (sel: string) => (sel === '[data-action]' ? el : null) } });
+      return el;
+    };
+    return { click };
+  };
+
+  test('calls the named action with its argument and the element', () => {
+    const calls: unknown[][] = [];
+    (globalThis as any).window = { setIsoStratum: (...a: unknown[]) => calls.push(['stratum', ...a]), stepIsoNode: (d: number) => calls.push(['step', d]) };
+    const { click } = setup();
+    const el = click({ action: 'setIsoStratum', arg: '-1' });
+    click({ action: 'stepIsoNode', arg: '-1' });
+    expect(calls).toEqual([['stratum', -1, el], ['step', -1]]);
+  });
+
+  test('ignores names it does not list and arguments it does not accept', () => {
+    const calls: unknown[] = [];
+    (globalThis as any).window = { setIsoStratum: () => calls.push(1), eval: () => calls.push('eval') };
+    const { click } = setup();
+    click({ action: 'eval', arg: 'alert(1)' });
+    click({ action: 'constructor' });
+    click({ action: 'setIsoStratum', arg: '2' });
+    expect(calls).toEqual([]);
   });
 });

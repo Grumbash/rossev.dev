@@ -573,6 +573,23 @@ describe('.github/workflows/publora-sync.yml', () => {
     expect(raw).not.toMatch(/--force\b(?!-with-lease)/);
   });
 
+  // `sync` runs package code, so its outputs are untrusted: a forged sha could point at a fork's
+  // commit (reachable by sha through this repo) and turn the bot PR into an attacker's whole tree.
+  test('publish only builds on a sha that is a full commit id already on main', () => {
+    const run = String((wf.jobs.publish.steps as any[]).find((s) => /gh pr (create|edit)/.test(String(s.run ?? ''))).run);
+    expect(run).toMatch(/\^\[0-9a-f\]\{40\}\$/);
+    expect(run).toMatch(/git merge-base --is-ancestor "\$SHA" origin\/main/);
+    expect(String(wf.jobs.publish.steps.find((s: any) => s.run?.includes('gh pr')).env.SHA)).toBe('${{ needs.sync.outputs.sha }}');
+  });
+
+  // grep -q quits on the first match; git log then dies of SIGPIPE and pipefail flips the test,
+  // so a human edit would be force-pushed over. Capture the list first instead.
+  test('the human-commit guard does not pipe git log into grep -q, and says so as a warning', () => {
+    const run = String((wf.jobs.publish.steps as any[]).find((s) => /gh pr (create|edit)/.test(String(s.run ?? ''))).run);
+    expect(run).not.toMatch(/git log[^\n|]*\|\s*grep -q/);
+    expect(run).toMatch(/::warning::[^\n]*someone other than the bot/);
+  });
+
   test('no AI attribution in commits or PRs; the bot is the author', () => {
     expect(raw).not.toMatch(/co-authored-by|generated with|🤖/i);
     expect(raw).toContain('github-actions[bot]');
