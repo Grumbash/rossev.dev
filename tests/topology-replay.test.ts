@@ -217,8 +217,34 @@ describe('the card is a replay you can take over', () => {
     }
   });
 
+  test('the film can be paused (WCAG 2.2.2): a pause toggle, not pressed', () => {
+    for (const c of [cards.en, cards.ru]) {
+      const b = tagWith(c, 'data-replay-pause');
+      expect(b.startsWith('<button')).toBe(true);
+      expect(b).toContain('aria-pressed="false"');
+    }
+  });
+
+  test('the take-over says it is a simulation; the shipped line does not deny the human gate', () => {
+    for (const d of [en, ru]) {
+      expect(d.topology.yourRun.length).toBeGreaterThan(3);
+      expect(d.topology.simulated.length).toBeGreaterThan(3);
+    }
+    expect(en.topology.simulated).toMatch(/simulat/i);
+    expect(JSON.stringify(en.topology)).not.toMatch(/nobody else looked/i);
+  });
+
   test('captions are announced through a polite live region', () => {
     for (const c of [cards.en, cards.ru]) expect(tagWith(c, 'data-replay-live')).toContain('aria-live="polite"');
+  });
+
+  test('the topology engine is not in the eager JS: real headroom under the 40 KB budget', () => {
+    const eager = [...pages.en.matchAll(/<script\b[^>]*\bsrc="(\/_astro\/[^"]+\.js)"/g)].map((m) => m[1]);
+    const preload = [...pages.en.matchAll(/<link\b[^>]*rel="modulepreload"[^>]*href="(\/_astro\/[^"]+\.js)"/g)].map((m) => m[1]);
+    const files = [...new Set([...eager, ...preload])].map((f) => readFileSync(join('dist', f)));
+    const gz = files.reduce((n, b) => n + Bun.gzipSync(b, { level: 9 }).length, 0);
+    expect(gz).toBeLessThanOrEqual(8000);
+    for (const b of files) expect(b.toString()).not.toContain('INCIDENT RESOLVED');
   });
 
   test('the replay costs nothing up front: its data and frames are not inlined in the page', () => {
@@ -290,12 +316,15 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
     const mode = q.get('mode');
     if (mode === 'watch') {
       out.a = snap(); await wait(5000); out.b = snap(); out.fetched = fetched();
+      await wait(4000); out.c = snap();
       const s = $('[data-replay-timeline]');
       key(s, 'Home'); await wait(200); out.home = snap();
       const catchAt = ${JSON.stringify(replay.events.findIndex((e: any) => e.kind === 'catch'))};
       for (let i = 0; i < catchAt; i++) { key(s, 'ArrowRight'); await wait(60); }
       await wait(2500); out.atCatch = snap(); out.sliderNow = s.getAttribute('aria-valuenow');
       key(s, 'End'); await wait(300); out.end = snap();
+      key(s, 'Home'); await wait(3000); out.afterScrub = snap();
+      out.pausePressed = $('[data-replay-pause]')?.getAttribute('aria-pressed');
     } else if (mode === 'takeover') {
       out.a = snap();
       $('[data-sim-judge]').click(); await wait(200); out.judgeOff = snap();
@@ -303,6 +332,9 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
       $('[data-sim-judge]').click(); await wait(100); $('[data-sim-fault]').click(); await wait(4000); out.caught = snap();
       await wait(${RESUME_PROMPT_MS} + 300); out.offer = snap();
       await wait(${AUTO_RESUME_MS - RESUME_PROMPT_MS} + 300); out.back = snap();
+    } else if (mode === 'explore') {
+      $('[data-sim-judge]').click(); await wait(200); out.a = snap();
+      $('[data-story-explore]').click(); await wait(${AUTO_RESUME_MS} + 1500); out.exploring = snap();
     } else if (mode === 'rm') {
       const r0 = window.__raf; await wait(2500); out.rafIdle = window.__raf - r0; out.a = snap();
     } else {
@@ -369,6 +401,13 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
       expect(r.atCatch.stamp).toBe('caught');
       expect(r.end.shot).toBe(String(N - 1));
       expect(r.end.live).toBe(replay.events[N - 1].caption[lang]);
+      // autoplay does not re-announce every caption; only visitor-caused changes reach the live region
+      expect(r.b.live).toBe(r.a.live);
+      expect(r.c.live).toBe(r.a.live);
+      expect(Number(r.c.shot)).toBeGreaterThan(Number(r.b.shot));
+      // scrubbing pauses the film where the visitor put it
+      expect(r.afterScrub.shot).toBe('0');
+      expect(r.pausePressed).toBe('true');
       expect(r.sw).toBeLessThanOrEqual(1440);
     });
 
@@ -380,8 +419,17 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
       expect(r.caught.outcome).toBe('caught');
       expect(r.caught.judge).toBe('true');
       expect(r.offer.resume).toBe(true);
+      // offering Resume does not move anything (it appears outside the input window, so it would count as CLS)
+      expect(r.offer.h).toBe(r.caught.h);
       expect(r.back.badge).toBe(dict[lang].topology.replayBadge);
       expect(r.back.outcome).toBeNull();
+    });
+
+    test(`${lang} at 1440: while Explore is open the idle clock stops: no Resume, no auto-resume`, async () => {
+      const r = await probe(lang, 1440, 'explore', 20000);
+      expect(r.a.badge).toBe(dict[lang].topology.yourRun);
+      expect(r.exploring.resume).toBe(false);
+      expect(r.exploring.badge).not.toBe(dict[lang].topology.replayBadge);
     });
 
     test(`${lang} reduced motion: a still final frame and the timeline, no running loop`, async () => {
