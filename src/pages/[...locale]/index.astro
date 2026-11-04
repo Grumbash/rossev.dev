@@ -215,7 +215,6 @@ const jsonLd = {
                 <button type="button" class="mode-btn" data-sim-judge aria-pressed="true">
                   {d.topology.judge}: <span data-sim-judge-state>{d.topology.judgeOn}</span>
                 </button>
-                <button type="button" class="mode-btn active" data-replay-resume hidden>{d.topology.resume}</button>
                 <button
                   type="button"
                   class="mode-btn iso-story-explore"
@@ -327,6 +326,10 @@ const jsonLd = {
                 aria-label="Interactive 3D System Architecture Topology. Use Left and Right arrow keys to cycle nodes, Enter to explode node layers, F to simulate fault."
               ></canvas>
 
+              {/* Offered when the visitor has left the film alone for a while. Over the canvas, so it
+                   moves nothing when it appears. */}
+              <button type="button" class="mode-btn active iso-resume" data-replay-resume hidden>{d.topology.resume}</button>
+
               {/* Phones: the canvas is a still poster until this is pressed (no rAF loop before it) */}
               <button
                 type="button"
@@ -405,23 +408,29 @@ const jsonLd = {
               </div>
             </div>
 
-            {/* One stop per event of the run, labelled with its real time on Gleb's clock. Five events share
-                 a minute, so the stops are evenly spaced: the spacing is the film's, not the run's. */}
-            <div
-              class="replay-timeline"
-              role="slider"
-              tabindex="0"
-              data-replay-timeline
-              aria-valuemin="0"
-              aria-valuemax={replay.events.length - 1}
-              aria-valuenow="0"
-              aria-label={d.topology.timeline}
-            >
-              {replayTimes.map((time, i) => (
-                <span class="replay-stop" data-replay-stop aria-hidden="true">
-                  <i></i>{time === replayTimes[i - 1] ? <b class="is-same">{time}</b> : <b>{time}</b>}
-                </span>
-              ))}
+            {/* Pause (WCAG 2.2.2), then one stop per event of the run, labelled with its real time on Gleb's
+                 clock. Five events share a minute, so the stops are evenly spaced: the spacing is the film's,
+                 not the run's. A scrub pauses the film where it lands. */}
+            <div class="replay-bar">
+              <button type="button" class="replay-pause" data-replay-pause aria-pressed="false" aria-label={d.topology.pause}>
+                <span aria-hidden="true"></span>
+              </button>
+              <div
+                class="replay-timeline"
+                role="slider"
+                tabindex="0"
+                data-replay-timeline
+                aria-valuemin="0"
+                aria-valuemax={replay.events.length - 1}
+                aria-valuenow="0"
+                aria-label={d.topology.timeline}
+              >
+                {replayTimes.map((time, i) => (
+                  <span class="replay-stop" data-replay-stop aria-hidden="true">
+                    <i></i>{time === replayTimes[i - 1] ? <b class="is-same">{time}</b> : <b>{time}</b>}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Clean Bottom Specification Bar */}
@@ -755,16 +764,15 @@ const jsonLd = {
       </div>
 
   <Fragment slot="scripts">
-    <!-- Bundled page code: 3D topology engine and its replay loader, case loader, post reader, toolbox -->
+    <!-- Bundled page code: the topology's loader (engine and replay are lazy), case loader, post reader, toolbox -->
     <script>
-      import { initIsoArchitectureEngine } from '../../scripts/iso-engine';
       import { initTopologyReplay } from '../../scripts/topology-replay';
       import { initCaseLoader } from '../../scripts/case-loader';
       import { initHome } from '../../scripts/home';
       initHome();
       initCaseLoader();
       document.addEventListener('DOMContentLoaded', () => {
-        initTopologyReplay(initIsoArchitectureEngine());
+        initTopologyReplay();
       });
     </script>
     {/* GR monogram: a tiny loader; the model, worker and their CSS load near the block */}

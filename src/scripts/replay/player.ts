@@ -83,12 +83,18 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   const judgeBtn = $<HTMLButtonElement>('[data-sim-judge]');
   const judgeState = $('[data-sim-judge-state]');
   const resumeBtn = $<HTMLButtonElement>('[data-replay-resume]');
+  const pauseBtn = $<HTMLButtonElement>('[data-replay-pause]');
   const timeline = $('[data-replay-timeline]');
   const stops = [...card.querySelectorAll<HTMLElement>('[data-replay-stop]')];
 
   // Reduced motion: no loop. The film rests on its last shot, each scrub is a still, results are instant.
   let s: SimState = rm ? { ...START, t: F.shots[N - 1].start } : START;
   let started = false;
+  // Paused by the visitor (the pause toggle, or a scrub: the film stays where they put it).
+  let paused = false;
+  // After a scrub the shot shows complete, as a still; playing again animates it from its start.
+  let still = false;
+  let attached = false;
 
   // The recorded frames (G→R on the pre-fix weights), fetched with the film, decoded once.
   let rec: { size: number; frames: Uint8Array[]; steps: number[]; source: string } | null = null;
@@ -102,7 +108,8 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
         steps: j.frames.map((f: { step: number }) => f.step),
         source: j.source[lang],
       };
-      api.redraw();
+      // Under reduced motion every frame is a deliberate redraw: only when the GR is on screen.
+      if (!rm || s.mode === 'live' || /test|catch|fix/.test(events[shotAt(F, s.t).index].kind)) api.redraw();
     })
     .catch(() => {});
 
@@ -114,6 +121,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   let focusNode: number | null = null;
   let tile: Rect | null = null; // where the mini GR was drawn this frame: the cut's hit area
   let stroke: [number, number][] | null = null;
+  let grab: Rect | null = null; // the tile as it was when the stroke started: the stroke maps to it
   let liveFrame: Uint8Array | null = null;
   let healing = false;
   const healer = createHealer(WEIGHTS_URL);
@@ -141,9 +149,27 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     }
     if (next.mode === 'live') window.playIso?.(); // a phone's poster needs frames for the run
     s = next;
-    if (s.mode === 'live' && !idleTimer) idleTimer = setInterval(idle, IDLE_TICK_MS);
-    if (s.mode !== 'live' && idleTimer) idleTimer = void clearInterval(idleTimer);
+    syncIdle();
     paint();
+    api.redraw();
+  }
+
+  /** The idle clock ticks only while live and attached: Explore pauses it, so nothing resumes behind it. */
+  function syncIdle() {
+    const on = attached && s.mode === 'live';
+    if (on && !idleTimer) idleTimer = setInterval(idle, IDLE_TICK_MS);
+    if (!on && idleTimer) idleTimer = void clearInterval(idleTimer);
+  }
+
+  /** Only what the visitor caused reaches the live region: autoplay would talk over everything. */
+  function announce(text: string) {
+    if (live) live.textContent = text;
+  }
+
+  function setPaused(on: boolean) {
+    paused = on;
+    if (!on) still = false;
+    pauseBtn?.setAttribute('aria-pressed', String(on));
     api.redraw();
   }
 
@@ -151,7 +177,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   function idle() {
     if (busy()) return;
     const next = tick(s, IDLE_TICK_MS, F.length);
-    if (next.mode !== s.mode) apply(next);
+    if (next.mode !== s.mode) apply(next); // came back by itself: not announced
     else {
       s = next;
       paint();
@@ -164,6 +190,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     messageNode = node;
     s = { ...s, idleMs: 0 };
     track({ action: 'outcome', outcome });
+    announce(text);
     paint();
     api.redraw();
   }
@@ -178,6 +205,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     messageNode = BUILDER;
     landed = '';
     apply(next);
+    announce(message);
     if (rm) finishRun();
   }
   function finishRun() {
@@ -200,10 +228,12 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     message = copy.nodes[idx] ?? '';
     messageNode = idx;
     apply(takeover(s));
+    announce(message);
   }
 
   function back() {
     apply(resume(s));
+    announce(events[shotAt(F, s.t).index].caption[lang]);
     if (document.activeElement === resumeBtn) timeline?.focus();
   }
 
@@ -213,6 +243,9 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     landed = '';
     camKey = '';
     apply({ ...(s.mode === 'live' ? resume(s) : s), t: F.shots[to].start });
+    setPaused(true);
+    still = true;
+    announce(events[to].caption[lang]);
   }
 
   // The cut: preview it at once on the grown frame, then let the real model regrow it.
@@ -242,6 +275,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     message = copy.cutHealing;
     messageNode = SANDBOX;
     apply({ ...takeover(s), outcome: null });
+    announce(message);
     healer.cut(strokes, (idx) => {
       liveFrame = idx;
       if (!rm) api.redraw();
@@ -257,6 +291,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
         healing = false;
         message = '';
         paint();
+        api.redraw();
       }
     );
   }
@@ -276,10 +311,9 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   function paint() {
     const { index, progress } = shotAt(F, s.t);
     const liveMode = s.mode === 'live';
-    const stamp = liveMode ? (shown === 'caught' || shown === 'shipped' ? shown : '') : stampFor(index, rm ? 1 : progress);
-    const text = liveMode ? message : events[index].caption[lang];
-    const offer = showResumePrompt(s);
-    const key = [index, s.mode, s.judge, shown, offer, stamp, text].join('|');
+    const stamp = liveMode ? (shown === 'caught' || shown === 'shipped' ? shown : '') : stampFor(index, rm || still ? 1 : progress);
+    const offer = attached && showResumePrompt(s);
+    const key = [index, s.mode, s.judge, shown, offer, stamp].join('|');
     if (key === painted) return;
     painted = key;
     set('data-replay-shot', String(index));
@@ -293,28 +327,32 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
       if (!offer && document.activeElement === resumeBtn) faultBtn?.focus();
       resumeBtn.hidden = !offer;
     }
-    if (live && live.textContent !== text) live.textContent = text;
     if (timeline) {
       timeline.setAttribute('aria-valuenow', String(index));
       timeline.setAttribute('aria-valuetext', `${times[index]} · ${events[index].caption[lang]}`);
     }
-    stops.forEach((st, i) => {
-      st.classList.toggle('is-current', i === index);
-      st.classList.toggle('is-past', i < index);
-    });
+    stops.forEach((st, i) => st.classList.toggle('is-current', i === index));
   }
 
   faultBtn?.addEventListener('click', fault);
   judgeBtn?.addEventListener('click', judge);
   resumeBtn?.addEventListener('click', back);
+  pauseBtn?.addEventListener('click', () => setPaused(!paused));
 
-  // The timeline: arrows step, Home/End jump, a click or drag on a stop scrubs.
-  timeline?.addEventListener('keydown', (e) => {
+  // The timeline: arrows step, Home/End jump, Space pauses or plays, a click or drag on a stop scrubs.
+  function key(k: string): boolean {
+    if (k === ' ') {
+      setPaused(!paused);
+      return true;
+    }
     const i = shotAt(F, s.t).index;
-    const to = ({ ArrowLeft: i - 1, ArrowDown: i - 1, ArrowRight: i + 1, ArrowUp: i + 1, Home: 0, End: N - 1 } as Record<string, number>)[e.key];
-    if (to === undefined) return;
-    e.preventDefault();
+    const to = ({ ArrowLeft: i - 1, ArrowDown: i - 1, ArrowRight: i + 1, ArrowUp: i + 1, Home: 0, End: N - 1 } as Record<string, number>)[k];
+    if (to === undefined) return false;
     scrub(to);
+    return true;
+  }
+  timeline?.addEventListener('keydown', (e) => {
+    if (key(e.key)) e.preventDefault();
   });
   const stopAt = (x: number) => {
     let best = 0;
@@ -488,13 +526,18 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     const anchor = v.anchor(SANDBOX);
     if (!rec || !a || !inCanvas(v, anchor)) return;
     const { ctx } = v;
-    const size = Math.round(Math.max(56, Math.min(104, v.width * 0.14)) * scale);
+    const size = grab ? grab.w : Math.round(Math.max(56, Math.min(104, v.width * 0.14)) * scale);
     // Beside the node, clear of its label (centred on the anchor).
     const gap = v.width < 520 ? 44 : 60;
     const right = anchor!.x + gap + size < v.width - 8;
-    const x = right ? anchor!.x + gap : anchor!.x - gap - size;
-    const y = Math.max(8, Math.min(v.height - size - 24, anchor!.y - size / 2 + 12));
-    tile = { x, y, w: size, h: size };
+    // While a stroke is drawn the tile stays where the stroke started, whatever the shot does.
+    tile = grab ?? {
+      x: right ? anchor!.x + gap : anchor!.x - gap - size,
+      y: Math.max(8, Math.min(v.height - size - 24, anchor!.y - size / 2 + 12)),
+      w: size,
+      h: size,
+    };
+    const { x, y } = tile;
     ctx.save();
     ctx.fillStyle = PAPER;
     ctx.fillRect(x, y, size, size);
@@ -632,7 +675,8 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
 
     const box = caption(v, ev.node, kickerOf(v, i), ev.caption[lang], rows, since(appearFrom));
     if (ev.kind === 'plan' && p >= APPROVE_AT) {
-      stamp(v, copy.approved, LIME, box.x + box.w - 70, box.y + box.h + 14, (p - APPROVE_AT) * len / 1000, `a${i}`);
+      // Under the caption card, not on it.
+      stamp(v, copy.approved, LIME, box.x + box.w - 90, box.y + box.h + (v.width < 520 ? 24 : 34), ((p - APPROVE_AT) * len) / 1000, `a${i}`);
     } else if (ev.kind === 'catch' && p >= STAMP_AT) {
       // Under the GR, or on a phone's short canvas just under the caption.
       const y = v.width < 520 ? box.y + box.h + 22 : Math.min(tile ? tile.y + tile.h + 40 : v.height * 0.62, v.height - 44);
@@ -653,7 +697,8 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     } else if (focusNode !== null) {
       camera(focusNode, 1.22, [focusNode]);
     }
-    const label = liveFrame ? '' : copy.cutHint;
+    // The cut hint only when nothing else is going on: not over a fault run or the SHIPPED band.
+    const label = run || liveFrame ? '' : copy.cutHint;
     drawTile(v, liveFrame ?? rec?.frames[0] ?? null, null, 0, 1.15, label);
 
     if (run) {
@@ -725,7 +770,9 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
       }
     }
 
-    if (message) caption(v, messageNode, `${strings.yourRun} · ${v.nodes[messageNode].num} · ${v.nodes[messageNode].short}`, message, [], 1);
+    // A fault run is scripted, and says so; the GR cut runs the real model, so it does not.
+    const mode = run ? `${strings.yourRun} · ${strings.simulated}` : strings.yourRun;
+    if (message) caption(v, messageNode, `${mode} · ${v.nodes[messageNode].num} · ${v.nodes[messageNode].short}`, message, [], 1);
     else caption(v, events[i].node, kickerOf(v, i), events[i].caption[lang], [], 1);
   }
 
@@ -735,7 +782,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
         started = true;
         track({ action: 'replay' });
       }
-      if (s.mode === 'replay' && !rm) s = tick(s, v.dt, F.length);
+      if (s.mode === 'replay' && !rm && !paused) s = tick(s, v.dt, F.length);
       if (run && !run.done) {
         run.ms += v.dt;
         if (run.ms >= RUN_MS) finishRun();
@@ -744,7 +791,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
       if (s.mode === 'replay' && !landed.endsWith(String(index))) landed = '';
       paint();
       tile = null;
-      if (s.mode === 'replay') drawShot(v, index, rm ? 0.999 : progress);
+      if (s.mode === 'replay') drawShot(v, index, rm || still ? 0.999 : progress);
       else drawLive(v, index);
       return !rm;
     },
@@ -754,11 +801,12 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
       if (type === 'down') {
         if (!tile || x < tile.x - 10 || x > tile.x + tile.w + 10 || y < tile.y - 10 || y > tile.y + tile.h + 10) return false;
         stroke = [];
+        grab = { ...tile };
       }
-      if (!stroke || !tile) return false;
+      if (!stroke || !grab) return false;
       const pt: [number, number] = [
-        Math.max(0, Math.min(1, (x - tile.x) / tile.w)),
-        Math.max(0, Math.min(1, (y - tile.y) / tile.h)),
+        Math.max(0, Math.min(1, (x - grab.x) / grab.w)),
+        Math.max(0, Math.min(1, (y - grab.y) / grab.h)),
       ];
       if (type !== 'up') {
         const prev = stroke[stroke.length - 1];
@@ -769,6 +817,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
       }
       const st = [...stroke, pt];
       stroke = null;
+      grab = null;
       const reach = st.reduce((n, q, k) => (k ? n + Math.hypot(q[0] - st[k - 1][0], q[1] - st[k - 1][1]) : 0), 0);
       if (reach >= 0.15) cutGR(st);
       else api.redraw();
@@ -776,12 +825,20 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     },
   };
 
+  // Explore takes the canvas: the film and the idle clock stop, and come back as they were.
   function attach() {
     if (window.getIsoDomain?.() !== 'yagni') window.setIsoDomain('yagni');
     camKey = '';
+    attached = true;
+    s = { ...s, idleMs: 0 };
+    syncIdle();
     api.setGuide(guide);
+    paint();
   }
   function detach() {
+    attached = false;
+    syncIdle();
+    paint();
     api.setGuide(null);
     window.resetIsoCamera?.();
   }
@@ -792,11 +849,15 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   return {
     attach,
     detach,
-    /** A take-over control the visitor used before this chunk had loaded. */
-    handle(el: Element) {
+    /** A control (or a timeline click at clientX `x`) the visitor used before this chunk had loaded. */
+    handle(el: Element, x = 0) {
       if (el.matches('[data-sim-fault]')) fault();
       else if (el.matches('[data-sim-judge]')) judge();
       else if (el.matches('[data-replay-resume]')) back();
+      else if (el.matches('[data-replay-pause]')) setPaused(!paused);
+      else if (el.matches('[data-replay-timeline]')) scrub(stopAt(x));
     },
+    /** A timeline key pressed before this chunk had loaded. */
+    key,
   };
 }

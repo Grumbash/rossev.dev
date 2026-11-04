@@ -753,10 +753,8 @@ a {
   color: #C8FF00;
 }
 
-.replay-label:hover,
-.replay-label:focus-visible,
-.iso-story-case:hover,
-.iso-story-case:focus-visible {
+.iso-story a:hover,
+.iso-story a:focus-visible {
   color: #FFFFFF;
 }
 
@@ -807,16 +805,52 @@ a {
   color: #FFFFFF;
 }
 
-/* Timeline: one stop per event, evenly spaced, each with its real time; a click or drag scrubs. */
+/* Pause, then the timeline: one stop per event, evenly spaced, each with its real time; a click or
+   drag scrubs. */
+.replay-bar {
+  display: flex;
+  background: #0F1118;
+  border-top: 2px solid #232736;
+}
+
+.replay-pause {
+  flex-shrink: 0;
+  width: 40px;
+  border: 0;
+  border-right: 2px solid #232736;
+  background: #1A1D28;
+  color: #E2E0D8;
+  cursor: pointer;
+}
+
+.replay-pause span::before {
+  content: '❚❚';
+}
+
+.replay-pause[aria-pressed="true"] span::before {
+  content: '▶';
+  color: #C8FF00;
+}
+
+/* Resume floats over the bottom of the canvas: appearing moves nothing. */
+.iso-resume {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  translate: -50%;
+  z-index: 7;
+}
+
 .replay-timeline {
+  flex: 1;
   display: flex;
   padding: 6px 8px 4px;
-  background: linear-gradient(#3A3F50, #3A3F50) 50% 13px / calc(100% - 64px) 2px no-repeat, #0F1118;
-  border-top: 2px solid #232736;
+  background: linear-gradient(#3A3F50, #3A3F50) 50% 13px / calc(100% - 64px) 2px no-repeat;
   cursor: pointer;
   touch-action: pan-y;
 }
 
+.replay-pause:focus-visible,
 .replay-timeline:focus-visible {
   outline: 3px solid var(--lime);
   outline-offset: -3px;
@@ -839,10 +873,6 @@ a {
   height: 12px;
   border: 2px solid #3A3F50;
   background: #1A1D28;
-}
-
-.replay-stop.is-past i {
-  background: #3A3F50;
 }
 
 .replay-stop.is-current {
@@ -871,7 +901,8 @@ a {
 .is-exploring .replay-badge,
 .is-exploring [data-sim-fault],
 .is-exploring [data-sim-judge],
-.is-exploring .replay-timeline {
+.is-exploring .iso-resume,
+.is-exploring .replay-bar {
   display: none;
 }
 
