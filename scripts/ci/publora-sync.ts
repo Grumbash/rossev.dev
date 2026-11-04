@@ -271,7 +271,9 @@ export function checkEntry(p: BlogPost): string[] {
     if (a.body === undefined) e.push('url: none, so the post needs its full text in body');
   } else if (!isLinkedinUrl(a.url) || !id) e.push('url: not a LinkedIn post url with an activity id');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(a.published ?? '')) e.push('published: not YYYY-MM-DD');
-  else if (id && a.published !== publishedDate(id)) e.push(`published: ${a.published} but the LinkedIn id says ${publishedDate(id)}`);
+  // A post first published here keeps its own date when its LinkedIn copy comes later.
+  else if (id && a.published !== publishedDate(id) && !(a.body && a.published < publishedDate(id)))
+    e.push(`published: ${a.published} but the LinkedIn id says ${publishedDate(id)}`);
   if (!CATEGORIES.includes(a.category)) e.push('category: unknown');
   if (!okPair(a.categoryLabel) || a.categoryLabel.en !== a.categoryLabel.en.toUpperCase() || !isRussian(a.categoryLabel.ru)) e.push('categoryLabel: needs an UPPERCASE en and a Russian ru');
   if (!Number.isInteger(a.originalMinutes) || a.originalMinutes < 1 || a.originalMinutes > 60) e.push('originalMinutes: 1-60');
@@ -329,6 +331,18 @@ export function buildEntry(o: { draft: Draft; source: string; url: string; activ
     body: { en: o.source, ru: d.bodyRu.trim() },
     color,
   };
+}
+
+const POST_LINK = /rossev\.dev\/(?:ru\/)?writing\/([a-z0-9]+(?:-[a-z0-9]+)*)/g;
+
+/** Index of the post first published here (no url yet) that a LinkedIn post links to, or -1: that
+ * LinkedIn post is the post's copy, so it gets the url instead of becoming a second entry. */
+export function sitePostLinkedFrom(content: string, posts: BlogPost[]): number {
+  for (const m of String(content ?? '').matchAll(POST_LINK)) {
+    const i = posts.findIndex((p) => !p.url && p.slug === m[1]);
+    if (i >= 0) return i;
+  }
+  return -1;
 }
 
 // --- the prompt ------------------------------------------------------------------------------
@@ -391,7 +405,7 @@ export type Skipped = { url: string; reason: string };
 const usd = (n: number) => `$${n.toFixed(n >= 0.001 ? 4 : 6)}`;
 
 /** Markdown for the PR: what was added, where, what it cost, what was skipped and why. */
-export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; previousTitles?: Map<string, string>; skipped: Skipped[]; model: string; costUsd: number; waiting?: number }) {
+export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; linked?: BlogPost[]; previousTitles?: Map<string, string>; skipped: Skipped[]; model: string; costUsd: number; waiting?: number }) {
   const out = ['LinkedIn posts from Publora, drafted for the site. Read the EN brief and the RU adaptation on the preview before merging.', ''];
   if (o.added.length) out.push(`**New posts (${o.added.length})**`, '');
   for (const p of o.added)
@@ -409,6 +423,10 @@ export function prBody(o: { added: BlogPost[]; filled?: BlogPost[]; previousTitl
       const was = o.previousTitles?.get(p.id);
       if (was && was !== p.title.en) out.push(`  - was: ${sanitize(was, 200)}`);
     }
+  }
+  if (o.linked?.length) {
+    out.push('', `**LinkedIn copies of posts first published here (${o.linked.length})**: the LinkedIn post links to the site's post, so that post gets its url (an "Also on LinkedIn" button) instead of a second entry. Nothing else changes.`, '');
+    for (const p of o.linked) out.push(`- **${sanitize(p.title.en, 200)}** · \`/writing/${p.slug}/\` · ${p.url}`);
   }
   if (o.waiting) out.push('', `${o.waiting} more post(s) did not fit this run's time budget; they come in the first run after this PR is merged.`);
   out.push('', `Model: \`${sanitize(o.model, 100)}\` · cost ${usd(o.costUsd)}`);
@@ -485,6 +503,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     const ignored = new Set((deps.readIgnored?.() ?? []).map(String));
     const fresh = new Map<string, Target>();
     const stubs = new Map<string, Target>(); // on the site without the full text yet
+    const copies = new Map<string, Target>(); // LinkedIn copies of posts first published here
     const bodyless = new Set(posts.filter((p) => !p.body).map((p) => activityId(p.url)));
     let known = 0;
     let old = 0;
@@ -528,11 +547,12 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
         known++;
         if (bodyless.has(t.activityId)) stubs.set(t.activityId, t);
       } else if (ignored.has(t.activityId)) skippedByList++;
+      else if (sitePostLinkedFrom(t.content, posts) >= 0) copies.set(t.activityId, t);
       else if (publishedDate(t.activityId) < since) old++;
       else fresh.set(t.activityId, t);
     }
     if (noId) log(`${noId} published LinkedIn post(s) without a LinkedIn id in postedId; Publora's format may have changed.`);
-    if (!fresh.size && !stubs.size) {
+    if (!fresh.size && !stubs.size && !copies.size) {
       log(
         `0 new posts (${groups.size} group(s) listed, ${backfilled} from the backfill, ${known} already on the site, ${old} before ${since}, ${skippedByList} on the ignore list, ${failed} unreadable).`,
       );
@@ -639,8 +659,26 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
     if (waiting) log(`${waiting} more post(s) did not fit the time budget; they come in the first run after this PR is merged (next run).`);
 
-    const changed = added.length + filled.length;
-    log(`${model}, ${added.length} added, ${filled.length} given full text, ${skipped.length} skipped, cost ${usd(costUsd)}`);
+    // LinkedIn copies of posts first published here: the post gets the url, nothing else changes.
+    // No model call, so no budget. Oldest first, so a post linked twice keeps its first copy.
+    const linked: BlogPost[] = [];
+    for (const t of [...copies.values()].sort(byAge)) {
+      const i = sitePostLinkedFrom(t.content, posts);
+      if (i < 0) continue;
+      const entry: BlogPost = { ...posts[i], url: t.url };
+      const problems = checkEntry(entry);
+      if (problems.length) {
+        skipped.push({ url: t.url, reason: `LinkedIn copy: ${problems.join('; ')}` });
+        log(`skip LinkedIn copy ${t.url}: ${problems.join('; ')}`);
+        continue;
+      }
+      posts = posts.map((p, j) => (j === i ? entry : p));
+      linked.push(entry);
+      log(`LinkedIn copy for ${entry.id} /writing/${entry.slug}/: ${t.url}`);
+    }
+
+    const changed = added.length + filled.length + linked.length;
+    log(`${model}, ${added.length} added, ${filled.length} given full text, ${linked.length} linked to their LinkedIn copy, ${skipped.length} skipped, cost ${usd(costUsd)}`);
     if (!changed) {
       log('0 new posts added; the skipped ones are retried on the next run.');
       output(0);
@@ -648,15 +686,16 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
     // The PR body first: if any write fails, posts.json is left as it was.
     const newestFirst = [...added].reverse();
-    if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ added: newestFirst, filled, previousTitles, skipped, model, costUsd, waiting }));
+    if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ added: newestFirst, filled, linked, previousTitles, skipped, model, costUsd, waiting }));
     deps.writeFile(POSTS_JSON, JSON.stringify(posts, null, 2) + '\n');
     const what = [
       added.length && `${added.length} LinkedIn post${added.length === 1 ? '' : 's'}`,
       filled.length && `full text for ${filled.length} post${filled.length === 1 ? '' : 's'}`,
+      linked.length && `LinkedIn links for ${linked.length} post${linked.length === 1 ? '' : 's'}`,
     ].filter(Boolean);
-    // `added` is every entry this run changed: new posts plus posts given their full text.
+    // `added` is every entry this run changed: new posts, posts given their full text, posts linked.
     output(changed, { title: `Add ${what.join(' and ')} from Publora` });
-    return { status: 'added' as const, added: added.length, filled: filled.length, slugs: newestFirst.map((p) => p.slug), skipped, costUsd };
+    return { status: 'added' as const, added: added.length, filled: filled.length, linked: linked.length, slugs: newestFirst.map((p) => p.slug), skipped, costUsd };
   } catch (e) {
     return fail(`error: ${why(e)}`);
   }
