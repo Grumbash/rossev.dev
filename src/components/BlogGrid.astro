@@ -40,7 +40,7 @@ const d = t(lang);
           data-track-id={post.id}
           hx-target="#post-reader-slot"
           hx-swap="innerHTML transition:true"
-          onclick="window.openBrief && window.openBrief(this, event)"
+          data-action="openBrief"
         >
           {d.writing.readBrief}
         </a>
