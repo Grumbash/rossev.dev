@@ -10,6 +10,19 @@ Built in two evenings with Gemini Argon. Astro 5, TypeScript, HTMX for the parti
 
 The GR monogram at the top of "Beyond the CV" is a neural cellular automaton ([Mordvintsev et al., 2020](https://distill.pub/2020/growing-ca/)) trained from scratch by `scripts/nca/train.py` (PyTorch, run it in a throwaway venv; see the header) and run in a Web Worker by `src/scripts/nca/`. The page only ships a ~0.4 KB loader up front; the model code and float16 weights (`public/nca/gr.bin`) load when the block nears the screen, and never on Save-Data or 2G, where a static SVG of the monogram stays. `bun test tests/nca.test.ts` checks the shipped weights still grow and heal.
 
+In the hero topology's take-over, a fault you inject runs on a toy service (`src/scripts/policy/service.ts`: a queue, four nodes, a deploy pipeline with the judge) kept alive by a small learned policy, an MLP of about a thousand parameters (`public/policy/policy.bin`, float16, ~2 KB, fetched only when you inject a fault). It sees only the noisy dashboard. It was trained by imitation from a teacher that sees the hidden fault (`src/scripts/policy/expert.ts`), then DAgger, and has to beat doing nothing and match or beat an on-call runbook frozen before training (`src/scripts/policy/rules.ts`). With the judge off a bad deploy still ships, and an overload beyond capacity still fails. `bun test tests/policy.test.ts` checks all of it.
+
+### Retrain the policy
+
+```bash
+uv venv /tmp/nca-venv && VIRTUAL_ENV=/tmp/nca-venv uv pip install torch numpy
+/tmp/nca-venv/bin/python scripts/policy/train.py                 # --device auto: cuda if present, else cpu
+/tmp/nca-venv/bin/python scripts/policy/train.py --device mps    # or cpu / cuda; --hidden 32,32 for a bigger net
+bun scripts/policy/rollouts.ts table                             # noop / runbook / teacher baselines
+```
+
+`scripts/policy/train.py` exports teacher rollouts with `bun scripts/policy/rollouts.ts export`, clones them, then runs DAgger rounds (the policy drives, the teacher labels every state it visits, the data is aggregated and the policy retrained). It scores each checkpoint with `rollouts.ts score` on validation seeds and overwrites `public/policy/policy.bin` and `tests/fixtures/policy-parity.json` only when the best one beats the shipped weights. About two minutes on a laptop CPU.
+
 `/how-its-built/` shows every merged PR of this repo with its receipts: the test committed red first, what was caught before merge, what I decided. It renders `src/data/build-story.json`, which `bun run build-story` makes from `gh pr view` plus the hand-written `src/data/build-story-highlights.json` (one entry per PR; the script refuses to write if a PR has no entry, no red test and no reason, untranslated copy, or a finding that doesn't point at that PR or one of its commits). The JSON records `throughSha`, the main commit it was generated through, and `bun test` only requires the PRs merged up to that commit. So rerun `bun run build-story` after merges and commit the JSON: a stale page doesn't turn main red, it just lags. Regenerating keeps any `ciVerdicts` CI has appended, and the script fails if a red-test commit touches anything outside `tests/`. It is not part of `bun run build`, because Vercel has no GitHub token.
 
 ## Run it
@@ -109,7 +122,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `skill_click` / `toolbox_copy` | `skill` / none | toolbox |
 | `post_open` / `post_linkedin` | `id` | READ BRIEF / LinkedIn original |
 | `post_filter` | `filter` (all, ai, leadership, systems, delivery) | writing filter tab |
-| `topology_interact` | `action`, `outcome` (free play behind Explore: domain, fault, xray, reset, packet, stratum, step, blueprint; drag = horizontal drag on the canvas; case = YAGNI case link, play = phone Play, explore = Explore toggle; the PR #11 replay: replay = the film first started, takeover = the visitor took over, resume = the film came back, scrub = a timeline stop used, outcome = a result landed, with `outcome` caught, shipped, healed or unhealed) | topology, once per action (and outcome) per view |
+| `topology_interact` | `action`, `outcome` (free play behind Explore: domain, fault, xray, reset, packet, stratum, step, blueprint; drag = horizontal drag on the canvas; case = YAGNI case link, play = phone Play, explore = Explore toggle; the PR #11 replay: replay = the film first started, takeover = the visitor took over, resume = the film came back, scrub = a timeline stop used, outcome = a result landed, with `outcome` caught, shipped, recovered, failed, healed or unhealed; recovered and failed are the learned policy's runs on the toy service) | topology, once per action (and outcome) per view |
 | `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset, case = bridge link to the YAGNI case) | GR monogram in Beyond the CV, once per action per view |
 | `lang_switch` / `theme_switch` | `to` | EN/RU link to the same page in the other locale (`/` ↔ `/ru/`), THEME |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |

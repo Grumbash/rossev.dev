@@ -5,6 +5,10 @@
 //   bun scripts/policy/rollouts.ts table
 //       Recovery rate / mean return / mean ticks to recover for noop, the runbook (rules.ts) and the
 //       teacher (expert.ts) on the evaluation seeds 1000–1099, judge on, plus bad_deploy judge off.
+//   bun scripts/policy/rollouts.ts score --policy <weights.bin> [--seeds 1000-1099]
+//       One JSON object on stdout: per scenario (visitor faults judge on, bad_deploy judge off,
+//       overload) the Score of the policy and of the runbook. scripts/policy/train.py uses it to pick
+//       and gate checkpoints.
 //   bun scripts/policy/rollouts.ts export --out <file.jsonl> [--seeds 0-299] [--policy <weights.bin>] [--beta 0.5] [--round 1]
 //       Without --policy: the teacher drives (behaviour cloning data).
 //       With --policy (DAgger): the learned policy drives (with probability --beta the teacher does,
@@ -58,6 +62,33 @@ function table() {
   }
 }
 
+async function loadPolicy(path: string) {
+  const { act, decodePolicy } = await import('../../src/scripts/policy/net');
+  const b = readFileSync(path);
+  const policy = decodePolicy(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
+  if (policy.inputs !== OBS_SIZE) throw new Error(`policy expects ${policy.inputs} inputs, OBS_SIZE is ${OBS_SIZE}`);
+  return { policy, act };
+}
+
+async function score() {
+  const weights = flag('policy');
+  if (!weights) throw new Error('--policy <weights.bin> is required');
+  const seeds = range(flag('seeds', '1000-1099')!);
+  const { policy, act } = await loadPolicy(weights);
+  const learned: Controller = { name: 'policy', decide: (_s, obs) => act(policy, obs).action };
+  const rows: [string, Scenario, boolean][] = [
+    ['latency', 'latency', true],
+    ['node_down', 'node_down', true],
+    ['surge', 'surge', true],
+    ['bad_deploy', 'bad_deploy', true],
+    ['bad_deploy_off', 'bad_deploy', false],
+    ['overload', 'overload', true],
+  ];
+  const out: Record<string, unknown> = {};
+  for (const [key, sc, judge] of rows) out[key] = { policy: evaluate(learned, sc, seeds, { judge }), rules: evaluate(rules, sc, seeds, { judge }), noop: evaluate(noop, sc, seeds, { judge }), expert: evaluate(teacher, sc, seeds, { judge }) };
+  console.log(JSON.stringify(out));
+}
+
 async function exportRollouts() {
   const out = flag('out');
   if (!out) throw new Error('--out <file.jsonl> is required');
@@ -68,10 +99,7 @@ async function exportRollouts() {
   const round = Number(flag('round', '1'));
   let driver: (seed: number) => Controller = () => teacher;
   if (weights) {
-    const { act, decodePolicy } = await import('../../src/scripts/policy/net');
-    const b = readFileSync(weights);
-    const policy = decodePolicy(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
-    if (policy.inputs !== OBS_SIZE) throw new Error(`policy expects ${policy.inputs} inputs, OBS_SIZE is ${OBS_SIZE}`);
+    const { policy, act } = await loadPolicy(weights);
     driver = (seed) => {
       const coin = mulberry32(seed * 7919 + round * 104729);
       return { name: 'dagger', decide: (s, obs) => (coin() < beta ? expert(s) : act(policy, obs).action) };
@@ -94,4 +122,5 @@ async function exportRollouts() {
 
 if (args[0] === 'table') table();
 else if (args[0] === 'export') await exportRollouts();
+else if (args[0] === 'score') await score();
 else console.log('usage: bun scripts/policy/rollouts.ts table | export --out <file.jsonl> [--seeds 0-299] [--policy <weights.bin> --beta 0.5 --round 1]');
