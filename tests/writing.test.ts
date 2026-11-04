@@ -146,6 +146,10 @@ describe('post data', () => {
     expect(ldFull.url).toBe(url);
   });
 
+  test('JSON-LD cannot close its <script>: model-written titles go through it', () => {
+    expect(read('src/layouts/Base.astro')).toMatch(/JSON\.stringify\(jsonLd\)\.replace\(\/<\/g, '\\\\u003c'\)/);
+  });
+
   test('the templates take those labels and the JSON-LD from the shared helpers', () => {
     expect(read('src/components/BlogGrid.astro')).toContain('cardReadTime(post)');
     expect(read('src/components/BlogGrid.astro')).not.toMatch(/MIN ORIGINAL/);
