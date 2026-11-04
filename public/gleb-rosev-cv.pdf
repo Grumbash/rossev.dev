@@ -4,646 +4,942 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<< /Type /Pages /Kids [7 0 R 15 0 R] /Count 2 >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 4 0 R /F2 5 0 R /F3 6 0 R >> >> /Contents 7 0 R >>
-endobj
-4 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
 endobj
-5 0 obj
+4 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
 endobj
-6 0 obj
+5 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>
 endobj
+6 0 obj
+<< /Title (Gleb Rosev „ Founding Engineer, AI Agents @ YAGNI) /Author (Gleb Rosev) /Subject (Canary #42: this CV, the site and /llms.txt are compiled from one file, src/data/profile.ts, so they never drift. If you read this far, you found the canary „ say "canary #42" when we talk.) /Keywords (Gleb Rosev, Founding Engineer, YAGNI, yagni.app, Sully.ai, AI Agents, Agent Benchmarks, Voice AI, TypeScript, Canary #42) /Creator (Programmatic TypeScript CV Compiler - src/data/profile.ts) /Producer (rossev.dev CV compiler) >>
+endobj
 7 0 obj
-<< /Length 13053 >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R /Annots [9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R] >>
+endobj
+8 0 obj
+<< /Length 8057 >>
 stream
 0.973 0.965 0.945 rg
 0.00 0.00 595.28 841.89 re f
-0.040 0.040 0.050 rg
-34.00 753.89 527.28 66.00 re f
+0.050 0.050 0.070 rg
+46.00 725.89 503.28 82.00 re f
 0.784 1.000 0.000 rg
-34.00 753.89 8.00 66.00 re f
+46.00 725.89 6.00 82.00 re f
 BT
-/F2 19.00 Tf
-0.960 0.950 0.920 rg
-52.00 797.89 Td
+/F2 22.00 Tf
+0.973 0.965 0.945 rg
+66.00 777.89 Td
 (GLEB ROSEV) Tj
 ET
+BT
+/F1 10.50 Tf
 0.784 1.000 0.000 rg
-184.00 796.89 214.00 15.00 re f
-BT
-/F3 8.50 Tf
-0.040 0.040 0.040 rg
-189.00 800.89 Td
-(FOUNDING ENGINEER, AI AGENTS) Tj
+66.00 759.89 Td
+(Founding Engineer, AI Agents · YAGNI \(yagni.app\) · Tbilisi, Georgia) Tj
 ET
 BT
-/F1 8.60 Tf
-0.000 0.898 1.000 rg
-52.00 782.89 Td
-(YAGNI \(yagni.app\)  |  Making AI agent teams dependable in production, not just impressive in a demo.) Tj
+/F1 8.50 Tf
+0.880 0.880 0.860 rg
+66.00 740.89 Td
+(rossevgleb@gmail.com) Tj
 ET
 BT
-/F3 6.80 Tf
-0.880 0.880 0.880 rg
-52.00 765.89 Td
-(rossevgleb@gmail.com  |  +995 591 90 81 80  |  linkedin.com/in/rossev  |  github.com/Grumbash  |  Tbilisi, Georgia) Tj
+/F1 8.50 Tf
+0.550 0.550 0.580 rg
+159.45 740.89 Td
+(·) Tj
 ET
-0.910 0.890 0.850 rg
-34.00 724.89 527.28 15.00 re f
+BT
+/F1 8.50 Tf
+0.880 0.880 0.860 rg
+166.81 740.89 Td
+(+995 591 90 81 80) Tj
+ET
+BT
+/F1 8.50 Tf
+0.550 0.550 0.580 rg
+242.94 740.89 Td
+(·) Tj
+ET
+BT
+/F1 8.50 Tf
+0.880 0.880 0.860 rg
+250.31 740.89 Td
+(linkedin.com/in/rossev) Tj
+ET
+BT
+/F1 8.50 Tf
+0.550 0.550 0.580 rg
+338.91 740.89 Td
+(·) Tj
+ET
+BT
+/F1 8.50 Tf
+0.880 0.880 0.860 rg
+346.27 740.89 Td
+(github.com/Grumbash) Tj
+ET
+BT
+/F1 8.50 Tf
+0.550 0.550 0.580 rg
+434.89 740.89 Td
+(·) Tj
+ET
+BT
+/F1 8.50 Tf
+0.880 0.880 0.860 rg
+442.25 740.89 Td
+(rossev.dev) Tj
+ET
 0.784 1.000 0.000 rg
-34.00 724.89 6.00 15.00 re f
-1.00 w
-0.040 0.040 0.040 RG
-34.00 724.89 527.28 15.00 re S
+46.00 700.89 7.00 7.00 re f
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+59.00 699.89 Td
+(SUMMARY) Tj
+ET
+0.80 w
+0.070 0.070 0.080 RG
+46.00 694.89 m 549.28 694.89 l S
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 679.89 Td
+(I build software systems where reliability matters, and I make AI agent teams dependable in production, not just) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 666.49 Td
+(impressive in a demo. Now: Founding Engineer at YAGNI \(yagni.app\), working with the founders on AI agent teams) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 653.09 Td
+(\(PM, Builder, Reviewer\) that take work from a proposal to a merged GitHub PR under human-approved plans. Before) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 639.69 Td
+(that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 626.29 Td
+(engineering management, plus a medical degree. How I work: I build with AI agents every day — I plan, delegate to) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 612.89 Td
+(agents, review their output with a second "judge" agent, and keep the human decision where it matters.) Tj
+ET
+0.784 1.000 0.000 rg
+46.00 588.49 7.00 7.00 re f
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+59.00 587.49 Td
+(EXPERIENCE) Tj
+ET
+0.80 w
+0.070 0.070 0.080 RG
+46.00 582.49 m 549.28 582.49 l S
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+46.00 567.49 Td
+(Founding Engineer, AI Agents) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+469.74 567.49 Td
+(Nov 2026 – Present) Tj
+ET
+BT
+/F2 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 553.49 Td
+(YAGNI \(yagni.app\)) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+137.40 553.49 Td
+(Tbilisi, Georgia · Remote) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+46.00 540.49 Td
+(Early-stage US startup building named AI agent teams that take engineering work from proposal to merged GitHub pull) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+46.00 528.49 Td
+(request under human-approved plans.) Tj
+ET
 BT
 /F2 8.50 Tf
-0.040 0.040 0.040 rg
-46.00 729.09 Td
-(01 // EXECUTIVE SUMMARY & OPERATING MODEL) Tj
+0.360 0.360 0.380 rg
+46.00 516.49 Td
+(Founding Team · Agent Benchmarks · Multi-Tenant Isolation · Self-Healing Syncs) Tj
 ET
 BT
-/F1 8.20 Tf
-0.080 0.080 0.080 rg
-38.00 716.89 Td
-(I build software systems where reliability matters, and I make AI agent teams dependable in production, not) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 500.49 Td
+(•) Tj
 ET
 BT
-/F1 8.20 Tf
-0.080 0.080 0.080 rg
-38.00 706.39 Td
-(just impressive in a demo. Now: Founding Engineer at YAGNI \(yagni.app\), working with the founders on AI) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 500.49 Td
+(Tenant isolation: tenant-scoped query guards and sandboxed code execution.) Tj
 ET
 BT
-/F1 8.20 Tf
-0.080 0.080 0.080 rg
-38.00 695.89 Td
-(agent teams \(PM, Builder, Reviewer\) that take work from a proposal to a merged GitHub PR under) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 485.59 Td
+(•) Tj
 ET
 BT
-/F1 8.20 Tf
-0.080 0.080 0.080 rg
-38.00 685.39 Td
-(human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 485.59 Td
+(Connector backfills made self-healing: stuck-cursor recovery, progress tracking and hard caps for long syncs of large) Tj
 ET
 BT
-/F1 8.20 Tf
-0.080 0.080 0.080 rg
-38.00 674.89 Td
-(across full-stack, mobile, cloud and engineering management, plus a medical degree. How I work: I build with) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 472.19 Td
+(workspaces.) Tj
 ET
 BT
-/F1 8.20 Tf
-0.080 0.080 0.080 rg
-38.00 664.39 Td
-(AI agents every day -- I plan, delegate to agents, review their output with a second "judge" agent, and keep) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 457.29 Td
+(•) Tj
 ET
 BT
-/F1 8.20 Tf
-0.080 0.080 0.080 rg
-38.00 653.89 Td
-(the human decision where it matters.) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 457.29 Td
+(Code-review agent reliability: fixed ticket-key collisions between YAGNI and external trackers that sent the reviewer) Tj
 ET
-0.910 0.890 0.850 rg
-34.00 623.39 527.28 15.00 re f
-0.000 0.898 1.000 rg
-34.00 623.39 6.00 15.00 re f
-1.00 w
-0.040 0.040 0.040 RG
-34.00 623.39 527.28 15.00 re S
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 443.89 Td
+(to the wrong issue.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 428.99 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 428.99 Td
+(Agent benchmarks: realistic engineering task suites that show whether a prompt, model or harness change makes) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 415.59 Td
+(agents better or worse.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 400.69 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 400.69 Td
+(Risk radar: flags stalled customer runs before the customer reports them.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 385.79 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 385.79 Td
+(Self-improving loop \(experimental\): a meta-agent reads failed runs, isolates the cause and drafts a fix for the team to) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 372.39 Td
+(review.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 357.49 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 357.49 Td
+(Monorepo build chain reduced to one command for fresh checkouts, worktrees and CI.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 342.59 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 342.59 Td
+(Technical point of contact for pilot customers: demos, debugging live runs, turning feedback into engineering work.) Tj
+ET
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+46.00 318.69 Td
+(Staff Harness Engineer, AI Voice Systems) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+464.22 318.69 Td
+(Sep 2025 – Oct 2026) Tj
+ET
+BT
+/F2 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 304.69 Td
+(Sully.ai) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+87.27 304.69 Td
+(Dubai, UAE) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+46.00 291.69 Td
+(AI receptionist platform for healthcare: voice and text agents for scheduling, care coordination and clinic operations. Sully.ai) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+46.00 279.69 Td
+(serves 400+ healthcare organizations.) Tj
+ET
 BT
 /F2 8.50 Tf
-0.040 0.040 0.040 rg
-46.00 627.59 Td
-(02 // EXPERIENCE & PRODUCTION SYSTEMS IMPACT) Tj
+0.360 0.360 0.380 rg
+46.00 267.69 Td
+(15s to 0s Dead Air at Pickup · MENA Launch · Real-Time Voice AI) Tj
 ET
-0.040 0.040 0.040 rg
-36.00 613.39 4.00 10.00 re f
 BT
-/F2 9.00 Tf
-0.040 0.040 0.040 rg
-44.00 615.39 Td
-(Founding Engineer, AI Agents  @  YAGNI \(yagni.app\)) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 251.69 Td
+(•) Tj
 ET
 BT
-/F3 6.80 Tf
-0.250 0.250 0.250 rg
-367.52 615.39 Td
-(Nov 2026 -- Present | Tbilisi, Georgia | Remote) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 251.69 Td
+(Led core engineering for the MENA launch: UAE infrastructure, Azure Blob Storage support, regional configuration) Tj
 ET
 BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 604.89 Td
-(Early-stage US startup building named AI agent teams that take engineering work from proposal to merged GitHub) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 238.29 Td
+(and production readiness.) Tj
 ET
 BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 595.39 Td
-(pull request under human-approved plans. [Founding Team / Agent Benchmarks / Multi-Tenant Isolation / Self-Healing) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 223.39 Td
+(•) Tj
 ET
 BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 585.89 Td
-(Syncs]) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 223.39 Td
+(Removed ~15 s of dead air at pickup on outbound calls: the agent was greeting the caller while the line was still) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 576.39 Td
-(> Tenant isolation: tenant-scoped query guards and sandboxed code execution.) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 209.99 Td
+(ringing.) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 566.99 Td
-(> Connector backfills made self-healing: stuck-cursor recovery, progress tracking and hard caps for long syncs) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 195.09 Td
+(•) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 557.59 Td
-(  of large workspaces.) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 195.09 Td
+(Made agent dispatch reliable on LiveKit: retry-and-verify, no more duplicate agents in one call, no more silent calls.) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 548.19 Td
-(> Code-review agent reliability: fixed ticket-key collisions between YAGNI and external trackers that sent the) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 180.19 Td
+(•) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 538.79 Td
-(  reviewer to the wrong issue.) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 180.19 Td
+(Designed UAE audio-residency guardrails so TTS and STT fallbacks stay within approved regional providers instead) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 529.39 Td
-(> Agent benchmarks: realistic engineering task suites that show whether a prompt, model or harness change) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 166.79 Td
+(of silently routing elsewhere.) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 519.99 Td
-(  makes agents better or worse.) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 151.89 Td
+(•) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 510.59 Td
-(> Risk radar: flags stalled customer runs before the customer reports them.) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 151.89 Td
+(Built patient-data validation for outbound campaigns: local phone formats, customer-specific schemas, clinic rules.) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 501.19 Td
-(> Self-improving loop \(experimental\): a meta-agent reads failed runs, isolates the cause and drafts a fix for) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 136.99 Td
+(•) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 491.79 Td
-(  the team to review.) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 136.99 Td
+(Built high-volume stress testing with headless LiveKit participants, Loki and Mimir validation, and runtime health) Tj
 ET
 BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 482.39 Td
-(> Monorepo build chain reduced to one command for fresh checkouts, worktrees and CI.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 472.99 Td
-(> Technical point of contact for pilot customers: demos, debugging live runs, turning feedback into) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 463.59 Td
-(  engineering work.) Tj
-ET
-0.040 0.040 0.040 rg
-36.00 446.69 4.00 10.00 re f
-BT
-/F2 9.00 Tf
-0.040 0.040 0.040 rg
-44.00 448.69 Td
-(Staff Harness Engineer, AI Voice Systems  @  Sully.ai) Tj
-ET
-BT
-/F3 6.80 Tf
-0.250 0.250 0.250 rg
-424.64 448.69 Td
-(Sep 2025 -- Oct 2026 | Dubai, UAE) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 438.19 Td
-(AI receptionist platform for healthcare: voice and text agents for scheduling, care coordination and clinic) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 428.69 Td
-(operations. Sully.ai serves 400+ healthcare organizations. [15s -> 0s Dead Air at Pickup / MENA Launch / Real-Time) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 419.19 Td
-(Voice AI]) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 409.69 Td
-(> Led core engineering for the MENA launch: UAE infrastructure, Azure Blob Storage support, regional) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 400.29 Td
-(  configuration and production readiness.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 390.89 Td
-(> Removed ~15 s of dead air at pickup on outbound calls: the agent was greeting the caller while the line was) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 381.49 Td
-(  still ringing.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 372.09 Td
-(> Made agent dispatch reliable on LiveKit: retry-and-verify, no more duplicate agents in one call, no more) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 362.69 Td
-(  silent calls.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 353.29 Td
-(> Designed UAE audio-residency guardrails so TTS and STT fallbacks stay within approved regional providers) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 343.89 Td
-(  instead of silently routing elsewhere.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 334.49 Td
-(> Built patient-data validation for outbound campaigns: local phone formats, customer-specific schemas, clinic) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 325.09 Td
-(  rules.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 315.69 Td
-(> Built high-volume stress testing with headless LiveKit participants, Loki and Mimir validation, and runtime) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 306.29 Td
-(  health checks; found and fixed the memory cascade behind burst failures.) Tj
-ET
-0.040 0.040 0.040 rg
-36.00 289.39 4.00 10.00 re f
-BT
-/F2 9.00 Tf
-0.040 0.040 0.040 rg
-44.00 291.39 Td
-(Engineering Manager / Senior Full-Stack  @  Kingpin) Tj
-ET
-BT
-/F3 6.80 Tf
-0.250 0.250 0.250 rg
-424.64 291.39 Td
-(Sep 2024 -- Sep 2025 | Dubai, UAE) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 280.89 Td
-(AI-powered multi-tenant B2B SaaS platform for wholesale. [12 Engineers Led / -80% Feedback Analysis Time / Canary) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 271.39 Td
-(Releases]) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 261.89 Td
-(> Led a cross-functional team of up to 12 people while staying active in architecture and code.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 252.49 Td
-(> Delivered multi-tenant catalog/order workflows with ERP/CRM syncs and feature-flagged trunk-based releases.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 243.09 Td
-(> Built an LLM feedback pipeline converting Sales/CS input into product insights \(-80% analysis time\).) Tj
-ET
-0.040 0.040 0.040 rg
-36.00 226.19 4.00 10.00 re f
-BT
-/F2 9.00 Tf
-0.040 0.040 0.040 rg
-44.00 228.19 Td
-(Lead React Native Developer  @  Kernelics) Tj
-ET
-BT
-/F3 6.80 Tf
-0.250 0.250 0.250 rg
-424.64 228.19 Td
-(Feb 2023 -- Sep 2024 | London, UK) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 217.69 Td
-(Product engineering across fintech, crypto, AI & healthcare. [100K+ Downloads / 5 Engineers Led / Unified) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 208.19 Td
-(Monorepo]) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 198.69 Td
-(> Led a 5-person team across web and mobile product delivery in a shared monorepo.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 189.29 Td
-(> Integrated native cryptographic modules into a flagship application with 100,000+ downloads.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 179.89 Td
-(> Hardened CI/CD build pipelines and production runtime stability.) Tj
-ET
-0.040 0.040 0.040 rg
-36.00 162.99 4.00 10.00 re f
-BT
-/F2 9.00 Tf
-0.040 0.040 0.040 rg
-44.00 164.99 Td
-(Frontend Team Lead | RN Manager | Full-Stack  @  BattlePro & ITechArt) Tj
-ET
-BT
-/F3 6.80 Tf
-0.250 0.250 0.250 rg
-363.44 164.99 Td
-(Jan 2018 -- Feb 2023 | New York & New Jersey, US) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 154.49 Td
-(Sports tournament platform, full-stack cloud architectures & technical mentorship. [220ms TTFB \(25->55 SP\) / $10M+) Tj
-ET
-BT
-/F1 7.60 Tf
-0.220 0.220 0.220 rg
-44.00 144.99 Td
-(Raised Arch / 1,500+ Students/Yr]) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 135.49 Td
-(> Owned frontend architecture and hiring for a 5-engineer team at BattlePro; doubled velocity \(25 -> 55 SP\) and) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 126.09 Td
-(  hit 220ms TTFB / 1.7s TTI.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 116.69 Td
-(> Architected a full-stack virtual networking platform at ITechArt that subsequently attracted $10M+ in) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 107.29 Td
-(  investment.) Tj
-ET
-BT
-/F1 7.80 Tf
-0.060 0.060 0.060 rg
-46.00 97.89 Td
-(> Delivered 150+ advanced React/JS lectures at TeachMeSkills; curriculum adopted by 1,500+ students/year.) Tj
-ET
-0.910 0.890 0.850 rg
-34.00 67.99 527.28 15.00 re f
-1.000 0.839 0.000 rg
-34.00 67.99 6.00 15.00 re f
-1.00 w
-0.040 0.040 0.040 RG
-34.00 67.99 527.28 15.00 re S
-BT
-/F2 8.50 Tf
-0.040 0.040 0.040 rg
-46.00 72.19 Td
-(03 // CORE CAPABILITIES & STACK MATRIX) Tj
-ET
-BT
-/F2 7.80 Tf
-0.040 0.040 0.040 rg
-38.00 59.99 Td
-(AI AGENTS & VOICE SYSTEMS: ) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 59.99 Td
-(Agent Teams & Harnesses | Agent Evaluation & Benchmarks | Self-Improving Loops | Sandboxed) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 50.49 Td
-(Code Runners | OpenAI / Claude / Gemini | LiveKit | Twilio | Speechmatics | MCP | RAG) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 40.99 Td
-(Pipelines) Tj
-ET
-BT
-/F2 7.80 Tf
-0.040 0.040 0.040 rg
-38.00 31.49 Td
-(ARCHITECTURE & CLOUD: ) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 31.49 Td
-(Distributed Systems | Multi-Tenant Isolation | Backend Services | GitHub & ERP/CRM) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 21.99 Td
-(Integrations | PostgreSQL | Redis | Kubernetes | Docker | AWS | GCP) Tj
-ET
-BT
-/F2 7.80 Tf
-0.040 0.040 0.040 rg
-38.00 12.49 Td
-(RELIABILITY & OPS: ) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 12.49 Td
-(Risk Radar & Early Warning | Observability | Incident Response | Runtime Diagnostics |) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 2.99 Td
-(Grafana | Loki | Mimir | Trunk-Based Delivery | Canary Releases | Feature Flags) Tj
-ET
-BT
-/F2 7.80 Tf
-0.040 0.040 0.040 rg
-38.00 -6.51 Td
-(FULL-STACK & MOBILE: ) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 -6.51 Td
-(TypeScript | Node.js | NestJS | React | React Native | Next.js | PostgreSQL | MongoDB |) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 -16.01 Td
-(Playwright | Cypress | Jest | Monorepos) Tj
-ET
-BT
-/F2 7.80 Tf
-0.040 0.040 0.040 rg
-38.00 -25.51 Td
-(LEADERSHIP: ) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 -25.51 Td
-(Teams of 5-12 Engineers | Customer Pilots & Demos | Technical Hiring | System Architecture |) Tj
-ET
-BT
-/F1 7.60 Tf
-0.120 0.120 0.120 rg
-182.00 -35.01 Td
-(Mentoring \(150+ Lectures\) | Product Strategy) Tj
-ET
-0.910 0.890 0.850 rg
-34.00 -63.51 527.28 15.00 re f
-1.000 0.333 0.000 rg
-34.00 -63.51 6.00 15.00 re f
-1.00 w
-0.040 0.040 0.040 RG
-34.00 -63.51 527.28 15.00 re S
-BT
-/F2 8.50 Tf
-0.040 0.040 0.040 rg
-46.00 -59.31 Td
-(04 // EDUCATION & LANGUAGES) Tj
-ET
-BT
-/F2 8.10 Tf
-0.040 0.040 0.040 rg
-38.00 -71.51 Td
-(Belarusian State University -- Medicine \(2015 -- 2019\)    |    Languages: English \(C1 Advanced\)  /  Russian \(Native\)) Tj
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 123.59 Td
+(checks; found and fixed the memory cascade behind burst failures.) Tj
 ET
 0.050 0.050 0.070 rg
-34.00 16.00 527.28 22.00 re f
+46.00 20.00 503.28 24.00 re f
 0.784 1.000 0.000 rg
-34.00 16.00 6.00 22.00 re f
+46.00 20.00 6.00 24.00 re f
 BT
-/F3 6.90 Tf
+/F3 7.50 Tf
 0.784 1.000 0.000 rg
-46.00 28.50 Td
-(AUTO-COMPILED FROM SRC/DATA/PROFILE.TS  //  CANARY #42  //  AI CONTEXT: /LLMS.TXT) Tj
+62.00 29.00 Td
+(COMPILED FROM SRC/DATA/PROFILE.TS · AI CONTEXT: ROSSEV.DEV/LLMS.TXT) Tj
 ET
 BT
-/F1 6.50 Tf
-0.750 0.780 0.820 rg
-46.00 20.00 Td
-(One source for this PDF, rossev.dev and /llms.txt. Read this far? You found canary #42: say it when we talk.) Tj
+/F1 7.50 Tf
+0.600 0.620 0.660 rg
+522.68 29.00 Td
+(1 / 2) Tj
 ET
-1.50 w
-0.040 0.040 0.040 RG
-34.00 819.89 m 561.28 819.89 l S
 endstream
 endobj
-8 0 obj
-<< /Title (Gleb Rosev - Founding Engineer, AI Agents @ YAGNI) /Author (Gleb Rosev) /Subject (Canary #42: this CV, the site and /llms.txt are compiled from one file, src/data/profile.ts, so they never drift. If you read this far, you found the canary -- say "canary #42" when we talk.) /Keywords (Gleb Rosev, Founding Engineer, YAGNI, yagni.app, Sully.ai, AI Agents, Agent Benchmarks, Voice AI, TypeScript, Canary #42) /Creator (Programmatic TypeScript CV Compiler - src/data/profile.ts) /Producer (Gleb Rosev Neo-Brutalist PDF Engine v2.0) >>
+9 0 obj
+<< /Type /Annot /Subtype /Link /Rect [66.00 738.76 154.45 747.69] /Border [0 0 0] /A << /S /URI /URI (mailto:rossevgleb@gmail.com) >> >>
+endobj
+10 0 obj
+<< /Type /Annot /Subtype /Link /Rect [250.31 738.76 333.91 747.69] /Border [0 0 0] /A << /S /URI /URI (https://www.linkedin.com/in/rossev) >> >>
+endobj
+11 0 obj
+<< /Type /Annot /Subtype /Link /Rect [346.27 738.76 429.89 747.69] /Border [0 0 0] /A << /S /URI /URI (https://github.com/Grumbash) >> >>
+endobj
+12 0 obj
+<< /Type /Annot /Subtype /Link /Rect [442.25 738.76 483.35 747.69] /Border [0 0 0] /A << /S /URI /URI (https://rossev.dev) >> >>
+endobj
+13 0 obj
+<< /Type /Annot /Subtype /Link /Rect [46.00 551.11 129.40 561.09] /Border [0 0 0] /A << /S /URI /URI (https://yagni.app) >> >>
+endobj
+14 0 obj
+<< /Type /Annot /Subtype /Link /Rect [46.00 302.32 79.27 312.29] /Border [0 0 0] /A << /S /URI /URI (https://www.sully.ai) >> >>
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 16 0 R /Annots [17 0 R 18 0 R 19 0 R] >>
+endobj
+16 0 obj
+<< /Length 7074 >>
+stream
+0.973 0.965 0.945 rg
+0.00 0.00 595.28 841.89 re f
+BT
+/F2 8.50 Tf
+0.070 0.070 0.080 rg
+46.00 803.89 Td
+(Gleb Rosev — CV) Tj
+ET
+BT
+/F1 8.50 Tf
+0.360 0.360 0.380 rg
+508.18 803.89 Td
+(rossev.dev) Tj
+ET
+0.60 w
+0.780 0.760 0.720 RG
+46.00 797.89 m 549.28 797.89 l S
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+46.00 775.89 Td
+(Engineering Manager / Senior Full-Stack) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+462.21 775.89 Td
+(Sep 2024 – Sep 2025) Tj
+ET
+BT
+/F2 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 761.89 Td
+(Kingpin) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+89.36 761.89 Td
+(Dubai, UAE) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+46.00 748.89 Td
+(AI-powered multi-tenant B2B SaaS platform for wholesale.) Tj
+ET
+BT
+/F2 8.50 Tf
+0.360 0.360 0.380 rg
+46.00 736.89 Td
+(12 Engineers Led · -80% Feedback Analysis Time · Canary Releases) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 720.89 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 720.89 Td
+(Led a cross-functional team of up to 12 people while staying active in architecture and code.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 705.99 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 705.99 Td
+(Delivered multi-tenant catalog/order workflows with ERP/CRM syncs and feature-flagged trunk-based releases.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 691.09 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 691.09 Td
+(Built an LLM feedback pipeline converting Sales/CS input into product insights \(-80% analysis time\).) Tj
+ET
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+46.00 667.19 Td
+(Lead React Native Developer) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+462.72 667.19 Td
+(Feb 2023 – Sep 2024) Tj
+ET
+BT
+/F2 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 653.19 Td
+(Kernelics) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+96.77 653.19 Td
+(London, UK) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+46.00 640.19 Td
+(Product engineering across fintech, crypto, AI & healthcare.) Tj
+ET
+BT
+/F2 8.50 Tf
+0.360 0.360 0.380 rg
+46.00 628.19 Td
+(100K+ Downloads · 5 Engineers Led · Unified Monorepo) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 612.19 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 612.19 Td
+(Led a 5-person team across web and mobile product delivery in a shared monorepo.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 597.29 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 597.29 Td
+(Integrated native cryptographic modules into a flagship application with 100,000+ downloads.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 582.39 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 582.39 Td
+(Hardened CI/CD build pipelines and production runtime stability.) Tj
+ET
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+46.00 558.49 Td
+(Frontend Team Lead · RN Manager · Full-Stack) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+464.22 558.49 Td
+(Jan 2018 – Feb 2023) Tj
+ET
+BT
+/F2 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 544.49 Td
+(BattlePro & ITechArt) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+146.90 544.49 Td
+(New York & New Jersey, US) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+46.00 531.49 Td
+(Sports tournament platform, full-stack cloud architectures & technical mentorship.) Tj
+ET
+BT
+/F2 8.50 Tf
+0.360 0.360 0.380 rg
+46.00 519.49 Td
+(220ms TTFB \(25 to 55 SP\) · $10M+ Raised Arch · 1,500+ Students/Yr) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 503.49 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 503.49 Td
+(Owned frontend architecture and hiring for a 5-engineer team at BattlePro; doubled velocity \(25 to 55 SP\) and hit) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 490.09 Td
+(220ms TTFB / 1.7s TTI.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 475.19 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 475.19 Td
+(Architected a full-stack virtual networking platform at ITechArt that subsequently attracted $10M+ in investment.) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+48.00 460.29 Td
+(•) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 460.29 Td
+(Delivered 150+ advanced React/JS lectures at TeachMeSkills; curriculum adopted by 1,500+ students/year.) Tj
+ET
+0.784 1.000 0.000 rg
+46.00 434.39 7.00 7.00 re f
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+59.00 433.39 Td
+(SKILLS) Tj
+ET
+0.80 w
+0.070 0.070 0.080 RG
+46.00 428.39 m 549.28 428.39 l S
+BT
+/F2 8.50 Tf
+0.070 0.070 0.080 rg
+46.00 413.39 Td
+(AI AGENTS & VOICE SYSTEMS) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 413.39 Td
+(Agent Teams & Harnesses · Agent Evaluation & Benchmarks · Self-Improving) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 399.99 Td
+(Loops · Sandboxed Code Runners · OpenAI / Claude / Gemini · LiveKit · Twilio ·) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 386.59 Td
+(Speechmatics · MCP · RAG Pipelines) Tj
+ET
+BT
+/F2 8.50 Tf
+0.070 0.070 0.080 rg
+46.00 370.19 Td
+(ARCHITECTURE & CLOUD) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 370.19 Td
+(Distributed Systems · Multi-Tenant Isolation · Backend Services · GitHub &) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 356.79 Td
+(ERP/CRM Integrations · PostgreSQL · Redis · Kubernetes · Docker · AWS · GCP) Tj
+ET
+BT
+/F2 8.50 Tf
+0.070 0.070 0.080 rg
+46.00 340.39 Td
+(RELIABILITY & OPS) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 340.39 Td
+(Risk Radar & Early Warning · Observability · Incident Response · Runtime) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 326.99 Td
+(Diagnostics · Grafana · Loki · Mimir · Trunk-Based Delivery · Canary Releases ·) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 313.59 Td
+(Feature Flags) Tj
+ET
+BT
+/F2 8.50 Tf
+0.070 0.070 0.080 rg
+46.00 297.19 Td
+(FULL-STACK & MOBILE) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 297.19 Td
+(TypeScript · Node.js · NestJS · React · React Native · Next.js · PostgreSQL ·) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 283.79 Td
+(MongoDB · Playwright · Cypress · Jest · Monorepos) Tj
+ET
+BT
+/F2 8.50 Tf
+0.070 0.070 0.080 rg
+46.00 267.39 Td
+(LEADERSHIP) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 267.39 Td
+(Teams of 5–12 Engineers · Customer Pilots & Demos · Technical Hiring · System) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+196.00 253.99 Td
+(Architecture · Mentoring \(150+ Lectures\) · Product Strategy) Tj
+ET
+0.784 1.000 0.000 rg
+46.00 226.59 7.00 7.00 re f
+BT
+/F2 10.50 Tf
+0.070 0.070 0.080 rg
+59.00 225.59 Td
+(EDUCATION & LANGUAGES) Tj
+ET
+0.80 w
+0.070 0.070 0.080 RG
+46.00 220.59 m 549.28 220.59 l S
+BT
+/F2 10.00 Tf
+0.070 0.070 0.080 rg
+46.00 205.59 Td
+(Belarusian State University) Tj
+ET
+BT
+/F1 9.00 Tf
+0.360 0.360 0.380 rg
+499.24 205.59 Td
+(2015 – 2019) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 192.19 Td
+(Medicine \(medical degree\)) Tj
+ET
+BT
+/F2 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 174.79 Td
+(Languages:) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+104.31 174.79 Td
+(English \(C1\), Russian \(native\)) Tj
+ET
+0.050 0.050 0.070 rg
+46.00 20.00 503.28 24.00 re f
+0.784 1.000 0.000 rg
+46.00 20.00 6.00 24.00 re f
+BT
+/F1 7.50 Tf
+0.860 0.880 0.900 rg
+62.00 29.00 Td
+(Canary #42: one source for this PDF, rossev.dev and /llms.txt. Read this far? Say “canary #42” when we talk.) Tj
+ET
+BT
+/F1 7.50 Tf
+0.600 0.620 0.660 rg
+522.68 29.00 Td
+(2 / 2) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Annot /Subtype /Link /Rect [46.00 759.51 81.36 769.49] /Border [0 0 0] /A << /S /URI /URI (https://kingpin.ai) >> >>
+endobj
+18 0 obj
+<< /Type /Annot /Subtype /Link /Rect [46.00 650.81 88.77 660.79] /Border [0 0 0] /A << /S /URI /URI (https://kernelics.com) >> >>
+endobj
+19 0 obj
+<< /Type /Annot /Subtype /Link /Rect [46.00 542.12 138.90 552.09] /Border [0 0 0] /A << /S /URI /URI (https://forgehub.com) >> >>
 endobj
 xref
-0 9
+0 20
 0000000000 65535 f 
 0000000015 00000 n 
 0000000064 00000 n 
-0000000121 00000 n 
-0000000273 00000 n 
-0000000370 00000 n 
-0000000472 00000 n 
-0000000572 00000 n 
-0000013678 00000 n 
+0000000128 00000 n 
+0000000225 00000 n 
+0000000327 00000 n 
+0000000427 00000 n 
+0000000966 00000 n 
+0000001169 00000 n 
+0000009278 00000 n 
+0000009430 00000 n 
+0000009591 00000 n 
+0000009745 00000 n 
+0000009890 00000 n 
+0000010033 00000 n 
+0000010178 00000 n 
+0000010363 00000 n 
+0000017490 00000 n 
+0000017633 00000 n 
+0000017779 00000 n 
 trailer
-<< /Size 9 /Root 1 0 R /Info 8 0 R >>
+<< /Size 20 /Root 1 0 R /Info 6 0 R >>
 startxref
-14236
+17925
 %%EOF

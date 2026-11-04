@@ -199,6 +199,24 @@ describe('CV PDF text for ATS', () => {
     });
   });
 
+  // poppler measures real glyph widths (CI runners without it skip this). Margins are at least 45pt.
+  const hasPdftotext = (() => {
+    try {
+      execSync('pdftotext -v', { stdio: 'ignore' });
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  test.skipIf(!hasPdftotext)('every word stays inside the page margins (pdftotext -bbox)', () => {
+    const html = execSync('pdftotext -bbox public/gleb-rosev-cv.pdf -', { encoding: 'utf8' });
+    const pageW = Number(html.match(/<page width="([\d.]+)"/)?.[1]);
+    const words = [...html.matchAll(/<word xMin="([\d.]+)" yMin="[\d.]+" xMax="([\d.]+)" yMax="[\d.]+">([^<]*)<\/word>/g)];
+    expect(words.length).toBeGreaterThan(100);
+    const outside = words.filter((m) => Number(m[1]) < 45 || Number(m[2]) > pageW - 45).map((m) => m[3]);
+    expect(outside).toEqual([]);
+  });
+
   test('sections and roles extract in document order', () => {
     const all = words(fullText);
     const order = [
