@@ -27,6 +27,12 @@ const MAX_STEPS_PER_TICK = 4; // a slow device grows slower instead of falling b
 // The loop runs until the healer (./healer.ts) sees the pattern stop changing (a bite
 // ~300 steps, a large loss up to ~2500) and then rests until the next bite or reset.
 const GROWN_STEPS = 300;
+// The page shows a notice for 2.5 s; no second one while it is up.
+const NOTICE_MS = 3000;
+// Under reduced motion a regrow skips to the grown monogram, but only once the gesture
+// that caused it has been still this long: growing out of sight blocks the worker for
+// ~0.7 s, and an erase stroke still under way would just erase the new monogram again.
+const QUIET_MS = 400;
 
 const scope = self as unknown as DedicatedWorkerGlobalScope;
 
@@ -36,6 +42,8 @@ let visible = false;
 let active = false; // the healer is still watching the pattern change
 let owed = 0;
 let lastTick = 0;
+let noticeUntil = 0;
+let silentGrowAt = 0; // when to grow a reduced-motion regrow out of sight; 0 = none pending
 
 // Pixel buffers travel to the page (transferred, not copied) and come back via
 // 'recycle'. The RGBA floats come from the healer, which reads them for its stats.
@@ -62,14 +70,15 @@ function postFrame(): void {
   scope.postMessage(msg, [pixels.buffer]);
 }
 
-/** A regrow from one cell started: tell the visitor why, and under reduced motion
- * show the finished monogram instead of the growth. */
+/** A regrow from one cell started: tell the visitor why (once), and under reduced
+ * motion show the finished monogram instead of the growth once the gesture is over. */
 function regrowing(): void {
-  scope.postMessage({ type: 'notice', kind: 'regrowing' } satisfies FromWorker);
-  if (reducedMotion) {
-    healer!.grow();
-    active = false;
+  const now = performance.now();
+  if (now >= noticeUntil) {
+    noticeUntil = now + NOTICE_MS;
+    scope.postMessage({ type: 'notice', kind: 'regrowing' } satisfies FromWorker);
   }
+  if (reducedMotion) silentGrowAt = now + QUIET_MS;
 }
 
 function shouldRun(): boolean {
@@ -88,6 +97,14 @@ function wake(): void {
 function tick(): boolean {
   if (!healer || !shouldRun()) return false;
   const now = performance.now();
+  if (silentGrowAt) {
+    if (now < silentGrowAt) return true; // hold the seed still while the gesture goes on
+    silentGrowAt = 0;
+    healer.grow();
+    active = false;
+    postFrame();
+    return false;
+  }
   owed = Math.min(owed + ((now - lastTick) / 1000) * STEPS_PER_SECOND, MAX_STEPS_PER_TICK);
   lastTick = now;
   const n = Math.floor(owed);
@@ -109,6 +126,7 @@ const ticker = createTicker(tick, TICK_MS);
  * Reset and full wipes still show the growth). */
 function reset(silent = reducedMotion): void {
   if (!healer) return;
+  silentGrowAt = 0;
   if (silent) {
     healer.grow();
     active = false;
@@ -145,6 +163,7 @@ scope.onmessage = async (event: MessageEvent<ToWorker>) => {
       // Healing answers the visitor, so it animates even with reduced motion.
       active = true;
       if (healer.damage(msg.points, msg.r) === 'regrowing') regrowing();
+      else if (silentGrowAt) silentGrowAt = performance.now() + QUIET_MS; // still erasing
       postFrame();
       wake();
       break;

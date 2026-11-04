@@ -10,7 +10,8 @@
 // tests/nca-regrow.test.ts.
 import type { NeuralCA } from './model';
 
-/** 'regrowing' is returned once, by the call that started a regrow from a single cell. */
+/** 'regrowing' is returned once per regrow, by the call that started it. Damage while a
+ * regrow is under way only damages the young pattern: no second regrow, no second notice. */
 export type HealerStatus = 'running' | 'settled' | 'regrowing';
 
 export interface HealerOptions {
@@ -20,10 +21,10 @@ export interface HealerOptions {
   minAliveFraction?: number;
   /** Steps without change before a pattern that looks like the grown one counts as settled. */
   settleWindow?: number;
-  /** Steps without change before a pattern that looks wrong is given up on and regrown. */
-  wrongWindow?: number;
-  /** Hard cap on steps since the last damage or regrow; the shape is judged then. */
-  maxSteps?: number;
+  /** Steps after the last damage or regrow by which the pattern must look grown, or it is
+   * regrown. Every good heal measured settles within ~770 steps; a wrong shape can drift
+   * slowly for thousands, so waiting for it to stop would keep the visitor waiting ~75 s. */
+  deadline?: number;
 }
 
 /** Coarse signature of a frame: alive count, bounding box, and per block of a GRID×GRID
@@ -49,20 +50,19 @@ const BBOX_MIN_CELLS = 3;
 // Judging a settled shape against the grown baseline.
 const ALIVE_TOLERANCE = 0.15;
 const MIN_BBOX_IOU = 0.85;
-const MAX_SHAPE_DISTANCE = 0.08;
-/** Healing only refills what was lost; this much more than the grown count is a wrong shape
- * spreading, judged after `settleWindow` steps of it without waiting for it to stop. */
-const OVERGROWN = 1.3;
-/** Regrows started by a wrong settle in a row; a model that keeps failing is left as is. */
-const MAX_AUTO_REGROWS = 2;
+// Good heals and regrows measure ≤ 0.026; heals stuck as a visibly imperfect GR (MSE ~0.01
+// against a clean ~0.0003, never improving) measure 0.047–0.065.
+const MAX_SHAPE_DISTANCE = 0.035;
+/** Regrows started by a wrong shape in a row. A growth from one cell itself ends imperfect
+ * now and then (2 of 14 measured), so a few tries; a model that keeps failing is left as is. */
+const MAX_AUTO_REGROWS = 3;
 
 export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   const aliveThreshold = ca.aliveThreshold;
   const grownSteps = opts.grownSteps ?? 300;
   const minAliveFraction = opts.minAliveFraction ?? 0.4;
   const settleWindow = opts.settleWindow ?? 200;
-  const wrongWindow = opts.wrongWindow ?? 600;
-  const maxSteps = opts.maxSteps ?? 3000;
+  const deadline = opts.deadline ?? 1000;
   const n = ca.size;
 
   const rgba = new Float32Array(n * n * 4);
@@ -74,8 +74,8 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   const cols = new Uint16Array(n);
 
   let settled = true;
+  let regrowing = false; // a regrow from one cell is under way (until it settles)
   let stillFor = 0; // steps the current frame has matched the anchor
-  let overFor = 0; // steps the pattern has been overgrown
   let since = 0; // steps since the last damage or (re)growth started
   let autoRegrows = 0;
 
@@ -126,7 +126,10 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
     to.green.set(from.green);
   }
 
-  /** L1 distance of the block signatures, as a fraction of the baseline's totals. */
+  /** L1 distance of the block signatures, as a fraction of the baseline's totals. Cell
+   * counts and green mass add up on one scale: a lime cell has green ≈ 1 and a black one
+   * ≈ 0, so the green term is a count of lime cells. A G turned into a lime-backed R moves
+   * the green term; a letter changing shape moves the counts. */
   function distance(a: Shape, b: Shape): number {
     let d = 0;
     let total = 0;
@@ -170,7 +173,6 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   function watch(): void {
     settled = false;
     stillFor = 0;
-    overFor = 0;
     since = 0;
     measure(anchor);
   }
@@ -178,8 +180,10 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   /** Re-seeds from a single cell and lets it grow visibly. */
   function regrow(): void {
     healer.regrows++;
+    regrowing = true;
     ca.seed();
     watch();
+    copy(anchor, now);
   }
 
   const healer = {
@@ -206,27 +210,34 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
       measure(baseline);
       copy(baseline, now);
       settled = true;
+      regrowing = false;
       autoRegrows = 0;
     },
 
     /** Seeds and grows visibly (Reset). Not counted as a regrow. */
     restart(): void {
       autoRegrows = 0;
+      regrowing = false;
       ca.seed();
       watch();
       copy(anchor, now);
     },
 
-    /** Erases brush stamps; regrows from one cell if too little is left to heal from. */
+    /** Erases brush stamps; regrows from one cell if too little is left to heal from.
+     * During a regrow it never starts another: one gesture is one regrow, however many
+     * moves it sends. */
     damage(points: { x: number; y: number }[], r: number): 'healing' | 'regrowing' {
       for (const p of points) ca.damage(p.x, p.y, r);
       autoRegrows = 0;
       measure(now);
-      if (now.alive < minAliveFraction * baseline.alive) {
+      if (!regrowing && now.alive < minAliveFraction * baseline.alive) {
         regrow();
-        copy(anchor, now);
         return 'regrowing';
       }
+      // A young regrow hit while still small starts again from its seed, as part of the
+      // same regrow: a scribble that goes on erasing would otherwise leave a mangled
+      // sprout that grows wrong and needs a second regrow (and a second notice).
+      if (regrowing && now.alive < minAliveFraction * baseline.alive) ca.seed();
       watch();
       return 'healing';
     },
@@ -238,8 +249,13 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
       since += steps;
       measure(now);
       if (now.alive === 0) {
-        regrow(); // everything died: start over rather than show an empty box
-        copy(anchor, now);
+        // Everything died: start over rather than show an empty box.
+        if (regrowing) {
+          ca.seed();
+          watch();
+          return 'running';
+        }
+        regrow();
         return 'regrowing';
       }
       if (isStill(now)) stillFor += steps;
@@ -247,23 +263,15 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
         copy(now, anchor);
         stillFor = 0;
       }
-      overFor = now.alive > OVERGROWN * baseline.alive ? overFor + steps : 0;
-      const capped = since >= maxSteps;
-      if (stillFor < settleWindow && overFor < settleWindow && !capped) return 'running';
-      if (overFor < settleWindow && (looksGrown(now) || autoRegrows >= MAX_AUTO_REGROWS)) {
+      const verdict = decide(stillFor >= settleWindow, since >= deadline, looksGrown(now), autoRegrows < MAX_AUTO_REGROWS);
+      if (verdict === 'running') return 'running';
+      if (verdict === 'settled') {
         settled = true;
-        return 'settled';
-      }
-      // A still shape that looks wrong may be a slow heal (a 55% loss takes ~2000 steps),
-      // so it gets a longer look before it is given up on.
-      if (stillFor < wrongWindow && overFor < settleWindow && !capped) return 'running';
-      if (autoRegrows >= MAX_AUTO_REGROWS) {
-        settled = true;
+        regrowing = false;
         return 'settled';
       }
       autoRegrows++;
       regrow();
-      copy(anchor, now);
       return 'regrowing';
     },
   };
@@ -271,3 +279,12 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
 }
 
 export type Healer = ReturnType<typeof createHealer>;
+
+/** The settle-or-regrow decision for one frame. A shape that looks grown settles once it
+ * has stopped changing; at the deadline it settles if it looks grown and is regrown if
+ * not, still changing or not (unless the wrong-shape retries are used up). */
+export function decide(still: boolean, pastDeadline: boolean, looksGrown: boolean, canRetry: boolean): 'running' | 'settled' | 'regrow' {
+  if (looksGrown && (still || pastDeadline)) return 'settled';
+  if (!pastDeadline) return 'running';
+  return canRetry ? 'regrow' : 'settled';
+}
