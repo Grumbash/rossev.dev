@@ -470,6 +470,11 @@ describe('every workflow keeps the write token away from package code', () => {
       }
     });
 
+    test(`${f}: the PAT never reaches every job at once (workflow env, secrets: inherit)`, () => {
+      expect(JSON.stringify(wf.env ?? {})).not.toContain('PUBLORA_SYNC_TOKEN');
+      for (const [, job] of jobs) expect(job.secrets).not.toBe('inherit');
+    });
+
     test(`${f}: the GITHUB_TOKEN never gets contents: write`, () => {
       expect(wf.permissions).toBeDefined();
       for (const p of [wf.permissions, ...jobs.map(([, j]) => j.permissions)]) {
