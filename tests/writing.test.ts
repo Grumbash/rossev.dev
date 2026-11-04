@@ -201,7 +201,9 @@ describe('post data', () => {
     for (const p of BLOG_POSTS) {
       expect(p.slug).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
       expect((p as any).published).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      if (p.url) expect((p as any).published).toBe(linkedinDate(p.url));
+      // A post first published here may predate its LinkedIn copy; otherwise LinkedIn is the original.
+      if (p.url && p.body) expect((p as any).published <= linkedinDate(p.url)!).toBe(true);
+      else if (p.url) expect((p as any).published).toBe(linkedinDate(p.url));
       // A post first published here is the site's own, so it carries its full text.
       else expect(p.body).toBeDefined();
     }

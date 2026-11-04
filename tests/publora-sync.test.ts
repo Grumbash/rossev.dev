@@ -18,6 +18,7 @@ import {
   activityId,
   buildEntry,
   checkEntry,
+  sitePostLinkedFrom,
   cleanSource,
   linkedinTargets,
   parseListPosts,
@@ -1012,5 +1013,54 @@ describe('the bot does not churn an open PR under review', () => {
     expect(String(steps[iSync].if ?? '')).toContain(`steps.${steps[iCheck].id}.outputs.`);
     // The check needs only a read token, never the API keys.
     expect(JSON.stringify(steps[iCheck].env ?? {})).not.toMatch(/PUBLORA_API_KEY|OPENROUTER_API_KEY/);
+  });
+});
+
+describe('a LinkedIn copy of a post first published here links to it instead of adding a second entry', () => {
+  const COPY_ID = '7524395148902412345'; // 2026-11-06, two days after the site post
+  const OWN: BlogPost = {
+    ...(structuredClone(SITE[1]) as BlogPost),
+    id: 'post-10',
+    slug: 'self-healing-monogram',
+    published: '2026-11-04',
+    url: undefined,
+    title: { en: 'My Logo Heals Itself. Then I Erased It Into a Stick.', ru: 'Мой логотип заживает сам. А потом я стёр его в палку.' },
+    takeaway: { en: 'A local model cannot recover information that is not there anymore.', ru: 'Локальная модель не восстановит информацию, которой больше нет.' },
+    body: { en: 'The full text, first published here.', ru: 'Полный текст, впервые опубликованный здесь.' },
+  };
+  const COPY_TEXT = 'My logo heals itself. Then I erased it into a stick.\n\nFull story: https://rossev.dev/writing/self-healing-monogram/';
+  const copyGroup: Group = { postGroupId: 'g-copy', status: 'published', posts: [li(`urn:li:share:${COPY_ID}`, 'published', COPY_TEXT)] };
+
+  test('the post gets the url and keeps its own date, nothing else changes, and no model is called', async () => {
+    const h = harness({ groups: [copyGroup], posts: [OWN, ...SITE] });
+    const out = await run(h.env, h.deps);
+    expect(out.status).toBe('added');
+    expect(toModel(h).length).toBe(0);
+    const posts = written(h)!;
+    expect(posts.length).toBe(SITE.length + 1);
+    expect(posts[0]).toEqual({ ...OWN, url: `https://www.linkedin.com/feed/update/urn:li:share:${COPY_ID}/` });
+    expect(checkEntry(posts[0])).toEqual([]);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^added=1$/m);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^title=Add LinkedIn links for 1 post from Publora$/m);
+    expect(h.writes['.publora/pr-body.md']).toMatch(/LinkedIn copies of posts first published here \(1\)/);
+  });
+
+  test('the next run sees it as on the site: nothing to do', async () => {
+    const h = harness({ groups: [copyGroup], posts: [{ ...OWN, url: `https://www.linkedin.com/feed/update/urn:li:share:${COPY_ID}/` }, ...SITE] });
+    expect((await run(h.env, h.deps)).status).toBe('none');
+  });
+
+  test('a /ru/ link counts too; a link to a post that is already on LinkedIn does not', () => {
+    expect(sitePostLinkedFrom('Read it: rossev.dev/ru/writing/self-healing-monogram/', [OWN])).toBe(0);
+    expect(sitePostLinkedFrom('Read it: rossev.dev/writing/self-healing-monogram/', [{ ...OWN, url: 'https://www.linkedin.com/feed/update/urn:li:share:1/' }])).toBe(-1);
+    expect(sitePostLinkedFrom('No link here.', [OWN])).toBe(-1);
+  });
+
+  test('the date check lets a post first published here predate its LinkedIn copy, never follow it', () => {
+    const url = `https://www.linkedin.com/feed/update/urn:li:share:${COPY_ID}/`;
+    expect(checkEntry({ ...OWN, url })).toEqual([]);
+    expect(checkEntry({ ...OWN, url, published: '2026-11-07' })[0]).toMatch(/^published: 2026-11-07 but the LinkedIn id says 2026-11-06/);
+    // Without its full text, the LinkedIn post is the original, so the dates must match.
+    expect(checkEntry({ ...OWN, url, body: undefined })[0]).toMatch(/^published: 2026-11-04 but the LinkedIn id says 2026-11-06/);
   });
 });
