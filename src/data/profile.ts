@@ -72,8 +72,8 @@ export interface BlogPost {
 // full post is on the page itself, so the minutes describe that.
 export const readTimeLabel = (post: BlogPost) =>
   post.body
-    ? { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN FULL POST`, ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ПОЛНЫЙ ТЕКСТ` }
-    : { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${post.originalMinutes} МИН ОРИГИНАЛ` };
+    ? { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN FULL POST`, ru: `КОНСПЕКТ НА 30 СЕК · ПОЛНЫЙ ТЕКСТ ${post.originalMinutes} МИН` }
+    : { en: `30-SEC BRIEF · ${post.originalMinutes}-MIN ORIGINAL`, ru: `КОНСПЕКТ НА 30 СЕК · ОРИГИНАЛ ${post.originalMinutes} МИН` };
 
 export const postPath = (post: BlogPost) => `/writing/${post.slug}/`;
 
@@ -153,17 +153,17 @@ export const PROFILE = {
   // Value line under the name: what I solve + proof. Every number must already be a fact on the page.
   valueLine: {
     en: 'AI agents that hold up in production, not just in the demo: dead air at pickup on healthcare calls cut from 15 s to 0; 28 PRs in week one: agents wrote 98% of the code, I did 97% of the planning.',
-    ru: 'AI-агенты, которые держатся в продакшене, а не только на демо: тишина при ответе в медицинских звонках — 15 с → 0; 28 PR за первую неделю: 98% кода написали агенты, 97% планирования — моё.'
+    ru: 'AI-агенты, которые работают в продакшене, а не только на демо: тишина после ответа в звонках клиник — с 15 с до 0; 28 PR за первую неделю, 98% кода написали агенты, 97% планирования — моё.'
   },
   // Short bio for the hero only (max 40 words EN). The long `bio` below feeds the CV PDF and llms.txt.
   bioShort: {
     en: 'Now: Founding Engineer at YAGNI, building AI agent teams (PM, Builder, Reviewer) that take work from proposal to merged PR under human-approved plans. Before: healthcare voice AI at Sully.ai. 8+ years, plus a medical degree.',
-    ru: 'Сейчас: Founding Engineer в YAGNI — команды AI-агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR по утверждённому человеком плану. До этого: голосовой AI для медицины в Sully.ai. 8+ лет, плюс медицинское образование.'
+    ru: 'Сейчас: Founding Engineer в YAGNI — команды AI-агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR по утверждённому человеком плану. До этого: голосовой AI для медицины в Sully.ai. 8+ лет в разработке и медицинское образование.'
   },
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
     en: 'I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus a medical degree.',
-    ru: 'Я строю системы, где важна надёжность, и делаю команды AI-агентов надёжными в продакшене, а не только на демо. Сейчас: Founding Engineer в YAGNI (yagni.app), вместе с фаундерами строю команды агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR в GitHub по утверждённому человеком плану. До этого: Staff Harness Engineer в голосовом AI для медицины в Sully.ai. 8+ лет в full-stack, мобайле, облаках и управлении командами, плюс медицинское образование.'
+    ru: 'Я строю системы, где важна надёжность, и добиваюсь, чтобы команды AI-агентов работали в продакшене, а не только на демо. Сейчас: Founding Engineer в YAGNI (yagni.app), вместе с фаундерами строю команды агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR в GitHub по утверждённому человеком плану. До этого: Staff Harness Engineer в Sully.ai, голосовой AI для медицины. 8+ лет: full-stack, мобильная разработка, облака и управление командами, плюс медицинское образование.'
   },
   medToAiStory: {
     en: 'How I work: I build with AI agents every day — I plan, delegate to agents, review their output with a second "judge" agent, and keep the human decision where it matters.',
@@ -172,7 +172,7 @@ export const PROFILE = {
   heroStats: [
     {
       value: '8+ YRS',
-      label: { en: 'Production Systems', ru: 'В продакшене' },
+      label: { en: 'Production Systems', ru: 'Опыта в продакшене' },
       color: 'var(--lime)'
     },
     {
@@ -182,7 +182,7 @@ export const PROFILE = {
     },
     {
       value: '15s → 0s',
-      label: { en: 'Dead Air at Pickup (Sully.ai)', ru: 'Тишины при ответе (Sully.ai)' },
+      label: { en: 'Dead Air at Pickup (Sully.ai)', ru: 'Тишина после ответа (Sully.ai)' },
       color: 'var(--yellow)'
     },
     {
@@ -207,7 +207,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     },
     summary: {
       en: 'Named AI agents (builder, reviewer, PM) that work under human-approved plans with auditable records, sandboxed execution, and realistic evaluation benchmarks.',
-      ru: 'Именованные AI-агенты (разработчик, ревьюер, PM), работающие по утверждённому человеком плану с полным аудитом шагов, песочницей и бенчмарками.'
+      ru: 'AI-агенты с ролями (PM, Builder, Reviewer) работают по утверждённому человеком плану: аудит каждого шага, песочница и бенчмарки на реальных задачах.'
     },
     metrics: [
       { value: '28 PRs', label: { en: 'Merged in the first week: 98% of the code by agents, 97% of the planning by me', ru: 'Смержено за первую неделю: 98% кода написали агенты, 97% планирования — моё' } }
@@ -230,18 +230,18 @@ export const CASE_STUDIES: CaseStudy[] = [
         ]
       },
       ru: {
-        challenge: 'Сделать команды AI-агентов по-настоящему надёжными в продакшене: с прозрачным аудитом каждого шага, строгой мультитенантной изоляцией, самовосстанавливающейся синхронизацией и защитой от регрессий.',
-        solution: 'Внедрил tenant-scoped query guards и песочницу для кода, устранил коллизии ключей тикетов у агента-ревьюера, сделал бэкфиллы коннекторов самовосстанавливающимися и внедрил бенчмарки с радаром рисков.',
+        challenge: 'Сделать команды AI-агентов надёжными в реальных кодовых базах клиентов: каждый шаг можно проверить, данные тенантов строго изолированы, синхронизация внешних воркспейсов восстанавливается сама, а регрессии ловятся раньше, чем их заметит клиент.',
+        solution: 'Сделал изоляцию тенантов и маршрутизацию агента код-ревью, научил бэкфиллы внешних воркспейсов восстанавливаться самим, свёл сборку worktree и CI к одной команде и построил бенчмарки на реальных задачах с радаром рисков.',
         outcomes: [
-          'Изоляция клиентов: tenant-scoped query guards и песочница для запуска кода.',
-          'Повысил надёжность агента код-ревью и создал бенчмарки на реальных задачах: устранил коллизии ключей тикетов между YAGNI и внешними трекерами.',
-          'Сделал синхронизацию больших внешних воркспейсов самовосстанавливающейся (stuck-cursor recovery, лимиты, трекинг) и внедрил «радар рисков» для клиентских прогонов.',
-          'Создал экспериментальный контур самообучения агентов на разборе сбоев и упростил сборку монорепозитория для чистых worktree и CI до одной команды.'
+          'Изоляция тенантов: гарды запросов по тенанту и песочница для запуска кода.',
+          'Агент код-ревью стал надёжнее: убрал коллизии ключей тикетов между YAGNI и внешними трекерами. Собрал бенчмарки на реальных задачах, чтобы мерить изменения агентов.',
+          'Бэкфиллы коннекторов восстанавливаются сами (зависшие курсоры, трекинг прогресса, жёсткие лимиты); построил радар рисков, который замечает зависшие прогоны клиентов.',
+          'Собрал экспериментальный цикл самоулучшения: агенты разбирают упавшие прогоны и предлагают фиксы. Сборку монорепо для worktree и CI свёл к одной команде.'
         ],
         topology: [
           '[Утверждённый человеком план] ──► [Команда агентов: PM · Builder · Reviewer]',
-          '[Песочница + Tenant Query Guards] ──► [Проверяемый PR в GitHub]',
-          '[Self-Healing бэкфиллы + Радар рисков] ──► [Агент поиска первопричин сбоев]'
+          '[Песочница + гарды запросов по тенанту] ──► [Проверяемый PR в GitHub]',
+          '[Радар рисков и зависших прогонов] ──► [Агент поиска первопричин сбоев]'
         ]
       }
     }
@@ -255,14 +255,14 @@ export const CASE_STUDIES: CaseStudy[] = [
     badge: { en: 'VOICE AI & HARNESS', ru: 'ГОЛОСОВОЙ AI' },
     title: {
       en: 'Multilingual Voice AI & Runtime Diagnostic Harness',
-      ru: 'Мультиязычный голосовой AI и система Runtime-диагностики'
+      ru: 'Мультиязычный голосовой AI и харнесс для runtime-диагностики'
     },
     summary: {
       en: 'AI receptionist for healthcare: voice agents for scheduling and clinic operations. Outbound call reliability, LiveKit dispatch, UAE data residency and the MENA launch.',
-      ru: 'AI-ресепшионист для клиник: голосовые агенты для записи и операционки. Надёжность исходящих звонков, диспетчеризация в LiveKit, резидентность данных в ОАЭ и запуск в MENA.'
+      ru: 'AI-ресепшионист для клиник: голосовые агенты для записи пациентов и работы клиник. Надёжность исходящих звонков, диспетчеризация в LiveKit, резидентность данных в ОАЭ и запуск в MENA.'
     },
     metrics: [
-      { value: '15s → 0s', label: { en: 'Dead Air at Pickup', ru: 'Тишины при ответе' } },
+      { value: '15s → 0s', label: { en: 'Dead Air at Pickup', ru: 'Тишина после ответа' } },
       { value: 'MENA', label: { en: 'Launch Led', ru: 'Запуск в регионе' } },
       { value: '400+', label: { en: 'Healthcare Orgs (Sully)', ru: 'Медорганизаций (Sully)' } }
     ],
@@ -283,17 +283,17 @@ export const CASE_STUDIES: CaseStudy[] = [
         ]
       },
       ru: {
-        challenge: 'Enterprise-медицина требует минимальной задержки в телефонных диалогах, мультиязычности и мгновенной локализации сбоев.',
-        solution: 'Спроектировал контур надёжности голосовых агентов: от телефонии (Twilio/LiveKit) и ASR (Speechmatics) до оркестрации LLM, эвалов и трассировки.',
+        challenge: 'Запуски у крупных медицинских клиентов: голос на нескольких языках с минимальной задержкой по живой телефонии и мгновенный поиск причины любого сбоя.',
+        solution: 'Построил слой надёжности голосовых агентов и харнесса: от входа через Twilio/LiveKit и ASR (Speechmatics) до оркестрации LLM, детерминированных эвалов и трассировки.',
         outcomes: [
-          'Убрал ~15 с тишины после ответа на исходящих звонках: агент здоровался, пока линия ещё звонила.',
+          'Убрал ~15 с тишины после ответа на исходящих звонках: агент здоровался, пока ещё шли гудки.',
           'Сделал диспетчеризацию агентов в LiveKit надёжной: retry-and-verify, без двойных агентов в звонке и без «немых» звонков.',
-          'Спроектировал гарды резидентности аудио в ОАЭ: фолбэки TTS и STT остаются у одобренных региональных провайдеров.'
+          'Спроектировал гардрейлы резидентности аудио в ОАЭ: фолбэки TTS и STT не уходят за пределы одобренных региональных провайдеров.'
         ],
         topology: [
           '[Телефония / SIP / Twilio] ──► [LiveKit Real-Time Media Router]',
-          '[Аудио-поток] ──► [Speechmatics ASR] ──► [AI Agent Harness & Guardrails]',
-          '[Agent Harness] ──► [Eval & Runtime Trace Collector] ──► [Клинический Backend]'
+          '[Аудиопоток] ──► [Speechmatics ASR] ──► [AI Agent Harness & Guardrails]',
+          '[Agent Harness] ──► [Eval & Runtime Trace Collector] ──► [EHR и бэкенд клиники]'
         ]
       }
     }
@@ -307,16 +307,16 @@ export const CASE_STUDIES: CaseStudy[] = [
     badge: { en: 'MULTI-TENANT B2B SAAS', ru: 'B2B SAAS И AI' },
     title: {
       en: 'Wholesale B2B Platform & Automated LLM Insight Engine',
-      ru: 'Мультитенантная B2B-платформа и LLM-конвейер аналитики'
+      ru: 'Мультитенантная B2B-платформа для опта и LLM-пайплайн аналитики'
     },
     summary: {
       en: 'Led 12 engineers shipping multi-tenant catalog/order workflows, ERP/CRM syncs, canary releases, and an LLM pipeline cutting feedback analysis time by 80%.',
-      ru: 'Команда до 12 человек: мультитенантные заказы, синхронизация ERP/CRM, канареечные релизы и LLM-аналитика (-80% времени).'
+      ru: 'Руководил командой из 12 инженеров: мультитенантный каталог и заказы, синхронизация с ERP/CRM, канареечные релизы и LLM-пайплайн, который сократил анализ фидбека на 80%.'
     },
     metrics: [
       { value: '-80%', label: { en: 'Feedback analysis time', ru: 'Время анализа фидбека' } },
-      { value: '12 ENG', label: { en: 'Team Led', ru: 'Команда' } },
-      { value: 'Canary', label: { en: 'Trunk Delivery', ru: 'Деплой' } }
+      { value: '12 ENG', label: { en: 'Team Led', ru: 'Инженеров в команде' } },
+      { value: 'Canary', label: { en: 'Trunk Delivery', ru: 'Релизы из main' } }
     ],
     stack: ['TypeScript', 'NestJS', 'React / Next.js', 'PostgreSQL', 'Redis', 'OpenAI / RAG', 'Grafana / Loki'],
     architecture: {
@@ -335,11 +335,11 @@ export const CASE_STUDIES: CaseStudy[] = [
         ]
       },
       ru: {
-        challenge: 'Масштабирование мультитенантной B2B-платформы с внешними ERP/CRM и переход команды из 12 человек на безопасные ежедневные релизы.',
-        solution: 'Внедрил trunk-based разработку с фича-флагами, мониторинг в Grafana и автоматический LLM-пайплайн структуризации фидбека.',
+        challenge: 'Масштабировать мультитенантные оптовые процессы с внешними ERP/CRM и перевести команду из 12 человек на безопасные ежедневные релизы.',
+        solution: 'Внедрил trunk-based разработку с фича-флагами и канареечными выкатками, алерты в Grafana и LLM-пайплайн, который сам разбирает фидбек от Sales и CS.',
         outcomes: [
-          'Сократил время анализа фидбека от Sales и CS на 80% за счёт LLM-конвейера.',
-          'Запустил мультитенантный каталог и транзакционный движок заказов с интеграцией ERP/CRM.',
+          'Сократил время анализа фидбека от Sales и CS на 80% с помощью LLM-пайплайна кластеризации.',
+          'Запустил мультитенантный каталог и транзакционный движок заказов с двусторонней синхронизацией ERP/CRM.',
           'Выстроил релизы из main через фича-флаги и канареечные выкатки.'
         ],
         topology: [
@@ -359,15 +359,15 @@ export const CASE_STUDIES: CaseStudy[] = [
     badge: { en: '220MS TTFB · CRYPTO · $10M+ ARCH', ru: '220 МС TTFB · КРИПТО · $10M+ АРХИТЕКТУРА' },
     title: {
       en: 'High-Velocity Web/Mobile Monorepos & $10M+ Virtual Network',
-      ru: 'Крипто-монорепо (100K+ юзеров), 220 мс TTFB и платформа на $10M+'
+      ru: 'Крипто-приложение на 100K+ скачиваний, 220 мс TTFB и продукт с $10M+ инвестиций'
     },
     summary: {
       en: 'Shipped native crypto modules to 100K+ downloads at Kernelics, doubled velocity (25 → 55 SP, 220ms TTFB) at BattlePro, and architected a $10M+ funded product.',
-      ru: 'Нативные крипто-модули (100K+ скачиваний в Kernelics), удвоение велосити (25 → 55 SP, 220 мс TTFB в BattlePro) и архитектура продукта с $10M+ инвестиций.'
+      ru: 'В Kernelics — нативные крипто-модули в приложении со 100K+ скачиваний; в BattlePro удвоил велосити (25 → 55 SP) и вышел на 220 мс TTFB; в ITechArt — архитектура продукта, который привлёк $10M+.'
     },
     metrics: [
-      { value: '100K+', label: { en: 'Crypto App Users', ru: 'Юзеров крипто-аппа' } },
-      { value: '220ms', label: { en: 'TTFB (1.7s TTI)', ru: 'TTFB (1.7 с TTI)' } },
+      { value: '100K+', label: { en: 'Crypto App Users', ru: 'Пользователей приложения' } },
+      { value: '220ms', label: { en: 'TTFB (1.7s TTI)', ru: 'TTFB (1,7 с TTI)' } },
       { value: '$10M+', label: { en: 'Funding Raised', ru: 'Инвестиций' } }
     ],
     stack: ['TypeScript', 'React Native', 'Next.js', 'Native Crypto', 'Monorepo', 'Node.js', 'AWS'],
@@ -387,11 +387,11 @@ export const CASE_STUDIES: CaseStudy[] = [
         ]
       },
       ru: {
-        challenge: 'Поставка защищённых криптографических мобильных приложений и молниеносных турнирных сеток под жёсткие дедлайны мероприятий.',
-        solution: 'Объединил Web/Mobile сборку в монорепо с нативной криптографией, оптимизировал SSR до 220 мс TTFB и спроектировал облачную сеть.',
+        challenge: 'Выпускать мобильные приложения с нативной криптографией и быстрые турнирные платформы к жёстким дедлайнам мероприятий.',
+        solution: 'Свёл сборку веба и мобайла в одно монорепо с нативной криптографией, переделал SSR и кеширование до 220 мс TTFB и спроектировал облачную виртуальную сеть.',
         outcomes: [
-          'Интегрировал криптографические модули в продакшен-приложение со 100 000+ скачиваний (Kernelics).',
-          'Достиг 220–250 мс TTFB и 1.7 с TTI, удвоив скорость спринтов с 25 до 55 SP (BattlePro).',
+          'Интегрировал криптографические модули в продакшен-приложение со 100 000+ скачиваний (Kernelics).',
+          'Вышел на 220–250 мс TTFB и 1,7 с TTI и удвоил пропускную способность спринта: с 25 до 55 SP (BattlePro).',
           'Заложил full-stack архитектуру продукта, который привлёк более $10M инвестиций (ITechArt).'
         ],
         topology: [
@@ -410,11 +410,11 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'exp-yagni',
     role: { en: 'Founding Engineer, AI Agents', ru: 'Founding Engineer, AI Agents' },
     company: 'YAGNI (yagni.app)',
-    period: { en: 'Nov 2026 — Present', ru: 'Ноя 2026 — Наст. время' },
+    period: { en: 'Nov 2026 — Present', ru: 'ноя 2026 — сейчас' },
     location: { en: 'Tbilisi, Georgia · Remote', ru: 'Тбилиси, Грузия · Удалённо' },
     domain: {
       en: 'Early-stage US startup building named AI agent teams that take engineering work from proposal to merged GitHub pull request under human-approved plans.',
-      ru: 'Американский стартап ранней стадии, создающий команды именованных AI-агентов, которые доводят задачи от предложения до смерженного PR в GitHub под контролем человека.'
+      ru: 'Американский стартап ранней стадии: команды AI-агентов с ролями доводят задачу от предложения до смерженного PR в GitHub по утверждённому человеком плану.'
     },
     color: 'var(--lime)',
     metrics: ['Founding Team', 'Agent Benchmarks', 'Multi-Tenant Isolation', 'Self-Healing Syncs'],
@@ -433,14 +433,14 @@ export const EXPERIENCE: ExperienceItem[] = [
         'Technical point of contact for pilot customers: demos, debugging live runs, turning feedback into engineering work.'
       ],
       ru: [
-        'Изоляция клиентов: tenant-scoped query guards и песочница для запуска кода.',
+        'Изоляция тенантов: гарды запросов по тенанту и песочница для запуска кода.',
         'Самовосстанавливающиеся бэкфиллы коннекторов: восстановление зависших курсоров, трекинг прогресса и жёсткие лимиты для долгих синков больших воркспейсов.',
         'Надёжность агента код-ревью: устранил коллизии ключей тикетов между YAGNI и внешними трекерами, из-за которых ревьюер шёл не в ту задачу.',
         'Бенчмарки агентов: реалистичные инженерные задачи, которые показывают, стал ли агент лучше или хуже после смены промпта, модели или харнесса.',
         'Радар рисков: замечает зависшие прогоны клиентов раньше, чем клиент о них сообщит.',
-        'Контур самоулучшения (эксперимент): мета-агент разбирает упавшие прогоны, находит причину и готовит фикс на ревью команде.',
-        'Сборка монорепозитория в одну команду для чистого checkout, worktree и CI.',
-        'Технический контакт для пилотных клиентов: демо, разбор живых прогонов, перевод фидбека в инженерные задачи.'
+        'Цикл самоулучшения (эксперимент): мета-агент разбирает упавшие прогоны, находит причину и готовит фикс на ревью команде.',
+        'Сборка монорепо одной командой — для чистого checkout, worktree и CI.',
+        'Технический контакт для пилотных клиентов: демо, отладка живых прогонов, фидбек клиентов превращаю в инженерные задачи.'
       ]
     }
   },
@@ -448,7 +448,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'exp-sully',
     role: { en: 'Staff Harness Engineer, AI Voice Systems', ru: 'Staff Harness Engineer, AI Voice Systems' },
     company: 'Sully.ai',
-    period: { en: 'Sep 2025 — Oct 2026', ru: 'Сен 2025 — Окт 2026' },
+    period: { en: 'Sep 2025 — Oct 2026', ru: 'сен 2025 — окт 2026' },
     location: { en: 'Dubai, UAE', ru: 'Дубай, ОАЭ' },
     domain: {
       en: 'AI receptionist platform for healthcare: voice and text agents for scheduling, care coordination and clinic operations. Sully.ai serves 400+ healthcare organizations.',
@@ -470,11 +470,11 @@ export const EXPERIENCE: ExperienceItem[] = [
       ],
       ru: [
         'Вёл основную разработку для запуска в MENA: инфраструктура в ОАЭ, поддержка Azure Blob Storage, региональная конфигурация и готовность к продакшену.',
-        'Убрал ~15 с тишины после ответа на исходящих звонках: агент здоровался, пока линия ещё звонила.',
+        'Убрал ~15 с тишины после ответа на исходящих звонках: агент здоровался, пока ещё шли гудки.',
         'Сделал диспетчеризацию агентов в LiveKit надёжной: retry-and-verify, без двойных агентов в одном звонке и без «немых» звонков.',
-        'Спроектировал гарды резидентности аудио в ОАЭ: фолбэки TTS и STT остаются у одобренных региональных провайдеров, а не уходят молча к другим.',
+        'Спроектировал гардрейлы резидентности аудио в ОАЭ: фолбэки TTS и STT остаются у одобренных региональных провайдеров, а не уходят молча к другим.',
         'Сделал валидацию данных пациентов для исходящих кампаний: локальные форматы номеров, схемы клиентов, правила клиник.',
-        'Построил нагрузочное тестирование с headless-участниками LiveKit, проверкой через Loki и Mimir и runtime health checks; нашёл и устранил каскад по памяти, ронявший систему под всплесками.'
+        'Построил нагрузочное тестирование с headless-участниками LiveKit, проверкой через Loki и Mimir и runtime health checks; нашёл и устранил каскад по памяти, из-за которого всё падало при всплесках.'
       ]
     }
   },
@@ -482,11 +482,11 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'exp-kingpin',
     role: { en: 'Engineering Manager / Senior Full-Stack', ru: 'Engineering Manager / Senior Full-Stack' },
     company: 'Kingpin',
-    period: { en: 'Sep 2024 — Sep 2025', ru: 'Сен 2024 — Сен 2025' },
+    period: { en: 'Sep 2024 — Sep 2025', ru: 'сен 2024 — сен 2025' },
     location: { en: 'Dubai, UAE', ru: 'Дубай, ОАЭ' },
     domain: {
       en: 'AI-powered multi-tenant B2B SaaS platform for wholesale.',
-      ru: 'AI-платформа и мультитенантный B2B SaaS для дистрибуции.'
+      ru: 'Мультитенантная B2B SaaS-платформа с AI для оптовой торговли.'
     },
     color: 'var(--yellow)',
     metrics: ['12 Engineers Led', '-80% Feedback Analysis Time', 'Canary Releases'],
@@ -500,9 +500,9 @@ export const EXPERIENCE: ExperienceItem[] = [
         'Built an LLM feedback pipeline converting Sales/CS input into product insights (-80% analysis time).'
       ],
       ru: [
-        'Руководил командой до 12 человек, совмещая управление поставкой с работой в коде и архитектуре.',
-        'Запустил мультитенантные заказы с ERP/CRM интеграциями, фича-флагами и мониторингом в Grafana.',
-        'Создал LLM-пайплайн для фидбека от Sales и CS, сокративший время его анализа на 80%.'
+        'Руководил кросс-функциональной командой до 12 человек и продолжал сам заниматься архитектурой и кодом.',
+        'Запустил мультитенантный каталог и заказы с синхронизацией ERP/CRM и trunk-based релизами за фича-флагами.',
+        'Построил LLM-пайплайн, который превращает фидбек от Sales и CS в продуктовые выводы: время анализа −80%.'
       ]
     }
   },
@@ -510,7 +510,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'exp-kernelics',
     role: { en: 'Lead React Native Developer', ru: 'Lead React Native Developer' },
     company: 'Kernelics',
-    period: { en: 'Feb 2023 — Sep 2024', ru: 'Фев 2023 — Сен 2024' },
+    period: { en: 'Feb 2023 — Sep 2024', ru: 'фев 2023 — сен 2024' },
     location: { en: 'London, UK', ru: 'Лондон, Великобритания' },
     domain: {
       en: 'Product engineering across fintech, crypto, AI & healthcare.',
@@ -527,9 +527,9 @@ export const EXPERIENCE: ExperienceItem[] = [
         'Hardened CI/CD build pipelines and production runtime stability.'
       ],
       ru: [
-        'Возглавлял команду из 5 человек (Web и Mobile) в едином монорепозитории.',
-        'Интегрировал защищённые криптографические модули в приложение со 100 000+ скачиваний.',
-        'Укрепил CI/CD пайплайны и стабильность релизов в продакшене.'
+        'Руководил командой из 5 человек: веб и мобайл в общем монорепо.',
+        'Интегрировал защищённые криптографические модули в приложение со 100 000+ скачиваний.',
+        'Сделал CI/CD-пайплайны надёжнее и стабилизировал релизы в продакшене.'
       ]
     }
   },
@@ -537,7 +537,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'exp-battlepro',
     role: { en: 'Frontend Team Lead · RN Manager · Full-Stack', ru: 'Frontend Team Lead · RN Manager · Full-Stack' },
     company: 'BattlePro & ITechArt',
-    period: { en: 'Jan 2018 — Feb 2023', ru: 'Янв 2018 — Фев 2023' },
+    period: { en: 'Jan 2018 — Feb 2023', ru: 'янв 2018 — фев 2023' },
     location: { en: 'New York & New Jersey, US', ru: 'Нью-Йорк и Нью-Джерси, США' },
     domain: {
       en: 'Sports tournament platform, full-stack cloud architectures & technical mentorship.',
@@ -556,9 +556,9 @@ export const EXPERIENCE: ExperienceItem[] = [
         'Delivered 150+ advanced React/JS lectures at TeachMeSkills; curriculum adopted by 1,500+ students/year.'
       ],
       ru: [
-        'Возглавлял фронтенд-команду из 5 человек в BattlePro: удвоил велосити (25 → 55 SP) и достиг 220 мс TTFB / 1.7 с TTI.',
-        'Спроектировал full-stack архитектуру продукта виртуального нетворкинга в ITechArt, привлёкшего $10M+ инвестиций.',
-        'Провёл 150+ лекций в TeachMeSkills и разработал программу обучения для 1 500+ студентов в год.'
+        'В BattlePro отвечал за фронтенд-архитектуру и найм в команду из 5 инженеров: удвоил велосити (25 → 55 SP), вышел на 220 мс TTFB и 1,7 с TTI.',
+        'В ITechArt спроектировал full-stack архитектуру платформы виртуального нетворкинга; позже продукт привлёк $10M+ инвестиций.',
+        'Прочитал 150+ лекций по React/JS в TeachMeSkills; по моей программе учатся 1 500+ студентов в год.'
       ]
     }
   }
