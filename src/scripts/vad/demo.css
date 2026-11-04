@@ -17,11 +17,7 @@
   transition: transform 80ms linear;
 }
 
-[data-vad-phase='detected'] [data-vad-result] {
-  color: #C8FF00;
-}
-
-[data-vad-start]:disabled {
+[data-vad-start][aria-disabled='true'] {
   opacity: 0.6;
   cursor: progress;
 }

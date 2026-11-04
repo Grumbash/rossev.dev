@@ -4,7 +4,8 @@
 //   idle ─start─► asking ─mic─► loading ─loaded─► calibrating ─ready─► listening ─onset─► detected
 //     │              └─mic error─► denied | nomic | unsupported | error      └─timeout─► quiet
 //     └─start─► savedata (Save-Data / 2G: nothing asked, nothing downloaded) | unsupported
-// A failure while loading or listening is `error`; a click on any end state starts over.
+// A failure while loading or listening is `error`; a click on any end state starts over; leaving
+// the page mid-run goes back to idle.
 
 export type Phase =
   | 'idle'
@@ -30,11 +31,15 @@ export type VadEvent =
   | { type: 'ready' }
   | { type: 'onset'; ms: number }
   | { type: 'timeout' }
-  | { type: 'fail' };
+  | { type: 'fail' }
+  // The page is going away (pagehide) or the demo's markup left it: a run in progress just ends.
+  | { type: 'stop' };
 
 export const initial: State = { phase: 'idle', progress: 0, ms: null };
 
-const ENDS: Phase[] = ['idle', 'detected', 'quiet', 'denied', 'nomic', 'error'];
+const ENDS: Phase[] = ['idle', 'savedata', 'unsupported', 'detected', 'quiet', 'denied', 'nomic', 'error'];
+const BUSY: Phase[] = ['asking', 'loading', 'calibrating', 'listening'];
+export const isBusy = (phase: Phase) => BUSY.includes(phase);
 
 type Connection = { saveData?: boolean; effectiveType?: string };
 
@@ -81,7 +86,9 @@ export function next(s: State, e: VadEvent, env: Env): State {
     case 'timeout':
       return s.phase === 'listening' || s.phase === 'calibrating' ? to('quiet') : s;
     case 'fail':
-      return ['asking', 'loading', 'calibrating', 'listening'].includes(s.phase) ? to('error') : s;
+      return BUSY.includes(s.phase) ? to('error') : s;
+    case 'stop':
+      return BUSY.includes(s.phase) ? initial : s;
   }
 }
 

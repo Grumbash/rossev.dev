@@ -2,8 +2,9 @@
 // The model sees audio in 32 ms frames (512 samples at 16 kHz). Your voice starts at the first
 // frame, looking back from the model's first speech frame, whose energy is more than twice the
 // room's noise floor. The number counts every frame from there through the decision frame, plus
-// that frame's compute time. The voice can start anywhere inside its first frame, so it is good
-// to ±32 ms; microphone and OS buffering before the page gets the audio are not counted.
+// that frame's compute time. The voice can start anywhere inside its first frame, so it may read
+// up to 32 ms high; the look-back stops at about a second; microphone and OS buffering before the
+// page gets the audio are not counted.
 
 export const FRAME_MS = 32;
 // Silero's own default for "speech".
@@ -16,6 +17,10 @@ const CALIBRATION = 8;
 const LOOKBACK = 31;
 // Noise floor: median of the last ~3 s of quiet frames.
 const FLOOR_WINDOW = 94;
+// Below this a frame is digital silence (a mic stream starting up), not a room: it can't calibrate.
+const SILENT_RMS = 1e-5;
+// The floor never drops below about -80 dBFS, so "twice the floor" always means something.
+const MIN_FLOOR = 1e-4;
 
 export type Frame = { rms: number; prob: number; inferMs: number };
 export type Onset = { ms: number; voiceFrame: number; speechFrame: number; inferMs: number };
@@ -45,10 +50,10 @@ export function createOnsetTimer() {
       const k = rms.push(f.rms) - 1;
       if (calibrated < CALIBRATION) {
         // Until the room is measured every frame the model calls quiet counts, loud or not.
-        if (f.prob < QUIET_PROB) {
+        if (f.prob < QUIET_PROB && f.rms > SILENT_RMS) {
           calibrated++;
           quiet.push(f.rms);
-          floor = median(quiet);
+          floor = Math.max(MIN_FLOOR, median(quiet));
         }
         return null;
       }
@@ -57,7 +62,7 @@ export function createOnsetTimer() {
         if (f.prob < QUIET_PROB && f.rms <= 2 * floor) {
           quiet.push(f.rms);
           if (quiet.length > FLOOR_WINDOW) quiet.shift();
-          floor = median(quiet);
+          floor = Math.max(MIN_FLOOR, median(quiet));
         }
         return null;
       }
