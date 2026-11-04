@@ -206,6 +206,13 @@ describe('posts live in src/data/posts.json so a script can append safely', () =
   test('every existing post passes the same entry check a generated one must pass', () => {
     for (const p of BLOG_POSTS) expect(checkEntry(p as BlogPost), p.id).toEqual([]);
   });
+
+  test('a post with no LinkedIn url is a hand-written one and must carry its full text', () => {
+    const own = BLOG_POSTS.find((p) => !p.url && p.body) as BlogPost;
+    expect(own).toBeDefined();
+    expect(checkEntry({ ...own, body: undefined })).toEqual(['url: none, so the post needs its full text in body']);
+    expect(checkEntry({ ...own, url: 'https://example.com/post' })[0]).toMatch(/^url: not a LinkedIn post url/);
+  });
 });
 
 // --- Publora parsing and de-dupe ---------------------------------------------------------------

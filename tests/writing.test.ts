@@ -6,6 +6,7 @@ import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { BLOG_POSTS, PROFILE, blogPostingLd, cardReadTime, fullPostLink, linkedinLabel, readTimeLabel } from '../src/data/profile';
+import { bodyBlocks, bodyHtml } from '../src/data/post-body';
 import budgets from '../perf-budgets.json';
 import { evaluateBytes, type Check } from '../scripts/perf-check';
 
@@ -91,9 +92,12 @@ function expectReaderFooter(html: string, i: number) {
   expect(follow?.attrs['data-track']).toBe('linkedin_click');
   expect(follow?.attrs['data-track-placement']).toBe('reader');
 
-  const original = tags.find((t) => t.attrs.href === post.url);
-  expect(original?.attrs['data-track']).toBe('post_linkedin');
-  expect(original?.attrs['data-track-id']).toBe(post.id);
+  // A post first published here has no LinkedIn copy to point at.
+  if (post.url) {
+    const original = tags.find((t) => t.attrs.href === post.url);
+    expect(original?.attrs['data-track']).toBe('post_linkedin');
+    expect(original?.attrs['data-track-id']).toBe(post.id);
+  } else expect(tags.some((t) => t.attrs['data-track'] === 'post_linkedin')).toBe(false);
 }
 
 let pages: Record<string, string> = {};
@@ -125,8 +129,9 @@ beforeAll(() => {
 describe('post data', () => {
   // No post has a body yet (the Publora sync adds them), so the page logic is pinned here on a fixture.
   test('with the full text here, every label and the JSON-LD treat the site as the original', () => {
-    const stub = { ...BLOG_POSTS[0], body: undefined };
-    const full = { ...BLOG_POSTS[0], body: { en: 'The text.', ru: 'Текст.' } };
+    const linked = BLOG_POSTS.find((p) => p.url)!;
+    const stub = { ...linked, body: undefined };
+    const full = { ...linked, body: { en: 'The text.', ru: 'Текст.' } };
     const n = stub.originalMinutes;
     expect(cardReadTime(stub)).toEqual({ en: `${n}-MIN ORIGINAL`, ru: `ОРИГИНАЛ ${n} МИН` });
     expect(cardReadTime(full)).toEqual({ en: `${n}-MIN FULL POST`, ru: `ПОЛНЫЙ ТЕКСТ ${n} МИН` });
@@ -144,6 +149,32 @@ describe('post data', () => {
     expect(ldFull.sameAs).toBe(full.url);
     expect(ldFull.author).toEqual({ '@id': PERSON });
     expect(ldFull.url).toBe(url);
+  });
+
+  test('a post first published here claims no LinkedIn original or copy', () => {
+    const own = { ...BLOG_POSTS[0], url: undefined, body: { en: 'The text.', ru: 'Текст.' } };
+    expect(linkedinLabel(own)).toBeNull();
+    const ld = blogPostingLd(own, `${SITE}${pagePath(own.slug)}`, `${SITE}/og-card.png`);
+    expect(ld.isBasedOn).toBeUndefined();
+    expect(ld.sameAs).toBeUndefined();
+  });
+
+  test('the full text renders a small Markdown subset and nothing it was not meant to', () => {
+    const html = bodyHtml(
+      'One <b> & *it* **bold** `a*b*<c>`\nsame [link](https://x.dev/a) [bad](javascript:alert(1))\n\n## Head\n\n- one\n- two\n\n- a\nnot a list'
+    );
+    expect(html).toBe(
+      [
+        '<p>One &lt;b&gt; &amp; <em>it</em> <strong>bold</strong> <code>a*b*&lt;c&gt;</code> same <a class="text-link" href="https://x.dev/a" target="_blank" rel="noopener noreferrer">link</a> [bad](javascript:alert(1))</p>',
+        '<h2>Head</h2>',
+        '<ul><li>one</li><li>two</li></ul>',
+        '<p>- a not a list</p>',
+      ].join('\n')
+    );
+    // A fence keeps its blank lines and its text verbatim, escaped, with no inline formatting.
+    expect(bodyHtml('Before\n\n```ts\nconst a = 1 * 2 * 3;\n\nif (a < 2) **x**\n```\n\nAfter')).toBe(
+      '<p>Before</p>\n<pre><code>const a = 1 * 2 * 3;\n\nif (a &lt; 2) **x**</code></pre>\n<p>After</p>'
+    );
   });
 
   test('JSON-LD cannot close its <script>: model-written titles go through it', () => {
@@ -170,7 +201,9 @@ describe('post data', () => {
     for (const p of BLOG_POSTS) {
       expect(p.slug).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
       expect((p as any).published).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect((p as any).published).toBe(linkedinDate(p.url));
+      if (p.url) expect((p as any).published).toBe(linkedinDate(p.url));
+      // A post first published here is the site's own, so it carries its full text.
+      else expect(p.body).toBeDefined();
     }
   });
 });
@@ -205,7 +238,8 @@ describe('every post has an indexable page', () => {
         expect(post.mainEntityOfPage?.['@id'] ?? post.mainEntityOfPage).toBe(url);
         expect(post.headline).toBe(p.title.en);
         expect(post.datePublished).toBe((p as any).published);
-        expect([post.isBasedOn, post.sameAs].flat()).toContain(p.url);
+        if (p.url) expect([post.isBasedOn, post.sameAs].flat()).toContain(p.url);
+        else expect([post.isBasedOn, post.sameAs]).toEqual([undefined, undefined]);
         // With the full text here, this page is the original and LinkedIn a copy of it.
         if ((p as any).body) expect(post.isBasedOn).toBeUndefined();
       });
@@ -226,10 +260,15 @@ describe('every post has an indexable page', () => {
           // The full text is on this page; LinkedIn is where it was also posted.
           expect(t).toMatch(new RegExp(`${min}-min full post`, 'i'));
           expect(t).not.toMatch(/original post on linkedin/i);
-          expect(t).toMatch(/also on linkedin/i);
-          expect(ru).toMatch(/также в linkedin/i);
-          expect(t).toContain(body.en.split(/\n\s*\n/)[0].trim().replace(/\s+/g, ' '));
-          expect(ru).toContain(body.ru.split(/\n\s*\n/)[0].trim().replace(/\s+/g, ' '));
+          if (p.url) {
+            expect(t).toMatch(/also on linkedin/i);
+            expect(ru).toMatch(/также в linkedin/i);
+          } else expect(t).not.toMatch(/(also|original post) on linkedin/i);
+          for (const [page, s] of [[t, body.en], [ru, body.ru]]) {
+            const blocks = bodyBlocks(s);
+            expect(page).toContain(squash(text(bodyHtml(blocks[0]))));
+            expect(page).toContain(squash(text(bodyHtml(blocks[blocks.length - 1]))));
+          }
         } else expect(t).toMatch(new RegExp(`${min}-min original`, 'i'));
         // One source for the brief: the inline reader and the page render the same bullets.
         const bullets = [...partials[p.id].matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => text(m[1]).trim());
