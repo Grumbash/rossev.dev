@@ -161,7 +161,7 @@ export const en = {
     start: 'Say hello',
     privacy: 'Audio stays on your device; nothing is recorded or sent.',
     asking: 'Allow the microphone to start.',
-    loading: 'Loading the model (0.5 MB, once):',
+    loading: 'Loading the model (0.5 MB):',
     calibrating: 'Measuring the room for a moment. Stay quiet…',
     listening: 'Listening. Say hello.',
     detected: 'Heard you after',
@@ -174,7 +174,7 @@ export const en = {
     ms: 'ms',
     compute: 'ms of compute for that frame on this device.',
     how:
-      'Measured from the 32 ms frame where your voice rose above the room to the model’s decision, plus the compute time; good to ±32 ms. Mic and OS buffering before the page gets the audio are not counted. At Sully the win was not a faster model but the agent waiting for a voice instead of a ringing line.'
+      'Measured from the 32 ms frame where your voice rose above the room to the model’s decision, plus the compute time. Your voice can start anywhere in that first frame, so it may read up to 32 ms high; the look-back stops at about a second. Mic and OS buffering before the page gets the audio are not counted. At Sully the win was not a faster model but the agent waiting for a voice instead of a ringing line.'
   },
   writing: {
     beyond: 'Beyond the CV',

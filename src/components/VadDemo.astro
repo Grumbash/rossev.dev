@@ -38,7 +38,7 @@ const small = 'font-size: 0.82rem; color: #A9ADBD;';
 
   <p role="status" aria-live="polite" style="font-size: 0.92rem; color: #E2E0D8; margin-top: 10px; min-height: 1.4em;">
     <span data-vad-msg="asking" hidden>{d.asking}</span>
-    <span data-vad-msg="loading" hidden>{d.loading} <span data-vad-progress>0%</span></span>
+    <span data-vad-msg="loading" hidden>{d.loading} <span data-vad-progress aria-hidden="true">0%</span></span>
     <span data-vad-msg="calibrating" hidden>{d.calibrating}</span>
     <span data-vad-msg="listening" hidden>{d.listening}<span class="vad-meter" aria-hidden="true"><span data-vad-meter></span></span></span>
     <span data-vad-msg="detected" hidden>
