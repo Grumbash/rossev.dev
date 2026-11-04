@@ -359,13 +359,13 @@ export type GitReader = {
 };
 
 // The round-1 implementation never reached git: it was rewritten before its first commit, so the run's
-// steps point at the implementation it became (19f2dbc, also the finding's own ref). The sandbox step
+// steps point at the implementation it became (7a37821, also the finding's own ref). The sandbox step
 // quotes the tests that existed then (`testsAt`: the first red test, bites only, no cut). The strokes
-// red test and the retrain were authored in the same second as 19f2dbc.
+// red test and the retrain were authored in the same second as 7a37821.
 const SHA = {
-  red: 'ead95cff3b5fe2180c6ea6f69d9d906e7eb8578f',
-  strokes: '85abfee4dc9c6eef4003a8e44d1f2e84d9dab9ac',
-  impl: '19f2dbcc2f73de42886406c972e1db0576c903f5',
+  red: '4c261ba8480c71eb06ba2da50deccde9f9cd070c',
+  strokes: '8f0f5ce344ba7bd7cdc3875c55b11b240bb9f048',
+  impl: '7a378213b85930a3c88a16ec51eb5a6f84967535',
 };
 
 export const STORYBOARDS: Record<number, Storyboard> = {
@@ -519,10 +519,10 @@ const git = (args: string[]) => execFileSync('git', args, { encoding: 'utf8' }).
 const RED_COMMIT_TOOLING: Record<string, string[]> = {
   // #32: the pre-fix round-1 weights (the "RR" model), a fixture the regrow test checks the guard
   // against; the page never fetches them (scripts/nca/train.py says so).
-  '4eb6cedb4462b1f9f4130958844388a4c2624fc7': ['scripts/nca/gr-round1.bin'],
+  '97f1bd6c152355c8f19c0926661f16387477ef61': ['scripts/nca/gr-round1.bin'],
   // #25: the export script that wrote tests/fixtures/vad/hello.json in the same commit; the weights it
   // also writes (public/vad/) came with the implementation.
-  'f5177fb85eb143ee75fb1e54db148207b8148818': ['scripts/vad/export.py'],
+  'bef91a2537d3bc3a449b67bc9f7d50f2412fff69': ['scripts/vad/export.py'],
 };
 
 const replayAt = process.argv.indexOf('--replay');

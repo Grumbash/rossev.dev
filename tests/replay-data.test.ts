@@ -132,10 +132,10 @@ describe('replay data (src/data/replay-pr11.json)', () => {
     }
     const tests = replay.events.filter((e) => e.kind === 'test');
     expect(tests.reduce((n, e) => n + (e.lines?.length ?? 0), 0)).toBeGreaterThanOrEqual(3);
-    for (const e of tests) expect(e.testsAt).toBe('ead95cff3b5fe2180c6ea6f69d9d906e7eb8578f');
+    for (const e of tests) expect(e.testsAt).toBe('4c261ba8480c71eb06ba2da50deccde9f9cd070c');
     expect(tests.flatMap((e) => e.lines!).some((n) => /cut/.test(n))).toBe(false);
     expect(tests.flatMap((e) => e.lines!).some((n) => /bite/.test(n))).toBe(true);
-    const fix = replay.events.find((e) => e.kind === 'fix' && e.sha === '85abfee4dc9c6eef4003a8e44d1f2e84d9dab9ac');
+    const fix = replay.events.find((e) => e.kind === 'fix' && e.sha === '8f0f5ce344ba7bd7cdc3875c55b11b240bb9f048');
     expect(fix?.lines ?? []).toContain('a vertical cut between the letters');
   });
 
@@ -150,7 +150,7 @@ describe('replay data (src/data/replay-pr11.json)', () => {
 
   test('the fix is the strokes red test and its implementation', () => {
     const fixes = replay.events.filter((e) => e.kind === 'fix').map((e) => e.sha);
-    expect(fixes).toContain('85abfee4dc9c6eef4003a8e44d1f2e84d9dab9ac');
+    expect(fixes).toContain('8f0f5ce344ba7bd7cdc3875c55b11b240bb9f048');
   });
 
   test('build-story regenerates exactly this file from build-story.json and git', () => {
@@ -175,7 +175,7 @@ describe('reproduced G→R frames (public/replay/pr11-gr.json)', () => {
     expect(readFileSync(ROUND1).equals(readFileSync('public/nca/gr.bin'))).toBe(false);
   });
 
-  // The sandbox's "all green" is a claim too: run the ead95cf assertions (bites-era tests) on round 1.
+  // The sandbox's "all green" is a claim too: run the 4c261ba assertions (bites-era tests) on round 1.
   test('the round-1 weights pass the tests that existed then (why the sandbox was green)', () => {
     const target = readJson('scripts/nca/target.json');
     const w = weightsFrom(ROUND1);

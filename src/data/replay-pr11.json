@@ -11,7 +11,7 @@
       "t": "2026-11-03T20:14:13+04:00",
       "kind": "plan",
       "node": 0,
-      "sha": "ead95cff3b5fe2180c6ea6f69d9d906e7eb8578f",
+      "sha": "4c261ba8480c71eb06ba2da50deccde9f9cd070c",
       "caption": {
         "en": "Plan: a failing test first. GR grows from one cell and regrows after a bite",
         "ru": "План: сначала падающий тест. GR растёт из одной клетки и отрастает после укуса"
@@ -21,7 +21,7 @@
       "t": "2026-11-03T23:43:36+04:00",
       "kind": "diff",
       "node": 2,
-      "sha": "19f2dbcc2f73de42886406c972e1db0576c903f5",
+      "sha": "7a378213b85930a3c88a16ec51eb5a6f84967535",
       "caption": {
         "en": "The builder writes the model: each cell senses its neighbours, then updates",
         "ru": "Builder пишет модель: каждая клетка ощущает соседей и обновляется"
@@ -38,8 +38,8 @@
       "t": "2026-11-03T23:43:36+04:00",
       "kind": "test",
       "node": 4,
-      "sha": "19f2dbcc2f73de42886406c972e1db0576c903f5",
-      "testsAt": "ead95cff3b5fe2180c6ea6f69d9d906e7eb8578f",
+      "sha": "7a378213b85930a3c88a16ec51eb5a6f84967535",
+      "testsAt": "4c261ba8480c71eb06ba2da50deccde9f9cd070c",
       "caption": {
         "en": "The sandbox runs the checks: all green, but they only test round bites",
         "ru": "Песочница гоняет проверки: всё зелёное, но проверяются только круглые укусы"
@@ -55,7 +55,7 @@
       "t": "2026-11-03T23:43:36+04:00",
       "kind": "catch",
       "node": 3,
-      "sha": "19f2dbcc2f73de42886406c972e1db0576c903f5",
+      "sha": "7a378213b85930a3c88a16ec51eb5a6f84967535",
       "reproduced": true,
       "caption": {
         "en": "The judge catches it: after a vertical cut the G grows back as an R",
@@ -66,7 +66,7 @@
       "t": "2026-11-03T23:43:36+04:00",
       "kind": "fix",
       "node": 4,
-      "sha": "85abfee4dc9c6eef4003a8e44d1f2e84d9dab9ac",
+      "sha": "8f0f5ce344ba7bd7cdc3875c55b11b240bb9f048",
       "lines": [
         "a vertical cut between the letters"
       ],
@@ -79,7 +79,7 @@
       "t": "2026-11-03T23:43:36+04:00",
       "kind": "fix",
       "node": 2,
-      "sha": "19f2dbcc2f73de42886406c972e1db0576c903f5",
+      "sha": "7a378213b85930a3c88a16ec51eb5a6f84967535",
       "caption": {
         "en": "Retrained on strokes from the start: the cut heals and the G stays a G",
         "ru": "Сеть переобучена на штрихах с нуля: разрез заживает, G остаётся G"
