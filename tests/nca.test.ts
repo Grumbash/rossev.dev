@@ -5,6 +5,8 @@ import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { NeuralCA, type NcaWeights } from '../src/scripts/nca/model';
 import { decodeWeights } from '../src/scripts/nca/weights';
+// The browser seeds from Math.random; tests use a fixed stream (mulberry32) so a run is repeatable.
+import { cut, mulberry32 } from '../src/scripts/replay/frames';
 
 // The page ships the weights as a compact binary; the tests run exactly what it decodes.
 const bin = readFileSync('public/nca/gr.bin');
@@ -12,17 +14,6 @@ const weights: NcaWeights = decodeWeights(bin.buffer.slice(bin.byteOffset, bin.b
 const target: { size: number; rgba: number[] } = JSON.parse(
   readFileSync('scripts/nca/target.json', 'utf8')
 );
-
-// The browser seeds from Math.random; tests use a fixed stream so a run is repeatable.
-function mulberry32(seed: number) {
-  return () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 function mse(ca: NeuralCA): number {
   const out = ca.rgba();
@@ -71,16 +62,8 @@ describe('NeuralCA on the GR weights', () => {
   }
 
   // The page invites a drag, not a bite: a stroke is the brush stamped every
-  // few cells along a line, the way the pointer handler stamps it.
-  function stroke(ca: NeuralCA, x0: number, y0: number, x1: number, y1: number) {
-    const n = ca.size;
-    const len = Math.hypot(x1 - x0, y1 - y0) * n;
-    const stamps = Math.ceil(len / 3);
-    for (let i = 0; i <= stamps; i++) {
-      const t = i / stamps;
-      ca.damage((x0 + (x1 - x0) * t) * n, (y0 + (y1 - y0) * t) * n, 0.12 * n);
-    }
-  }
+  // few cells along a line, the way the pointer handler stamps it (cut() in frames.ts).
+  const stroke = cut;
 
   const strokes: [string, [number, number, number, number][]][] = [
     ['a vertical cut between the letters', [[0.5, 0, 0.5, 1]]],
