@@ -69,7 +69,8 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - **FULL-STACK & MOBILE**: TypeScript, Node.js, NestJS, React, React Native, Next.js, PostgreSQL, MongoDB, Playwright, Cypress, Jest, Monorepos
 - **LEADERSHIP**: Teams of 5–12 Engineers, Customer Pilots & Demos, Technical Hiring, System Architecture, Mentoring (150+ Lectures), Product Strategy
 
-## Writing (full posts on rossev.dev, each with a 30-second brief; also on LinkedIn)
+## Writing (full posts on rossev.dev, each with a 30-second brief; most also on LinkedIn)
+- [My Logo Heals Itself. Then I Erased It Into a Stick.](https://rossev.dev/writing/self-healing-monogram/) (2026-11-04): A local model can’t recover information that isn’t there: give it a dumb global supervisor that knows when to restart.
 - [Engineering Management Is Applied Systems Thinking](https://rossev.dev/writing/engineering-management-systems-thinking/) (2026-10-13): Debug your team’s feedback loops, handoffs, and queue depth just like a distributed system.
 - [Every Engineering Estimate Is Actually Two Separate Things](https://rossev.dev/writing/every-engineering-estimate-is-two-things/) (2026-10-19): Separate probability sizing from deterministic business commitments.
 - [The New AI Bottleneck Isn’t Generation — It’s Verification](https://rossev.dev/writing/the-new-ai-bottleneck/) (2026-10-19): Harnesses, automated evals, and runtime observability separate AI toys from production.
