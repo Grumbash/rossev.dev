@@ -51,8 +51,19 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      # An open bot PR is under review: a run would re-draft every post in it (new wording, new cost)
+      # and force-push over the review. New posts wait until it is merged or closed.
+      - id: open-pr
+        run: |
+          n=$(gh pr list --repo "$GITHUB_REPOSITORY" --head bot/publora-sync --state open --json number --jq length)
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+          if [ "$n" != "0" ]; then echo "An open bot PR is waiting for review; nothing to sync until it is merged or closed."; fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Always exits 0; writes added=N to $GITHUB_OUTPUT (0 on nothing new or on any error).
       - id: sync
+        if: steps.open-pr.outputs.count == '0'
         run: bun scripts/ci/publora-sync.ts
         env:
           PUBLORA_API_KEY: ${{ secrets.PUBLORA_API_KEY }}

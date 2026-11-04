@@ -45,7 +45,7 @@ const FALLBACK_PALETTE = ['var(--lime)', 'var(--yellow)', 'var(--cyan)', 'var(--
 const WORDS_PER_MINUTE = 230;
 // A run starts no model call after RUN_BUDGET_MS (new posts newest first, then full-text fills),
 // leaving the job's 20 minutes room for one last call (2 min timeout), tests and build. A quick
-// model gets through the whole backfill (~50 calls) in one run; a slow one stops cleanly and the
+// model gets through the whole backfill (~43 calls) in one run; a slow one stops cleanly and the
 // rest come in the first run after the PR is merged. MAX_CALLS only guards against a runaway list.
 export const RUN_BUDGET_MS = 12 * 60_000;
 export const MAX_CALLS = 80;
@@ -207,7 +207,7 @@ export function validateDraft(raw: unknown, source: string): { ok: true; draft: 
 
   const en: [string, unknown][] = [];
   const ru: [string, unknown][] = [];
-  for (const [field, min, max] of [['title', 8, 140], ['takeaway', 20, 220], ['quote', 10, 280]] as const) {
+  for (const [field, min, max] of [['title', 8, 140], ['takeaway', 41, 220], ['quote', 10, 280]] as const) {
     if (!exactKeys(d[field], ['en', 'ru'])) {
       errors.push(`${field}: needs exactly en and ru`);
       continue;
@@ -247,6 +247,12 @@ export function validateDraft(raw: unknown, source: string): { ok: true; draft: 
 
 const ENTRY_KEYS = ['id', 'slug', 'published', 'category', 'categoryLabel', 'originalMinutes', 'url', 'title', 'takeaway', 'tags', 'brief', 'body', 'color'];
 const okPair = (v: any) => exactKeys(v, ['en', 'ru']) && str(v.en, 1, 10_000) && str(v.ru, 1, 50_000);
+
+/** Each page's <title> and meta description must be unique (the page tests check it). */
+export const clashes = (e: BlogPost, others: BlogPost[]) => [
+  ...(others.some((p) => p.title.en.trim().toLowerCase() === e.title.en.trim().toLowerCase()) ? ['same title as a post already on the site'] : []),
+  ...(others.some((p) => p.takeaway.en.trim().toLowerCase() === e.takeaway.en.trim().toLowerCase()) ? ['same takeaway as a post already on the site'] : []),
+];
 
 /** Problems with a site entry, generated or hand-written; [] when it is fine. */
 export function checkEntry(p: BlogPost): string[] {
@@ -419,6 +425,9 @@ export type Deps = {
  * (YYYY-MM-DD, default DEFAULT_SINCE), GITHUB_OUTPUT (gets added=N), PR_BODY_PATH. Never throws.
  */
 export async function run(env: Record<string, string | undefined>, deps: Deps) {
+  // The time budget counts from here, Publora calls included.
+  const now = deps.now ?? Date.now;
+  const started = now();
   const secrets = [env.PUBLORA_API_KEY, env.OPENROUTER_API_KEY];
   const log = (s: string) => deps.log(redact(`publora-sync: ${s}`, secrets));
   const why = (e: any) => `${e?.message ?? e}${e?.cause ? ` (${e.cause})` : ''}`;
@@ -521,8 +530,6 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
 
     const byAge = (a: Target, b: Target) => (BigInt(a.activityId) < BigInt(b.activityId) ? -1 : 1);
-    const now = deps.now ?? Date.now;
-    const started = now();
     let calls = 0;
     let waiting = 0;
     const inBudget = () => calls < MAX_CALLS && now() - started < RUN_BUDGET_MS;
@@ -579,7 +586,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     const added: BlogPost[] = [];
     for (const { t, source, draft } of drafted.sort((a, b) => byAge(a.t, b.t))) {
       const entry = buildEntry({ draft, source, url: t.url, activityId: t.activityId, existing: posts });
-      const problems = checkEntry(entry);
+      const problems = [...checkEntry(entry), ...clashes(entry, posts)];
       if (problems.length) {
         skipped.push({ url: t.url, reason: problems.join('; ') });
         log(`skip ${t.url}: ${problems.join('; ')}`);
@@ -608,7 +615,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
       const old = posts[i];
       const regenerated = buildEntry({ draft, source, url: old.url, activityId: t.activityId, existing: posts });
       const entry: BlogPost = { ...regenerated, id: old.id, slug: old.slug, published: old.published, url: old.url, originalMinutes: old.originalMinutes, color: old.color };
-      const problems = checkEntry(entry);
+      const problems = [...checkEntry(entry), ...clashes(entry, posts.filter((_, j) => j !== i))];
       if (problems.length) {
         skipped.push({ url: t.url, reason: `full text: ${problems.join('; ')}` });
         log(`skip full text for ${t.url}: ${problems.join('; ')}`);

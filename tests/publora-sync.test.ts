@@ -834,7 +834,13 @@ describe('a run is bounded by time, not by a post count, so the whole backfill l
   const entry = (id: string, text: string) => ({ activityId: id, url: `https://www.linkedin.com/posts/rossev_x-share-${id}-AbCd`, text });
   const backfillHarness = (n: number, minutesPerCall: number) => {
     const ids = Array.from({ length: n }, (_, i) => (BigInt(NEW_ID) + BigInt(i) * 1000n).toString());
-    const drafts = Object.fromEntries(ids.map((_, i) => [`Backfill post ${i} `, { ...DRAFT_NEW, slug: `backfill-post-${i}` }]));
+    // Distinct titles and takeaways: the sync skips a draft that repeats one already on the site.
+    const drafts = Object.fromEntries(
+      ids.map((_, i) => [
+        `Backfill post ${i} `,
+        { ...DRAFT_NEW, slug: `backfill-post-${i}`, title: { ...DRAFT_NEW.title, en: `${DRAFT_NEW.title.en}, note ${i}` }, takeaway: { ...DRAFT_NEW.takeaway, en: `${DRAFT_NEW.takeaway.en} Note ${i}.` } },
+      ]),
+    );
     const h = harness({ groups: [], drafts });
     let now = 0;
     const real = h.deps.fetch;
@@ -901,5 +907,56 @@ describe('fancy Unicode letters become plain text', () => {
   test('mathematical bold and italic letters are mapped to plain ones; other symbols stay', () => {
     expect(cleanSource('𝗔𝗜 𝘄𝗼𝗻’𝘁 𝗿𝗲𝗽𝗹𝗮𝗰𝗲 𝗱𝗲𝘃𝗲𝗹𝗼𝗽𝗲𝗿𝘀. 𝙘𝙪𝙧𝙞𝙤𝙪𝙨')).toBe('AI won’t replace developers. curious');
     expect(cleanSource('Harness² loop… «ёлочки» — 🚀')).toBe('Harness² loop… «ёлочки» — 🚀');
+  });
+});
+
+// --- one bad entry never blocks the PR ---------------------------------------------------------------
+
+describe('what the page tests demand is enforced per entry, so one bad draft is skipped instead of failing the job', () => {
+  const src = cleanSource(NEW_TEXT);
+
+  test('a takeaway of 40 characters or fewer is rejected (it is the meta description, which must be longer)', () => {
+    const d = structuredClone(DRAFT_NEW);
+    d.takeaway.en = 'Fix the queue before you hire anyone.';
+    expect(d.takeaway.en.length).toBeLessThanOrEqual(40);
+    expect(validateDraft(d, src).ok).toBe(false);
+  });
+
+  test('a draft whose title or takeaway is already on the site is skipped with a reason', async () => {
+    for (const patch of [{ title: { en: STUBS[2].title.en, ru: DRAFT_NEW.title.ru } }, { takeaway: { en: STUBS[3].takeaway.en, ru: DRAFT_NEW.takeaway.ru } }]) {
+      const h = harness({ groups: [GROUPS[0]], drafts: { 'waiting problem': { ...DRAFT_NEW, ...patch } } });
+      const out = await run(h.env, h.deps);
+      expect(out.status).toBe('none');
+      expect(h.logs.join('\n')).toMatch(/skip.*(same title|same takeaway)/i);
+    }
+  });
+
+  test('the time budget counts from the start of the run, Publora calls included', async () => {
+    const h = harness();
+    let now = 0;
+    (h.deps as any).now = () => now;
+    const real = h.deps.fetch;
+    h.deps.fetch = (async (url: string, init?: RequestInit) => {
+      if (url.startsWith('https://api.publora.com/')) now += RUN_BUDGET_MS;
+      return real(url, init);
+    }) as typeof fetch;
+    await run(h.env, h.deps);
+    expect(toModel(h).length).toBe(0);
+  });
+});
+
+describe('the bot does not churn an open PR under review', () => {
+  const raw = readFileSync('.github/workflows/publora-sync.yml', 'utf8');
+  const wf = Bun.YAML.parse(raw) as any;
+  const steps = (Object.values(wf.jobs) as any[]).flatMap((j) => j.steps);
+
+  test('a step before the sync looks for an open bot PR, and the sync runs only when there is none', () => {
+    const iSync = steps.findIndex((s: any) => String(s.run ?? '').includes('scripts/ci/publora-sync.ts'));
+    const iCheck = steps.findIndex((s: any) => /gh pr list\b[\s\S]*--head bot\/publora-sync[\s\S]*--state open/.test(String(s.run ?? '')));
+    expect(iCheck).toBeGreaterThanOrEqual(0);
+    expect(iCheck).toBeLessThan(iSync);
+    expect(String(steps[iSync].if ?? '')).toContain(`steps.${steps[iCheck].id}.outputs.`);
+    // The check needs only a read token, never the API keys.
+    expect(JSON.stringify(steps[iCheck].env ?? {})).not.toMatch(/PUBLORA_API_KEY|OPENROUTER_API_KEY/);
   });
 });
