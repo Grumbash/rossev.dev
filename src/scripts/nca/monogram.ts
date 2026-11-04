@@ -57,10 +57,15 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
     if (!notice || !text) return;
     placeNotice();
     window.addEventListener('resize', placeNotice);
-    noticeLine.textContent = text;
+    // Cleared first and filled a moment later, so the same text again is a change a
+    // screen reader announces (a clear and refill in one task can be coalesced away).
+    noticeLine.textContent = '';
     if (!noticeLine.isConnected) notice.appendChild(noticeLine);
     clearTimeout(noticeTimer);
-    noticeTimer = setTimeout(hideNotice, NOTICE_MS);
+    noticeTimer = setTimeout(() => {
+      noticeLine.textContent = text;
+      noticeTimer = setTimeout(hideNotice, NOTICE_MS);
+    }, 50);
   }
 
   const send = (msg: ToWorker, transfer: Transferable[] = []) => worker?.postMessage(msg, transfer);
