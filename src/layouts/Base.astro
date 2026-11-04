@@ -259,8 +259,10 @@ const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
     <script>
       import { initSite } from '../scripts/site';
       import { initAnalytics } from '../scripts/analytics';
+      import { initVadLoader } from '../scripts/vad/loader';
       initSite();
       initAnalytics();
+      initVadLoader();
     </script>
     <slot name="scripts" />
 

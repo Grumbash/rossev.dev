@@ -1,0 +1,57 @@
+---
+// Issue #9: "Say hello" next to the Sully case's "15s → 0s". Rendered inside the Sully breakdown
+// (its /cases/sully/ page and the home fragment), so home's own HTML carries none of it.
+// src/scripts/vad/loader.ts (eager, a click listener) shows one data-vad-msg line per state and
+// imports the demo only on click; every line is here, in the page's language. Static look is
+// inline like the rest of the blueprint; only the live meter's CSS comes with the lazy chunk.
+import { t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const d = t(lang).vad;
+const cell = 'background: #161922; border: 2px solid #3A3F52; padding: 12px 16px;';
+const big = 'display: block; font-family: var(--font-mono); font-size: 1.6rem; font-weight: 800;';
+const small = 'font-size: 0.82rem; color: #A9ADBD;';
+---
+
+<div class="vad-demo" data-vad data-vad-phase="idle" style="margin-top: 20px; border: 2px dashed #C8FF00; padding: 16px;">
+  <noscript><style>[data-vad-start]{display:none!important}</style></noscript>
+  <div style="font-family: var(--font-mono); font-size: 0.76rem; color: #C8FF00; font-weight: 800; margin-bottom: 8px;">{d.kicker}</div>
+  <p style="font-size: 0.92rem; color: #E2E0D8; margin-bottom: 14px;">{d.lead}</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px;">
+    <div style={cell}>
+      <span style={`${big} color: #FF5500;`}>{d.beforeValue}</span>
+      <span style={small}>{d.before}</span>
+    </div>
+    <div style={cell}>
+      <span data-vad-result style={`${big} color: #E2E0D8;`}><span data-vad-ms>—</span> {d.ms}</span>
+      <span style={small}>{d.afterLabel}</span>
+    </div>
+  </div>
+
+  <button type="button" class="brutal-btn brutal-btn-lime" data-vad-start>{d.start}</button>
+  <p style="font-size: 0.82rem; color: #E2E0D8; margin-top: 8px;">{d.privacy}</p>
+
+  <p role="status" aria-live="polite" style="font-size: 0.92rem; color: #E2E0D8; margin-top: 10px; min-height: 1.4em;">
+    <span data-vad-msg="asking" hidden>{d.asking}</span>
+    <span data-vad-msg="loading" hidden>{d.loading} <span data-vad-progress>0%</span></span>
+    <span data-vad-msg="calibrating" hidden>{d.calibrating}</span>
+    <span data-vad-msg="listening" hidden>{d.listening}<span class="vad-meter" aria-hidden="true"><span data-vad-meter></span></span></span>
+    <span data-vad-msg="detected" hidden>
+      {d.detected} <b style="color: #C8FF00;"><span data-vad-ms>—</span> {d.ms}</b>.
+      <span style={small}><span data-vad-infer>—</span> {d.compute}</span>
+    </span>
+    <span data-vad-msg="quiet" hidden>{d.quiet}</span>
+    <span data-vad-msg="denied" hidden>{d.denied}</span>
+    <span data-vad-msg="nomic" hidden>{d.nomic}</span>
+    <span data-vad-msg="unsupported" hidden>{d.unsupported}</span>
+    <span data-vad-msg="savedata" hidden>{d.savedata}</span>
+    <span data-vad-msg="error" hidden>{d.error}</span>
+  </p>
+
+  <p style={`${small} margin-top: 8px;`}>{d.how}</p>
+</div>

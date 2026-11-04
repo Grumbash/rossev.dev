@@ -1,0 +1,33 @@
+/* Voice demo styles that only matter once it runs; the block's static look is inline in
+   VadDemo.astro, so the page needs no CSS for it before the click. */
+.vad-meter {
+  display: block;
+  height: 6px;
+  margin-top: 8px;
+  background: #3A3F52;
+  overflow: hidden;
+}
+
+.vad-meter > span {
+  display: block;
+  height: 100%;
+  background: #C8FF00;
+  transform-origin: left;
+  transform: scaleX(var(--vad-p, 0));
+  transition: transform 80ms linear;
+}
+
+[data-vad-phase='detected'] [data-vad-result] {
+  color: #C8FF00;
+}
+
+[data-vad-start]:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vad-meter > span {
+    transition: none;
+  }
+}

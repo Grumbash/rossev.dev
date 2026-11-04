@@ -111,6 +111,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `post_filter` | `filter` (all, ai, leadership, systems, delivery) | writing filter tab |
 | `topology_interact` | `action`, `outcome` (free play behind Explore: domain, fault, xray, reset, packet, stratum, step, blueprint; drag = horizontal drag on the canvas; case = YAGNI case link, play = phone Play, explore = Explore toggle; the PR #11 replay: replay = the film first started, takeover = the visitor took over, resume = the film came back, scrub = a timeline stop used, outcome = a result landed, with `outcome` caught, shipped, healed or unhealed) | topology, once per action (and outcome) per view |
 | `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset, case = bridge link to the YAGNI case) | GR monogram in Beyond the CV, once per action per view |
+| `vad_demo` | `action` (start = Say hello clicked and the mic asked, denied = mic permission refused, detected = speech heard, error = no mic, unsupported browser or failed load), `ms` (detected only: onset latency bucket <100, 100-199, 200-399, 400-799, 800+) | voice demo in the Sully case; Save-Data and a quiet 15 s send nothing |
 | `lang_switch` / `theme_switch` | `to` | EN/RU link to the same page in the other locale (`/` ↔ `/ru/`), THEME |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |
 | `booking_confirmed` | `source` (nav, hero, footer, reader, build-story, unknown) | `/booked` after a cal.com redirect carrying a booking `uid`, once per booking |
@@ -128,3 +129,5 @@ Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event,
 ## License
 
 Code is MIT. The texts, the CV and everything about me personally are not: see [LICENSE](LICENSE).
+
+The voice demo in the Sully case runs [Silero VAD](https://github.com/snakers4/silero-vad) v6.2.3 (MIT, Silero Team; notice in `public/vad/LICENSE-silero-vad.txt`). `scripts/vad/export.py` turns the official `silero_vad_16k_op15.onnx` into the float16 weights in `public/vad/`; `src/scripts/vad/model.ts` is a TypeScript port, held to the ONNX model's output by `tests/vad-model.test.ts`.
