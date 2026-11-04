@@ -1,8 +1,9 @@
 // The hero topology replays a real agent run on this site: PR #11, the GR monogram.
 // Everything it shows must be checkable: times are the commits' own, diff lines were really added,
-// test names really exist, the catch is the judge's real finding. The G→R mis-heal never shipped
-// (the first committed weights were already trained on strokes), so it is reproduced from the
-// pre-fix recipe, kept as weights in the repo, and the recorded frames must re-run from them.
+// test names really exist, the catch is the judge's real finding. The G→R mis-heal never reached git
+// (the first committed weights were already trained on strokes); the round-1 weights it came from were
+// recovered from the agent run's working files and are kept here, and the recorded frames must re-run
+// from them exactly.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -34,7 +35,7 @@ type Replay = { pr: number; label: L10n; url: string; mergedAt: string; events: 
 
 const REPLAY = 'src/data/replay-pr11.json';
 const FRAMES = 'public/replay/pr11-gr.json';
-const BITES = 'scripts/nca/gr-bites.bin';
+const ROUND1 = 'scripts/nca/gr-round1.bin';
 
 let story: any;
 let pr11: any;
@@ -157,11 +158,25 @@ describe('reproduced G→R frames (public/replay/pr11-gr.json)', () => {
     rec = existsSync(FRAMES) ? readJson(FRAMES) : { frames: [] };
   });
 
-  test('says where it came from: the pre-fix recipe, as committed weights', () => {
-    expect(existsSync(BITES)).toBe(true);
-    expect(rec.weights).toBe(BITES);
-    expect(rec.recipe).toMatch(/train\.py\b.*--damage bites/);
-    expect(readFileSync('scripts/nca/train.py', 'utf8')).toMatch(/--damage[\s\S]{0,200}bites/);
+  test('says where it came from: PR #11 round-1 weights, committed, not the shipped ones', () => {
+    expect(existsSync(ROUND1)).toBe(true);
+    expect(rec.weights).toBe(ROUND1);
+    expect(rec.source.en).toMatch(/PR #11/);
+    expect(rec.source.en).toMatch(/round 1/i);
+    expect(rec.source.en).toMatch(/not in git/i);
+    expect(rec.source.ru).toMatch(/PR #11/);
+    expect(readFileSync(ROUND1).equals(readFileSync('public/nca/gr.bin'))).toBe(false);
+  });
+
+  test('the round-1 weights grow GR fine: the bug only shows after a cut', () => {
+    const target = readJson('scripts/nca/target.json');
+    const ca = new NeuralCA(weightsFrom(ROUND1), mulberry32(rec.rngSeed));
+    ca.seed();
+    ca.step(rec.grow);
+    const out = ca.rgba();
+    let sum = 0;
+    for (let i = 0; i < out.length; i++) sum += (out[i] - target.rgba[i]) ** 2;
+    expect(sum / out.length).toBeLessThan(0.01);
   });
 
   test('is small: 12–16 frames, at most 4 KB gzip', () => {
@@ -171,7 +186,7 @@ describe('reproduced G→R frames (public/replay/pr11-gr.json)', () => {
   });
 
   test('re-runs exactly from the committed weights: grow, vertical cut, regrow', () => {
-    const ca = new NeuralCA(weightsFrom(BITES), mulberry32(rec.rngSeed));
+    const ca = new NeuralCA(weightsFrom(ROUND1), mulberry32(rec.rngSeed));
     ca.seed();
     ca.step(rec.grow);
     let at = 0;
@@ -182,6 +197,7 @@ describe('reproduced G→R frames (public/replay/pr11-gr.json)', () => {
       expect(encodeFrame(quantize(ca.rgba()))).toBe(f.data);
     });
     expect(rec.cut).toEqual([[0.5, 0, 0.5, 1]]);
+    expect(rec.frames.at(-1).step).toBeGreaterThanOrEqual(1000);
   });
 
   test('shows the bug: the G grows back with lime in it, where the target has none', () => {
