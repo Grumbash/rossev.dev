@@ -27,9 +27,10 @@ Files:
 After new weights or a new target: run `bun scripts/nca/gen-baseline.ts` (it rewrites
 src/scripts/nca/baseline.ts, the target signature the page's recovery guard judges
 "grown" against; tests/nca-baseline.test.ts fails until you do), then re-check the
-guard's tolerances in src/scripts/nca/healer.ts on ~50 seeds: every cleanly grown GR
-(MSE < 0.002) must pass the target check, and `bun test tests/nca-regrow.test.ts` must
-stay green.
+guard's thresholds in src/scripts/nca/healer.ts on ~400 grows plus some heals: every
+clean frame (MSE < 0.002) must be within MAX_SHAPE_DISTANCE of the target and every
+crooked one (MSE > 0.005) beyond it, and `bun test tests/nca-regrow.test.ts` must stay
+green.
 
 Also, without training:
   train.py --to-bin old/gr.json      convert float32 JSON weights to --out (how the shipped
