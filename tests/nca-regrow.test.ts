@@ -107,6 +107,57 @@ describe('a large but recoverable loss', () => {
     expect(run.statuses.at(-1)).toBe('settled');
     expect(mse(ca)).toBeLessThan(0.01);
   });
+
+  // A judge measured: across seeds, half-lost monograms drifted as a wrong blob until a 3000-step
+  // cap (~75 s at 40 steps/s), and some settled on a visibly imperfect GR the loop then slept on.
+  // Every good heal it measured settled within ~770 steps.
+  for (const keep of [0.5, 0.55]) {
+    test(`keeping the top ${Math.round(keep * 100)}%: on every seed it decides within ~30 s and ends as a clean GR`, () => {
+      for (const seed of [1, 2, 3, 4, 5, 6]) {
+        const { ca, healer } = grown(seed);
+        healer.damage(eraseBelow(ca, keep), 2.5);
+        // Decided = healed and settled, or gave up and started a regrow.
+        let decidedAt = -1;
+        for (let steps = 4; steps <= 6000; steps += 4) {
+          const s = healer.step(4);
+          if (decidedAt < 0 && (s === 'settled' || s === 'regrowing')) decidedAt = steps;
+          if (s === 'settled') break;
+        }
+        expect(decidedAt, `seed ${seed}`).toBeGreaterThan(0);
+        expect(decidedAt, `seed ${seed}`).toBeLessThanOrEqual(1200);
+        expect(mse(ca), `seed ${seed}`).toBeLessThan(0.01);
+      }
+    });
+  }
+});
+
+describe('one gesture is one regrow', () => {
+  test('a scribble that keeps erasing after the threshold regrows and announces once, not per pointer move', () => {
+    const { ca, healer } = grown(4);
+    const n = ca.size;
+    let regrowingVerdicts = 0;
+    // A drag sends one damage message per pointer move; sweep back and forth across the whole grid.
+    for (let pass = 0; pass < 6; pass++) {
+      for (let x = 0; x <= n; x += 3) {
+        for (const y of [0.2, 0.4, 0.6, 0.8]) {
+          if (healer.damage([{ x: pass % 2 ? n - x : x, y: y * n }], 0.12 * n) === 'regrowing') regrowingVerdicts++;
+        }
+        healer.step(4);
+      }
+    }
+    expect(regrowingVerdicts).toBeLessThanOrEqual(1);
+    expect(healer.regrows).toBeLessThanOrEqual(1);
+    runUntilSettled(healer, 3000);
+    expect(mse(ca)).toBeLessThan(0.01);
+  });
+
+  test('a small tap while a regrow is under way does not start another one', () => {
+    const { ca, healer } = grown(5);
+    expect(healer.damage(eraseBelow(ca, 0.3), 2.5)).toBe('regrowing');
+    for (let i = 0; i < 5; i++) healer.step(4);
+    expect(healer.damage([{ x: 2, y: 2 }], 2)).not.toBe('regrowing');
+    expect(healer.regrows).toBe(1);
+  });
 });
 
 describe('a shape that settles wrong is caught too', () => {
