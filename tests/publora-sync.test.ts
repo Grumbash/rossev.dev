@@ -11,6 +11,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { BLOG_POSTS, type BlogPost } from '../src/data/profile';
 import {
   DEFAULT_MODEL,
+  DEFAULT_SINCE,
+  RUN_BUDGET_MS,
   activityId,
   buildEntry,
   checkEntry,
@@ -115,8 +117,12 @@ const DRAFT_PARTIAL = {
   bodyRu: 'Оунершип — это не дежурство.\n\nВладеть системой — значит решать, что имеет право вас будить, и удалять алерты, на которые никто не реагирует.',
 };
 
+// The 9 brief-only posts the site launched with, frozen: the live posts.json changes with every bot
+// PR (and its CI runs these tests on the changed data), so run() is tested against this fixture.
+const STUBS = readJson('tests/fixtures/publora/site-posts.json') as BlogPost[];
+
 // The site as most runs see it: post-1 already has its full text, so only new posts reach the model.
-const SITE = (BLOG_POSTS as BlogPost[]).map((p) => (p.id === 'post-1' ? { ...p, body: { en: 'Full text.', ru: 'Полный текст.' } } : p));
+const SITE = STUBS.map((p) => (p.id === 'post-1' ? { ...p, body: { en: 'Full text.', ru: 'Полный текст.' } } : p));
 
 type Call = { url: string; method: string; headers: Headers; body: any };
 function harness(opts: { groups?: Group[]; publora?: 'ok' | '401' | '500'; drafts?: Record<string, unknown>; posts?: BlogPost[] } = {}) {
@@ -289,7 +295,7 @@ describe('the model draft is validated, never trusted', () => {
 // --- the site entry ----------------------------------------------------------------------------
 
 describe('the generated entry looks like the posts already on the site', () => {
-  const existing = BLOG_POSTS as BlogPost[];
+  const existing = STUBS;
   const entry = buildEntry({
     draft: DRAFT_NEW as any,
     source: cleanSource(NEW_TEXT),
@@ -335,7 +341,7 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('added');
     const posts = written(h)!;
-    expect(posts.length).toBe(BLOG_POSTS.length + 2);
+    expect(posts.length).toBe(STUBS.length + 2);
     const added = posts.slice(0, 2);
     expect(added.map((p) => p.slug)).toEqual(['ownership-is-not-on-call', 'velocity-is-a-waiting-problem']);
     expect(posts.slice(2)).toEqual(SITE);
@@ -412,7 +418,7 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     const h = harness({ drafts: { 'waiting problem': DRAFT_NEW, 'Ownership is not on-call': lying } });
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('added');
-    expect(written(h)!.length).toBe(BLOG_POSTS.length + 1);
+    expect(written(h)!.length).toBe(STUBS.length + 1);
     expect(h.logs.join('\n')).toMatch(/skip.*80/i);
     expect(h.writes['.publora/pr-body.md']).toMatch(/skipped/i);
 
@@ -518,8 +524,10 @@ describe('.github/workflows/publora-sync.yml', () => {
   test('runs daily on a schedule and by hand, nothing else', () => {
     expect(raw).not.toBe('');
     expect(Object.keys(on).sort()).toEqual(['schedule', 'workflow_dispatch']);
-    expect(on.schedule.length).toBe(1);
-    expect(on.schedule[0].cron).toMatch(/^\d{1,2} \d{1,2} \* \* \*$/);
+    // Two daily slots: GitHub drops scheduled runs under load, and a run is idempotent.
+    expect(on.schedule.length).toBe(2);
+    for (const s of on.schedule) expect(s.cron).toMatch(/^\d{1,2} \d{1,2} \* \* \*$/);
+    expect(new Set(on.schedule.map((s: any) => s.cron.split(' ')[1])).size).toBe(2);
   });
 
   test('minimal permissions: write contents and pull requests, nothing more', () => {
@@ -625,7 +633,7 @@ describe('one bad post never blocks the others', () => {
       url.includes('/get-post/g-deleted') ? new Response(JSON.stringify({ success: false, error: 'Post group not found' }), { status: 404 }) : real(url, init)) as typeof fetch;
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('added');
-    expect(written(h)!.length).toBe(BLOG_POSTS.length + 2);
+    expect(written(h)!.length).toBe(STUBS.length + 2);
     expect(h.logs.join('\n')).toMatch(/g-deleted.*404/);
   });
 
@@ -644,7 +652,7 @@ describe('a post Gleb rejected stays rejected', () => {
     (h.deps as any).readIgnored = () => [NEW_ID];
     await run(h.env, h.deps);
     expect(written(h)!.slice(0, 1).map((p) => p.slug)).toEqual(['ownership-is-not-on-call']);
-    expect(written(h)!.length).toBe(BLOG_POSTS.length + 1);
+    expect(written(h)!.length).toBe(STUBS.length + 1);
     expect(toModel(h).length).toBe(1);
     expect(h.writes['.publora/pr-body.md']).toContain('publora-ignore.json');
     expect(h.writes['.publora/pr-body.md']).toContain(PARTIAL_ID);
@@ -685,13 +693,13 @@ const stubDraft = (bodyRu = BODY_RU, slug = 'systems-thinking-for-managers') => 
 
 describe('the stubs already on the site get their full text and a brief regenerated from it', () => {
   test('a site post without a body gets body.en = the original, a new brief and body.ru from the model; id, slug, url, date and color stay', async () => {
-    const h = harness({ posts: BLOG_POSTS as BlogPost[], drafts: { 'waiting problem': DRAFT_NEW, 'Ownership is not on-call': DRAFT_PARTIAL, 'applied systems thinking': stubDraft() } });
+    const h = harness({ posts: STUBS, drafts: { 'waiting problem': DRAFT_NEW, 'Ownership is not on-call': DRAFT_PARTIAL, 'applied systems thinking': stubDraft() } });
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('added');
     const posts = written(h)!;
-    expect(posts.length).toBe(BLOG_POSTS.length + 2);
+    expect(posts.length).toBe(STUBS.length + 2);
     const p1 = posts.find((p) => p.id === 'post-1')!;
-    const before = BLOG_POSTS.find((p) => p.id === 'post-1')! as BlogPost;
+    const before = STUBS.find((p) => p.id === 'post-1')! as BlogPost;
     const d = stubDraft();
     expect(p1.body).toEqual({ en: 'Engineering management is applied systems thinking.', ru: BODY_RU });
     expect(p1.title).toEqual(d.title);
@@ -705,7 +713,7 @@ describe('the stubs already on the site get their full text and a brief regenera
     expect(Object.keys(p1)).toEqual(Object.keys(posts[0]));
     expect(checkEntry(p1)).toEqual([]);
     // The other stubs are not in this Publora fixture, so they stay as they are.
-    for (const p of posts.filter((p) => p.id !== 'post-1' && BLOG_POSTS.some((b) => b.id === p.id))) expect(p).toEqual(BLOG_POSTS.find((b) => b.id === p.id) as BlogPost);
+    for (const p of posts.filter((p) => p.id !== 'post-1' && STUBS.some((b) => b.id === p.id))) expect(p).toEqual(STUBS.find((b) => b.id === p.id) as BlogPost);
     // Same prompt and schema as a new post.
     const stubCall = toModel(h).find((c) => String(c.body.messages.at(-1).content).includes('applied systems thinking'))!;
     expect(stubCall.body.response_format.json_schema.schema.required).toContain('bullets');
@@ -719,17 +727,17 @@ describe('the stubs already on the site get their full text and a brief regenera
   });
 
   test('only full text for old posts, nothing new: still one PR', async () => {
-    const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': stubDraft() } });
+    const h = harness({ groups: [GROUPS[1]], posts: STUBS, drafts: { 'applied systems thinking': stubDraft() } });
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('added');
-    expect(written(h)!.length).toBe(BLOG_POSTS.length);
+    expect(written(h)!.length).toBe(STUBS.length);
     expect(h.writes['/tmp/gh-output']).toMatch(/^added=1$/m);
     expect(h.writes['/tmp/gh-output']).toMatch(/^title=.*full text/im);
   });
 
   test('the draft is validated like any other: Russian, no new numbers, not a fragment', async () => {
     for (const draft of [stubDraft('Engineering management is applied systems thinking.'), stubDraft('Менеджмент — это на 40% системное мышление и распределённые системы.'), stubDraft('Коротко.'), { bodyRu: BODY_RU }]) {
-      const h = harness({ groups: [GROUPS[1]], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': draft } });
+      const h = harness({ groups: [GROUPS[1]], posts: STUBS, drafts: { 'applied systems thinking': draft } });
       const out = await run(h.env, h.deps);
       expect(out.status, JSON.stringify(draft).slice(0, 60)).toBe('none');
       expect(h.writes[POSTS_JSON]).toBeUndefined();
@@ -745,23 +753,6 @@ describe('the stubs already on the site get their full text and a brief regenera
   });
 });
 
-describe('one run stays well inside the job timeout', () => {
-  test('at most 5 brief-only posts get their full text per run; the rest come the next day', async () => {
-    const stubs = (BLOG_POSTS as BlogPost[]).slice(0, 7);
-    const groups = stubs.map((p, i) => ({
-      postGroupId: `g-stub-${i}`,
-      status: 'published',
-      posts: [li(`urn:li:share:${activityId(p.url)}`, 'published', `Stub number ${i} text for the page, long enough to adapt.`)],
-    })) as Group[];
-    const drafts = Object.fromEntries(stubs.map((_, i) => [`Stub number ${i}`, stubDraft(`Текст заметки номер ${i} для страницы, достаточно длинный для адаптации.`)]));
-    const h = harness({ groups, posts: BLOG_POSTS as BlogPost[], drafts });
-    await run(h.env, h.deps);
-    expect(toModel(h).length).toBe(5);
-    expect(written(h)!.filter((p) => p.body).length).toBe(5);
-    expect(h.writes['/tmp/gh-output']).toMatch(/^added=5$/m);
-    expect(h.logs.join('\n')).toMatch(/2 .*next run/i);
-  });
-});
 
 // --- posts that never went through Publora --------------------------------------------------------
 
@@ -798,7 +789,7 @@ describe('src/data/linkedin-backfill.json fills in what Publora never published'
   });
 
   test('a backfill post already on the site without its text gives it the full text', async () => {
-    const h = harness({ groups: [], posts: BLOG_POSTS as BlogPost[], drafts: { 'applied systems thinking': stubDraft() } });
+    const h = harness({ groups: [], posts: STUBS, drafts: { 'applied systems thinking': stubDraft() } });
     (h.deps as any).readBackfill = () => [entry(ON_SITE_ID, 'Engineering management is applied systems thinking.')];
     await run(h.env, h.deps);
     expect(written(h)!.find((p) => p.id === 'post-1')!.body?.en).toBe('Engineering management is applied systems thinking.');
@@ -822,7 +813,7 @@ describe('src/data/linkedin-backfill.json fills in what Publora never published'
       (h.deps as any).readBackfill = bad;
       const out = await run(h.env, h.deps);
       expect(out.status).toBe('added');
-      expect(written(h)!.length).toBe(BLOG_POSTS.length + 2);
+      expect(written(h)!.length).toBe(STUBS.length + 2);
     }
   });
 
@@ -834,25 +825,138 @@ describe('src/data/linkedin-backfill.json fills in what Publora never published'
     expect(toModel(h).length).toBe(0);
   });
 
-  test('over the cap, the newest posts go first; the PR says how many wait for the run after it is merged', async () => {
-    const ids = Array.from({ length: 10 }, (_, i) => (BigInt(NEW_ID) + BigInt(i) * 1000n).toString());
-    const drafts = Object.fromEntries(ids.map((_, i) => [`Backfill post ${i} `, { ...DRAFT_NEW, slug: `backfill-post-${i}` }]));
+
+});
+
+// --- the whole backfill in one run -----------------------------------------------------------------
+
+describe('a run is bounded by time, not by a post count, so the whole backfill lands in one PR', () => {
+  const entry = (id: string, text: string) => ({ activityId: id, url: `https://www.linkedin.com/posts/rossev_x-share-${id}-AbCd`, text });
+  const backfillHarness = (n: number, minutesPerCall: number) => {
+    const ids = Array.from({ length: n }, (_, i) => (BigInt(NEW_ID) + BigInt(i) * 1000n).toString());
+    // Distinct titles and takeaways: the sync skips a draft that repeats one already on the site.
+    const drafts = Object.fromEntries(
+      ids.map((_, i) => [
+        `Backfill post ${i} `,
+        { ...DRAFT_NEW, slug: `backfill-post-${i}`, title: { ...DRAFT_NEW.title, en: `${DRAFT_NEW.title.en}, note ${i}` }, takeaway: { ...DRAFT_NEW.takeaway, en: `${DRAFT_NEW.takeaway.en} Note ${i}.` } },
+      ]),
+    );
     const h = harness({ groups: [], drafts });
+    let now = 0;
+    const real = h.deps.fetch;
+    h.deps.fetch = (async (url: string, init?: RequestInit) => {
+      if (url.startsWith('https://openrouter.ai/')) now += minutesPerCall * 60_000;
+      return real(url, init);
+    }) as typeof fetch;
+    (h.deps as any).now = () => now;
     (h.deps as any).readBackfill = () => ids.map((id, i) => entry(id, `${NEW_TEXT}\n\nBackfill post ${i} closing line.`));
+    return h;
+  };
+
+  test('a quick model gets through 43 posts in one run', async () => {
+    const h = backfillHarness(43, 0.15);
     await run(h.env, h.deps);
-    const slugs = written(h)!.slice(0, 8).map((p) => p.slug);
-    expect(slugs).toEqual([9, 8, 7, 6, 5, 4, 3, 2].map((i) => `backfill-post-${i}`));
-    expect(h.writes['.publora/pr-body.md']).toMatch(/2 more .*after this PR is merged/i);
+    expect(toModel(h).length).toBe(43);
+    expect(h.writes['/tmp/gh-output']).toMatch(/^added=43$/m);
+    expect(h.writes['.publora/pr-body.md']).not.toMatch(/more post\(s\)/);
   });
 
-  test('one run makes at most 8 model calls in all, new posts first; the rest wait for the next run', async () => {
-    const ids = Array.from({ length: 10 }, (_, i) => (BigInt(NEW_ID) + BigInt(i) * 1000n).toString());
-    const drafts = Object.fromEntries(ids.map((_, i) => [`Backfill post ${i} `, { ...DRAFT_NEW, slug: `backfill-post-${i}` }]));
-    const h = harness({ groups: [], drafts });
-    (h.deps as any).readBackfill = () => ids.map((id, i) => entry(id, `${NEW_TEXT}\n\nBackfill post ${i} closing line.`));
+  test('a slow model: no call starts after the time budget; newest first; the PR says how many wait', async () => {
+    expect(RUN_BUDGET_MS).toBeLessThanOrEqual(13 * 60_000); // + tests and build inside the job's 20 minutes
+    const h = backfillHarness(10, 2);
     await run(h.env, h.deps);
-    expect(toModel(h).length).toBe(8);
-    expect(h.writes['/tmp/gh-output']).toMatch(/^added=8$/m);
-    expect(h.logs.join('\n')).toMatch(/2 .*next run/i);
+    const calls = Math.ceil(RUN_BUDGET_MS / (2 * 60_000));
+    expect(toModel(h).length).toBe(calls);
+    expect(written(h)![0].slug).toBe('backfill-post-9');
+    expect(h.writes['.publora/pr-body.md']).toMatch(new RegExp(`${10 - calls} more post\\(s\\).*after this PR is merged`));
+  });
+
+  test('full-text fills share the same budget, after the new posts', async () => {
+    const h = harness({ groups: [GROUPS[1]], posts: STUBS, drafts: { 'waiting problem': DRAFT_NEW, 'applied systems thinking': stubDraft() } });
+    let now = 0;
+    (h.deps as any).now = () => now;
+    const real = h.deps.fetch;
+    h.deps.fetch = (async (url: string, init?: RequestInit) => {
+      if (url.startsWith('https://openrouter.ai/')) now += RUN_BUDGET_MS; // the first call uses it all
+      return real(url, init);
+    }) as typeof fetch;
+    (h.deps as any).readBackfill = () => [entry(NEW_ID, NEW_TEXT)];
+    await run(h.env, h.deps);
+    expect(toModel(h).length).toBe(1);
+    expect(written(h)![0].slug).toBe('velocity-is-a-waiting-problem');
+    expect(written(h)!.find((p) => p.id === 'post-1')!.body).toBeUndefined();
+  });
+});
+
+describe('the backfill covers every own post Gleb has, from August 2025', () => {
+  const b = readJson('src/data/linkedin-backfill.json') as { activityId: string; text: string }[];
+
+  test('43 posts, the oldest on or after PUBLORA_SINCE, so none is filtered out by date', () => {
+    expect(b.length).toBe(43);
+    const oldest = publishedDate(b[0].activityId);
+    expect(oldest).toBe('2025-08-19');
+    expect(DEFAULT_SINCE <= oldest).toBe(true);
+  });
+
+  test('no job shares or bare reshares', () => {
+    for (const e of b) expect(e.text).not.toMatch(/^(Guys, that’s a great opportunity|Another good opportunity|We're hiring|Exciting news! I am officially open)/);
+  });
+});
+
+describe('fancy Unicode letters become plain text', () => {
+  test('mathematical bold and italic letters are mapped to plain ones; other symbols stay', () => {
+    expect(cleanSource('𝗔𝗜 𝘄𝗼𝗻’𝘁 𝗿𝗲𝗽𝗹𝗮𝗰𝗲 𝗱𝗲𝘃𝗲𝗹𝗼𝗽𝗲𝗿𝘀. 𝙘𝙪𝙧𝙞𝙤𝙪𝙨')).toBe('AI won’t replace developers. curious');
+    expect(cleanSource('Harness² loop… «ёлочки» — 🚀')).toBe('Harness² loop… «ёлочки» — 🚀');
+  });
+});
+
+// --- one bad entry never blocks the PR ---------------------------------------------------------------
+
+describe('what the page tests demand is enforced per entry, so one bad draft is skipped instead of failing the job', () => {
+  const src = cleanSource(NEW_TEXT);
+
+  test('a takeaway of 40 characters or fewer is rejected (it is the meta description, which must be longer)', () => {
+    const d = structuredClone(DRAFT_NEW);
+    d.takeaway.en = 'Fix the queue before you hire anyone.';
+    expect(d.takeaway.en.length).toBeLessThanOrEqual(40);
+    expect(validateDraft(d, src).ok).toBe(false);
+  });
+
+  test('a draft whose title or takeaway is already on the site is skipped with a reason', async () => {
+    for (const patch of [{ title: { en: STUBS[2].title.en, ru: DRAFT_NEW.title.ru } }, { takeaway: { en: STUBS[3].takeaway.en, ru: DRAFT_NEW.takeaway.ru } }]) {
+      const h = harness({ groups: [GROUPS[0]], drafts: { 'waiting problem': { ...DRAFT_NEW, ...patch } } });
+      const out = await run(h.env, h.deps);
+      expect(out.status).toBe('none');
+      expect(h.logs.join('\n')).toMatch(/skip.*(same title|same takeaway)/i);
+    }
+  });
+
+  test('the time budget counts from the start of the run, Publora calls included', async () => {
+    const h = harness();
+    let now = 0;
+    (h.deps as any).now = () => now;
+    const real = h.deps.fetch;
+    h.deps.fetch = (async (url: string, init?: RequestInit) => {
+      if (url.startsWith('https://api.publora.com/')) now += RUN_BUDGET_MS;
+      return real(url, init);
+    }) as typeof fetch;
+    await run(h.env, h.deps);
+    expect(toModel(h).length).toBe(0);
+  });
+});
+
+describe('the bot does not churn an open PR under review', () => {
+  const raw = readFileSync('.github/workflows/publora-sync.yml', 'utf8');
+  const wf = Bun.YAML.parse(raw) as any;
+  const steps = (Object.values(wf.jobs) as any[]).flatMap((j) => j.steps);
+
+  test('a step before the sync looks for an open bot PR, and the sync runs only when there is none', () => {
+    const iSync = steps.findIndex((s: any) => String(s.run ?? '').includes('scripts/ci/publora-sync.ts'));
+    const iCheck = steps.findIndex((s: any) => /gh pr list\b[\s\S]*--head bot\/publora-sync[\s\S]*--state open/.test(String(s.run ?? '')));
+    expect(iCheck).toBeGreaterThanOrEqual(0);
+    expect(iCheck).toBeLessThan(iSync);
+    expect(String(steps[iSync].if ?? '')).toContain(`steps.${steps[iCheck].id}.outputs.`);
+    // The check needs only a read token, never the API keys.
+    expect(JSON.stringify(steps[iCheck].env ?? {})).not.toMatch(/PUBLORA_API_KEY|OPENROUTER_API_KEY/);
   });
 });
