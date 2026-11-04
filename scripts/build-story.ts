@@ -287,7 +287,12 @@ export const STORYBOARDS: Record<number, Storyboard> = {
           en: 'The sandbox runs the checks: all green, but they only test round bites',
           ru: 'Песочница гоняет проверки: всё зелёное, но проверяются только круглые укусы',
         },
-        lines: ['grows GR from a single seed cell', 'stays stable long after it has grown', 'the grid and the target are the same size'],
+        lines: [
+          'grows GR from a single seed cell',
+          'regrows after a bite out of the centre',
+          'regrows after a bite out of the left edge',
+          'stays stable long after it has grown',
+        ],
       },
       {
         kind: 'catch',
@@ -331,6 +336,22 @@ export const STORYBOARDS: Record<number, Storyboard> = {
   },
 };
 
+/**
+ * A test name is in the source literally, or matches a template title like `regrows after a bite out of the ${name}`
+ * whose ${...} part is one of the string literals in that file (same rule as tests/replay-data.test.ts).
+ */
+export function testNameIn(src: string, name: string): boolean {
+  if (src.includes(name)) return true;
+  const literals = new Set([...src.matchAll(/'([^'\n]+)'/g)].map((m) => m[1]));
+  for (const m of src.matchAll(/test\(`([^`]*)\$\{\w+\}([^`]*)`/g)) {
+    if (name.startsWith(m[1]) && name.endsWith(m[2]) && literals.has(name.slice(m[1].length, name.length - m[2].length))) return true;
+  }
+  return false;
+}
+
+/** The judge's G→R finding a `reproduced` catch must stand for. */
+const G_TO_R = /G grow back as an R/;
+
 /** The replay of PR `number`: storyboard steps timed from git, checked against the commits. Throws on a mismatch. */
 export function replayFor(story: Story, git: GitReader, number: number, board: Storyboard | undefined = STORYBOARDS[number]): Replay {
   const pr = story.prs.find((p) => p.number === number);
@@ -346,11 +367,14 @@ export function replayFor(story: Story, git: GitReader, number: number, board: S
       const added = new Set(git.added(step.sha).map((l) => l.trim()));
       for (const l of step.lines ?? []) if (!added.has(l.trim())) throw new Error(`replay #${number}: ${step.sha.slice(0, 7)} did not add ${JSON.stringify(l)}`);
     }
+    if (step.reproduced && !pr.findings.some((f) => G_TO_R.test(f.en)))
+      throw new Error(`replay #${number}: ${step.kind} is marked reproduced, but the PR has no G→R finding`);
     if (step.testsAt && !shas.has(step.testsAt)) throw new Error(`replay #${number}: testsAt ${step.testsAt} is not a commit of the PR`);
     if (step.kind === 'test' || (step.kind === 'fix' && step.lines?.length)) {
       const at = step.testsAt ?? step.sha;
-      const src = git.show(at, testFile ?? 'tests/nca.test.ts');
-      for (const n of step.lines ?? []) if (!src.includes(n)) throw new Error(`replay #${number}: no test ${JSON.stringify(n)} in ${testFile} at ${at.slice(0, 7)}`);
+      const file = testFile ?? 'tests/nca.test.ts';
+      const src = git.show(at, file);
+      for (const n of step.lines ?? []) if (!testNameIn(src, n)) throw new Error(`replay #${number}: no test ${JSON.stringify(n)} in ${file} at ${at.slice(0, 7)}`);
     }
     return { t: git.authoredAt(step.sha), ...step };
   });
