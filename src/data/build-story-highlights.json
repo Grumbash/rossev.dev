@@ -171,6 +171,37 @@
     "findings": [],
     "green": "f01970d4970f7208c8025471769deed4dbbc39b8"
   },
+  "13": {
+    "visitorChange": {
+      "en": "Nothing visible. The perf gate moved from a local pre-push hook to GitHub Actions on every PR that touches what ships, and when a budget breaks, a cheap model explains why in one PR comment.",
+      "ru": "Внешне ничего. Проверка производительности переехала из локального pre-push хука в GitHub Actions и запускается на каждом PR, который меняет то, что уходит на сайт. Если бюджет пробит, недорогая модель объясняет причину в одном комментарии к PR."
+    },
+    "humanDecision": {
+      "en": "The model is called only on a breach, usually on a free model, and its answer is made inert before it is posted. The LLM code review stays local on purpose.",
+      "ru": "Модель вызывается только при пробитом бюджете, обычно бесплатная, а её ответ обезвреживается перед публикацией. LLM-ревью кода намеренно остаётся локальным."
+    },
+    "findings": [
+      {
+        "en": "A run cancelled by a newer push could still cost a model call. Now it costs nothing.",
+        "ru": "Прогон, отменённый более новым пушем, всё равно мог вызвать модель. Теперь он ничего не стоит.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/13"
+      },
+      {
+        "en": "Without Chrome, CI would quietly check bytes only. Now the gate fails.",
+        "ru": "Без Chrome CI тихо проверял бы только байты. Теперь проверка падает.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/13"
+      },
+      {
+        "en": "A test failure left no explanation on the PR. Now it gets a \"gate not run\" comment.",
+        "ru": "Падение тестов не оставляло в PR никакого объяснения. Теперь появляется комментарий «gate not run».",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/13"
+      }
+    ],
+    "review": {
+      "en": "An independent judge reviewed the diff: ship after fixes. Its fixes are in.",
+      "ru": "Дифф проверил независимый судья: «можно мержить после правок». Его правки внесены."
+    }
+  },
   "14": {
     "visitorChange": {
       "en": "This page: every merged PR of the site with its red test, what was caught before merge and what I decided. Every number on it is computed from the data.",
@@ -202,5 +233,232 @@
       "ru": "Код написал независимый агент, дифф проверил независимый судья: «можно мержить после правок». Его замечания исправлены до мержа."
     },
     "green": "37af6d8820ae058c1b46234a80e5524258c26cab"
+  },
+  "16": {
+    "visitorChange": {
+      "en": "Writing filters use the same words as the cards they show. Russian text gets Cyrillic fonts instead of the OS fallback, loaded only when Russian renders. The phone number is now only in the CV PDF.",
+      "ru": "Фильтры блога называются так же, как категории на карточках. Русский текст получил кириллические шрифты вместо системных, и они загружаются только когда на странице есть русский. Номер телефона теперь только в PDF-резюме."
+    },
+    "humanDecision": {
+      "en": "Canary #42 stays as an easter egg for people who read the CV to the end, worded as a fact rather than an instruction to an AI. A known overlap in the CV footer was left for later.",
+      "ru": "Canary #42 остаётся пасхалкой для тех, кто дочитал резюме до конца, но сформулирован как факт, а не как указание для ИИ. Известное наложение в подвале резюме оставил на потом."
+    },
+    "findings": [],
+    "noRedTest": {
+      "en": "Four small fixes, one commit each: every commit brought its test together with the change, so no test was committed red on its own first.",
+      "ru": "Четыре мелкие правки, по коммиту на каждую: тест приходил в том же коммите, что и изменение, поэтому отдельного красного теста первым нет."
+    }
+  },
+  "17": {
+    "visitorChange": {
+      "en": "llms.txt, the file meant for language models, ends with a friendly note and a haiku a model may quote to show it read the file.",
+      "ru": "llms.txt, файл для языковых моделей, заканчивается дружеской запиской и хайку, которое модель может процитировать, чтобы показать, что прочитала файл."
+    },
+    "humanDecision": {
+      "en": "The note only invites, never instructs, and lives only in llms.txt: the CV and the footer stay for humans.",
+      "ru": "Записка только приглашает и ничего не требует, и живёт только в llms.txt: резюме и подвал сайта остаются для людей."
+    },
+    "findings": [],
+    "green": "9ec415c4d55f3ca6fcd664d2ffc1815ad95a46c6"
+  },
+  "18": {
+    "visitorChange": {
+      "en": "The hero topology tells a three-step story: a human approves the plan, agents build in a sandbox, then you break it and watch it heal. It ends on a link to the YAGNI case. Free play moved behind Explore, and phones get a still poster with Play.",
+      "ru": "Топология в hero рассказывает историю в три шага: человек утверждает план, агенты строят в песочнице, потом вы ломаете систему и смотрите, как она восстанавливается. В конце ссылка на кейс YAGNI. Свободная игра спрятана за Explore, а на телефонах показывается статичный постер с кнопкой Play."
+    },
+    "humanDecision": {
+      "en": "The topology should say what problem it solves, not just look clever. Merged with two known gaps written down: some node labels overlap on the phone poster, and the header status line stays English-only.",
+      "ru": "Топология должна говорить, какую задачу решает, а не просто выглядеть эффектно. Смержил с двумя записанными недочётами: на постере для телефона часть подписей узлов наезжает друг на друга, а строка статуса в шапке остаётся только на английском."
+    },
+    "findings": [
+      {
+        "en": "Keyboard focus was lost when the focused control went away. Now it moves to Break or the case link.",
+        "ru": "Фокус клавиатуры терялся, когда исчезал элемент в фокусе. Теперь он переходит на Break или на ссылку на кейс.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/18"
+      },
+      {
+        "en": "The case link swallowed modifier clicks, so it could not be opened in a new tab.",
+        "ru": "Ссылка на кейс перехватывала клики с модификаторами, и её нельзя было открыть в новой вкладке.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/18"
+      },
+      {
+        "en": "?domain= shifted the layout after first paint. Now it applies when Explore opens.",
+        "ru": "?domain= сдвигал вёрстку после первой отрисовки. Теперь он применяется при открытии Explore.",
+        "ref": "https://github.com/Grumbash/rossev.dev/pull/18"
+      }
+    ],
+    "review": {
+      "en": "Implemented by an agent and reviewed by a separate judge that saw only the diff, the tests and the task. Its findings were fixed before merge.",
+      "ru": "Код написал агент, проверил отдельный судья, которому дали только дифф, тесты и задачу. Его замечания исправлены до мержа."
+    },
+    "green": "edf2ae170b13a6e06175096db56a9fc669b2e033"
+  },
+  "19": {
+    "visitorChange": {
+      "en": "Post pages carry the full text: the English original and a Russian adaptation, with LinkedIn linked as a copy. New LinkedIn posts reach the site through one daily bot PR that I review.",
+      "ru": "На страницах постов теперь полный текст: английский оригинал и русская адаптация, а LinkedIn указан как копия. Новые посты из LinkedIn попадают на сайт через один ежедневный PR от бота, который я проверяю."
+    },
+    "humanDecision": {
+      "en": "The site is the original, LinkedIn the copy. The drafts are written by Haiku 5.5 with GLM-5.3 Flash as the fallback, picked in a bake-off of 13 cheap models on two real posts. The bot never pushes to main.",
+      "ru": "Оригинал — сайт, копия — LinkedIn. Черновики пишет Haiku 5.5, запасная модель — GLM-5.3 Flash; обе выбраны в сравнении 13 недорогих моделей на двух реальных постах. В main бот никогда не пушит."
+    },
+    "findings": [
+      {
+        "en": "A broken backfill file stopped the whole sync. Now it is skipped, and backfill URLs must be LinkedIn.",
+        "ru": "Сломанный файл бэкфилла останавливал всю синхронизацию. Теперь он пропускается, а ссылки в бэкфилле должны вести на LinkedIn.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/7a1e2ba961ca154077178b4159ae84baa3bfba1f"
+      }
+    ]
+  },
+  "20": {
+    "visitorChange": {
+      "en": "The home page got lighter: the 6 latest posts plus a link to all of them, page scripts in bundled modules, and each architecture case on its own page, loaded into home only when opened. Home HTML went from 35,758 to 30,270 B gzipped.",
+      "ru": "Главная стала легче: 6 последних постов и ссылка на все, скрипты страницы в собранных модулях, а у каждого кейса своя страница, которая подгружается на главную только при открытии. HTML главной уменьшился с 35 758 до 30 270 байт в gzip."
+    },
+    "humanDecision": {
+      "en": "Budgets unchanged: the home page made room by shedding weight, not by raising the limit.",
+      "ru": "Бюджеты не менял: главная освободила место, сбросив вес, а не за счёт поднятого лимита."
+    },
+    "findings": [
+      {
+        "en": "A deep link with ?case= could open the case before analytics was listening, so the automatic open could be counted as a case_open. Now the restore waits until every module has run.",
+        "ru": "Ссылка с ?case= могла открыть кейс раньше, чем аналитика начинала слушать события, и автоматическое открытие могло засчитаться как case_open. Теперь восстановление ждёт, пока отработают все модули.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/7a19a4589cdfafed0217292d3ad251e178e781c3"
+      },
+      {
+        "en": "Page scripts could run before the global helpers they call. Now the helpers load first.",
+        "ru": "Скрипты страницы могли запуститься раньше глобальных функций, которые они вызывают. Теперь эти функции загружаются первыми.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/7a19a4589cdfafed0217292d3ad251e178e781c3"
+      }
+    ]
+  },
+  "21": {
+    "visitorChange": {
+      "en": "/llm.txt, the misspelling an AI browsing tool actually requested, now redirects to /llms.txt instead of a 404.",
+      "ru": "/llm.txt, опечатка, по которой реально обратился ИИ-браузер, теперь перенаправляет на /llms.txt вместо 404."
+    },
+    "humanDecision": {
+      "en": "A permanent redirect, not a second copy, so the two files can never drift apart.",
+      "ru": "Постоянный редирект, а не вторая копия, чтобы два файла никогда не разошлись."
+    },
+    "findings": [],
+    "green": "f1a81f6e07679928f617cbf935a1916037f7680a"
+  },
+  "22": {
+    "visitorChange": {
+      "en": "Each language is its own page: English at /, Russian at /ru/, with hreflang and a language link that keeps your place. Home HTML went from 30,266 to 23,218 B gzipped.",
+      "ru": "У каждого языка своя страница: английская на /, русская на /ru/, с hreflang и переключателем языка, который сохраняет место на странице. HTML главной уменьшился с 30 266 до 23 218 байт в gzip."
+    },
+    "humanDecision": {
+      "en": "Static pages per locale instead of hidden duplicate spans, with typed dictionaries: a missing or extra key fails the build. English stays the default.",
+      "ru": "Отдельные статические страницы для каждого языка вместо скрытых дублей текста, словари типизированы: пропущенный или лишний ключ ломает сборку. Английский остаётся языком по умолчанию."
+    },
+    "findings": [
+      {
+        "en": "A booking made from a Russian page landed on the English /booked/. Now it lands on /ru/booked/.",
+        "ru": "Бронь, сделанная с русской страницы, вела на английскую /booked/. Теперь она ведёт на /ru/booked/.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/d695bdc2e3be2211a3b89f92eaced52ec44351f1"
+      },
+      {
+        "en": "The language link dropped ?query#anchor on right-click. Now it keeps them.",
+        "ru": "Переключатель языка терял ?query#anchor при клике правой кнопкой. Теперь сохраняет.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/d695bdc2e3be2211a3b89f92eaced52ec44351f1"
+      }
+    ]
+  },
+  "23": {
+    "visitorChange": {
+      "en": "The hero topology plays a recorded replay of a real agent run on this site, PR #11, including the judge catching the G that grew back as an R. You can take over at any point: switch the judge off and watch a fault ship, or cut the mini GR.",
+      "ru": "Топология в hero показывает запись реального прогона агентов на этом сайте, PR #11, включая момент, когда судья ловит G, отросшую как R. Перехватить управление можно в любой момент: выключить судью и посмотреть, как ошибка уходит в прод, или разрезать маленькую GR."
+    },
+    "humanDecision": {
+      "en": "Show a real run, labelled as a replay, rather than an illustration, and check everything in it against git. The scripted fault in the take-over is marked as simulated.",
+      "ru": "Показывать реальный прогон с пометкой, что это повтор, а не иллюстрацию, и сверять всё в нём с git. Сценарная ошибка при перехвате управления помечена как симуляция."
+    },
+    "findings": [
+      {
+        "en": "The sandbox step showed a test that only existed after the catch. Now it names the bite tests that existed then.",
+        "ru": "Шаг песочницы показывал тест, который появился только после находки. Теперь он называет тесты на укусы, которые были тогда.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/297523331fe7e519db800b142ece8107a0aa26a6"
+      },
+      {
+        "en": "Autoplay flooded the live region and could not be paused. Now the film pauses and the live region stays quiet.",
+        "ru": "Автовоспроизведение засыпало live-регион сообщениями, и его нельзя было поставить на паузу. Теперь фильм ставится на паузу, а live-регион молчит.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/408fd94c5a90e94614a2347ec4dad10ebd9a9d10"
+      },
+      {
+        "en": "A cancelled live heal could still land later. Now a stale heal never lands.",
+        "ru": "Отменённое заживление могло всё равно сработать позже. Теперь устаревшее заживление не применяется.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/408fd94c5a90e94614a2347ec4dad10ebd9a9d10"
+      }
+    ],
+    "review": {
+      "en": "Implemented by an agent and reviewed by independent judges that saw only the diff, the tests and the task, once for the data layer and once for the UI. Their findings were fixed before merge.",
+      "ru": "Код написал агент, проверили независимые судьи, которым дали только дифф, тесты и задачу: один раз слой данных, один раз интерфейс. Их замечания исправлены до мержа."
+    }
+  },
+  "24": {
+    "visitorChange": {
+      "en": "The CV PDF is two clean pages with every section, real dashes and bullets, larger body text and clickable links. The canary note no longer sits on top of body text.",
+      "ru": "PDF-резюме теперь две аккуратные страницы со всеми разделами, настоящими тире и маркерами, более крупным текстом и кликабельными ссылками. Строка canary больше не наезжает на основной текст."
+    },
+    "humanDecision": {
+      "en": "Two pages instead of cutting sections to fit one. The build fails on text past the margin rather than shipping it, with no new dependencies.",
+      "ru": "Две страницы вместо того, чтобы урезать разделы ради одной. Сборка падает на тексте за полями, а не выпускает его, и без новых зависимостей."
+    },
+    "findings": [
+      {
+        "en": "Not every line was checked against the footer band. Now every paragraph and bullet line is.",
+        "ru": "Проверялись не все строки: какие-то могли залезть в полосу подвала. Теперь проверяется каждая строка абзацев и списков.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/f076f9a7078fbe114555675077f7ae12b96cb51b"
+      },
+      {
+        "en": "A section heading could end up alone at the bottom of a page. Now it keeps its first entry.",
+        "ru": "Заголовок раздела мог остаться один внизу страницы. Теперь он не отрывается от первой записи.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/f076f9a7078fbe114555675077f7ae12b96cb51b"
+      }
+    ]
+  },
+  "25": {
+    "visitorChange": {
+      "en": "The Sully case has a Say hello demo: a voice-activity model listens to your mic in the browser and shows how many ms it took to notice your voice, next to the old ~15 s of dead air. Audio stays in memory, and the model downloads only after you allow the mic.",
+      "ru": "В кейсе Sully появилось демо «Скажите „алло“»: модель детекции голоса слушает микрофон прямо в браузере и показывает, за сколько миллисекунд заметила голос, рядом со старыми ~15 с тишины. Звук остаётся в памяти, а модель скачивается только после разрешения на микрофон."
+    },
+    "humanDecision": {
+      "en": "Port Silero VAD to TypeScript instead of loading an ONNX runtime, which would have meant about 3.4 MB per click. The page says plainly that at Sully the win was not a faster model but the agent waiting for a voice instead of a ringing line.",
+      "ru": "Перенести Silero VAD на TypeScript вместо загрузки ONNX-рантайма, который весил бы около 3,4 МБ на каждый клик. Текст на странице прямо говорит, что в Sully выигрыш дала не быстрая модель, а то, что агент ждёт голос, а не звонящую линию."
+    },
+    "findings": [
+      {
+        "en": "Digital silence at mic start could set the noise floor. Now the floor can't go below −80 dBFS.",
+        "ru": "Цифровая тишина в начале записи могла задать уровень шума. Теперь он не опускается ниже −80 dBFS.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+      },
+      {
+        "en": "A stalled setup could keep the mic on. A watchdog and a timeout now always release it.",
+        "ru": "Зависшая инициализация могла оставить микрофон включённым. Теперь сторожевой таймер и тайм-аут всегда его освобождают.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+      },
+      {
+        "en": "Leaving the page did not reset a running demo. Now it returns to idle.",
+        "ru": "Уход со страницы не сбрасывал запущенное демо. Теперь оно возвращается в исходное состояние.",
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+      }
+    ]
+  },
+  "26": {
+    "visitorChange": {
+      "en": "Nothing changes on the page until the sync's next bot PR is merged. That PR is meant to bring every own LinkedIn post since August 2025 to /writing/ with its full text. The Writing descriptions now say the site carries full posts.",
+      "ru": "На странице ничего не меняется, пока не смержен следующий PR бота синхронизации. Этот PR должен принести в /writing/ все мои посты из LinkedIn с августа 2025 года с полным текстом. Описания раздела Writing теперь говорят, что на сайте полные посты."
+    },
+    "humanDecision": {
+      "en": "Backfill everything in one run, about $0.04 with Haiku, under a time budget instead of post-count caps. One bad draft is skipped with its reason instead of blocking the whole PR.",
+      "ru": "Загрузить всё одним прогоном, около $0,04 с Haiku, с ограничением по времени вместо лимита на число постов. Один неудачный черновик пропускается с указанием причины, а не блокирует весь PR."
+    },
+    "findings": [],
+    "noRedTest": {
+      "en": "Two commits, each bringing its tests together with the change: no test was committed red on its own first.",
+      "ru": "Два коммита, и каждый приносил тесты вместе с изменением: отдельного красного теста первым нет."
+    }
   }
 }

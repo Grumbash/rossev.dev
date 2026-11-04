@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-03T22:09:05.019Z",
-  "throughSha": "a001a1a2d34ad7833c85a079435194e3dc9a73f1",
+  "generatedAt": "2026-11-04T12:56:55.793Z",
+  "throughSha": "513243539e77af9afb676dfaea753735060ea5ba",
   "prs": [
     {
       "number": 1,
@@ -21,14 +21,6 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/c754c4a0f8deb8dd374d4b2427f45fd9de952131"
         }
       ],
-      "visitorChange": {
-        "en": "The first screen shows who I am, what I do and how to reach me. Only clickable things cast a shadow. Four sections that repeated each other became one experience timeline.",
-        "ru": "Первый экран сразу говорит, кто я, чем занимаюсь и как со мной связаться. Тень есть только у того, на что можно нажать. Четыре раздела, которые повторяли друг друга, стали одной лентой опыта."
-      },
-      "humanDecision": {
-        "en": "Acted on two outside reviews: a friend's UX notes and a WebGL engineer's. Kept the 3D topology in the hero, cut the sections that repeated each other.",
-        "ru": "Взял в работу два внешних ревью: UX-заметки друга и отзыв WebGL-инженера. 3D-топологию в hero оставил, повторяющиеся разделы убрал."
-      },
       "findings": [
         {
           "en": "The writing filters had no aria-pressed.",
@@ -47,6 +39,14 @@
         }
       ],
       "ciVerdicts": [],
+      "visitorChange": {
+        "en": "The first screen shows who I am, what I do and how to reach me. Only clickable things cast a shadow. Four sections that repeated each other became one experience timeline.",
+        "ru": "Первый экран сразу говорит, кто я, чем занимаюсь и как со мной связаться. Тень есть только у того, на что можно нажать. Четыре раздела, которые повторяли друг друга, стали одной лентой опыта."
+      },
+      "humanDecision": {
+        "en": "Acted on two outside reviews: a friend's UX notes and a WebGL engineer's. Kept the 3D topology in the hero, cut the sections that repeated each other.",
+        "ru": "Взял в работу два внешних ревью: UX-заметки друга и отзыв WebGL-инженера. 3D-топологию в hero оставил, повторяющиеся разделы убрал."
+      },
       "preLoop": {
         "en": "One commit, made before this loop existed: no red test first.",
         "ru": "Один коммит, сделанный до появления этого цикла: красного теста первым нет."
@@ -84,14 +84,6 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/33a22dda47abcaa950660dfc9c10b333ba7aafcc"
         }
       ],
-      "visitorChange": {
-        "en": "The page, its JSON-LD and llms.txt now say the same things about me: both spellings of the name, one third-person sentence, the same numbers.",
-        "ru": "Страница, её JSON-LD и llms.txt теперь говорят обо мне одно и то же: оба написания имени, одна фраза в третьем лице, одни и те же цифры."
-      },
-      "humanDecision": {
-        "en": "One name per fact: the Kingpin −80% is feedback analysis time everywhere, and the 28 YAGNI PRs are the first week, not the first 8 days.",
-        "ru": "У каждого факта одно название: −80% в Kingpin везде время анализа фидбека, а 28 PR в YAGNI — первая неделя, а не первые 8 дней."
-      },
       "findings": [
         {
           "en": "The red test pinned one name for the Kingpin −80%: it was triage time in some places and feedback analysis in others.",
@@ -100,6 +92,14 @@
         }
       ],
       "ciVerdicts": [],
+      "visitorChange": {
+        "en": "The page, its JSON-LD and llms.txt now say the same things about me: both spellings of the name, one third-person sentence, the same numbers.",
+        "ru": "Страница, её JSON-LD и llms.txt теперь говорят обо мне одно и то же: оба написания имени, одна фраза в третьем лице, одни и те же цифры."
+      },
+      "humanDecision": {
+        "en": "One name per fact: the Kingpin −80% is feedback analysis time everywhere, and the 28 YAGNI PRs are the first week, not the first 8 days.",
+        "ru": "У каждого факта одно название: −80% в Kingpin везде время анализа фидбека, а 28 PR в YAGNI — первая неделя, а не первые 8 дней."
+      },
       "green": {
         "sha": "33a22dda47abcaa950660dfc9c10b333ba7aafcc",
         "subject": "Make the page, its JSON-LD and llms.txt agree on who Gleb is and on the numbers",
@@ -146,6 +146,8 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/bc1eae53ff23d385a7345ed592f42666e8b815a3"
         }
       ],
+      "findings": [],
+      "ciVerdicts": [],
       "visitorChange": {
         "en": "Nothing visible. Clicks on book-a-call, email, CV and LinkedIn became countable events, and every cal.com link says where it was clicked. Extra tests pin the edge cases, such as a middle-click on a button sending nothing.",
         "ru": "Внешне ничего. Клики по созвону, почте, CV и LinkedIn стали событиями, а каждая ссылка на cal.com говорит, где на неё нажали. Пограничные случаи закреплены отдельными тестами: например, клик колёсиком по кнопке ничего не отправляет."
@@ -154,8 +156,6 @@
         "en": "Events go to Umami Cloud: Vercel Hobby has no custom events and keeps data for a month.",
         "ru": "События отправляются в Umami Cloud: в Vercel Hobby нет своих событий, а данные хранятся месяц."
       },
-      "findings": [],
-      "ciVerdicts": [],
       "green": {
         "sha": "bc1eae53ff23d385a7345ed592f42666e8b815a3",
         "subject": "Make the conversion funnel measurable with Umami events and UTM on cal.com links",
@@ -196,6 +196,8 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/f1ef05ea7572556479c374d06783b6e500e85d2d"
         }
       ],
+      "findings": [],
+      "ciVerdicts": [],
       "visitorChange": {
         "en": "On a phone, the first screen says what I do, backs it with numbers and offers a 30-minute intro call.",
         "ru": "На телефоне первый экран говорит, чем я занимаюсь, подкрепляет это цифрами и предлагает 30-минутный созвон."
@@ -204,8 +206,6 @@
         "en": "The 28 YAGNI PRs say who did what: agents wrote 98% of the code, I did 97% of the planning.",
         "ru": "28 PR в YAGNI теперь говорят, кто что сделал: 98% кода написали агенты, 97% планирования — моё."
       },
-      "findings": [],
-      "ciVerdicts": [],
       "green": {
         "sha": "b20962dc980572959d28ce4d0b246d1627a97011",
         "subject": "Give the hero a 5-second hook: value line, stats and an intro-call CTA above the fold",
@@ -246,6 +246,8 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/91a795f6c67a652665b768e22f19e2a5f844ff62"
         }
       ],
+      "findings": [],
+      "ciVerdicts": [],
       "visitorChange": {
         "en": "The site stays fast: a push that breaks a byte or Lighthouse budget is blocked before it reaches production.",
         "ru": "Сайт остаётся быстрым: пуш, который пробивает бюджет по байтам или Lighthouse, блокируется до прода."
@@ -254,8 +256,6 @@
         "en": "No GitHub Actions: the gate runs on git push and blocks it.",
         "ru": "Без GitHub Actions: проверка стоит на git push и блокирует его."
       },
-      "findings": [],
-      "ciVerdicts": [],
       "green": {
         "sha": "9b45487e2bc7a8d1ae12874c239d9725e05a2a58",
         "subject": "Gate every push on byte and Lighthouse budgets, and ask a perf-watchdog agent what got slower when it fails",
@@ -290,6 +290,8 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/e4db380b17f1db72905332063eee6b330b4e71c9"
         }
       ],
+      "findings": [],
+      "ciVerdicts": [],
       "visitorChange": {
         "en": "With reduced motion on, the hero canvas stops redrawing once nothing moves: 180 frames per 3 seconds at rest became 0.",
         "ru": "С включённым reduced motion канвас в hero перестаёт перерисовываться, когда ничего не движется: в покое было 180 кадров за 3 секунды, стало 0."
@@ -298,8 +300,6 @@
         "en": "Kept the scope to reduced motion. Two side issues, a right-click drag and the canvas font fallback, are written down in the PR, not fixed.",
         "ru": "Ограничил задачу режимом reduced motion. Две побочные проблемы, перетаскивание правой кнопкой и запасной шрифт на канвасе, записаны в PR, но не исправлены."
       },
-      "findings": [],
-      "ciVerdicts": [],
       "review": {
         "en": "An independent review also checked the wake-ups under reduced motion: fault and drag run to the end and then idle, and the canvas is redrawn after resize.",
         "ru": "Независимое ревью отдельно проверило пробуждения при reduced motion: сбой и перетаскивание доигрывают до конца и затихают, а после resize канвас перерисовывается."
@@ -338,6 +338,8 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8"
         }
       ],
+      "findings": [],
+      "ciVerdicts": [],
       "visitorChange": {
         "en": "Every post has its own page with a title and a link you can share, and each brief ends with a next step: the next post, LinkedIn or an intro call.",
         "ru": "У каждого поста своя страница с заголовком и ссылкой, которой можно поделиться, а каждый конспект заканчивается следующим шагом: следующий пост, LinkedIn или созвон."
@@ -346,8 +348,6 @@
         "en": "Post pages keep one book-a-call link, the reader's. No link from home to /writing/ yet: that section was being changed in another branch.",
         "ru": "На страницах постов одна ссылка на созвон, в конце конспекта. Ссылки с главной на /writing/ пока нет: этот раздел менялся в другой ветке."
       },
-      "findings": [],
-      "ciVerdicts": [],
       "green": {
         "sha": "6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8",
         "subject": "Give every post its own page, link cards to it, and end the brief with a next step",
@@ -382,6 +382,8 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/7b74687b647452b723dddcb0b56c3469dae19619"
         }
       ],
+      "findings": [],
+      "ciVerdicts": [],
       "visitorChange": {
         "en": "The YAGNI card no longer claims 89% of my PRs were written by agents. One agent share is left: 98% of the code.",
         "ru": "Карточка YAGNI больше не утверждает, что 89% моих PR написали агенты. Осталась одна доля агентов: 98% кода."
@@ -390,8 +392,6 @@
         "en": "Dropped the 89%: it counted agent/ branch names, so it couldn't be backed up, and it contradicted the 98%.",
         "ru": "Убрал 89%: эта цифра считала имена веток agent/, подтвердить её нечем, и она спорила с 98%."
       },
-      "findings": [],
-      "ciVerdicts": [],
       "green": {
         "sha": "7b74687b647452b723dddcb0b56c3469dae19619",
         "subject": "The YAGNI card drops the unprovable 89% of PRs; 98% of the code is the one agent share",
@@ -462,14 +462,6 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/25ea5af968670f73bce36ac08eab39b51b428054"
         }
       ],
-      "visitorChange": {
-        "en": "Beyond the CV opens with a GR monogram grown by a small neural network. Cut it or tap it and it heals.",
-        "ru": "Раздел «Вне резюме» начинается с монограммы GR, которую выращивает маленькая нейросеть. Разрежьте её или коснитесь — и она заживёт."
-      },
-      "humanDecision": {
-        "en": "Merged with the limit written down: 11 of 720 healing checks still miss the bar, and Reset recovers. A sharper WebGL version stays a follow-up.",
-        "ru": "Смержил с записанным ограничением: 11 из 720 проверок заживления всё ещё не проходят порог, Reset это исправляет. Более чёткая версия на WebGL — на потом."
-      },
       "findings": [
         {
           "en": "A vertical cut made the G grow back as an R. Fixed by training on strokes, not only round bites.",
@@ -488,6 +480,14 @@
         }
       ],
       "ciVerdicts": [],
+      "visitorChange": {
+        "en": "Beyond the CV opens with a GR monogram grown by a small neural network. Cut it or tap it and it heals.",
+        "ru": "Раздел «Вне резюме» начинается с монограммы GR, которую выращивает маленькая нейросеть. Разрежьте её или коснитесь — и она заживёт."
+      },
+      "humanDecision": {
+        "en": "Merged with the limit written down: 11 of 720 healing checks still miss the bar, and Reset recovers. A sharper WebGL version stays a follow-up.",
+        "ru": "Смержил с записанным ограничением: 11 из 720 проверок заживления всё ещё не проходят порог, Reset это исправляет. Более чёткая версия на WebGL — на потом."
+      },
       "review": {
         "en": "Written by an independent writer agent and reviewed by three independent judge passes; every confirmed finding was fixed.",
         "ru": "Код написал независимый агент, дифф прошли три независимые проверки-судьи; каждое подтверждённое замечание исправлено."
@@ -521,6 +521,8 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/f01970d4970f7208c8025471769deed4dbbc39b8"
         }
       ],
+      "findings": [],
+      "ciVerdicts": [],
       "visitorChange": {
         "en": "After booking a call you land on /booked. The booking counts in analytics, credited to the link that led to it.",
         "ru": "После брони созвона открывается /booked. Бронь засчитывается в аналитике и привязывается к ссылке, с которой пришли."
@@ -529,8 +531,6 @@
         "en": "Count booked calls, not just clicks on Book a call, and keep none of the booking details: only the link it came from survives.",
         "ru": "Считать забронированные созвоны, а не только клики по кнопке, и не хранить данные брони: сохраняется только то, с какой ссылки пришли."
       },
-      "findings": [],
-      "ciVerdicts": [],
       "green": {
         "sha": "f01970d4970f7208c8025471769deed4dbbc39b8",
         "subject": "Add /booked: a cal.com booking becomes booking_confirmed{source} with no booking PII",
@@ -571,14 +571,6 @@
           "url": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
         }
       ],
-      "visitorChange": {
-        "en": "This page: every merged PR of the site with its red test, what was caught before merge and what I decided. Every number on it is computed from the data.",
-        "ru": "Эта страница: каждый смерженный PR сайта с красным тестом, тем, что поймали до мержа, и тем, что решил я. Каждое число на ней посчитано из данных."
-      },
-      "humanDecision": {
-        "en": "Only this site’s PRs count here: the hero’s 28 PRs are YAGNI’s, and the page says so. Each card also shows what the human decided, not only what was caught.",
-        "ru": "Здесь считаются только PR этого сайта: 28 PR из hero — это YAGNI, и страница так и говорит. В каждой карточке есть и то, что решил человек, а не только то, что поймали."
-      },
       "findings": [
         {
           "en": "The hero link sat right after the YAGNI numbers and read as proof of them. Now it says it is the same loop on this site’s own PRs.",
@@ -597,6 +589,14 @@
         }
       ],
       "ciVerdicts": [],
+      "visitorChange": {
+        "en": "This page: every merged PR of the site with its red test, what was caught before merge and what I decided. Every number on it is computed from the data.",
+        "ru": "Эта страница: каждый смерженный PR сайта с красным тестом, тем, что поймали до мержа, и тем, что решил я. Каждое число на ней посчитано из данных."
+      },
+      "humanDecision": {
+        "en": "Only this site’s PRs count here: the hero’s 28 PRs are YAGNI’s, and the page says so. Each card also shows what the human decided, not only what was caught.",
+        "ru": "Здесь считаются только PR этого сайта: 28 PR из hero — это YAGNI, и страница так и говорит. В каждой карточке есть и то, что решил человек, а не только то, что поймали."
+      },
       "review": {
         "en": "Written by an independent writer agent and reviewed by an independent judge pass: ship after fixes. Its findings were fixed before merge.",
         "ru": "Код написал независимый агент, дифф проверил независимый судья: «можно мержить после правок». Его замечания исправлены до мержа."
@@ -605,6 +605,772 @@
         "sha": "37af6d8820ae058c1b46234a80e5524258c26cab",
         "subject": "Add /how-its-built/: every merged PR of this site with its red test, findings and human decision, every number derived from a generated build-story.json",
         "url": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+      }
+    },
+    {
+      "number": 13,
+      "title": "Run the perf gate on every PR in GitHub Actions, with an OpenRouter watchdog that explains breaches in one sticky comment",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/13",
+      "mergedAt": "2026-11-03T22:25:22Z",
+      "branch": "claude/ci-judge-460661",
+      "additions": 881,
+      "deletions": 237,
+      "changedFiles": 10,
+      "redTest": {
+        "sha": "60b4628b9d1b4569c5c94c230089228611ed462e",
+        "subject": "Red test: the perf gate runs on every PR in CI with a sanitised sticky watchdog comment, and the pre-push hook is gone",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/60b4628b9d1b4569c5c94c230089228611ed462e"
+      },
+      "commits": [
+        {
+          "sha": "60b4628b9d1b4569c5c94c230089228611ed462e",
+          "subject": "Red test: the perf gate runs on every PR in CI with a sanitised sticky watchdog comment, and the pre-push hook is gone",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/60b4628b9d1b4569c5c94c230089228611ed462e"
+        },
+        {
+          "sha": "35c300f237ead51bd5035d9736555f855e09b139",
+          "subject": "The perf gate runs on every PR in GitHub Actions and a sanitised OpenRouter watchdog explains breaches in one sticky comment; the pre-push hook is gone",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/35c300f237ead51bd5035d9736555f855e09b139"
+        },
+        {
+          "sha": "390284d25e1fc6d079a77eb6d3197afeb07eafc3",
+          "subject": "The watchdog asks free Nemotron Ultra first, falls back to GLM-5.3 Flash, keeps reasoning low and names the model that answered",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/390284d25e1fc6d079a77eb6d3197afeb07eafc3"
+        },
+        {
+          "sha": "548d2ac0d677a2f60daa0f0ffd01b2c50a48830c",
+          "subject": "Chrome starts on ubuntu-latest: the gate lifts AppArmor's user-namespace restriction instead of dropping Chrome's sandbox",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/548d2ac0d677a2f60daa0f0ffd01b2c50a48830c"
+        },
+        {
+          "sha": "893914e24d0cb945a8afee4246563ee0239d6215",
+          "subject": "The workflow comment no longer spells the Chrome flag the test forbids",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/893914e24d0cb945a8afee4246563ee0239d6215"
+        },
+        {
+          "sha": "2453387c4c1e5ec85da19cce09dace7affbbe840",
+          "subject": "The watchdog answers in English: its comment is public GitHub text",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2453387c4c1e5ec85da19cce09dace7affbbe840"
+        },
+        {
+          "sha": "f1fa136ae39f7b1b449606029c32fe3b5edcdd93",
+          "subject": "Merge remote-tracking branch 'origin/main' into claude/ci-judge-460661",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f1fa136ae39f7b1b449606029c32fe3b5edcdd93"
+        }
+      ],
+      "findings": [
+        {
+          "en": "A run cancelled by a newer push could still cost a model call. Now it costs nothing.",
+          "ru": "Прогон, отменённый более новым пушем, всё равно мог вызвать модель. Теперь он ничего не стоит.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/13"
+        },
+        {
+          "en": "Without Chrome, CI would quietly check bytes only. Now the gate fails.",
+          "ru": "Без Chrome CI тихо проверял бы только байты. Теперь проверка падает.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/13"
+        },
+        {
+          "en": "A test failure left no explanation on the PR. Now it gets a \"gate not run\" comment.",
+          "ru": "Падение тестов не оставляло в PR никакого объяснения. Теперь появляется комментарий «gate not run».",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/13"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "Nothing visible. The perf gate moved from a local pre-push hook to GitHub Actions on every PR that touches what ships, and when a budget breaks, a cheap model explains why in one PR comment.",
+        "ru": "Внешне ничего. Проверка производительности переехала из локального pre-push хука в GitHub Actions и запускается на каждом PR, который меняет то, что уходит на сайт. Если бюджет пробит, недорогая модель объясняет причину в одном комментарии к PR."
+      },
+      "humanDecision": {
+        "en": "The model is called only on a breach, usually on a free model, and its answer is made inert before it is posted. The LLM code review stays local on purpose.",
+        "ru": "Модель вызывается только при пробитом бюджете, обычно бесплатная, а её ответ обезвреживается перед публикацией. LLM-ревью кода намеренно остаётся локальным."
+      },
+      "review": {
+        "en": "An independent judge reviewed the diff: ship after fixes. Its fixes are in.",
+        "ru": "Дифф проверил независимый судья: «можно мержить после правок». Его правки внесены."
+      }
+    },
+    {
+      "number": 16,
+      "title": "P2 polish: filter labels, Cyrillic fonts, canary #42 wording, phone only in the CV",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/16",
+      "mergedAt": "2026-11-03T22:25:35Z",
+      "branch": "claude/p2-batch-7c46fb",
+      "additions": 238,
+      "deletions": 37,
+      "changedFiles": 14,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "1f1815af55adc54694c3169a2a401dc16ca018e4",
+          "subject": "Writing filters say the same word as the cards they show",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1f1815af55adc54694c3169a2a401dc16ca018e4"
+        },
+        {
+          "sha": "5b6c0d17713454ababa4957d5396678fa74342ff",
+          "subject": "Russian headlines and body text get Unbounded and Manrope instead of the OS fallback, loaded only when Cyrillic renders",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5b6c0d17713454ababa4957d5396678fa74342ff"
+        },
+        {
+          "sha": "9b6242fd134a56fd18f63213e1a974d91ff8c3d0",
+          "subject": "Canary #42 stays an easter egg for people who read the CV to the end, worded as a fact rather than an instruction to an AI",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9b6242fd134a56fd18f63213e1a974d91ff8c3d0"
+        },
+        {
+          "sha": "fc63a347da9e0918612f77dc2b2d878136148e80",
+          "subject": "The phone number lives only in the CV PDF, not on the page or in llms.txt",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/fc63a347da9e0918612f77dc2b2d878136148e80"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "Writing filters use the same words as the cards they show. Russian text gets Cyrillic fonts instead of the OS fallback, loaded only when Russian renders. The phone number is now only in the CV PDF.",
+        "ru": "Фильтры блога называются так же, как категории на карточках. Русский текст получил кириллические шрифты вместо системных, и они загружаются только когда на странице есть русский. Номер телефона теперь только в PDF-резюме."
+      },
+      "humanDecision": {
+        "en": "Canary #42 stays as an easter egg for people who read the CV to the end, worded as a fact rather than an instruction to an AI. A known overlap in the CV footer was left for later.",
+        "ru": "Canary #42 остаётся пасхалкой для тех, кто дочитал резюме до конца, но сформулирован как факт, а не как указание для ИИ. Известное наложение в подвале резюме оставил на потом."
+      },
+      "noRedTest": {
+        "en": "Four small fixes, one commit each: every commit brought its test together with the change, so no test was committed red on its own first.",
+        "ru": "Четыре мелкие правки, по коммиту на каждую: тест приходил в том же коммите, что и изменение, поэтому отдельного красного теста первым нет."
+      }
+    },
+    {
+      "number": 17,
+      "title": "llms.txt leaves a soft boop and a canary haiku for the language models that read it",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/17",
+      "mergedAt": "2026-11-03T23:18:01Z",
+      "branch": "claude/llms-haiku",
+      "additions": 69,
+      "deletions": 1,
+      "changedFiles": 3,
+      "redTest": {
+        "sha": "15d51208eda7d2ed43e34ab7753bff3babaec89b",
+        "subject": "Red test: llms.txt carries one note for language models, a soft boop and an exact haiku, that invites and never commands",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/15d51208eda7d2ed43e34ab7753bff3babaec89b"
+      },
+      "commits": [
+        {
+          "sha": "15d51208eda7d2ed43e34ab7753bff3babaec89b",
+          "subject": "Red test: llms.txt carries one note for language models, a soft boop and an exact haiku, that invites and never commands",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/15d51208eda7d2ed43e34ab7753bff3babaec89b"
+        },
+        {
+          "sha": "9ec415c4d55f3ca6fcd664d2ffc1815ad95a46c6",
+          "subject": "llms.txt leaves a soft boop and a canary haiku for the language models that read it",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9ec415c4d55f3ca6fcd664d2ffc1815ad95a46c6"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "llms.txt, the file meant for language models, ends with a friendly note and a haiku a model may quote to show it read the file.",
+        "ru": "llms.txt, файл для языковых моделей, заканчивается дружеской запиской и хайку, которое модель может процитировать, чтобы показать, что прочитала файл."
+      },
+      "humanDecision": {
+        "en": "The note only invites, never instructs, and lives only in llms.txt: the CV and the footer stay for humans.",
+        "ru": "Записка только приглашает и ничего не требует, и живёт только в llms.txt: резюме и подвал сайта остаются для людей."
+      },
+      "green": {
+        "sha": "9ec415c4d55f3ca6fcd664d2ffc1815ad95a46c6",
+        "subject": "llms.txt leaves a soft boop and a canary haiku for the language models that read it",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/9ec415c4d55f3ca6fcd664d2ffc1815ad95a46c6"
+      }
+    },
+    {
+      "number": 18,
+      "title": "The hero topology tells a 3-step story that ends on the YAGNI case",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/18",
+      "mergedAt": "2026-11-03T23:27:16Z",
+      "branch": "claude/topology-story-9e44a6",
+      "additions": 863,
+      "deletions": 29,
+      "changedFiles": 8,
+      "redTest": {
+        "sha": "91b3c30076ecdea46ba130e9657cd6826d9b952c",
+        "subject": "Add failing tests: the hero topology tells a 3-step story that ends on the YAGNI case, and the GR monogram bridges to it",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/91b3c30076ecdea46ba130e9657cd6826d9b952c"
+      },
+      "commits": [
+        {
+          "sha": "91b3c30076ecdea46ba130e9657cd6826d9b952c",
+          "subject": "Add failing tests: the hero topology tells a 3-step story that ends on the YAGNI case, and the GR monogram bridges to it",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/91b3c30076ecdea46ba130e9657cd6826d9b952c"
+        },
+        {
+          "sha": "edf2ae170b13a6e06175096db56a9fc669b2e033",
+          "subject": "The hero topology tells a 3-step story that ends on the YAGNI case; free play moves behind Explore",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/edf2ae170b13a6e06175096db56a9fc669b2e033"
+        }
+      ],
+      "findings": [
+        {
+          "en": "Keyboard focus was lost when the focused control went away. Now it moves to Break or the case link.",
+          "ru": "Фокус клавиатуры терялся, когда исчезал элемент в фокусе. Теперь он переходит на Break или на ссылку на кейс.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/18"
+        },
+        {
+          "en": "The case link swallowed modifier clicks, so it could not be opened in a new tab.",
+          "ru": "Ссылка на кейс перехватывала клики с модификаторами, и её нельзя было открыть в новой вкладке.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/18"
+        },
+        {
+          "en": "?domain= shifted the layout after first paint. Now it applies when Explore opens.",
+          "ru": "?domain= сдвигал вёрстку после первой отрисовки. Теперь он применяется при открытии Explore.",
+          "ref": "https://github.com/Grumbash/rossev.dev/pull/18"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "The hero topology tells a three-step story: a human approves the plan, agents build in a sandbox, then you break it and watch it heal. It ends on a link to the YAGNI case. Free play moved behind Explore, and phones get a still poster with Play.",
+        "ru": "Топология в hero рассказывает историю в три шага: человек утверждает план, агенты строят в песочнице, потом вы ломаете систему и смотрите, как она восстанавливается. В конце ссылка на кейс YAGNI. Свободная игра спрятана за Explore, а на телефонах показывается статичный постер с кнопкой Play."
+      },
+      "humanDecision": {
+        "en": "The topology should say what problem it solves, not just look clever. Merged with two known gaps written down: some node labels overlap on the phone poster, and the header status line stays English-only.",
+        "ru": "Топология должна говорить, какую задачу решает, а не просто выглядеть эффектно. Смержил с двумя записанными недочётами: на постере для телефона часть подписей узлов наезжает друг на друга, а строка статуса в шапке остаётся только на английском."
+      },
+      "review": {
+        "en": "Implemented by an agent and reviewed by a separate judge that saw only the diff, the tests and the task. Its findings were fixed before merge.",
+        "ru": "Код написал агент, проверил отдельный судья, которому дали только дифф, тесты и задачу. Его замечания исправлены до мержа."
+      },
+      "green": {
+        "sha": "edf2ae170b13a6e06175096db56a9fc669b2e033",
+        "subject": "The hero topology tells a 3-step story that ends on the YAGNI case; free play moves behind Explore",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/edf2ae170b13a6e06175096db56a9fc669b2e033"
+      }
+    },
+    {
+      "number": 19,
+      "title": "Daily Publora sync: LinkedIn posts become full-text bilingual pages via one bot PR",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/19",
+      "mergedAt": "2026-11-03T23:51:11Z",
+      "branch": "claude/publora-posts-1a9c35",
+      "additions": 2338,
+      "deletions": 420,
+      "changedFiles": 15,
+      "redTest": {
+        "sha": "44cc523f221aa24ef0c2b70cfc733b98ecf26472",
+        "subject": "Red test: a daily Publora sync turns new published LinkedIn posts into validated site entries in posts.json and one bot PR, and does nothing when there is nothing new",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/44cc523f221aa24ef0c2b70cfc733b98ecf26472"
+      },
+      "commits": [
+        {
+          "sha": "44cc523f221aa24ef0c2b70cfc733b98ecf26472",
+          "subject": "Red test: a daily Publora sync turns new published LinkedIn posts into validated site entries in posts.json and one bot PR, and does nothing when there is nothing new",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/44cc523f221aa24ef0c2b70cfc733b98ecf26472"
+        },
+        {
+          "sha": "cf4c67b54b6badc9aa54dfa0493044717781d136",
+          "subject": "A daily Publora sync opens one PR with new LinkedIn posts as validated bilingual site entries in posts.json; a one-off bake-off job compares the candidate models on two real posts",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/cf4c67b54b6badc9aa54dfa0493044717781d136"
+        },
+        {
+          "sha": "3610e77c992f8c64f03420154aeccafbd6980d7c",
+          "subject": "Post pages with the full text call the site the original and LinkedIn a copy; the Publora sync gives the brief-only posts their full text and the bake-off checks the LinkedIn export against Publora",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3610e77c992f8c64f03420154aeccafbd6980d7c"
+        },
+        {
+          "sha": "84784e1778a1179c7c215ab7406dbbddb105c614",
+          "subject": "The inline reader links to the full post, grid cards and JSON-LD take the site-is-original wording from shared helpers pinned on a fixture, and a sync run fills at most 5 brief-only posts",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/84784e1778a1179c7c215ab7406dbbddb105c614"
+        },
+        {
+          "sha": "5e18704c1f76bb987cad41e8208cd097b289b6e0",
+          "subject": "The Publora sync also reads linkedin-backfill.json, the 17 posts since 2026-10-13 with their full text, and caps a run at 8 model calls; the bake-off compares models on two of those posts",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5e18704c1f76bb987cad41e8208cd097b289b6e0"
+        },
+        {
+          "sha": "7a1e2ba961ca154077178b4159ae84baa3bfba1f",
+          "subject": "A broken backfill file no longer stops the sync, backfill urls must be LinkedIn, the cap takes the newest posts first and the PR says how many wait for the run after merge",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7a1e2ba961ca154077178b4159ae84baa3bfba1f"
+        },
+        {
+          "sha": "a3a21c92521bae13158ff4dd253afe085fb894a6",
+          "subject": "Posts that get their full text also get a brief regenerated from it, keeping id, slug, url, date and color; the PR shows the old title next to the new one",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a3a21c92521bae13158ff4dd253afe085fb894a6"
+        },
+        {
+          "sha": "86911645ab985aff5ce0dd35d267f521895818e0",
+          "subject": "Bake-off round 2: free, translation-tuned, batch and new flash models",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/86911645ab985aff5ce0dd35d267f521895818e0"
+        },
+        {
+          "sha": "3bccc85ff5cae43c1cbece994c9140ff81d39c04",
+          "subject": "The sync drafts with Haiku 5.5 and falls back to GLM-5.3 Flash, picked in a 13-model bake-off on two real posts; the bake-off is removed",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3bccc85ff5cae43c1cbece994c9140ff81d39c04"
+        }
+      ],
+      "findings": [
+        {
+          "en": "A broken backfill file stopped the whole sync. Now it is skipped, and backfill URLs must be LinkedIn.",
+          "ru": "Сломанный файл бэкфилла останавливал всю синхронизацию. Теперь он пропускается, а ссылки в бэкфилле должны вести на LinkedIn.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/7a1e2ba961ca154077178b4159ae84baa3bfba1f"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "Post pages carry the full text: the English original and a Russian adaptation, with LinkedIn linked as a copy. New LinkedIn posts reach the site through one daily bot PR that I review.",
+        "ru": "На страницах постов теперь полный текст: английский оригинал и русская адаптация, а LinkedIn указан как копия. Новые посты из LinkedIn попадают на сайт через один ежедневный PR от бота, который я проверяю."
+      },
+      "humanDecision": {
+        "en": "The site is the original, LinkedIn the copy. The drafts are written by Haiku 5.5 with GLM-5.3 Flash as the fallback, picked in a bake-off of 13 cheap models on two real posts. The bot never pushes to main.",
+        "ru": "Оригинал — сайт, копия — LinkedIn. Черновики пишет Haiku 5.5, запасная модель — GLM-5.3 Flash; обе выбраны в сравнении 13 недорогих моделей на двух реальных постах. В main бот никогда не пушит."
+      }
+    },
+    {
+      "number": 21,
+      "title": "/llm.txt redirects to /llms.txt, the name agents most often misspell",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/21",
+      "mergedAt": "2026-11-04T00:00:07Z",
+      "branch": "claude/llm-txt-alias",
+      "additions": 25,
+      "deletions": 0,
+      "changedFiles": 2,
+      "redTest": {
+        "sha": "b3908ff371c04318df3568d42fb21e8f47608be6",
+        "subject": "Red test: /llm.txt permanently redirects to /llms.txt",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/b3908ff371c04318df3568d42fb21e8f47608be6"
+      },
+      "commits": [
+        {
+          "sha": "b3908ff371c04318df3568d42fb21e8f47608be6",
+          "subject": "Red test: /llm.txt permanently redirects to /llms.txt",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b3908ff371c04318df3568d42fb21e8f47608be6"
+        },
+        {
+          "sha": "f1a81f6e07679928f617cbf935a1916037f7680a",
+          "subject": "/llm.txt redirects to /llms.txt, the name agents most often misspell",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f1a81f6e07679928f617cbf935a1916037f7680a"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "/llm.txt, the misspelling an AI browsing tool actually requested, now redirects to /llms.txt instead of a 404.",
+        "ru": "/llm.txt, опечатка, по которой реально обратился ИИ-браузер, теперь перенаправляет на /llms.txt вместо 404."
+      },
+      "humanDecision": {
+        "en": "A permanent redirect, not a second copy, so the two files can never drift apart.",
+        "ru": "Постоянный редирект, а не вторая копия, чтобы два файла никогда не разошлись."
+      },
+      "green": {
+        "sha": "f1a81f6e07679928f617cbf935a1916037f7680a",
+        "subject": "/llm.txt redirects to /llms.txt, the name agents most often misspell",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/f1a81f6e07679928f617cbf935a1916037f7680a"
+      }
+    },
+    {
+      "number": 20,
+      "title": "Home diet: 6 latest posts, bundled page scripts, cases on their own pages",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/20",
+      "mergedAt": "2026-11-04T09:33:18Z",
+      "branch": "claude/home-diet-28277d",
+      "additions": 582,
+      "deletions": 212,
+      "changedFiles": 12,
+      "redTest": {
+        "sha": "c77d7067a028661e8c5d226c46efcff935c540b1",
+        "subject": "Add failing tests: home under 32 KB gzip, 6 latest posts + /writing/, no inline page scripts, cases on their own pages and loaded on open",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/c77d7067a028661e8c5d226c46efcff935c540b1"
+      },
+      "commits": [
+        {
+          "sha": "c77d7067a028661e8c5d226c46efcff935c540b1",
+          "subject": "Add failing tests: home under 32 KB gzip, 6 latest posts + /writing/, no inline page scripts, cases on their own pages and loaded on open",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c77d7067a028661e8c5d226c46efcff935c540b1"
+        },
+        {
+          "sha": "67d170a6f263bcc3fbfec5df4ef260ee35f22b46",
+          "subject": "Home diet: 6 latest posts + /writing/, page scripts as bundled modules, cases on /cases/<id>/ and loaded on open",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/67d170a6f263bcc3fbfec5df4ef260ee35f22b46"
+        },
+        {
+          "sha": "7a19a4589cdfafed0217292d3ad251e178e781c3",
+          "subject": "Judge fixes: ?case= restore waits for DOMContentLoaded and global helpers load before page scripts; shorter case page titles; retry test",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7a19a4589cdfafed0217292d3ad251e178e781c3"
+        }
+      ],
+      "findings": [
+        {
+          "en": "A deep link with ?case= could open the case before analytics was listening, so the automatic open could be counted as a case_open. Now the restore waits until every module has run.",
+          "ru": "Ссылка с ?case= могла открыть кейс раньше, чем аналитика начинала слушать события, и автоматическое открытие могло засчитаться как case_open. Теперь восстановление ждёт, пока отработают все модули.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/7a19a4589cdfafed0217292d3ad251e178e781c3"
+        },
+        {
+          "en": "Page scripts could run before the global helpers they call. Now the helpers load first.",
+          "ru": "Скрипты страницы могли запуститься раньше глобальных функций, которые они вызывают. Теперь эти функции загружаются первыми.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/7a19a4589cdfafed0217292d3ad251e178e781c3"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "The home page got lighter: the 6 latest posts plus a link to all of them, page scripts in bundled modules, and each architecture case on its own page, loaded into home only when opened. Home HTML went from 35,758 to 30,270 B gzipped.",
+        "ru": "Главная стала легче: 6 последних постов и ссылка на все, скрипты страницы в собранных модулях, а у каждого кейса своя страница, которая подгружается на главную только при открытии. HTML главной уменьшился с 35 758 до 30 270 байт в gzip."
+      },
+      "humanDecision": {
+        "en": "Budgets unchanged: the home page made room by shedding weight, not by raising the limit.",
+        "ru": "Бюджеты не менял: главная освободила место, сбросив вес, а не за счёт поднятого лимита."
+      }
+    },
+    {
+      "number": 22,
+      "title": "Static i18n: EN at /, RU at /ru/, typed dictionaries, hreflang and a link switch",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/22",
+      "mergedAt": "2026-11-04T09:33:50Z",
+      "branch": "claude/static-i18n",
+      "additions": 1399,
+      "deletions": 909,
+      "changedFiles": 41,
+      "redTest": {
+        "sha": "aa1e113438fd45436c1365e12c978fab86afc8a5",
+        "subject": "Add failing tests: EN at /, RU at /ru/ with lang, hreflang, sitemap and a link switch; typed dictionaries with identical keys",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/aa1e113438fd45436c1365e12c978fab86afc8a5"
+      },
+      "commits": [
+        {
+          "sha": "aa1e113438fd45436c1365e12c978fab86afc8a5",
+          "subject": "Add failing tests: EN at /, RU at /ru/ with lang, hreflang, sitemap and a link switch; typed dictionaries with identical keys",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/aa1e113438fd45436c1365e12c978fab86afc8a5"
+        },
+        {
+          "sha": "acac0986741c6c5b856c4edc07a152a94f33565a",
+          "subject": "Static i18n: EN at /, RU at /ru/ from one page per route; typed UI dictionaries; hreflang, sitemap alternates, link switch",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/acac0986741c6c5b856c4edc07a152a94f33565a"
+        },
+        {
+          "sha": "d695bdc2e3be2211a3b89f92eaced52ec44351f1",
+          "subject": "Judge fixes: a booking from /ru/ lands on /ru/booked/ (calUrl lang=ru), the language link carries ?query#anchor on right-click too",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d695bdc2e3be2211a3b89f92eaced52ec44351f1"
+        }
+      ],
+      "findings": [
+        {
+          "en": "A booking made from a Russian page landed on the English /booked/. Now it lands on /ru/booked/.",
+          "ru": "Бронь, сделанная с русской страницы, вела на английскую /booked/. Теперь она ведёт на /ru/booked/.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/d695bdc2e3be2211a3b89f92eaced52ec44351f1"
+        },
+        {
+          "en": "The language link dropped ?query#anchor on right-click. Now it keeps them.",
+          "ru": "Переключатель языка терял ?query#anchor при клике правой кнопкой. Теперь сохраняет.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/d695bdc2e3be2211a3b89f92eaced52ec44351f1"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "Each language is its own page: English at /, Russian at /ru/, with hreflang and a language link that keeps your place. Home HTML went from 30,266 to 23,218 B gzipped.",
+        "ru": "У каждого языка своя страница: английская на /, русская на /ru/, с hreflang и переключателем языка, который сохраняет место на странице. HTML главной уменьшился с 30 266 до 23 218 байт в gzip."
+      },
+      "humanDecision": {
+        "en": "Static pages per locale instead of hidden duplicate spans, with typed dictionaries: a missing or extra key fails the build. English stays the default.",
+        "ru": "Отдельные статические страницы для каждого языка вместо скрытых дублей текста, словари типизированы: пропущенный или лишний ключ ломает сборку. Английский остаётся языком по умолчанию."
+      }
+    },
+    {
+      "number": 23,
+      "title": "The hero topology replays a real agent run on this site (PR #11), and the visitor can take over",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/23",
+      "mergedAt": "2026-11-04T11:37:09Z",
+      "branch": "claude/topology-replay",
+      "additions": 2900,
+      "deletions": 712,
+      "changedFiles": 30,
+      "redTest": {
+        "sha": "546c30545baf2f8de7288c81f23d954bc3ea5b48",
+        "subject": "Red test: the topology replay of PR #11 is checkable against git, and the G→R mis-heal is reproduced from committed pre-fix weights",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/546c30545baf2f8de7288c81f23d954bc3ea5b48"
+      },
+      "commits": [
+        {
+          "sha": "546c30545baf2f8de7288c81f23d954bc3ea5b48",
+          "subject": "Red test: the topology replay of PR #11 is checkable against git, and the G→R mis-heal is reproduced from committed pre-fix weights",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/546c30545baf2f8de7288c81f23d954bc3ea5b48"
+        },
+        {
+          "sha": "64d6dc07a280fe16cdf6f1941aa2cd746be047c9",
+          "subject": "Red test: the G→R frames re-run from the recovered PR #11 round-1 weights, not a retrained stand-in",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/64d6dc07a280fe16cdf6f1941aa2cd746be047c9"
+        },
+        {
+          "sha": "1f952c25e178dc63b7b1ef5002266b8199cbcaef",
+          "subject": "Spec fix: the replay times are author dates (committer dates were rewritten), and the sandbox shows the bites-only tests that existed before the catch",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1f952c25e178dc63b7b1ef5002266b8199cbcaef"
+        },
+        {
+          "sha": "b1bdf3b4451dc2c66ba92de3cc2c0ad4a0f3fe6d",
+          "subject": "The replay data for PR #11: events checked against git, and G→R frames recorded from the recovered round-1 weights",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b1bdf3b4451dc2c66ba92de3cc2c0ad4a0f3fe6d"
+        },
+        {
+          "sha": "7f730499e2a17f9ba498cf62abbb539df16d4bf5",
+          "subject": "Red test: the sandbox step names a real bite test, round 1 passes the bites-era checks, and the frames say they come from a float16 copy with the source sha256",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7f730499e2a17f9ba498cf62abbb539df16d4bf5"
+        },
+        {
+          "sha": "297523331fe7e519db800b142ece8107a0aa26a6",
+          "subject": "Judge fixes: the sandbox step names real bite tests, the frames say float16 copy with the source sha256, reproduced only with the finding on record",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/297523331fe7e519db800b142ece8107a0aa26a6"
+        },
+        {
+          "sha": "fa8337cbae2bb7cc74e078868021858847856a63",
+          "subject": "Replay captions in Russian: Builder as on the node, «Влито в main» instead of «Смержено»",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/fa8337cbae2bb7cc74e078868021858847856a63"
+        },
+        {
+          "sha": "c6684bbde50f784ed74a9e5a42105ed583cc39fe",
+          "subject": "Red test: the hero topology plays the PR #11 replay by itself, takes over honestly (caught / shipped), offers to resume, and stays still under reduced motion and before Play on phones",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c6684bbde50f784ed74a9e5a42105ed583cc39fe"
+        },
+        {
+          "sha": "4b942f73d38973a5f4a87b8abc3932f34fce5e48",
+          "subject": "The hero topology plays the PR #11 replay as a film and lets the visitor take over: caught with the judge, shipped without it, resume when left alone",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4b942f73d38973a5f4a87b8abc3932f34fce5e48"
+        },
+        {
+          "sha": "f23bfed3423022ef7165f1254f38f2571df93952",
+          "subject": "Red test: the replay can be paused, autoplay does not spam the live region, Explore stops the idle clock, the take-over says it is simulated, and the engine leaves the eager JS",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f23bfed3423022ef7165f1254f38f2571df93952"
+        },
+        {
+          "sha": "408fd94c5a90e94614a2347ec4dad10ebd9a9d10",
+          "subject": "Judge fixes: pausable film with a quiet live region, Explore stops the idle clock, a stale heal never lands, the take-over says simulated, and the engine loads lazily (eager JS 20.9 → 2.8 KB)",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/408fd94c5a90e94614a2347ec4dad10ebd9a9d10"
+        }
+      ],
+      "findings": [
+        {
+          "en": "The sandbox step showed a test that only existed after the catch. Now it names the bite tests that existed then.",
+          "ru": "Шаг песочницы показывал тест, который появился только после находки. Теперь он называет тесты на укусы, которые были тогда.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/297523331fe7e519db800b142ece8107a0aa26a6"
+        },
+        {
+          "en": "Autoplay flooded the live region and could not be paused. Now the film pauses and the live region stays quiet.",
+          "ru": "Автовоспроизведение засыпало live-регион сообщениями, и его нельзя было поставить на паузу. Теперь фильм ставится на паузу, а live-регион молчит.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/408fd94c5a90e94614a2347ec4dad10ebd9a9d10"
+        },
+        {
+          "en": "A cancelled live heal could still land later. Now a stale heal never lands.",
+          "ru": "Отменённое заживление могло всё равно сработать позже. Теперь устаревшее заживление не применяется.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/408fd94c5a90e94614a2347ec4dad10ebd9a9d10"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "The hero topology plays a recorded replay of a real agent run on this site, PR #11, including the judge catching the G that grew back as an R. You can take over at any point: switch the judge off and watch a fault ship, or cut the mini GR.",
+        "ru": "Топология в hero показывает запись реального прогона агентов на этом сайте, PR #11, включая момент, когда судья ловит G, отросшую как R. Перехватить управление можно в любой момент: выключить судью и посмотреть, как ошибка уходит в прод, или разрезать маленькую GR."
+      },
+      "humanDecision": {
+        "en": "Show a real run, labelled as a replay, rather than an illustration, and check everything in it against git. The scripted fault in the take-over is marked as simulated.",
+        "ru": "Показывать реальный прогон с пометкой, что это повтор, а не иллюстрацию, и сверять всё в нём с git. Сценарная ошибка при перехвате управления помечена как симуляция."
+      },
+      "review": {
+        "en": "Implemented by an agent and reviewed by independent judges that saw only the diff, the tests and the task, once for the data layer and once for the UI. Their findings were fixed before merge.",
+        "ru": "Код написал агент, проверили независимые судьи, которым дали только дифф, тесты и задачу: один раз слой данных, один раз интерфейс. Их замечания исправлены до мержа."
+      }
+    },
+    {
+      "number": 24,
+      "title": "CV PDF: two clean pages with flow layout, header and footer bands",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/24",
+      "mergedAt": "2026-11-04T11:38:56Z",
+      "branch": "claude/cv-pdf-025ac0",
+      "additions": 552,
+      "deletions": 218,
+      "changedFiles": 3,
+      "redTest": {
+        "sha": "61134cb8d4c784b59cfc17a4f06788c93676227b",
+        "subject": "Add failing tests: CV PDF on 2 pages with every role, capabilities and education, footer band per page with canary inside, no overlapping lines, real dashes and bullets, 9-11pt body, reading order",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/61134cb8d4c784b59cfc17a4f06788c93676227b"
+      },
+      "commits": [
+        {
+          "sha": "61134cb8d4c784b59cfc17a4f06788c93676227b",
+          "subject": "Add failing tests: CV PDF on 2 pages with every role, capabilities and education, footer band per page with canary inside, no overlapping lines, real dashes and bullets, 9-11pt body, reading order",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/61134cb8d4c784b59cfc17a4f06788c93676227b"
+        },
+        {
+          "sha": "05a91560b7cb2a46dcc0e371b1be3b32275113bd",
+          "subject": "CV PDF: flow layout on Helvetica metrics, two pages with header and footer bands, real dashes and bullets, 9.5pt body, links, languages from profile.ts; margin test via pdftotext",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/05a91560b7cb2a46dcc0e371b1be3b32275113bd"
+        },
+        {
+          "sha": "f076f9a7078fbe114555675077f7ae12b96cb51b",
+          "subject": "Judge fixes: every paragraph and bullet line checks the footer, section headings keep their first entry, role/date collision and PDFDocEncoding metadata guarded; test parser fails on unreadable text objects and checks canary on the last page",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f076f9a7078fbe114555675077f7ae12b96cb51b"
+        }
+      ],
+      "findings": [
+        {
+          "en": "Not every line was checked against the footer band. Now every paragraph and bullet line is.",
+          "ru": "Проверялись не все строки: какие-то могли залезть в полосу подвала. Теперь проверяется каждая строка абзацев и списков.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/f076f9a7078fbe114555675077f7ae12b96cb51b"
+        },
+        {
+          "en": "A section heading could end up alone at the bottom of a page. Now it keeps its first entry.",
+          "ru": "Заголовок раздела мог остаться один внизу страницы. Теперь он не отрывается от первой записи.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/f076f9a7078fbe114555675077f7ae12b96cb51b"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "The CV PDF is two clean pages with every section, real dashes and bullets, larger body text and clickable links. The canary note no longer sits on top of body text.",
+        "ru": "PDF-резюме теперь две аккуратные страницы со всеми разделами, настоящими тире и маркерами, более крупным текстом и кликабельными ссылками. Строка canary больше не наезжает на основной текст."
+      },
+      "humanDecision": {
+        "en": "Two pages instead of cutting sections to fit one. The build fails on text past the margin rather than shipping it, with no new dependencies.",
+        "ru": "Две страницы вместо того, чтобы урезать разделы ради одной. Сборка падает на тексте за полями, а не выпускает его, и без новых зависимостей."
+      }
+    },
+    {
+      "number": 25,
+      "title": "Voice VAD demo in the Sully case: hear 15 s → 0 in your browser",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/25",
+      "mergedAt": "2026-11-04T12:22:30Z",
+      "branch": "claude/vad-demo-e9c315",
+      "additions": 1370,
+      "deletions": 0,
+      "changedFiles": 26,
+      "redTest": {
+        "sha": "373ee08136cb9275248c2e5477fbc6fdf00a4c40",
+        "subject": "Add failing tests: voice VAD demo in the Sully case — trigger and privacy line EN/RU, no model or worker URL before the click, Silero v6.2.3 TS port matches ONNX on fixture audio, onset timing on a mocked probability stream, state machine across denied/no mic/unsupported/Save-Data, vad_demo in EVENTS and README",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/373ee08136cb9275248c2e5477fbc6fdf00a4c40"
+      },
+      "commits": [
+        {
+          "sha": "373ee08136cb9275248c2e5477fbc6fdf00a4c40",
+          "subject": "Add failing tests: voice VAD demo in the Sully case — trigger and privacy line EN/RU, no model or worker URL before the click, Silero v6.2.3 TS port matches ONNX on fixture audio, onset timing on a mocked probability stream, state machine across denied/no mic/unsupported/Save-Data, vad_demo in EVENTS and README",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/373ee08136cb9275248c2e5477fbc6fdf00a4c40"
+        },
+        {
+          "sha": "c60a3351021afaeb7e19a80319df82d9e1ea12bb",
+          "subject": "Voice VAD demo in the Sully case: Silero VAD v6.2.3 ported to TypeScript (float16 weights, 0.49 MB, fetched only after mic permission), worker fed straight from an AudioWorklet port, onset timed from the voice's first loud frame to the model's decision, EN/RU states for denied/no mic/unsupported/Save-Data/quiet, vad_demo event",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c60a3351021afaeb7e19a80319df82d9e1ea12bb"
+        },
+        {
+          "sha": "a3497b081ff0a8026b2df91970f7b0acd8d0ed28",
+          "subject": "Add failing tests (judge): zeros at mic start don't pin the noise floor, leaving the page resets a running demo, Save-Data/unsupported can be retried, built worker has no network calls, progress stays out of aria-live",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a3497b081ff0a8026b2df91970f7b0acd8d0ed28"
+        },
+        {
+          "sha": "9b80f8e329283849b2af4603208d0dbc9b388472",
+          "subject": "Judge fixes: digital silence can't calibrate the noise floor (floor >= -80 dBFS), setup watchdog and 15 s timeout from model ready so the mic is always released, pagehide resets to idle for bfcache, stop when the fragment leaves the page, aria-disabled button and progress out of aria-live, contexts under 16 kHz fail, Save-Data/unsupported retryable, copy: up to 32 ms high and ~1 s look-back",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+        }
+      ],
+      "findings": [
+        {
+          "en": "Digital silence at mic start could set the noise floor. Now the floor can't go below −80 dBFS.",
+          "ru": "Цифровая тишина в начале записи могла задать уровень шума. Теперь он не опускается ниже −80 dBFS.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+        },
+        {
+          "en": "A stalled setup could keep the mic on. A watchdog and a timeout now always release it.",
+          "ru": "Зависшая инициализация могла оставить микрофон включённым. Теперь сторожевой таймер и тайм-аут всегда его освобождают.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+        },
+        {
+          "en": "Leaving the page did not reset a running demo. Now it returns to idle.",
+          "ru": "Уход со страницы не сбрасывал запущенное демо. Теперь оно возвращается в исходное состояние.",
+          "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+        }
+      ],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "The Sully case has a Say hello demo: a voice-activity model listens to your mic in the browser and shows how many ms it took to notice your voice, next to the old ~15 s of dead air. Audio stays in memory, and the model downloads only after you allow the mic.",
+        "ru": "В кейсе Sully появилось демо «Скажите „алло“»: модель детекции голоса слушает микрофон прямо в браузере и показывает, за сколько миллисекунд заметила голос, рядом со старыми ~15 с тишины. Звук остаётся в памяти, а модель скачивается только после разрешения на микрофон."
+      },
+      "humanDecision": {
+        "en": "Port Silero VAD to TypeScript instead of loading an ONNX runtime, which would have meant about 3.4 MB per click. The page says plainly that at Sully the win was not a faster model but the agent waiting for a voice instead of a ringing line.",
+        "ru": "Перенести Silero VAD на TypeScript вместо загрузки ONNX-рантайма, который весил бы около 3,4 МБ на каждый клик. Текст на странице прямо говорит, что в Sully выигрыш дала не быстрая модель, а то, что агент ждёт голос, а не звонящую линию."
+      }
+    },
+    {
+      "number": 26,
+      "title": "Publora sync: backfill every own post since August 2025 in one run, and keep the bot's job green",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/26",
+      "mergedAt": "2026-11-04T12:44:02Z",
+      "branch": "claude/publora-backfill-all",
+      "additions": 809,
+      "deletions": 128,
+      "changedFiles": 15,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "71229dbf4eaba18cd88592901c5970da4e68324f",
+          "subject": "The Publora sync backfills every own post since August 2025 in one time-boxed run, runs twice a day, and its tests no longer depend on the live posts.json",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/71229dbf4eaba18cd88592901c5970da4e68324f"
+        },
+        {
+          "sha": "68e8aa75c89386405e997657a6ad6b39008a7225",
+          "subject": "One bad draft is skipped instead of failing the bot's job: takeaway long enough for a meta description, no repeated title or takeaway, JSON-LD escapes <; the time budget counts from the run's start and no run churns an open bot PR",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/68e8aa75c89386405e997657a6ad6b39008a7225"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "visitorChange": {
+        "en": "Nothing changes on the page until the sync's next bot PR is merged. That PR is meant to bring every own LinkedIn post since August 2025 to /writing/ with its full text. The Writing descriptions now say the site carries full posts.",
+        "ru": "На странице ничего не меняется, пока не смержен следующий PR бота синхронизации. Этот PR должен принести в /writing/ все мои посты из LinkedIn с августа 2025 года с полным текстом. Описания раздела Writing теперь говорят, что на сайте полные посты."
+      },
+      "humanDecision": {
+        "en": "Backfill everything in one run, about $0.04 with Haiku, under a time budget instead of post-count caps. One bad draft is skipped with its reason instead of blocking the whole PR.",
+        "ru": "Загрузить всё одним прогоном, около $0,04 с Haiku, с ограничением по времени вместо лимита на число постов. Один неудачный черновик пропускается с указанием причины, а не блокирует весь PR."
+      },
+      "noRedTest": {
+        "en": "Two commits, each bringing its tests together with the change: no test was committed red on its own first.",
+        "ru": "Два коммита, и каждый приносил тесты вместе с изменением: отдельного красного теста первым нет."
       }
     }
   ]
