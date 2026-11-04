@@ -28,7 +28,7 @@ const readTime = readTimeLabel(post);
     <button
       type="button"
       class="brutal-btn brutal-btn-sm"
-      onclick="document.getElementById('post-reader-slot').innerHTML = ''; window.setUrlParam && window.setUrlParam('post', null)"
+      data-action="closeBrief"
     >
       {d.close}
     </button>

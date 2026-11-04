@@ -99,7 +99,7 @@ describe('runtime (initAnalytics)', () => {
     };
     return e;
   };
-  // Capture listeners, then the element's own onclick, then bubble listeners.
+  // Capture listeners, then the data-action handler (registered first), then the analytics bubble listener.
   const dispatch = (type: string, event: any, onclick?: () => void) => {
     for (const l of docListeners[type] ?? []) if (l.capture) l.fn(event);
     onclick?.();
@@ -303,7 +303,7 @@ describe('built markup', () => {
   });
 
   test('every topology control is tracked with an action', () => {
-    const topo = page.filter((t) => /window\.(setIso|triggerIso|toggleIso|resetIso|fireIso|stepIso|openDomainBlueprint)/.test(t.attrs.onclick ?? ''));
+    const topo = page.filter((t) => /^(setIso|triggerIso|toggleIso|resetIso|fireIso|stepIso|openDomainBlueprint)/.test(t.attrs['data-action'] ?? ''));
     expect(topo.length).toBeGreaterThan(5);
     for (const t of topo) {
       expect(t.attrs['data-track']).toBe('topology_interact');

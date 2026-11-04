@@ -1,4 +1,4 @@
-// Home page helpers the markup calls from onclick: the inline post reader (?post= restore, openBrief,
+// Home page helpers the markup calls through data-action (scripts/actions.ts): the inline post reader (?post= restore, openBrief,
 // focus after a swap), the essay filter tabs and the toolbox (copy as text, skill → jobs highlight).
 declare global {
   interface Window {
