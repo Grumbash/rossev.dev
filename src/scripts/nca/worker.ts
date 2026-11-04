@@ -5,6 +5,7 @@
 import { NeuralCA } from './model';
 import { decodeWeights } from './weights';
 import { createTicker } from './ticker';
+import { createHealer, type Healer, type HealerStatus } from './healer';
 
 export type ToWorker =
   | { type: 'init'; weightsUrl: string; reducedMotion: boolean }
@@ -16,41 +17,48 @@ export type ToWorker =
 
 export type FromWorker =
   | { type: 'frame'; size: number; pixels: Uint8ClampedArray<ArrayBuffer> }
+  /** A regrow from a single cell started (too much lost, or it settled into a wrong shape). */
+  | { type: 'notice'; kind: 'regrowing' }
   | { type: 'error'; message: string };
 
 const STEPS_PER_SECOND = 40;
 const TICK_MS = 1000 / 30;
 const MAX_STEPS_PER_TICK = 4; // a slow device grows slower instead of falling behind
-// Growing takes ~300 steps and healing a cut up to ~600. After that the pattern
-// is visually still, so the loop rests until the next bite or reset.
-const ACTIVE_STEPS = 700;
+// The loop runs until the healer (./healer.ts) settles: a bite or cut ~200–450 steps, a
+// loss too large to heal is given up by step 380 and regrown (~400–800 more), and then it
+// rests until the next bite or reset.
 const GROWN_STEPS = 300;
+// The page shows a notice for 2.5 s; no second one while it is up. Longer than 2.5 s
+// so a regrow right as the notice fades doesn't flash it straight back.
+const NOTICE_MS = 3000;
+// Under reduced motion a regrow skips to the grown monogram, but only once the gesture
+// that caused it has been still this long: growing out of sight blocks the worker for
+// ~0.7 s, and an erase stroke still under way would just erase the new monogram again.
+const QUIET_MS = 400;
 
 const scope = self as unknown as DedicatedWorkerGlobalScope;
 
-let ca: NeuralCA | null = null;
-let aliveThreshold = 0.1;
+let healer: Healer | null = null;
 let reducedMotion = false;
 let visible = false;
-let budget = 0;
+let active = false; // the healer is still watching the pattern change
 let owed = 0;
 let lastTick = 0;
+let noticeUntil = 0;
+let silentGrowAt = 0; // when to grow a reduced-motion regrow out of sight; 0 = none pending
 
-// Frame buffers: one RGBA float buffer, and pixel buffers that travel to the
-// page (transferred, not copied) and come back via 'recycle'.
-let rgba: Float32Array = new Float32Array(0);
+// Pixel buffers travel to the page (transferred, not copied) and come back via
+// 'recycle'. The RGBA floats come from the healer, which reads them for its stats.
 const spare: Uint8ClampedArray<ArrayBuffer>[] = [];
 
-/** Posts the current state as straight-alpha pixels. Returns false if no cell is alive. */
-function postFrame(): boolean {
-  if (!ca) return false;
-  rgba = ca.rgba(rgba.length === ca.size * ca.size * 4 ? rgba : undefined);
+/** Posts the healer's last measured frame as straight-alpha pixels. */
+function postFrame(): void {
+  if (!healer) return;
+  const { rgba, size } = healer;
   const pixels = spare.pop() ?? new Uint8ClampedArray(rgba.length);
-  let maxAlpha = 0;
   // The model works in premultiplied alpha; ImageData wants it straight.
   for (let i = 0; i < rgba.length; i += 4) {
     const a = rgba[i + 3];
-    if (a > maxAlpha) maxAlpha = a;
     if (a < 1 / 255) {
       pixels[i] = pixels[i + 1] = pixels[i + 2] = pixels[i + 3] = 0;
       continue;
@@ -60,18 +68,23 @@ function postFrame(): boolean {
     pixels[i + 2] = (rgba[i + 2] / a) * 255;
     pixels[i + 3] = a * 255;
   }
-  const msg: FromWorker = { type: 'frame', size: ca.size, pixels };
+  const msg: FromWorker = { type: 'frame', size, pixels };
   scope.postMessage(msg, [pixels.buffer]);
-  return maxAlpha > aliveThreshold;
 }
 
-/** Posts a frame; if everything has died (a full wipe), starts over from a seed. */
-function showOrRestart(): void {
-  if (!postFrame()) reset();
+/** A regrow from one cell started: tell the visitor why (once), and under reduced
+ * motion show the finished monogram instead of the growth once the gesture is over. */
+function regrowing(): void {
+  const now = performance.now();
+  if (now >= noticeUntil) {
+    noticeUntil = now + NOTICE_MS;
+    scope.postMessage({ type: 'notice', kind: 'regrowing' } satisfies FromWorker);
+  }
+  if (reducedMotion) silentGrowAt = now + QUIET_MS;
 }
 
 function shouldRun(): boolean {
-  return ca !== null && visible && budget > 0;
+  return healer !== null && visible && active;
 }
 
 /** Starts the loop if it should run and isn't already; the only way ticks get scheduled. */
@@ -84,16 +97,25 @@ function wake(): void {
 
 /** One loop iteration; returns whether to keep going. */
 function tick(): boolean {
-  if (!ca || !shouldRun()) return false;
+  if (!healer || !shouldRun()) return false;
   const now = performance.now();
+  if (silentGrowAt) {
+    if (now < silentGrowAt) return true; // hold the seed still while the gesture goes on
+    silentGrowAt = 0;
+    healer.grow();
+    active = false;
+    postFrame();
+    return false;
+  }
   owed = Math.min(owed + ((now - lastTick) / 1000) * STEPS_PER_SECOND, MAX_STEPS_PER_TICK);
   lastTick = now;
-  const n = Math.min(Math.floor(owed), budget);
+  const n = Math.floor(owed);
   if (n > 0) {
-    ca.step(n);
+    const status: HealerStatus = healer.step(n);
     owed -= n;
-    budget -= n;
-    showOrRestart(); // may reset(), which wakes the ticker; it stays a single chain
+    if (status === 'settled') active = false;
+    if (status === 'regrowing') regrowing();
+    postFrame();
   }
   return shouldRun();
 }
@@ -105,13 +127,14 @@ const ticker = createTicker(tick, TICK_MS);
  * page's static GR (a GR → dot → GR flash would read as a glitch, not as growth;
  * Reset and full wipes still show the growth). */
 function reset(silent = reducedMotion): void {
-  if (!ca) return;
-  ca.seed();
+  if (!healer) return;
+  silentGrowAt = 0;
   if (silent) {
-    ca.step(GROWN_STEPS);
-    budget = 0;
+    healer.grow();
+    active = false;
   } else {
-    budget = ACTIVE_STEPS;
+    healer.restart();
+    active = true;
   }
   postFrame();
   wake();
@@ -125,9 +148,7 @@ scope.onmessage = async (event: MessageEvent<ToWorker>) => {
       try {
         const res = await fetch(msg.weightsUrl);
         if (!res.ok) throw new Error(`weights: HTTP ${res.status}`);
-        const weights = decodeWeights(await res.arrayBuffer());
-        ca = new NeuralCA(weights);
-        aliveThreshold = weights.aliveThreshold;
+        healer = createHealer(new NeuralCA(decodeWeights(await res.arrayBuffer())), { grownSteps: GROWN_STEPS });
       } catch (err) {
         scope.postMessage({ type: 'error', message: String(err) } satisfies FromWorker);
         return;
@@ -140,10 +161,12 @@ scope.onmessage = async (event: MessageEvent<ToWorker>) => {
       wake();
       break;
     case 'damage':
-      if (!ca) return;
-      for (const p of msg.points) ca.damage(p.x, p.y, msg.r);
-      budget = ACTIVE_STEPS; // healing answers the visitor, so it animates even with reduced motion
-      showOrRestart();
+      if (!healer) return;
+      // Healing answers the visitor, so it animates even with reduced motion.
+      active = true;
+      if (healer.damage(msg.points, msg.r) === 'regrowing') regrowing();
+      else if (silentGrowAt) silentGrowAt = performance.now() + QUIET_MS; // still erasing
+      postFrame();
       wake();
       break;
     case 'reset':

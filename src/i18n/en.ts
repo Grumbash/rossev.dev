@@ -183,7 +183,8 @@ export const en = {
     bridgeLink: 'systems that notice damage and repair themselves →',
     howHtml:
       'How it works: each cell holds 16 numbers, reads its 3×3 neighbourhood through Sobel filters and updates through one 128-unit hidden layer. Trained to grow from a single cell and to heal after cuts and bites, after <a class="text-link" href="https://distill.pub/2020/growing-ca/" target="_blank" rel="noopener noreferrer">Mordvintsev et al., Distill 2020 ↗</a>',
-    reset: 'Reset'
+    reset: 'Reset',
+    regrowing: "Couldn't heal this one — regrowing from a single cell."
   },
   vad: {
     kicker: 'TRY IT // VOICE ACTIVITY DETECTION',
