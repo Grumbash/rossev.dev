@@ -94,11 +94,14 @@ export function eventFromDataset(dataset: Record<string, string | undefined>): {
   return { name: name as EventName, props: Object.keys(props).length ? props : undefined };
 }
 
-export function calUrl(placement: Placement): string {
+// `lang`: the page's locale, when not English. cal.com forwards it to /booked/, which sends the
+// visitor on to the confirmation page in their language (/ru/booked/).
+export function calUrl(placement: Placement, lang = 'en'): string {
   const url = new URL(PROFILE.calendar);
   url.searchParams.set('utm_source', 'rossev.dev');
   url.searchParams.set('utm_medium', 'site');
   url.searchParams.set('utm_content', placement);
+  if (lang !== 'en') url.searchParams.set('lang', lang);
   return url.toString();
 }
 
@@ -126,7 +129,7 @@ export function initAnalytics(): void {
 
   // Capture phase runs before the element's onclick, so this is the language before the click.
   let langBefore: string | null = null;
-  document.addEventListener('click', () => (langBefore = root.getAttribute('data-lang')), true);
+  document.addEventListener('click', () => (langBefore = root.getAttribute('lang')), true);
 
   // Bubble phase on document: runs after the element's own onclick handler.
   const onClick = (e: Event) => {
@@ -135,7 +138,7 @@ export function initAnalytics(): void {
     if (!ev) return;
     // EN while already on EN is not a switch.
     if (ev.name === 'lang_switch' && ev.props?.to === langBefore) return;
-    if (ev.name === 'cta_book') track(ev.name, { ...ev.props, lang: root.getAttribute('data-lang') || 'en' });
+    if (ev.name === 'cta_book') track(ev.name, { ...ev.props, lang: root.getAttribute('lang') || 'en' });
     else if (ev.name === 'theme_switch') track(ev.name, { to: root.getAttribute('data-theme') || 'light' });
     else if (ev.name === 'topology_interact' || ev.name === 'nca_interact') trackOnce(ev.name, ev.props);
     else track(ev.name, ev.props);

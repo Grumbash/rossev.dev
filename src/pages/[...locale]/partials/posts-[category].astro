@@ -1,0 +1,19 @@
+---
+export const partial = true;
+import { BLOG_POSTS, latestPosts } from '../../../data/profile';
+import BlogGrid from '../../../components/BlogGrid.astro';
+import { localeOf, localeParams } from '../../../i18n';
+
+export function getStaticPaths() {
+  return localeParams().flatMap((params) =>
+    ['all', 'ai', 'leadership', 'systems', 'delivery'].map((category) => ({ params: { ...params, category } })),
+  );
+}
+
+const { category } = Astro.params;
+const lang = localeOf(Astro.params.locale);
+// Same count as home's first render; the rest are on /writing/.
+const filteredPosts = latestPosts(category === 'all' ? BLOG_POSTS : BLOG_POSTS.filter((p) => p.category === category));
+---
+
+<BlogGrid posts={filteredPosts} lang={lang} />
