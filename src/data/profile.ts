@@ -3,13 +3,13 @@ import POSTS from './posts.json';
 export interface CaseStudy {
   id: string;
   company: string;
-  period: string;
-  location: string;
+  period: { en: string; ru: string };
+  location: { en: string; ru: string };
   color: string;
   badge: { en: string; ru: string };
   title: { en: string; ru: string };
   summary: { en: string; ru: string };
-  metrics: { value: string; label: { en: string; ru: string } }[];
+  metrics: { value: { en: string; ru: string }; label: { en: string; ru: string } }[];
   stack: string[];
   architecture: {
     en: {
@@ -171,22 +171,22 @@ export const PROFILE = {
   },
   heroStats: [
     {
-      value: '8+ YRS',
+      value: { en: '8+ YRS', ru: '8+ лет' },
       label: { en: 'Production Systems', ru: 'Опыта в продакшене' },
       color: 'var(--lime)'
     },
     {
-      value: '-80%',
+      value: { en: '-80%', ru: '−80%' },
       label: { en: 'Feedback Analysis Time (Kingpin)', ru: 'Время анализа фидбека (Kingpin)' },
       color: 'var(--cyan)'
     },
     {
-      value: '15s → 0s',
+      value: { en: '15s → 0s', ru: '15 с → 0' },
       label: { en: 'Dead Air at Pickup (Sully.ai)', ru: 'Тишина после ответа (Sully.ai)' },
       color: 'var(--yellow)'
     },
     {
-      value: '5–12',
+      value: { en: '5–12', ru: '5–12' },
       label: { en: 'Engineers Led', ru: 'Инженеров в командах' },
       color: 'var(--orange)'
     }
@@ -197,8 +197,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'yagni',
     company: 'YAGNI (yagni.app)',
-    period: 'NOV 2026 — PRESENT',
-    location: 'Tbilisi · Remote',
+    period: { en: 'NOV 2026 — PRESENT', ru: 'ноя 2026 — сейчас' },
+    location: { en: 'Tbilisi · Remote', ru: 'Тбилиси · удалённо' },
     color: 'var(--lime)',
     badge: { en: 'AGENT TEAMS FOR ENGINEERING', ru: 'КОМАНДЫ AI-АГЕНТОВ' },
     title: {
@@ -210,7 +210,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'AI-агенты с ролями (PM, Builder, Reviewer) работают по утверждённому человеком плану: аудит каждого шага, песочница и бенчмарки на реальных задачах.'
     },
     metrics: [
-      { value: '28 PRs', label: { en: 'Merged in the first week: 98% of the code by agents, 97% of the planning by me', ru: 'Смержено за первую неделю: 98% кода написали агенты, 97% планирования — моё' } }
+      { value: { en: '28 PRs', ru: '28 PR' }, label: { en: 'Merged in the first week: 98% of the code by agents, 97% of the planning by me', ru: 'Смержено за первую неделю: 98% кода написали агенты, 97% планирования — моё' } }
     ],
     stack: ['Agent Benchmarks', 'Self-Improving Loops', 'Sandboxed Runner', 'Tenant Query Guards', 'Self-Healing Syncs', 'Risk Radar'],
     architecture: {
@@ -234,7 +234,7 @@ export const CASE_STUDIES: CaseStudy[] = [
         solution: 'Сделал изоляцию тенантов и маршрутизацию агента код-ревью, научил бэкфиллы внешних воркспейсов восстанавливаться самим, свёл сборку worktree и CI к одной команде и построил бенчмарки на реальных задачах с радаром рисков.',
         outcomes: [
           'Изоляция тенантов: гарды запросов по тенанту и песочница для запуска кода.',
-          'Агент код-ревью стал надёжнее: убрал коллизии ключей тикетов между YAGNI и внешними трекерами. Собрал бенчмарки на реальных задачах, чтобы мерить изменения агентов.',
+          'Сделал агента код-ревью надёжнее: убрал коллизии ключей тикетов между YAGNI и внешними трекерами. Собрал бенчмарки на реальных задачах, чтобы мерить изменения агентов.',
           'Бэкфиллы коннекторов восстанавливаются сами (зависшие курсоры, трекинг прогресса, жёсткие лимиты); построил радар рисков, который замечает зависшие прогоны клиентов.',
           'Собрал экспериментальный цикл самоулучшения: агенты разбирают упавшие прогоны и предлагают фиксы. Сборку монорепо для worktree и CI свёл к одной команде.'
         ],
@@ -249,8 +249,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'sully',
     company: 'Sully.ai',
-    period: 'SEP 2025 — OCT 2026',
-    location: 'Dubai, UAE',
+    period: { en: 'SEP 2025 — OCT 2026', ru: 'сен 2025 — окт 2026' },
+    location: { en: 'Dubai, UAE', ru: 'Дубай, ОАЭ' },
     color: 'var(--cyan)',
     badge: { en: 'VOICE AI & HARNESS', ru: 'ГОЛОСОВОЙ AI' },
     title: {
@@ -259,12 +259,12 @@ export const CASE_STUDIES: CaseStudy[] = [
     },
     summary: {
       en: 'AI receptionist for healthcare: voice agents for scheduling and clinic operations. Outbound call reliability, LiveKit dispatch, UAE data residency and the MENA launch.',
-      ru: 'AI-ресепшионист для клиник: голосовые агенты для записи пациентов и работы клиник. Надёжность исходящих звонков, диспетчеризация в LiveKit, резидентность данных в ОАЭ и запуск в MENA.'
+      ru: 'AI-ресепшионист для медицины: голосовые агенты для записи пациентов и работы клиник. Надёжность исходящих звонков, диспетчеризация в LiveKit, резидентность данных в ОАЭ и запуск в MENA.'
     },
     metrics: [
-      { value: '15s → 0s', label: { en: 'Dead Air at Pickup', ru: 'Тишина после ответа' } },
-      { value: 'MENA', label: { en: 'Launch Led', ru: 'Запуск в регионе' } },
-      { value: '400+', label: { en: 'Healthcare Orgs (Sully)', ru: 'Медорганизаций (Sully)' } }
+      { value: { en: '15s → 0s', ru: '15 с → 0' }, label: { en: 'Dead Air at Pickup', ru: 'Тишина после ответа' } },
+      { value: { en: 'MENA', ru: 'MENA' }, label: { en: 'Launch Led', ru: 'Запуск в регионе' } },
+      { value: { en: '400+', ru: '400+' }, label: { en: 'Healthcare Orgs (Sully)', ru: 'Медорганизаций (Sully)' } }
     ],
     stack: ['LiveKit', 'Twilio', 'Speechmatics', 'OpenAI / Claude / Gemini', 'TypeScript', 'Node.js', 'Agent Evals'],
     architecture: {
@@ -283,7 +283,7 @@ export const CASE_STUDIES: CaseStudy[] = [
         ]
       },
       ru: {
-        challenge: 'Запуски у крупных медицинских клиентов: голос на нескольких языках с минимальной задержкой по живой телефонии и мгновенный поиск причины любого сбоя.',
+        challenge: 'Запуски у крупных медицинских клиентов требуют голоса на нескольких языках с минимальной задержкой по живой телефонии и мгновенного поиска причины любого сбоя.',
         solution: 'Построил слой надёжности голосовых агентов и харнесса: от входа через Twilio/LiveKit и ASR (Speechmatics) до оркестрации LLM, детерминированных эвалов и трассировки.',
         outcomes: [
           'Убрал ~15 с тишины после ответа на исходящих звонках: агент здоровался, пока ещё шли гудки.',
@@ -293,7 +293,7 @@ export const CASE_STUDIES: CaseStudy[] = [
         topology: [
           '[Телефония / SIP / Twilio] ──► [LiveKit Real-Time Media Router]',
           '[Аудиопоток] ──► [Speechmatics ASR] ──► [AI Agent Harness & Guardrails]',
-          '[Agent Harness] ──► [Eval & Runtime Trace Collector] ──► [EHR и бэкенд клиники]'
+          '[Agent Harness] ──► [Eval & Runtime Trace Collector] ──► [МИС и бэкенд клиники]'
         ]
       }
     }
@@ -301,8 +301,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'kingpin',
     company: 'Kingpin',
-    period: '2024 — 2025',
-    location: 'Dubai, UAE',
+    period: { en: '2024 — 2025', ru: '2024 — 2025' },
+    location: { en: 'Dubai, UAE', ru: 'Дубай, ОАЭ' },
     color: 'var(--yellow)',
     badge: { en: 'MULTI-TENANT B2B SAAS', ru: 'B2B SAAS И AI' },
     title: {
@@ -314,9 +314,9 @@ export const CASE_STUDIES: CaseStudy[] = [
       ru: 'Руководил командой из 12 инженеров: мультитенантный каталог и заказы, синхронизация с ERP/CRM, канареечные релизы и LLM-пайплайн, который сократил анализ фидбека на 80%.'
     },
     metrics: [
-      { value: '-80%', label: { en: 'Feedback analysis time', ru: 'Время анализа фидбека' } },
-      { value: '12 ENG', label: { en: 'Team Led', ru: 'Инженеров в команде' } },
-      { value: 'Canary', label: { en: 'Trunk Delivery', ru: 'Релизы из main' } }
+      { value: { en: '-80%', ru: '−80%' }, label: { en: 'Feedback analysis time', ru: 'Время анализа фидбека' } },
+      { value: { en: '12 ENG', ru: '12' }, label: { en: 'Team Led', ru: 'Инженеров в команде' } },
+      { value: { en: 'Canary', ru: 'Канарейки' }, label: { en: 'Trunk Delivery', ru: 'Релизы из main' } }
     ],
     stack: ['TypeScript', 'NestJS', 'React / Next.js', 'PostgreSQL', 'Redis', 'OpenAI / RAG', 'Grafana / Loki'],
     architecture: {
@@ -353,22 +353,22 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'battlepro',
     company: 'BattlePro · Kernelics · ITechArt',
-    period: '2018 — 2024',
-    location: 'UK & US',
+    period: { en: '2018 — 2024', ru: '2018 — 2024' },
+    location: { en: 'UK & US', ru: 'Великобритания и США' },
     color: 'var(--orange)',
     badge: { en: '220MS TTFB · CRYPTO · $10M+ ARCH', ru: '220 МС TTFB · КРИПТО · $10M+ АРХИТЕКТУРА' },
     title: {
       en: 'High-Velocity Web/Mobile Monorepos & $10M+ Virtual Network',
-      ru: 'Крипто-приложение на 100K+ скачиваний, 220 мс TTFB и продукт с $10M+ инвестиций'
+      ru: 'Крипто-приложение со 100K+ скачиваний, 220 мс TTFB и продукт с $10M+ инвестиций'
     },
     summary: {
       en: 'Shipped native crypto modules to 100K+ downloads at Kernelics, doubled velocity (25 → 55 SP, 220ms TTFB) at BattlePro, and architected a $10M+ funded product.',
       ru: 'В Kernelics — нативные крипто-модули в приложении со 100K+ скачиваний; в BattlePro удвоил велосити (25 → 55 SP) и вышел на 220 мс TTFB; в ITechArt — архитектура продукта, который привлёк $10M+.'
     },
     metrics: [
-      { value: '100K+', label: { en: 'Crypto App Users', ru: 'Пользователей приложения' } },
-      { value: '220ms', label: { en: 'TTFB (1.7s TTI)', ru: 'TTFB (1,7 с TTI)' } },
-      { value: '$10M+', label: { en: 'Funding Raised', ru: 'Инвестиций' } }
+      { value: { en: '100K+', ru: '100K+' }, label: { en: 'Crypto App Users', ru: 'Пользователей приложения' } },
+      { value: { en: '220ms', ru: '220 мс' }, label: { en: 'TTFB (1.7s TTI)', ru: 'TTFB (1,7 с TTI)' } },
+      { value: { en: '$10M+', ru: '$10M+' }, label: { en: 'Funding Raised', ru: 'Инвестиций' } }
     ],
     stack: ['TypeScript', 'React Native', 'Next.js', 'Native Crypto', 'Monorepo', 'Node.js', 'AWS'],
     architecture: {
@@ -391,12 +391,12 @@ export const CASE_STUDIES: CaseStudy[] = [
         solution: 'Свёл сборку веба и мобайла в одно монорепо с нативной криптографией, переделал SSR и кеширование до 220 мс TTFB и спроектировал облачную виртуальную сеть.',
         outcomes: [
           'Интегрировал криптографические модули в продакшен-приложение со 100 000+ скачиваний (Kernelics).',
-          'Вышел на 220–250 мс TTFB и 1,7 с TTI и удвоил пропускную способность спринта: с 25 до 55 SP (BattlePro).',
+          'Вышел на 220–250 мс TTFB и 1,7 с TTI и удвоил велосити: с 25 до 55 SP (BattlePro).',
           'Заложил full-stack архитектуру продукта, который привлёк более $10M инвестиций (ITechArt).'
         ],
         topology: [
           '[Shared Monorepo] ──► [Нативные крипто-модули (100K+ скачиваний)]',
-          '[Edge SSR & Cache Layer (220ms TTFB)] ──► [CMS-Driven UI Engine (1.7s TTI)]',
+          '[Edge SSR & Cache Layer (220 мс TTFB)] ──► [CMS-Driven UI Engine (1,7 с TTI)]',
           '[Virtual Networking Orchestrator] ──► [Архитектура под $10M+ инвестиций]'
         ]
       }

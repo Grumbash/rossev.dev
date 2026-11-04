@@ -200,7 +200,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     card.style.borderColor = node.top;
 
     const stratumNames: Record<string, { en: string; ru: string }> = {
-      '1': { en: 'STRATUM L+1 · ORBITAL TELEMETRY (+74m)', ru: 'СЛОЙ L+1 · РАДАР, ЭВАЛЫ, САМОУЛУЧШЕНИЕ (+74 м)' },
+      '1': { en: 'STRATUM L+1 · ORBITAL TELEMETRY (+74m)', ru: 'СЛОЙ L+1 · НАБЛЮДАЕМОСТЬ И ЭВАЛЫ (+74 м)' },
       '0': { en: 'STRATUM L0 · CORE EXECUTION DECK (0m)', ru: 'СЛОЙ L0 · ЯДРО СИСТЕМЫ (0 м)' },
       '-1': { en: 'STRATUM L-1 · SUBTERRANEAN VAULT (-68m)', ru: 'СЛОЙ L-1 · ИЗОЛЯЦИЯ И ДАННЫЕ (−68 м)' }
     };

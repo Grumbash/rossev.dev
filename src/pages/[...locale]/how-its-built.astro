@@ -124,7 +124,7 @@ const LOOP = [
                     PR #{p.number} · {b.merged}{' '}
                     <time datetime={p.mergedAt}>{day(p.mergedAt)}</time>
                   </span>
-                  <h3 class="bs-card-title" lang="en">{p.title}</h3>
+                  {lang === 'ru' && p.titleRu ? <h3 class="bs-card-title">{p.titleRu}</h3> : <h3 class="bs-card-title" lang="en">{p.title}</h3>}
                 </div>
                 {p.pending && <p class="bs-pending">{b.pending}</p>}
                 <dl class="bs-rows">

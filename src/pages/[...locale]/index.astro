@@ -115,7 +115,7 @@ const jsonLd = {
             <div class="hero-stats-grid">
               {PROFILE.heroStats.map((st) => (
                 <div class="stat-card">
-                  <span class="stat-val">{st.value}</span>
+                  <span class="stat-val">{st.value[lang]}</span>
                   <div class="stat-lbl">
                     {st.label[lang]}
                   </div>
@@ -521,7 +521,7 @@ const jsonLd = {
           <ol class="timeline" id="experience-timeline">
             {EXPERIENCE.map((exp, idx) => {
               const cs = CASE_STUDIES.find((c) => c.id === exp.caseId);
-              const numbers = cs ? cs.metrics.filter((m) => /\d/.test(m.value)) : [];
+              const numbers = cs ? cs.metrics.filter((m) => /\d/.test(m.value.en)) : [];
               return (
                 <li class="brutal-box job-card" id={exp.id} data-company={exp.company}>
                   <div class="job-head">
@@ -562,7 +562,7 @@ const jsonLd = {
                     <div class="job-metrics">
                       {numbers.map((m) => (
                         <div class="job-metric">
-                          <span class="job-metric-val">{m.value}</span>
+                          <span class="job-metric-val">{m.value[lang]}</span>
                           <span class="job-metric-lbl">
                             {m.label[lang]}
                           </span>
