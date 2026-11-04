@@ -30,6 +30,7 @@ type ReplayEvent = {
   caption: L10n;
   lines?: string[];
   reproduced?: boolean;
+  testsAt?: string;
 };
 type Replay = { pr: number; label: L10n; url: string; mergedAt: string; events: ReplayEvent[] };
 
@@ -95,11 +96,11 @@ describe('replay data (src/data/replay-pr11.json)', () => {
     }
   });
 
-  test('times are the commits’ own, and the merge is the PR’s merge', () => {
+  test('times are when each commit was authored (committer dates were rewritten by a later rebase), and the merge is the PR’s merge', () => {
     const shas = new Set(pr11.commits.map((c: any) => c.sha));
     for (const e of replay.events.filter((e) => e.kind !== 'merge')) {
       expect(shas.has(e.sha)).toBe(true);
-      expect(Date.parse(e.t)).toBe(Date.parse(git('show', '-s', '--format=%cI', e.sha!).trim()));
+      expect(Date.parse(e.t)).toBe(Date.parse(git('show', '-s', '--format=%aI', e.sha!).trim()));
     }
     const merge = replay.events.at(-1)!;
     expect(Date.parse(merge.t)).toBe(Date.parse(pr11.mergedAt));
@@ -121,15 +122,21 @@ describe('replay data (src/data/replay-pr11.json)', () => {
     }
   });
 
+  // Honest order: the sandbox ran the implementation (its commit gives the time) against the tests that
+  // existed then (bites only, from the first red test: `testsAt`); they passed and missed the cut.
+  // The vertical-cut test only exists because the judge caught G→R, so it belongs to the fix.
   test('test names exist in tests/nca.test.ts at their commit', () => {
-    const tests = replay.events.filter((e) => e.kind === 'test');
-    expect(tests.reduce((n, e) => n + (e.lines?.length ?? 0), 0)).toBeGreaterThanOrEqual(3);
-    for (const e of tests) {
-      const src = git('show', `${e.sha}:tests/nca.test.ts`);
+    const named = replay.events.filter((e) => (e.kind === 'test' || e.kind === 'fix') && e.lines?.length);
+    for (const e of named) {
+      const src = git('show', `${e.testsAt ?? e.sha}:tests/nca.test.ts`);
       for (const name of e.lines!) expect(src).toContain(name);
     }
-    const all = tests.flatMap((e) => e.lines!);
-    expect(all.some((n) => n.includes('a vertical cut between the letters'))).toBe(true);
+    const tests = replay.events.filter((e) => e.kind === 'test');
+    expect(tests.reduce((n, e) => n + (e.lines?.length ?? 0), 0)).toBeGreaterThanOrEqual(3);
+    for (const e of tests) expect(e.testsAt).toBe('6151777add1a736c719b97cef9adf95b434208ff');
+    expect(tests.flatMap((e) => e.lines!).some((n) => /cut/.test(n))).toBe(false);
+    const fix = replay.events.find((e) => e.kind === 'fix' && e.sha === '662bf5800a68368eae63308271d2947c92cd2d94');
+    expect(fix?.lines ?? []).toContain('a vertical cut between the letters');
   });
 
   test('the catch is the judge’s real G→R finding, marked as reproduced, at the Judge node', () => {
