@@ -58,12 +58,14 @@ function parsePdf(pdf: string): Page[] {
     const contentIds = [...(page.match(/\/Contents (\[[^\]]*\]|\d+ 0 R)/)?.[1] ?? '').matchAll(/(\d+) 0 R/g)].map((m) => Number(m[1]));
     const stream = contentIds.map((cid) => objects.get(cid)?.match(/stream\n([\s\S]*?)\nendstream/)?.[1] ?? '').join('\n');
     const texts: TextObj[] = [];
-    for (const bt of stream.matchAll(/BT\s([\s\S]*?)\sET/g)) {
+    // BT and ET are operators on their own lines, so a string holding "ET" can't end a block early.
+    for (const bt of stream.matchAll(/^BT$([\s\S]*?)^ET$/gm)) {
       const body = bt[1];
       const font = body.match(/\/(F\d+) ([\d.]+) Tf/);
       const pos = body.match(/([\d.-]+) ([\d.-]+) Td/) ?? body.match(/1 0 0 1 ([\d.-]+) ([\d.-]+) Tm/);
       const strings = [...body.matchAll(/\(((?:\\.|[^\\)])*)\) Tj/g)].map((m) => decodeString(m[1]));
-      if (!font || !pos || strings.length === 0) continue;
+      // A text object the parser can't read would escape every check below, so it fails instead.
+      if (!font || !pos || strings.length === 0) throw new Error(`unparsed text object: ${body}`);
       texts.push({ font: font[1], size: Number(font[2]), x: Number(pos[1]), y: Number(pos[2]), text: strings.join('') });
     }
     const rects = [...stream.matchAll(/([\d.-]+) ([\d.-]+) ([\d.-]+) ([\d.-]+) re f\b/g)].map((m) => ({
@@ -142,11 +144,10 @@ describe('CV PDF layout', () => {
     });
   });
 
-  test('canary #42 lives inside a footer band', () => {
-    const holders = pages.flatMap((page) => {
-      const band = footerBand(page);
-      return page.texts.filter((t) => /canary #42/i.test(t.text) && band && t.y > band.y && t.y < band.y + band.h);
-    });
+  test('canary #42 lives inside the footer band of the last page, for whoever reads to the end', () => {
+    const last = pages[pages.length - 1];
+    const band = footerBand(last);
+    const holders = last.texts.filter((t) => /canary #42/i.test(t.text) && band && t.y > band.y && t.y < band.y + band.h);
     expect(holders.length).toBeGreaterThan(0);
   });
 
