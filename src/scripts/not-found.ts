@@ -18,6 +18,10 @@ export function latinLayoutPath(path: string): string | null {
   return [...path].map((ch) => KEYS.get(ch) ?? ch).join('');
 }
 
+export function suggestPath(_path: string, _routes: readonly string[]): string | null {
+  throw new Error('Not implemented yet');
+}
+
 export function initNotFound() {
   let path = location.pathname;
   try {
