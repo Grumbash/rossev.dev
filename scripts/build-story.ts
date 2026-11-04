@@ -5,6 +5,8 @@
 //
 // Usage: bun run build-story   (needs an authenticated `gh`; rerun after each merge and commit the JSON).
 // Not part of `bun run build`: Vercel has no GitHub token, so the build only reads the committed file.
+// Replay: bun scripts/build-story.ts --replay 11 [--stdout] writes src/data/replay-pr11.json (or prints it)
+// from build-story.json and local git only, no gh: the hero topology's replay of that PR's agent run.
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -195,10 +197,222 @@ export function validate(story: Story): string[] {
   return problems;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Replay: one PR's agent run as timed events on the yagni topology (src/data/topology.ts,
+// ISO_DOMAINS.yagni.nodes: 0 PLAN & GITHUB, 1 AGENT CORE, 2 BUILDER, 3 REVIEWER & JUDGE, 4 SANDBOX,
+// 5 ORG ISOLATION, 6 SELF-IMPROVING, 7 radar). Every event points at a commit of the PR and takes that
+// commit's author date (when the work happened: the branch's rebase rewrote every
+// committer date to 00:49); diff lines must be lines the commit added, test names must be in its tests.
+
+export type ReplayKind = 'plan' | 'diff' | 'test' | 'catch' | 'fix' | 'merge';
+export type ReplayEvent = {
+  t: string;
+  kind: ReplayKind;
+  node: number;
+  sha?: string;
+  caption: L10n;
+  lines?: string[];
+  /** For `test`/`fix` events: the commit whose test file `lines` quotes, when not `sha` itself. */
+  testsAt?: string;
+  reproduced?: boolean;
+};
+export type Replay = { pr: number; label: L10n; url: string; mergedAt: string; events: ReplayEvent[] };
+
+/** A storyboard step: an event without its time, which comes from git (or the PR's merge). */
+export type ReplayStep = Omit<ReplayEvent, 't'> & {
+  /** For `test` steps: the file whose test names `lines` quotes. */
+  testFile?: string;
+};
+export type Storyboard = { label: L10n; steps: ReplayStep[] };
+
+/** What the replay builder reads from git; the CLI passes the local repo, tests can pass a stub. */
+export type GitReader = {
+  /** Author date, ISO 8601. */
+  authoredAt(sha: string): string;
+  /** Lines the commit added, without the leading "+". */
+  added(sha: string): string[];
+  /** A file at that commit. */
+  show(sha: string, path: string): string;
+};
+
+// The round-1 implementation never reached git: it was rewritten before its first commit, so the run's
+// steps point at the implementation it became (7f6064e, also the finding's own ref). The sandbox step
+// quotes the tests that existed then (`testsAt`: the first red test, bites only, no cut). The strokes
+// red test and the retrain were authored in the same second as 7f6064e.
+const SHA = {
+  red: '6151777add1a736c719b97cef9adf95b434208ff',
+  strokes: '662bf5800a68368eae63308271d2947c92cd2d94',
+  impl: '7f6064e500dfd45c1268f82e4d13912fb4b5d087',
+};
+
+export const STORYBOARDS: Record<number, Storyboard> = {
+  11: {
+    label: {
+      en: 'Replay of a real agent run on this site · PR #11',
+      ru: 'Повтор реального прогона агентов на этом сайте · PR #11',
+    },
+    steps: [
+      {
+        kind: 'plan',
+        node: 0,
+        sha: SHA.red,
+        caption: {
+          en: 'Plan: a failing test first. GR grows from one cell and regrows after a bite',
+          ru: 'План: сначала падающий тест. GR растёт из одной клетки и отрастает после укуса',
+        },
+      },
+      {
+        kind: 'diff',
+        node: 2,
+        sha: SHA.impl,
+        caption: {
+          en: 'The builder writes the model: each cell senses its neighbours, then updates',
+          ru: 'Builder пишет модель: каждая клетка ощущает соседей и обновляется',
+        },
+        lines: [
+          'p[c * 3] = state[base + c];',
+          'p[c * 3 + 1] = (tr + 2 * r + br - tl - 2 * l - bl) / 8;',
+          'p[c * 3 + 2] = (bl + 2 * b + br - tl - 2 * t - tr) / 8;',
+          'if (this.rng() < this.fireRate) this.update(cell, next);',
+          'if (region[cell] && !(preAlive[cell] && postAlive[cell])) next.fill(0, cell * ch, (cell + 1) * ch);',
+        ],
+      },
+      {
+        kind: 'test',
+        node: 4,
+        sha: SHA.impl,
+        testsAt: SHA.red,
+        testFile: 'tests/nca.test.ts',
+        caption: {
+          en: 'The sandbox runs the checks: all green, but they only test round bites',
+          ru: 'Песочница гоняет проверки: всё зелёное, но проверяются только круглые укусы',
+        },
+        lines: [
+          'grows GR from a single seed cell',
+          'regrows after a bite out of the centre',
+          'regrows after a bite out of the left edge',
+          'stays stable long after it has grown',
+        ],
+      },
+      {
+        kind: 'catch',
+        node: 3,
+        sha: SHA.impl,
+        reproduced: true,
+        caption: {
+          en: 'The judge catches it: after a vertical cut the G grows back as an R',
+          ru: 'Судья ловит ошибку: после вертикального разреза G отрастает как R',
+        },
+      },
+      {
+        kind: 'fix',
+        node: 4,
+        sha: SHA.strokes,
+        testFile: 'tests/nca.test.ts',
+        lines: ['a vertical cut between the letters'],
+        caption: {
+          en: 'The catch becomes a red test: heal drag strokes, not only round bites',
+          ru: 'Находка становится красным тестом: заживать после штрихов, а не только укусов',
+        },
+      },
+      {
+        kind: 'fix',
+        node: 2,
+        sha: SHA.impl,
+        caption: {
+          en: 'Retrained on strokes from the start: the cut heals and the G stays a G',
+          ru: 'Сеть переобучена на штрихах с нуля: разрез заживает, G остаётся G',
+        },
+      },
+      {
+        kind: 'merge',
+        node: 0,
+        caption: {
+          en: 'Merged, with the known limit written down',
+          ru: 'Влито в main, известное ограничение записано',
+        },
+      },
+    ],
+  },
+};
+
+/**
+ * A test name is in the source literally, or matches a template title like `regrows after a bite out of the ${name}`
+ * whose ${...} part is one of the string literals in that file (same rule as tests/replay-data.test.ts).
+ */
+export function testNameIn(src: string, name: string): boolean {
+  if (src.includes(name)) return true;
+  const literals = new Set([...src.matchAll(/'([^'\n]+)'/g)].map((m) => m[1]));
+  for (const m of src.matchAll(/test\(`([^`]*)\$\{\w+\}([^`]*)`/g)) {
+    if (name.startsWith(m[1]) && name.endsWith(m[2]) && literals.has(name.slice(m[1].length, name.length - m[2].length))) return true;
+  }
+  return false;
+}
+
+/** The judge's G→R finding a `reproduced` catch must stand for. */
+const G_TO_R = /G grow back as an R/;
+
+/** The replay of PR `number`: storyboard steps timed from git, checked against the commits. Throws on a mismatch. */
+export function replayFor(story: Story, git: GitReader, number: number, board: Storyboard | undefined = STORYBOARDS[number]): Replay {
+  const pr = story.prs.find((p) => p.number === number);
+  if (!pr) throw new Error(`replay: #${number} is not in build-story.json`);
+  if (!board) throw new Error(`replay: no storyboard for #${number}`);
+  const shas = new Set(pr.commits.map((c) => c.sha));
+  const events = board.steps.map(({ testFile, ...step }): ReplayEvent => {
+    if (step.kind === 'merge') return { t: pr.mergedAt, ...step };
+    if (!step.sha || !shas.has(step.sha)) throw new Error(`replay #${number}: ${step.kind} ${step.sha} is not a commit of the PR`);
+    if (step.kind === 'plan' && pr.commits.find((c) => c.sha === step.sha)?.role !== 'red')
+      throw new Error(`replay #${number}: plan ${step.sha} is not a red-test commit`);
+    if (step.kind === 'diff') {
+      const added = new Set(git.added(step.sha).map((l) => l.trim()));
+      for (const l of step.lines ?? []) if (!added.has(l.trim())) throw new Error(`replay #${number}: ${step.sha.slice(0, 7)} did not add ${JSON.stringify(l)}`);
+    }
+    if (step.reproduced && !pr.findings.some((f) => G_TO_R.test(f.en)))
+      throw new Error(`replay #${number}: ${step.kind} is marked reproduced, but the PR has no G→R finding`);
+    if (step.testsAt && !shas.has(step.testsAt)) throw new Error(`replay #${number}: testsAt ${step.testsAt} is not a commit of the PR`);
+    if (step.kind === 'test' || (step.kind === 'fix' && step.lines?.length)) {
+      const at = step.testsAt ?? step.sha;
+      const file = testFile ?? 'tests/nca.test.ts';
+      const src = git.show(at, file);
+      for (const n of step.lines ?? []) if (!testNameIn(src, n)) throw new Error(`replay #${number}: no test ${JSON.stringify(n)} in ${file} at ${at.slice(0, 7)}`);
+    }
+    return { t: git.authoredAt(step.sha), ...step };
+  });
+  for (let i = 1; i < events.length; i++)
+    if (Date.parse(events[i].t) < Date.parse(events[i - 1].t))
+      throw new Error(`replay #${number}: ${events[i].kind} (${events[i].t}) is earlier than ${events[i - 1].kind} (${events[i - 1].t})`);
+  for (const e of events) {
+    if (!isL10n(e.caption) || e.caption.en.length > 90) throw new Error(`replay #${number}: caption "${e.caption.en}" needs EN ≤ 90 chars and Russian RU`);
+    if (!Number.isInteger(e.node) || e.node < 0 || e.node > 7) throw new Error(`replay #${number}: node ${e.node} is not a topology node`);
+  }
+  return { pr: number, label: board.label, url: pr.url, mergedAt: pr.mergedAt, events };
+}
+
 const run = (args: string[]) => execFileSync('gh', args, { encoding: 'utf8' });
 const git = (args: string[]) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 
-if (import.meta.main) {
+const replayAt = process.argv.indexOf('--replay');
+if (import.meta.main && replayAt >= 0) {
+  // Local only: build-story.json plus git, never gh.
+  const root = resolve(import.meta.dir, '..');
+  const number = Number(process.argv[replayAt + 1]);
+  const story: Story = JSON.parse(readFileSync(resolve(root, 'src/data/build-story.json'), 'utf8'));
+  const local: GitReader = {
+    authoredAt: (sha) => git(['show', '-s', '--format=%aI', sha]),
+    added: (sha) =>
+      execFileSync('git', ['show', '--format=', sha], { encoding: 'utf8', maxBuffer: 64 << 20 })
+        .split('\n')
+        .filter((l) => l.startsWith('+'))
+        .map((l) => l.slice(1)),
+    show: (sha, path) => execFileSync('git', ['show', `${sha}:${path}`], { encoding: 'utf8', maxBuffer: 64 << 20 }),
+  };
+  const json = JSON.stringify(replayFor(story, local, number), null, 2) + '\n';
+  if (process.argv.includes('--stdout')) process.stdout.write(json);
+  else {
+    writeFileSync(resolve(root, `src/data/replay-pr${number}.json`), json);
+    console.log(`✓ src/data/replay-pr${number}.json`);
+  }
+} else if (import.meta.main) {
   const root = resolve(import.meta.dir, '..');
   const highlights: Record<string, Highlight> = JSON.parse(readFileSync(resolve(root, 'src/data/build-story-highlights.json'), 'utf8'));
   const numbers: number[] = JSON.parse(run(['pr', 'list', '--repo', REPO, '--state', 'merged', '--limit', '1000', '--json', 'number'])).map(
