@@ -50,7 +50,9 @@ describe('RU copy follows docs/ru-style.md', () => {
     const EN = /\b\d+(?:[.,]\d+)?\+?\s?(?:YRS|ENG|ms|s)\b|\b\d+ PRs\b|\bPRESENT\b|\b(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\w* \d{4}\b/gi;
     const hits: string[] = [];
     for (const f of files.filter((f) => f.startsWith('dist/ru/') && f.endsWith('.html'))) {
-      const html = readFileSync(f, 'utf8').replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '');
+      const html = readFileSync(f, 'utf8').replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '')
+        // Quoted GitHub data (a PR title without titleRu, commit subjects) is marked lang="en" on purpose.
+        .replace(/<(\w+)\b[^>]*\slang="en"[^>]*>[^<]*<\/\1>/g, '');
       for (const m of html.matchAll(EN)) hits.push(`${f}: …${html.slice(Math.max(0, m.index! - 40), m.index! + 30)}…`);
     }
     expect(hits).toEqual([]);
