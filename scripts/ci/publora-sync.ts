@@ -141,7 +141,7 @@ export const DRAFT_SCHEMA = {
   },
 };
 
-export const RESPONSE_FORMAT = { type: 'json_schema', json_schema: { name: 'site_entry', strict: true, schema: DRAFT_SCHEMA } };
+const RESPONSE_FORMAT = { type: 'json_schema', json_schema: { name: 'site_entry', strict: true, schema: DRAFT_SCHEMA } };
 
 const cyr = (s: string) => (s.match(/\p{Script=Cyrillic}/gu) ?? []).length;
 const lat = (s: string) => (s.match(/\p{Script=Latin}/gu) ?? []).length;
@@ -333,7 +333,7 @@ export function buildEntry(o: { draft: Draft; source: string; url: string; activ
 const fence = (tag: string, data: string) => `<${tag}>\n${data.replaceAll(`</${tag}>`, `<\\/${tag}>`)}\n</${tag}>`;
 
 // The rules of docs/ru-style.md the model needs; the banned forms are also checked by the validator.
-export const RUSSIAN = `Russian (docs/ru-style.md of the site): write the way a Russian-speaking engineer writes for peers on Habr or in a work chat, not the way a translator does.
+const RUSSIAN = `Russian (docs/ru-style.md of the site): write the way a Russian-speaking engineer writes for peers on Habr or in a work chat, not the way a translator does.
 - Keep IT terms the way Russian engineers say them, in Latin script or transliterated: PR, CI, LLM, on-call, мерж, смержить, фидбек, фикс, гардрейл, харнесс, эвалы, фолбэк, тенант, деплой, прод, ревью, бэклог, фича-флаг, оунершип, сеньорность. Never swap them for "native" words nobody in IT uses: не «влить» (merge), не «защита» (guardrail), не «арендатор» (tenant), не «отзывы» (feedback).
 - What makes Russian sound translated is the structure, not the terms: rebuild each sentence in Russian word order; no calques like «нанимаете под», no Title Case in titles, no канцелярит (chains of verbal nouns or participles), no literal translations of English metaphors, no marketing words (молниеносный, радикально).
 - First person, short sentences, verbs over nouns. Address the reader as «вы», lowercase; never «ты».
