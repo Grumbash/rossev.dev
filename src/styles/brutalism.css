@@ -702,7 +702,7 @@ a {
   min-width: 0;
 }
 
-/* The node spec changes with every story step and trace: two lines, always, so the card never resizes. */
+/* The node spec changes with every hover and trace: two lines, always, so the card never resizes. */
 #iso-hud-text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -725,8 +725,8 @@ a {
   white-space: nowrap;
 }
 
-/* Guided story above the canvas. Captions and the case link stack in one grid cell:
-   the panel always fits the longest of them, so switching steps shifts nothing. */
+/* Replay bar above the canvas: the honest label, the take-over controls, Explore, the YAGNI case link.
+   Captions are drawn on the canvas (src/scripts/replay/player.ts). */
 .iso-story {
   display: flex;
   flex-direction: column;
@@ -736,32 +736,25 @@ a {
   border-bottom: 2px solid #232736;
 }
 
-.iso-story-captions {
-  display: grid;
-}
-
-.iso-story-caption {
-  grid-area: 1 / 1;
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 0.92rem;
-  font-weight: 600;
-  line-height: 1.35;
-  color: #F4F0EA;
-  visibility: hidden;
-}
-
-.iso-story-caption.is-current {
-  visibility: visible;
+.replay-label,
+.iso-story-case {
+  align-self: start;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #B8C0D4;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .iso-story-case {
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  font-weight: 600;
   color: #C8FF00;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  align-self: start;
 }
 
+.replay-label:hover,
+.replay-label:focus-visible,
 .iso-story-case:hover,
 .iso-story-case:focus-visible {
   color: #FFFFFF;
@@ -769,22 +762,18 @@ a {
 
 .iso-story-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
 }
 
-.iso-story-count {
-  font-family: var(--font-mono);
-  font-size: 0.71rem;
-  font-weight: 800;
-  color: #B8C0D4;
-  min-width: 2.4em;
-  text-align: center;
+.iso-story-controls .mode-btn {
+  min-height: 32px;
 }
 
-.iso-story-controls .mode-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
+.iso-story-controls [aria-pressed="false"] {
+  border-color: #FF3366;
+  color: #FF6688;
 }
 
 .iso-story-explore {
@@ -796,21 +785,94 @@ a {
   color: #C8FF00;
 }
 
+.replay-badge {
+  flex-shrink: 0;
+  background: #0A0A0A;
+  color: #C8FF00;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+/* One header line next to the badge, however narrow: REPLAY ↔ YOUR RUN must not change the card's height. */
+.stage-header > span:first-child {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.is-live .replay-badge {
+  background: #FF2A55;
+  color: #FFFFFF;
+}
+
+/* Timeline: one stop per event, evenly spaced, each with its real time; a click or drag scrubs. */
+.replay-timeline {
+  display: flex;
+  padding: 6px 8px 4px;
+  background: linear-gradient(#3A3F50, #3A3F50) 50% 13px / calc(100% - 64px) 2px no-repeat, #0F1118;
+  border-top: 2px solid #232736;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.replay-timeline:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: -3px;
+}
+
+.replay-stop {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-height: 32px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: #8A93AA;
+}
+
+.replay-stop i {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #3A3F50;
+  background: #1A1D28;
+}
+
+.replay-stop.is-past i {
+  background: #3A3F50;
+}
+
+.replay-stop.is-current {
+  color: #F4F0EA;
+}
+
+.replay-stop.is-current i {
+  background: #C8FF00;
+  border-color: #0A0A0A;
+}
+
+.replay-stop .is-same {
+  opacity: 0.45;
+}
+
 /* The display rules above (flex buttons, the tabs bar) would otherwise beat [hidden]. */
 .stage-iso-card [hidden] {
   display: none !important;
 }
 
-/* The deck rail and the dossier's fault button are free play: shown only under Explore
-   (in the story, breaking things is step 3's job). */
+/* The deck rail, the dossier and the engine's status line are free play: shown only under Explore.
+   The replay's badge, controls and timeline are the replay's: hidden under Explore. */
 .stage-iso-card:not(.is-exploring) .iso-stratum-rail,
-.stage-iso-card:not(.is-exploring) .iso-insp-btn-fault {
+.stage-iso-card:not(.is-exploring) .iso-inspector-card,
+.stage-iso-card:not(.is-exploring) #iso-trace-status,
+.is-exploring .replay-badge,
+.is-exploring [data-sim-fault],
+.is-exploring [data-sim-judge],
+.is-exploring .replay-timeline {
   display: none;
-}
-
-.iso-story-controls .mode-btn[aria-disabled="true"] {
-  opacity: 0.6;
-  cursor: progress;
 }
 
 /* Zoom/drag hint: only where there is a mouse or trackpad to use it. */
@@ -1646,11 +1708,11 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
     padding: 16px;
   }
 
-  /* Topology on a phone: a short poster with Play; the caption and controls stay. */
+  /* Topology on a phone: a short poster with Play; the controls and the timeline stay. */
   .iso-canvas-container,
   #iso-arch-canvas {
-    min-height: 200px;
-    height: 200px;
+    min-height: 228px;
+    height: 228px;
   }
   .iso-play {
     display: block;
@@ -1665,18 +1727,14 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
   .stage-iso-card .iso-stratum-rail {
     display: none;
   }
-  /* The dossier would cover the whole short canvas; it is free-play detail anyway. */
-  .stage-iso-card:not(.is-exploring) .iso-inspector-card {
-    display: none;
-  }
   .iso-story {
     padding: 8px 12px;
     gap: 6px;
   }
-  .iso-story-caption {
-    font-size: 0.84rem;
+  /* The replay's case link does BLUEPRINT's job: the node bar is Explore-only here, one line. */
+  .stage-iso-card:not(.is-exploring) .iso-bottom-hud {
+    display: none;
   }
-  /* One line: the node badge and BLUEPRINT; the long spec line is desktop detail. */
   .iso-bottom-hud {
     padding: 6px 12px;
     font-size: 0.7rem;
