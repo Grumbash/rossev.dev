@@ -125,11 +125,18 @@ jobs:
           TITLE: ${{ needs.sync.outputs.title }}
           BRANCH: bot/publora-sync
           IN: ${{ runner.temp }}/publora-sync
+          SHA: ${{ needs.sync.outputs.sha }}
         run: |
           set -euo pipefail
           if [ -z "$GH_TOKEN" ]; then echo "::error::Secret PUBLORA_SYNC_TOKEN is not set; nothing pushed."; exit 1; fi
           auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
           git_auth() { git -c "http.https://github.com/.extraheader=$auth" "$@"; }
+
+          # `sync` ran package code, so its sha is checked, not trusted: a fork's commit is reachable
+          # by sha through this repo, and the bot PR must never be cut from anything but main.
+          if ! [[ "$SHA" =~ ^[0-9a-f]{40}$ ]]; then echo "::error::sync returned no commit sha; nothing pushed."; exit 1; fi
+          git fetch --quiet origin main
+          if ! git merge-base --is-ancestor "$SHA" origin/main; then echo "::error::$SHA is not on main; nothing pushed."; exit 1; fi
 
           # Only these two files ever change; anything else in the artifact is ignored.
           cp "$IN/src/data/posts.json" src/data/posts.json
@@ -140,8 +147,10 @@ jobs:
           expect=$(git_auth ls-remote origin "refs/heads/$BRANCH" | cut -f1)
           if [ -n "$expect" ]; then
             git_auth fetch --quiet origin "$BRANCH"
-            if git log --format=%ae HEAD..FETCH_HEAD | grep -qv '^41898283+github-actions\[bot\]@users.noreply.github.com$'; then
-              echo "::notice::$BRANCH has commits by someone other than the bot; leaving it and its PR alone."
+            # Captured, not piped into grep -q: an early grep exit would SIGPIPE git log under pipefail.
+            others=$(git log --format=%ae HEAD..FETCH_HEAD | grep -v '^41898283+github-actions\[bot\]@users.noreply.github.com$' || true)
+            if [ -n "$others" ]; then
+              echo "::warning::$BRANCH has commits by someone other than the bot; leaving it and its PR alone. Merge or close its PR, or delete the branch, to let the sync push again."
               exit 0
             fi
           fi
