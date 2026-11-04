@@ -267,7 +267,7 @@ export const STORYBOARDS: Record<number, Storyboard> = {
         sha: SHA.impl,
         caption: {
           en: 'The builder writes the model: each cell senses its neighbours, then updates',
-          ru: 'Сборщик пишет модель: каждая клетка ощущает соседей и обновляется',
+          ru: 'Builder пишет модель: каждая клетка ощущает соседей и обновляется',
         },
         lines: [
           'p[c * 3] = state[base + c];',
@@ -329,7 +329,7 @@ export const STORYBOARDS: Record<number, Storyboard> = {
         node: 0,
         caption: {
           en: 'Merged, with the known limit written down',
-          ru: 'Смержено, известное ограничение записано',
+          ru: 'Влито в main, известное ограничение записано',
         },
       },
     ],
