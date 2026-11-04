@@ -949,6 +949,11 @@ a {
   align-items: center;
 }
 
+.writing-more,
+.case-back {
+  margin-top: 24px;
+}
+
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
