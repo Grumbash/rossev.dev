@@ -57,6 +57,35 @@ describe('generator (pure functions on real gh output)', () => {
     expect(isDataOnly([])).toBe(false);
   });
 
+  // Any bot's PR is bookkeeping too: publora-sync merges bot/publora-sync PRs that touch posts.json,
+  // and each would otherwise become a pending card and drag "red test first" down.
+  test('a PR from a bot/ branch is not a story entry either', async () => {
+    const { isBookkeeping } = await gen();
+    const pr = (headRefName: string, paths: string[]) => ({ headRefName, files: paths.map((path) => ({ path })) });
+    expect(isBookkeeping(pr('bot/publora-sync', ['src/data/posts.json', 'public/llms.txt']))).toBe(true);
+    expect(isBookkeeping(pr('bot/build-story', ['src/data/build-story.json']))).toBe(true);
+    expect(isBookkeeping(fixture(15))).toBe(true);
+    expect(isBookkeeping(fixture(18))).toBe(false);
+    expect(isBookkeeping(pr('feat/robot-arm', ['src/pages/x.astro']))).toBe(false);
+    expect(isBookkeeping({ headRefName: 'feat/x' })).toBe(false);
+  });
+
+  // A red commit may add a stub its test imports, but only a new file that does nothing but throw:
+  // editing a real module under the same comment would slip code in before the test.
+  test('a red commit may add placeholder stubs, never change an existing file', async () => {
+    const { isPlaceholder } = await gen();
+    const stub = '// Not implemented yet: tests/x.test.ts is red first.\nexport function run(): never {\n  throw new Error(\'not implemented\');\n}\n';
+    expect(isPlaceholder('A', stub)).toBe(true);
+    expect(isPlaceholder('M', stub)).toBe(false);
+    expect(isPlaceholder('A', 'export const add = (a: number, b: number) => a + b;\n')).toBe(false);
+    expect(isPlaceholder('A', stub + 'export const real = (a: number) => a * 2;\n')).toBe(false);
+    for (const sha of ['91b3c30', '546c305', 'c6684bb']) {
+      const added = execSync(`git show --diff-filter=A --name-only --format= ${sha}`, { encoding: 'utf8' }).split('\n').filter((f) => f && !f.startsWith('tests/'));
+      expect(added.length, sha).toBeGreaterThan(0);
+      for (const f of added) expect(isPlaceholder('A', execSync(`git show ${sha}:${f}`, { encoding: 'utf8' })), `${sha} ${f}`).toBe(true);
+    }
+  });
+
   // New PRs show up with what git and GitHub know; the copy in Gleb's voice waits for him.
   test('a PR without highlights becomes a pending entry: facts only, no invented copy', async () => {
     const { toEntry, validate, computeStats } = await gen();
@@ -203,8 +232,9 @@ describe('committed data (src/data/build-story.json)', () => {
   test('every PR merged up to the commit the data was generated through is in the data', () => {
     expect(story.throughSha).toMatch(/^[0-9a-f]{40}$/);
     execSync(`git merge-base --is-ancestor ${story.throughSha} HEAD`);
-    // Merges that only refreshed the build-story data are left out (see isDataOnly).
-    const dataOnly = (sha: string) =>
+    // Merges that only refreshed the build-story data, and any bot's merge, are left out (see isBookkeeping).
+    const dataOnly = (sha: string, subject: string) =>
+      / from [^/]+\/bot\//.test(subject) ||
       execSync(`git diff --name-only ${sha}^1 ${sha}`, { encoding: 'utf8' })
         .split('\n')
         .filter(Boolean)
@@ -212,12 +242,12 @@ describe('committed data (src/data/build-story.json)', () => {
     const merged = execSync(`git log --merges --format=%H%x09%s ${story.throughSha}`, { encoding: 'utf8' })
       .split('\n')
       .map((l) => l.split('\t'))
-      .map(([sha, s]) => ({ sha, n: Number(s?.match(/^Merge pull request #(\d+) from /)?.[1]) }))
+      .map(([sha, s]) => ({ sha, s, n: Number(s?.match(/^Merge pull request #(\d+) from /)?.[1]) }))
       .filter((m) => m.n);
     expect(merged.length).toBeGreaterThan(0);
     const have = new Set(story.prs.map((p: any) => p.number));
-    expect(merged.filter((m) => !have.has(m.n) && !dataOnly(m.sha)).map((m) => m.n)).toEqual([]);
-    expect(merged.filter((m) => have.has(m.n) && dataOnly(m.sha)).map((m) => m.n)).toEqual([]);
+    expect(merged.filter((m) => !have.has(m.n) && !dataOnly(m.sha, m.s)).map((m) => m.n)).toEqual([]);
+    expect(merged.filter((m) => have.has(m.n) && dataOnly(m.sha, m.s)).map((m) => m.n)).toEqual([]);
   });
 
   test('catches up with main: every PR through #24 is in, the data-only #15 is not', () => {
