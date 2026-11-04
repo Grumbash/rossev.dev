@@ -86,6 +86,8 @@ function expectReaderFooter(html: string, i: number) {
 }
 
 let pages: Record<string, string> = {};
+// The Russian twin of each post page, /ru/writing/<slug>/.
+let ruPages: Record<string, string> = {};
 let partials: Record<string, string> = {};
 let home = '';
 // Home's HTML plus the first-party scripts it loads: page code ships as bundled modules.
@@ -104,6 +106,7 @@ beforeAll(() => {
   for (const p of BLOG_POSTS) {
     const file = `dist/writing/${p.slug}/index.html`;
     pages[p.slug] = existsSync(file) ? read(file) : '';
+    ruPages[p.slug] = existsSync(`dist/ru${pagePath(p.slug)}index.html`) ? read(`dist/ru${pagePath(p.slug)}index.html`) : '';
     partials[p.id] = read(`dist/partials/post-${p.id}/index.html`);
   }
 });
@@ -137,7 +140,7 @@ describe('post data', () => {
     expect(read('src/components/BlogGrid.astro')).not.toMatch(/MIN ORIGINAL/);
     expect(read('src/components/PostBrief.astro')).toContain('linkedinLabel(post)');
     expect(read('src/components/PostBrief.astro')).toContain('fullPostLink(post, inline)');
-    expect(read('src/pages/writing/[slug].astro')).toContain('blogPostingLd(post');
+    expect(read('src/pages/[...locale]/writing/[slug].astro')).toContain('blogPostingLd(post');
   });
 
   test('the read time is honest about where the text is: the original on LinkedIn, or the full post here', () => {
@@ -192,24 +195,26 @@ describe('every post has an indexable page', () => {
         if ((p as any).body) expect(post.isBasedOn).toBeUndefined();
       });
 
-      test('shows the brief in both languages with an honest read time', () => {
+      test('shows the brief in both languages (EN here, RU on /ru/) with an honest read time', () => {
         const t = text(html());
+        const ru = text(ruPages[p.slug]);
         expect(t).toContain(p.title.en);
-        expect(t).toContain(p.title.ru);
+        expect(ru).toContain(p.title.ru);
         expect(t).toMatch(/30-sec brief/i);
         // The minutes describe the LinkedIn original, so they come from the data, not a constant.
         const min = (p as any).originalMinutes;
         expect(min).toBeGreaterThan(0);
-        expect(t).toMatch(/30 сек/i);
-        expect(t).toMatch(new RegExp(`${min} мин`, 'i'));
+        expect(ru).toMatch(/30 сек/i);
+        expect(ru).toMatch(new RegExp(`${min} мин`, 'i'));
         const body = (p as any).body as { en: string; ru: string } | undefined;
         if (body) {
           // The full text is on this page; LinkedIn is where it was also posted.
           expect(t).toMatch(new RegExp(`${min}-min full post`, 'i'));
           expect(t).not.toMatch(/original post on linkedin/i);
           expect(t).toMatch(/also on linkedin/i);
-          expect(t).toMatch(/также в linkedin/i);
-          for (const para of [body.en, body.ru].map((b) => b.split(/\n\s*\n/)[0].trim())) expect(t).toContain(para.replace(/\s+/g, ' '));
+          expect(ru).toMatch(/также в linkedin/i);
+          expect(t).toContain(body.en.split(/\n\s*\n/)[0].trim().replace(/\s+/g, ' '));
+          expect(ru).toContain(body.ru.split(/\n\s*\n/)[0].trim().replace(/\s+/g, ' '));
         } else expect(t).toMatch(new RegExp(`${min}-min original`, 'i'));
         // One source for the brief: the inline reader and the page render the same bullets.
         const bullets = [...partials[p.id].matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => text(m[1]).trim());
@@ -217,9 +222,10 @@ describe('every post has an indexable page', () => {
         for (const b of bullets) expect(t).toContain(b);
       });
 
-      test('has the same chrome as home: theme + language switches and the funnel analytics', () => {
+      test('has the same chrome as home: theme + language switch and the funnel analytics', () => {
         const tags = controls(html());
-        expect(tags.filter((t) => t.attrs['data-track'] === 'lang_switch').length).toBe(2);
+        // One switch: a link to the same post in the other language.
+        expect(tags.filter((t) => t.attrs['data-track'] === 'lang_switch').map((t) => t.attrs.href)).toEqual([`/ru${pagePath(p.slug)}`]);
         expect(tags.filter((t) => t.attrs['data-track'] === 'theme_switch').length).toBe(1);
         expect(tags.some((t) => t.attrs.href === '/' || t.attrs.href === `${SITE}/`)).toBe(true);
       });
@@ -336,6 +342,9 @@ describe('post pages are held to the byte budgets too', () => {
     const files = html.flatMap((c) => c.files);
     for (const p of BLOG_POSTS) expect(files).toContain(`writing/${p.slug}/index.html`);
     expect(files).toContain('writing/index.html');
+    // The Russian copies count too.
+    expect(files).toContain('ru/index.html');
+    for (const p of BLOG_POSTS) expect(files).toContain(`ru/writing/${p.slug}/index.html`);
     for (const c of html) expect(c.ok, `${c.files.join(',')}: ${c.actual} > ${c.limit}`).toBe(true);
   });
 });
@@ -343,14 +352,16 @@ describe('post pages are held to the byte budgets too', () => {
 describe('filter tabs', () => {
   // A reader who clicks a filter should see cards stamped with the word they clicked.
   test('each category filter is labelled like its cards, in both languages', () => {
-    const tabs = [...home.matchAll(/<button\b[^>]*data-track-filter="(\w+)"[^>]*>([\s\S]*?)<\/button>/g)];
+    const tabsOf = (html: string) => [...html.matchAll(/<button\b[^>]*data-track-filter="(\w+)"[^>]*>([\s\S]*?)<\/button>/g)];
+    const tabs = tabsOf(home);
+    const ruTabs = tabsOf(read('dist/ru/index.html'));
     const categories = [...new Set(BLOG_POSTS.map((p) => p.category))];
     for (const c of categories) {
       const tab = tabs.find((m) => m[1] === c);
       expect(tab, `filter tab for ${c}`).toBeDefined();
       const label = BLOG_POSTS.find((p) => p.category === c)!.categoryLabel;
-      const en = tab![2].match(/<span class="lang-en">([\s\S]*?)<\/span>/)?.[1];
-      const ru = tab![2].match(/<span class="lang-ru">([\s\S]*?)<\/span>/)?.[1];
+      const en = tab![2];
+      const ru = ruTabs.find((m) => m[1] === c)?.[2];
       expect(decode(en ?? '').trim().toUpperCase(), `${c} en`).toBe(label.en);
       expect(decode(ru ?? '').trim().toLocaleUpperCase('ru'), `${c} ru`).toBe(label.ru);
     }

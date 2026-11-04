@@ -3,15 +3,22 @@
 // red test, what was caught before merge, what I decided, and links to the real commits. A review or
 // judge is shown only where the PR itself says one ran (`review`), never implied. Renders
 // src/data/build-story.json (made by `bun run build-story`); every number here is computed from it.
-import Base from '../layouts/Base.astro';
-import story from '../data/build-story.json';
-import { computeStats, type Entry } from '../../scripts/build-story';
-import { calUrl } from '../scripts/analytics';
+import Base from '../../layouts/Base.astro';
+import story from '../../data/build-story.json';
+import { computeStats, type Entry } from '../../../scripts/build-story';
+import { calUrl } from '../../scripts/analytics';
+import { localeOf, localePath, localeStaticPaths, t } from '../../i18n';
+
+export const getStaticPaths = localeStaticPaths;
+const lang = localeOf(Astro.params.locale);
+const d = t(lang);
+const b = d.build;
 
 const SITE = 'https://rossev.dev/';
 const PERSON_ID = `${SITE}#person`;
-const url = new URL('/how-its-built/', Astro.site || SITE).toString();
-const ogImageUrl = new URL('/og-card.png', Astro.site || SITE).toString();
+const url = new URL(localePath(lang, '/how-its-built/'), SITE).toString();
+const ogImageUrl = new URL('/og-card.png', SITE).toString();
+const homePath = localePath(lang, '/');
 
 const prs = story.prs as Entry[];
 const stats = computeStats(prs);
@@ -21,9 +28,8 @@ const PUBLISHED = '2026-11-04';
 const day = (iso: string) => iso.slice(0, 10);
 const short = (sha: string) => sha.slice(0, 7);
 
-const title = 'How this site was built — Gleb Rosev';
-const description =
-  'Every merged PR of rossev.dev with its receipts: the test committed red first (all but the first PR), what was caught before merge, what Gleb decided, and links to the commits.';
+const title = d.meta.buildTitle;
+const description = d.meta.buildDescription;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -31,8 +37,7 @@ const jsonLd = {
     {
       '@type': 'TechArticle',
       '@id': `${url}#article`,
-      headline: 'How this site was built',
-      alternativeHeadline: 'Как собран этот сайт',
+      headline: d.meta.buildHeadline,
       description,
       url,
       mainEntityOfPage: { '@id': url },
@@ -41,7 +46,7 @@ const jsonLd = {
       author: { '@id': PERSON_ID },
       publisher: { '@id': PERSON_ID },
       isPartOf: { '@id': `${SITE}#website` },
-      inLanguage: ['en', 'ru'],
+      inLanguage: lang,
       image: ogImageUrl
     },
     // The full Person node lives on home; this is enough to resolve the @id here.
@@ -56,106 +61,56 @@ const jsonLd = {
 };
 
 const LOOP = [
-  { en: 'Framing', ru: 'Постановка', noteEn: 'the job to be done, with me', noteRu: 'какую работу делаем — со мной', human: true },
-  { en: 'Red test', ru: 'Красный тест', noteEn: 'committed first, failing', noteRu: 'первым коммитом, падает', human: false },
-  { en: 'Writer agent', ru: 'Агент пишет', noteEn: 'an independent agent makes it pass', noteRu: 'отдельный агент делает его зелёным', human: false },
-  { en: 'Judge', ru: 'Судья', noteEn: 'independent LLM passes on the diff', noteRu: 'независимые LLM-проверки диффа', human: false },
-  { en: 'Fix', ru: 'Фикс', noteEn: 'then browser and perf checks', noteRu: 'потом браузер и perf', human: false },
-  { en: 'Merge', ru: 'Мерж', noteEn: 'by me, the human', noteRu: 'делаю я, человек', human: true }
+  { name: b.loopFraming, note: b.loopFramingNote, human: true },
+  { name: b.loopRed, note: b.loopRedNote, human: false },
+  { name: b.loopWriter, note: b.loopWriterNote, human: false },
+  { name: b.loopJudge, note: b.loopJudgeNote, human: false },
+  { name: b.loopFix, note: b.loopFixNote, human: false },
+  { name: b.loopMerge, note: b.loopMergeNote, human: true }
 ];
 ---
 
-<Base title={title} description={description} canonical={url} ogType="article" jsonLd={jsonLd} cta={false}>
+<Base title={title} description={description} ogType="article" jsonLd={jsonLd} cta={false}>
   <section class="section-block">
     <div class="container bs-wrap">
-      <a class="text-link bs-back" href="/">
-        <span class="lang-en">← Home</span>
-        <span class="lang-ru">← На главную</span>
-      </a>
+      <a class="text-link bs-back" href={homePath}>{b.home}</a>
 
-      <span class="section-kicker">
-        <span class="lang-en">Receipts</span>
-        <span class="lang-ru">Доказательства</span>
-      </span>
-      <h1 class="section-title">
-        <span class="lang-en">How this site was built</span>
-        <span class="lang-ru">Как собран этот сайт</span>
-      </h1>
-      <p class="bs-lead">
-        <span class="lang-en">
-          Agents wrote the code, I did the planning. That is easy to say, so here are the receipts: every merged PR of this
-          site, with the test committed red before the code (all but the first PR, made before this loop), what was caught
-          before merge, and what I decided.
-        </span>
-        <span class="lang-ru">
-          Код писали агенты, планировал я. Сказать легко, поэтому вот доказательства: каждый смерженный PR этого сайта —
-          с тестом, закоммиченным красным до кода (кроме самого первого, сделанного до этого цикла), с тем, что поймали
-          до мержа, и с тем, что решил я.
-        </span>
-      </p>
-      <p class="fine-print">
-        <span class="lang-en">
-          The PR count and percentages on <a class="text-link" href="/">the home page</a> are about my work at YAGNI, not
-          this site. This page shows the same loop on this site’s own PRs.
-        </span>
-        <span class="lang-ru">
-          Число PR и проценты на <a class="text-link" href="/">главной</a> — про мою работу в YAGNI, а не про этот сайт.
-          Здесь тот же цикл на PR самого сайта.
-        </span>
-      </p>
+      <span class="section-kicker">{b.kicker}</span>
+      <h1 class="section-title">{b.title}</h1>
+      <p class="bs-lead">{b.lead}</p>
+      <p class="fine-print" set:html={b.scopeHtml(homePath)} />
 
-      <h2 class="bs-h2">
-        <span class="lang-en">How the loop runs now</span>
-        <span class="lang-ru">Как сейчас устроен цикл</span>
-      </h2>
+      <h2 class="bs-h2">{b.loopTitle}</h2>
       <ol class="bs-loop" role="list">
         {LOOP.map((s) => (
           <li class:list={['bs-step', { 'bs-step-human': s.human }]}>
-            <strong>
-              <span class="lang-en">{s.en}</span>
-              <span class="lang-ru">{s.ru}</span>
-            </strong>
-            <span class="bs-step-note">
-              <span class="lang-en">{s.noteEn}</span>
-              <span class="lang-ru">{s.noteRu}</span>
-            </span>
+            <strong>{s.name}</strong>
+            <span class="bs-step-note">{s.note}</span>
           </li>
         ))}
       </ol>
-      <p class="fine-print">
-        <span class="lang-en">
-          Judge and fix repeat until every confirmed finding is fixed. Highlighted steps are mine. The loop grew over these
-          PRs: a card mentions a review only where its PR says one ran.
-        </span>
-        <span class="lang-ru">
-          Судья и фикс повторяются, пока не исправлено каждое подтверждённое замечание. Выделенные шаги — мои. Цикл
-          складывался по ходу этих PR: ревью упомянуто в карточке, только если о нём сказано в самом PR.
-        </span>
-      </p>
+      <p class="fine-print">{b.loopNote}</p>
 
       <div class="bs-stats">
         <div class="stat-card">
           <span class="stat-val" data-stat="prs">{stats.prs}</span>
-          <div class="stat-lbl"><span class="lang-en">Merged PRs</span><span class="lang-ru">Смерженных PR</span></div>
+          <div class="stat-lbl">{b.statPrs}</div>
         </div>
         <div class="stat-card">
           <span class="stat-val" data-stat="red-first">{`${stats.redFirst}/${stats.prs}`}</span>
-          <div class="stat-lbl"><span class="lang-en">Red test first</span><span class="lang-ru">Красный тест первым</span></div>
+          <div class="stat-lbl">{b.statRedFirst}</div>
         </div>
         <div class="stat-card">
           <span class="stat-val" data-stat="findings">{stats.findings}</span>
-          <div class="stat-lbl"><span class="lang-en">Findings highlighted</span><span class="lang-ru">Выделенных находок</span></div>
+          <div class="stat-lbl">{b.statFindings}</div>
         </div>
         <div class="stat-card">
           <span class="stat-val" data-stat="commits">{stats.commits}</span>
-          <div class="stat-lbl"><span class="lang-en">Commits, no merges</span><span class="lang-ru">Коммитов без мержей</span></div>
+          <div class="stat-lbl">{b.statCommits}</div>
         </div>
       </div>
 
-      <h2 class="bs-h2">
-        <span class="lang-en">Every PR, oldest first</span>
-        <span class="lang-ru">Все PR, от первого</span>
-      </h2>
+      <h2 class="bs-h2">{b.prsTitle}</h2>
       <div class="bs-timeline">
         {prs.map((p) => {
           const g = p.green;
@@ -165,26 +120,19 @@ const LOOP = [
               <article class="brutal-box bs-card" data-pr={p.number}>
                 <div class="bs-card-head">
                   <span class="label">
-                    PR #{p.number} · <span class="lang-en">merged</span><span class="lang-ru">смержен</span>{' '}
+                    PR #{p.number} · {b.merged}{' '}
                     <time datetime={p.mergedAt}>{day(p.mergedAt)}</time>
                   </span>
                   <h3 class="bs-card-title" lang="en">{p.title}</h3>
                 </div>
                 <dl class="bs-rows">
                   <div>
-                    <dt class="label"><span class="lang-en">For visitors</span><span class="lang-ru">Для посетителей</span></dt>
-                    <dd>
-                      <span class="lang-en">{p.visitorChange.en}</span>
-                      <span class="lang-ru">{p.visitorChange.ru}</span>
-                    </dd>
+                    <dt class="label">{b.forVisitors}</dt>
+                    <dd>{p.visitorChange[lang]}</dd>
                   </div>
                   <div>
                     <dt class="label">
-                      {g ? (
-                        <><span class="lang-en">Red → green</span><span class="lang-ru">Красный → зелёный</span></>
-                      ) : (
-                        <><span class="lang-en">Red test</span><span class="lang-ru">Красный тест</span></>
-                      )}
+                      {g ? b.redGreen : b.redTest}
                     </dt>
                     <dd>
                       {p.redTest ? (
@@ -200,31 +148,24 @@ const LOOP = [
                           )}
                         </>
                       ) : (
-                        <>
-                          <span class="lang-en">{p.preLoop!.en}</span>
-                          <span class="lang-ru">{p.preLoop!.ru}</span>
-                        </>
+                        <>{p.preLoop![lang]}</>
                       )}
                     </dd>
                   </div>
                   {p.review && (
                     <div>
-                      <dt class="label"><span class="lang-en">Review</span><span class="lang-ru">Ревью</span></dt>
-                      <dd>
-                        <span class="lang-en">{p.review.en}</span>
-                        <span class="lang-ru">{p.review.ru}</span>
-                      </dd>
+                      <dt class="label">{b.review}</dt>
+                      <dd>{p.review[lang]}</dd>
                     </div>
                   )}
                   {p.findings.length > 0 && (
                     <div>
-                      <dt class="label"><span class="lang-en">Caught before merge</span><span class="lang-ru">Поймано до мержа</span></dt>
+                      <dt class="label">{b.caught}</dt>
                       <dd>
                         <ul class="bs-findings">
                           {p.findings.map((f) => (
                             <li>
-                              <span class="lang-en">{f.en}</span>
-                              <span class="lang-ru">{f.ru}</span>
+                              {f[lang]}
                               {/* A finding pinned to the PR as a whole links through the card's own PR link below. */}
                               {f.ref !== p.url && (
                                 <>
@@ -241,21 +182,15 @@ const LOOP = [
                     </div>
                   )}
                   <div>
-                    <dt class="label"><span class="lang-en">What I decided</span><span class="lang-ru">Что решил я</span></dt>
-                    <dd>
-                      <span class="lang-en">{p.humanDecision.en}</span>
-                      <span class="lang-ru">{p.humanDecision.ru}</span>
-                    </dd>
+                    <dt class="label">{b.decided}</dt>
+                    <dd>{p.humanDecision[lang]}</dd>
                   </div>
                 </dl>
                 <div class="bs-card-foot">
-                  <a class="text-link" href={p.url}>
-                    <span class="lang-en">PR #{p.number} on GitHub ↗</span>
-                    <span class="lang-ru">PR #{p.number} на GitHub ↗</span>
-                  </a>
+                  <a class="text-link" href={p.url}>{b.onGithub(p.number)}</a>
                   <span class="label">
-                    +{p.additions} −{p.deletions} · {p.changedFiles} <span class="lang-en">files</span><span class="lang-ru">файлов</span>
-                    · {commits} <span class="lang-en">commits</span><span class="lang-ru">коммитов</span>
+                    +{p.additions} −{p.deletions} · {p.changedFiles} {b.files}
+                    · {commits} {b.commits}
                   </span>
                 </div>
               </article>
@@ -266,20 +201,16 @@ const LOOP = [
       </div>
 
       <div class="bs-cta">
-        <p class="bs-lead">
-          <span class="lang-en">If you build with agents and want a loop like this on your repo, happy to talk it through.</span>
-          <span class="lang-ru">Если вы работаете с агентами и хотите такой же цикл в своём репозитории — давайте обсудим.</span>
-        </p>
+        <p class="bs-lead">{b.ctaLead}</p>
         <a
-          href={calUrl('build-story')}
+          href={calUrl('build-story', lang)}
           data-track="cta_book"
           data-track-placement="build-story"
           target="_blank"
           rel="noopener noreferrer"
           class="brutal-btn"
         >
-          <span class="lang-en">BOOK A 30-MIN CALL ↗</span>
-          <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН ↗</span>
+          {b.cta}
         </a>
       </div>
     </div>

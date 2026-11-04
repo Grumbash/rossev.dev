@@ -1,6 +1,7 @@
 ---
-// Shared chrome for every page: <head> (meta, fonts, theme/lang bootstrap, analytics), nav,
-// contact footer, toast and the global helpers (language, theme, URL params, clipboard).
+// Shared chrome for every page: <head> (meta, hreflang, fonts, theme bootstrap, analytics), nav,
+// contact footer, toast and the global helpers (theme, URL params, clipboard). The locale comes from
+// the URL (/ru/... is Russian); each page exists once per locale, see src/i18n/index.ts.
 // Page-specific scripts go in the "scripts" slot; page-specific <head> bits in the "head" slot.
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import '@fontsource-variable/space-grotesk/wght.css';
@@ -14,11 +15,11 @@ import { PROFILE } from '../data/profile';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import { calUrl } from '../scripts/analytics';
+import { DEFAULT_LOCALE, LOCALES, SITE, localePath, splitLocale, t } from '../i18n';
 
 interface Props {
   title: string;
   description: string;
-  canonical: string;
   ogType?: 'website' | 'article';
   ogTitle?: string;
   ogDescription?: string;
@@ -36,7 +37,6 @@ interface Props {
 const {
   title,
   description,
-  canonical,
   ogType = 'website',
   ogTitle = title,
   ogDescription = description,
@@ -48,18 +48,27 @@ const {
   htmx = false
 } = Astro.props;
 
-const ogImageUrl = new URL('/og-card.png', Astro.site || 'https://rossev.dev').toString();
-const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
+// Every page is canonical in its own locale and lists the others as alternates (x-default: the default locale).
+const [lang, path] = splitLocale(Astro.url.pathname.replace(/\/?$/, '/'));
+const d = t(lang);
+const urlIn = (l: typeof lang) => new URL(localePath(l, path), SITE).toString();
+const canonical = urlIn(lang);
+const others = LOCALES.filter((l) => l !== lang);
+const ogImageUrl = new URL('/og-card.png', SITE).toString();
+const homePath = localePath(lang, '/');
+const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
 ---
 
 <!DOCTYPE html>
-<html lang="en" data-lang="en" data-theme="light" data-page={home ? 'home' : 'writing'}>
+<html lang={lang} data-theme="light" data-page={home ? 'home' : 'writing'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {LOCALES.map((l) => <link rel="alternate" hreflang={l} href={urlIn(l)} />)}
+    <link rel="alternate" hreflang="x-default" href={urlIn(DEFAULT_LOCALE)} />
 
     <!-- Favicon, Manifest & AI Crawler Discovery -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -68,6 +77,8 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
 
     <!-- Open Graph / Telegram / Slack / LinkedIn / X Cards (Raster PNG 1200x630) -->
     <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content={d.meta.ogLocale} />
+    {others.map((l) => <meta property="og:locale:alternate" content={t(l).meta.ogLocale} />)}
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={ogTitle} />
     <meta property="og:description" content={ogDescription} />
@@ -88,19 +99,12 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
     <!-- Structured Data (JSON-LD) -->
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
-    <!-- Synchronous Anti-FOUC Theme & Language Initialization -->
+    <!-- Synchronous anti-FOUC theme: the saved theme applies before first paint -->
     <script is:inline>
-      (function () {
-        try {
-          var savedLang = localStorage.getItem('rosev_lang') || 'en';
-          document.documentElement.setAttribute('data-lang', savedLang);
-          document.documentElement.setAttribute('lang', savedLang);
-          var savedTheme = localStorage.getItem('rosev_theme');
-          if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-          }
-        } catch (e) {}
-      })();
+      try {
+        var savedTheme = localStorage.getItem('rosev_theme');
+        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+      } catch (e) {}
     </script>
 
     {htmx && <script src="/htmx.min.js" defer></script>}
@@ -121,71 +125,58 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
     <!-- TOP NAV: text links scroll, buttons act -->
     <header class="top-nav">
       <div class="nav-inner">
-        <a href={home ? '#top' : '/'} class="brand-logo">
+        <a href={home ? '#top' : homePath} class="brand-logo">
           <span class="brand-badge">GR</span>
           <span>GLEB ROSEV</span>
         </a>
 
-        <nav class="nav-links" aria-label="Sections">
-          <a class="nav-link" href={anchor('experience')}>
-            <span class="lang-en">Experience</span>
-            <span class="lang-ru">Опыт</span>
-          </a>
-          <a class="nav-link" href={anchor('writing')}>
-            <span class="lang-en">Writing</span>
-            <span class="lang-ru">Блог</span>
-          </a>
-          <a class="nav-link" href={anchor('contact')}>
-            <span class="lang-en">Contact</span>
-            <span class="lang-ru">Контакты</span>
-          </a>
+        <nav class="nav-links" aria-label={d.nav.sections}>
+          <a class="nav-link" href={anchor('experience')}>{d.nav.experience}</a>
+          <a class="nav-link" href={anchor('writing')}>{d.nav.writing}</a>
+          <a class="nav-link" href={anchor('contact')}>{d.nav.contact}</a>
         </nav>
 
         <div class="nav-controls">
-          <button
-            type="button"
-            class="ctrl-btn active-lang"
-            id="btn-lang-en"
-            onclick="window.setSiteLang('en')"
-            data-track="lang_switch"
-            data-track-to="en"
-            aria-label="Switch language to English"
-          >
-            EN
-          </button>
-          <button
-            type="button"
-            class="ctrl-btn"
-            id="btn-lang-ru"
-            onclick="window.setSiteLang('ru')"
-            data-track="lang_switch"
-            data-track-to="ru"
-            aria-label="Switch language to Russian"
-          >
-            RU
-          </button>
+          {/* The current language is plain text; the others link to this page in that language.
+              site.ts carries ?query and #anchor over on click. */}
+          {LOCALES.map((l) =>
+            l === lang ? (
+              <span class="ctrl-btn active-lang" title={d.nav.current}>{l.toUpperCase()}</span>
+            ) : (
+              <a
+                class="ctrl-btn"
+                href={localePath(l, path)}
+                hreflang={l}
+                lang={l}
+                data-lang-switch
+                data-track="lang_switch"
+                data-track-to={l}
+                aria-label={t(l).nav.readIn}
+              >
+                {l.toUpperCase()}
+              </a>
+            )
+          )}
           <button
             type="button"
             class="ctrl-btn"
             id="btn-theme-toggle"
             onclick="window.toggleSiteTheme()"
             data-track="theme_switch"
-            title="Toggle Light / Dark Mode"
+            title={d.nav.themeTitle}
           >
-            <span class="lang-en">THEME</span>
-            <span class="lang-ru">ТЕМА</span>
+            {d.nav.theme}
           </button>
           {cta && (
             <a
-              href={calUrl('nav')}
+              href={calUrl('nav', lang)}
               data-track="cta_book"
               data-track-placement="nav"
               target="_blank"
               rel="noopener noreferrer"
               class="brutal-btn brutal-btn-lime brutal-btn-sm"
             >
-              <span class="lang-en">BOOK A CALL ↗</span>
-              <span class="lang-ru">СОЗВОН ↗</span>
+              {d.nav.bookCall}
             </a>
           )}
         </div>
@@ -200,27 +191,13 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
         <div class="container">
           <div class="contact-grid">
             <div>
-              <span class="section-kicker">
-                <span class="lang-en">Contact</span>
-                <span class="lang-ru">Контакты</span>
-              </span>
-              <h2 class="section-title" style="margin-bottom: 12px;">
-                <span class="lang-en">Let’s talk</span>
-                <span class="lang-ru">Давайте поговорим</span>
-              </h2>
-              <p class="footer-lead">
-                <span class="lang-en">
-                  Always happy to connect with founders, engineering leaders, and builders working on production AI agents and distributed systems.
-                </span>
-                <span class="lang-ru">
-                  Всегда рад общению с фаундерами, техлидами и инженерами, создающими AI-агентов и сложные продакшен-системы.
-                </span>
-              </p>
+              <span class="section-kicker">{d.footer.kicker}</span>
+              <h2 class="section-title" style="margin-bottom: 12px;">{d.footer.title}</h2>
+              <p class="footer-lead">{d.footer.lead}</p>
               <div class="hero-actions">
                 {cta && (
-                  <a href={calUrl('footer')} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime" data-track="cta_book" data-track-placement="footer">
-                    <span class="lang-en">BOOK A 30-MIN CALL ↗</span>
-                    <span class="lang-ru">ЗАБРОНИРОВАТЬ СОЗВОН ↗</span>
+                  <a href={calUrl('footer', lang)} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime" data-track="cta_book" data-track-placement="footer">
+                    {d.footer.bookCall}
                   </a>
                 )}
                 <button
@@ -230,8 +207,7 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
                   data-track="email_copy"
                   data-track-placement="footer"
                 >
-                  <span class="lang-en">COPY EMAIL</span>
-                  <span class="lang-ru">СКОПИРОВАТЬ EMAIL</span>
+                  {d.footer.copyEmail}
                 </button>
               </div>
               <div class="footer-links">
@@ -239,10 +215,10 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
                 <a class="text-link" href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" data-track="linkedin_click" data-track-placement="footer">LinkedIn ↗</a>
                 <a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                 <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Founding_Engineer_CV.pdf" data-track="cv_download" data-track-placement="footer">
-                  <span class="lang-en">CV (PDF) ↓</span><span class="lang-ru">CV (PDF) ↓</span>
+                  {d.footer.cv}
                 </a>
-                <a class="text-link" href="/how-its-built/" aria-current={Astro.url.pathname.replace(/\/?$/, '/') === '/how-its-built/' ? 'page' : undefined}>
-                  <span class="lang-en">How this site was built</span><span class="lang-ru">Как собран этот сайт</span>
+                <a class="text-link" href={localePath(lang, '/how-its-built/')} aria-current={path === '/how-its-built/' ? 'page' : undefined}>
+                  {d.footer.howBuilt}
                 </a>
                 <a class="text-link" href="/llms.txt" target="_blank" title="Plain-text Markdown context for AI Agents & LLMs">/llms.txt ↗</a>
               </div>
@@ -251,31 +227,22 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
             <div class="footer-facts">
               <dl>
               <div class="contact-row">
-                <dt class="label"><span class="lang-en">Education</span><span class="lang-ru">Образование</span></dt>
-                <dd>
-                  <span class="lang-en">Belarusian State University — Medicine (2015 — 2019)</span>
-                  <span class="lang-ru">БГУ — Медицинское дело (2015 — 2019)</span>
-                </dd>
+                <dt class="label">{d.footer.education}</dt>
+                <dd>{d.footer.educationValue}</dd>
               </div>
               <div class="contact-row">
-                <dt class="label"><span class="lang-en">Languages</span><span class="lang-ru">Языки</span></dt>
-                <dd>
-                  <span class="lang-en">{PROFILE.languages.map((l) => l.en).join(' · ')}</span>
-                  <span class="lang-ru">{PROFILE.languages.map((l) => l.ru).join(' · ')}</span>
-                </dd>
+                <dt class="label">{d.footer.languages}</dt>
+                <dd>{PROFILE.languages.map((l) => l[lang]).join(' · ')}</dd>
               </div>
               <div class="contact-row">
-                <dt class="label"><span class="lang-en">Based</span><span class="lang-ru">Где</span></dt>
-                <dd>
-                  <span class="lang-en">{PROFILE.location.en} · Remote · {PROFILE.timezone}</span>
-                  <span class="lang-ru">{PROFILE.location.ru} · удалённо · {PROFILE.timezone}</span>
-                </dd>
+                <dt class="label">{d.footer.based}</dt>
+                <dd>{PROFILE.location[lang]} · {d.footer.remote} · {PROFILE.timezone}</dd>
               </div>
               </dl>
               <p class="footer-fineprint">
-                <span class="lang-en">CV auto-built from</span><span class="lang-ru">CV собирается из</span>
+                {d.footer.cvBuiltFrom}
                 <code>profile.ts</code> (<code>canary #42</code>)
-                · © {new Date().getFullYear()} <span class="lang-en">Gleb Rosev</span><span class="lang-ru">Глеб Росев</span>
+                · © {new Date().getFullYear()} {d.meta.name}
               </p>
             </div>
           </div>
@@ -284,11 +251,11 @@ const anchor = (id: string) => (home ? `#${id}` : `/#${id}`);
     </main>
 
     <!-- Toast Notification -->
-    <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite">
-      COPIED TO CLIPBOARD
+    <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite" data-copied={d.toast.copied}>
+      {d.toast.copiedDefault}
     </div>
 
-    <!-- Before page scripts: onclick handlers and the analytics toggle listener exist first. Global helpers (language, theme, URL params, clipboard) and funnel analytics (Umami custom events) -->
+    <!-- Before page scripts: onclick handlers and the analytics toggle listener exist first. Global helpers (theme, language links, URL params, clipboard) and funnel analytics (Umami custom events) -->
     <script>
       import { initSite } from '../scripts/site';
       import { initAnalytics } from '../scripts/analytics';

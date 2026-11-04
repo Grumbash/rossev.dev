@@ -111,7 +111,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `post_filter` | `filter` (all, ai, leadership, systems, delivery) | writing filter tab |
 | `topology_interact` | `action` (free play behind Explore: domain, fault, xray, reset, packet, stratum, step, blueprint; drag = horizontal drag on the canvas; guided story: step2, step3 = arrived at that step, heal = Break & heal, case = YAGNI case link, play = phone Play, explore = Explore toggle) | topology, once per action per view |
 | `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset, case = bridge link to the YAGNI case) | GR monogram in Beyond the CV, once per action per view |
-| `lang_switch` / `theme_switch` | `to` | EN/RU (only on an actual change), THEME |
+| `lang_switch` / `theme_switch` | `to` | EN/RU link to the same page in the other locale (`/` ↔ `/ru/`), THEME |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |
 | `booking_confirmed` | `source` (nav, hero, footer, reader, build-story, unknown) | `/booked` after a cal.com redirect carrying a booking `uid`, once per booking |
 
@@ -123,7 +123,7 @@ Every cal.com link carries `?utm_source=rossev.dev&utm_medium=site&utm_content=<
 
 cal.com sends visitors to `/booked` after they book: event type → Advanced → Redirect on booking → `https://rossev.dev/booked/`, with "Forward parameters" on. Without forwarding there is no `uid` and no `utm_content`, so no `booking_confirmed` is sent. The forwarded query also carries the booking (email, name, phone, guests...). A classic inline script in the page's `<head>` keeps only whether a `uid` is present and the `utm_content` placement (`bookingSource()`), then strips the whole query before the deferred Umami and Vercel scripts read the URL. Vercel's server logs still see the full redirect URL. Reschedules are not counted: cal.com forwards the booking page's `rescheduleUid`, and a non-empty one means no event.
 
-Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` and `build-story` bookings start on `/writing/*` and `/how-its-built/`, so a `/` (path) first step makes it a home-only funnel; prepend it only for that.
+Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` and `build-story` bookings start on `/writing/*` and `/how-its-built/` (and their `/ru/` twins), so a `/` (path) first step makes it a home-only funnel; prepend it only for that. A booking made from a `/ru/` page carries `lang=ru` (`calUrl`); `/booked/` forwards it to `/ru/booked/` before anything is tracked.
 
 ## License
 

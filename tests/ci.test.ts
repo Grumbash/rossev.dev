@@ -159,7 +159,8 @@ describe('the prompt', () => {
   test('the repo conventions the fix must respect are in the prompt', () => {
     const all = messages.map((m) => m.content).join('\n');
     expect(all).toContain('perf-budgets.json');
-    expect(all).toMatch(/lang-en/);
+    // Bilingual copy: one locale per URL, UI strings in the typed dictionaries.
+    expect(all).toMatch(/src\/i18n\/en\.ts/);
   });
 });
 
