@@ -555,8 +555,8 @@ describe('.github/workflows/publora-sync.yml', () => {
     expect(new Set(on.schedule.map((s: any) => s.cron.split(' ')[1])).size).toBe(2);
   });
 
-  test('minimal permissions: write contents and pull requests, nothing more', () => {
-    expect(wf.permissions).toEqual({ contents: 'write', 'pull-requests': 'write' });
+  test('minimal permissions: the GITHUB_TOKEN only reads; every write goes through the PAT in `publish`', () => {
+    expect(wf.permissions).toEqual({ contents: 'read', 'pull-requests': 'read' });
     for (const j of jobs) if (j.permissions) expect(j.permissions).toEqual(wf.permissions);
   });
 
@@ -586,11 +586,33 @@ describe('.github/workflows/publora-sync.yml', () => {
     expect(iPr).toBeGreaterThan(iTest);
     const id = steps[iSync].id;
     expect(id).toBeTruthy();
-    for (const s of steps.slice(iSync + 1)) expect(String(s.if ?? '')).toContain(`steps.${id}.outputs.added`);
+    const sync = wf.jobs.sync.steps as any[];
+    for (const s of sync.slice(sync.findIndex((x) => x.id === id) + 1)) expect(String(s.if ?? '')).toContain(`steps.${id}.outputs.added`);
+    // The PR is pushed from a second job on a fresh VM, only when the sync added something.
+    expect(wf.jobs.publish.needs).toBe('sync');
+    expect(String(wf.jobs.publish.if)).toContain('needs.sync.outputs.added');
+    expect((wf.jobs.publish.steps as any[]).some((s) => /gh pr (create|edit)/.test(String(s.run ?? '')))).toBe(true);
     expect(raw).toContain('bot/publora-sync');
     expect(runs[iPr]).toMatch(/--body-file/);
     expect(raw).not.toMatch(/git push\b[^\n]*\bmain\b/);
     expect(raw).not.toMatch(/--force\b(?!-with-lease)/);
+  });
+
+  // `sync` runs package code, so its outputs are untrusted: a forged sha could point at a fork's
+  // commit (reachable by sha through this repo) and turn the bot PR into an attacker's whole tree.
+  test('publish only builds on a sha that is a full commit id already on main', () => {
+    const run = String((wf.jobs.publish.steps as any[]).find((s) => /gh pr (create|edit)/.test(String(s.run ?? ''))).run);
+    expect(run).toMatch(/\^\[0-9a-f\]\{40\}\$/);
+    expect(run).toMatch(/git merge-base --is-ancestor "\$SHA" origin\/main/);
+    expect(String(wf.jobs.publish.steps.find((s: any) => s.run?.includes('gh pr')).env.SHA)).toBe('${{ needs.sync.outputs.sha }}');
+  });
+
+  // grep -q quits on the first match; git log then dies of SIGPIPE and pipefail flips the test,
+  // so a human edit would be force-pushed over. Capture the list first instead.
+  test('the human-commit guard does not pipe git log into grep -q, and says so as a warning', () => {
+    const run = String((wf.jobs.publish.steps as any[]).find((s) => /gh pr (create|edit)/.test(String(s.run ?? ''))).run);
+    expect(run).not.toMatch(/git log[^\n|]*\|\s*grep -q/);
+    expect(run).toMatch(/::warning::[^\n]*someone other than the bot/);
   });
 
   test('no AI attribution in commits or PRs; the bot is the author', () => {

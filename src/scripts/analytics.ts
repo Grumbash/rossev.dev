@@ -135,11 +135,11 @@ export function initAnalytics(): void {
     track('booking_confirmed', { source: (PLACEMENTS as readonly string[]).includes(booked) ? booked : 'unknown' });
   }
 
-  // Capture phase runs before the element's onclick, so this is the language before the click.
+  // Capture phase runs before the data-action handler, so this is the language before the click.
   let langBefore: string | null = null;
   document.addEventListener('click', () => (langBefore = root.getAttribute('lang')), true);
 
-  // Bubble phase on document: runs after the element's own onclick handler.
+  // Bubble phase on document, registered after initActions: runs after the data-action handler.
   const onClick = (e: Event) => {
     const el = (e.target as Element | null)?.closest?.<HTMLElement>('[data-track]');
     const ev = el && eventFromDataset(el.dataset);

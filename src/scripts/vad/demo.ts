@@ -18,18 +18,6 @@ const QUIET_MS = 15_000;
 const SETUP_MS = 30_000;
 // The model's input is 16 kHz; a context below that (an 8 kHz headset) can't feed it.
 const MIN_RATE = 16_000;
-// Copies each 128-sample render quantum to the worker's port, batched to ~1024 samples.
-const WORKLET = `registerProcessor('vad-tap', class extends AudioWorkletProcessor {
-  constructor() { super(); this.out = null; this.buf = new Float32Array(1024); this.n = 0;
-    this.port.onmessage = (e) => { this.out = e.data; }; }
-  process(inputs) {
-    const ch = inputs[0] && inputs[0][0];
-    if (!ch || !this.out) return true;
-    if (this.n + ch.length > this.buf.length) { this.out.postMessage(this.buf.slice(0, this.n)); this.n = 0; }
-    this.buf.set(ch, this.n); this.n += ch.length;
-    return true;
-  }
-});`;
 
 let styled = false;
 
@@ -101,12 +89,8 @@ export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Prom
     worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
     worker.onerror = fail;
 
-    const url = URL.createObjectURL(new Blob([WORKLET], { type: 'text/javascript' }));
-    try {
-      await ctx.audioWorklet.addModule(url);
-    } finally {
-      URL.revokeObjectURL(url);
-    }
+    // The tap worklet (public/vad/tap-worklet.js) copies the mic to the worker's port.
+    await ctx.audioWorklet.addModule('/vad/tap-worklet.js');
     if (ctx.state === 'suspended') await ctx.resume();
     source = ctx.createMediaStreamSource(stream!);
     tap = new AudioWorkletNode(ctx, 'vad-tap');
