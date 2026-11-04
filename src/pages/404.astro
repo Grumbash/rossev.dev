@@ -1,0 +1,200 @@
+---
+// Vercel serves this one page for every missing path, in every locale. It is the site's look without
+// Base: Base's canonical and hreflang would point at a /404/ that is not a page. Both languages are in
+// the markup; src/scripts/not-found.ts shows the visitor's one, first rescues a path typed in the
+// Russian keyboard layout, then suggests the closest real page and cuts the GR monogram, which heals.
+// The joke is the site's own loop: a red test that never got its agent.
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/space-grotesk/wght.css';
+import '@fontsource-variable/syne/wght.css';
+import '../styles/fonts-cyrillic.css';
+import '../styles/brutalism.css';
+import GrFallback from '../components/GrFallback.astro';
+import { LOCALES, localePath, t } from '../i18n';
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t('en').notFound.pageTitle}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main class="container nf">
+      <div class="nf-copy">
+        {LOCALES.map((l) => {
+          const n = t(l).notFound;
+          return (
+            <section data-lang={l} data-title={n.pageTitle} hidden={l !== 'en'} lang={l}>
+              <span class="section-kicker">{n.kicker}</span>
+              <h1 class="section-title nf-title">{n.title}</h1>
+              {/* Lines appear one by one, like a test run; the fix line only when a close page exists. */}
+              <div class="brutal-box nf-run">
+                <div class="nf-line nf-dim" style="--i: 0">$ bun test site.test.ts</div>
+                <div class="nf-line" style="--i: 1"><span class="nf-fail">✗</span> GET <span data-path>/…</span></div>
+                <div class="nf-line nf-indent" style="--i: 2">expected&nbsp;&nbsp;<span class="nf-ok">a page</span></div>
+                <div class="nf-line nf-indent" style="--i: 3">received&nbsp;&nbsp;<span class="nf-fail">404 Not Found</span></div>
+                <div class="nf-line" style="--i: 4"><span class="nf-ok">0 pass</span> · <span class="nf-fail">1 fail</span></div>
+                <div class="nf-line nf-fix" style="--i: 5" data-suggest hidden>
+                  → suggested fix: <a class="text-link" href="/" data-suggest-link>/</a>
+                </div>
+              </div>
+              <p class="nf-lead">{n.lead}</p>
+              <nav class="nf-links">
+                <a class="brutal-btn brutal-btn-lime" href={localePath(l, '/')}>{n.home}</a>
+                <a class="brutal-btn" href={localePath(l, '/hire/')}>{n.hire}</a>
+                <a class="brutal-btn" href={localePath(l, '/writing/')}>{n.writing}</a>
+                <a class="brutal-btn" href={localePath(l, '/how-its-built/')}>{n.built}</a>
+              </nav>
+            </section>
+          );
+        })}
+      </div>
+      {/* The home page's self-healing monogram (src/scripts/nca), cut by the script as soon as it has grown. */}
+      <section class="nca-section nf-nca">
+        <div class="nca-block">
+          <canvas id="nca-canvas" class="nca-canvas" width="56" height="56" tabindex="0" role="button" aria-labelledby="nf-nca-label" hidden></canvas>
+          <GrFallback />
+          <p class="nca-notice" aria-live="polite" data-regrowing={t('en').nca.regrowing} hidden></p>
+          {LOCALES.map((l) => (
+            <p class="nf-caption" data-lang={l} hidden={l !== 'en'} lang={l}>{t(l).notFound.healCaption}</p>
+          ))}
+          <span id="nf-nca-label" class="visually-hidden">{t('en').notFound.healLabel}</span>
+        </div>
+      </section>
+    </main>
+    <script>
+      import { initNotFound } from '../scripts/not-found';
+      initNotFound();
+    </script>
+  </body>
+</html>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 40px 56px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .nf-title {
+    max-width: 14ch;
+  }
+
+  .nf-run {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 28px 0;
+    padding: 20px 22px;
+    max-width: 560px;
+    overflow-x: auto;
+  }
+
+  .nf-line {
+    white-space: pre;
+    animation: nf-type 0.25s steps(1, end) both;
+    animation-delay: calc(var(--i) * 0.35s + 0.2s);
+  }
+
+  @keyframes nf-type {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .nf-indent {
+    padding-left: 4ch;
+  }
+
+  .nf-fix {
+    margin-top: 10px;
+  }
+
+  .nf-fix a {
+    color: inherit;
+    background: var(--lime);
+    padding: 0 4px;
+  }
+
+  html[data-theme='dark'] .nf-fix a {
+    color: #0a0a0a;
+  }
+
+  .nf-dim {
+    color: var(--ink-muted);
+  }
+
+  .nf-fail {
+    color: var(--pink);
+    font-weight: 700;
+  }
+
+  .nf-ok {
+    color: var(--ink);
+    background: var(--lime);
+    padding: 0 4px;
+  }
+
+  html[data-theme='dark'] .nf-ok {
+    color: #0a0a0a;
+  }
+
+  .nf-lead {
+    max-width: 560px;
+    font-size: 17px;
+    margin: 0 0 28px;
+  }
+
+  .nf-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .nf-links a {
+    text-decoration: none;
+  }
+
+  .nf-nca .nca-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 0;
+    gap: 14px;
+  }
+
+  .nf-caption {
+    max-width: 228px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 860px) {
+    .nf {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .nf-nca {
+      order: -1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nf-line {
+      animation: none;
+    }
+  }
+</style>

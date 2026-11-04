@@ -6,6 +6,7 @@ import { PROFILE } from '../data/profile';
 // Every event and its props (max 2). Add a control here before tagging it.
 export const EVENTS = {
   // cal.com link clicked. placement: nav|hero|footer|reader|build-story|hire; lang: page language at click time
+  // (`case`, the QR card at /c, loads no site JS: its bookings are attributed by utm_content alone)
   cta_book: ['placement', 'lang'],
   // "copy email" button. placement: hero|footer
   email_copy: ['placement'],
@@ -59,7 +60,7 @@ export const EVENTS = {
 } as const;
 
 // Where a cal.com link sits. calUrl() tags links with it; /booked reads it back.
-export const PLACEMENTS = ['nav', 'hero', 'footer', 'reader', 'build-story', 'hire'] as const;
+export const PLACEMENTS = ['nav', 'hero', 'footer', 'reader', 'build-story', 'hire', 'case'] as const;
 export type Placement = (typeof PLACEMENTS)[number];
 
 export type EventName = keyof typeof EVENTS;
