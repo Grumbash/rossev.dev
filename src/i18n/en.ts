@@ -70,6 +70,35 @@ export const en = {
     replayBadge: 'REPLAY · PR #11',
     yourRun: 'YOUR RUN',
     simulated: 'simulated',
+    toyService: 'toy service',
+    policyLabel: (n: number) => `A learned policy (${n.toLocaleString('en')} params), trained offline — not scripted`,
+    faultMenu: 'Pick a fault for the learned policy',
+    faultKinds: {
+      latency: 'Slow dependency',
+      node_down: 'Node down',
+      bad_deploy: 'Bad deploy',
+      surge: 'Traffic surge'
+    },
+    // Drawn on the canvas during a run of the learned policy on the toy service.
+    policyCanvas: {
+      policy: 'policy',
+      loading: 'Loading the policy…',
+      run: {
+        latency: 'A dependency is getting slow. The policy sees only the dashboard, not the cause.',
+        node_down: 'A node is failing. The policy sees only the dashboard, not the cause.',
+        bad_deploy: 'A change the tests do not catch is on its way to main.',
+        surge: 'Traffic is climbing. The policy sees only the dashboard, not the cause.'
+      },
+      recovered: 'Recovered: back within the SLO after {n} ticks, decided from the dashboard alone.',
+      rolledBack: 'It shipped, then the policy rolled it back: within the SLO again after {n} ticks.',
+      failed: 'Failed: the policy could not keep up and the service stayed outside its SLO.',
+      recoveredStamp: 'RECOVERED',
+      failedStamp: 'FAILED',
+      drained: 'drained',
+      queue: 'queue',
+      errors: 'errors',
+      nodes: 'nodes'
+    },
     injectFault: 'Inject a fault',
     judge: 'Judge',
     judgeOn: 'on',

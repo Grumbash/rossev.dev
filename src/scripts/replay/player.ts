@@ -4,13 +4,17 @@
 // the canvas next to the node. The G→R mis-heal plays from frames recorded on the real pre-fix
 // weights (public/replay/pr11-gr.json). The visitor can take over at any moment (./sim.ts has the
 // rules): inject a fault, switch the judge off, click a node, or cut the mini GR, which then
-// regrows on the real shipped model (./heal.ts). Left alone, the film comes back.
+// regrows on the real shipped model (./heal.ts). A fault runs the learned policy on the toy service
+// (./policy-run.ts, issue #10): it decides every tick from the dashboard alone. Left alone, the film
+// comes back.
 import replay from '../../data/replay-pr11.json';
 import type { Dict } from '../../i18n';
 import type { IsoApi, IsoGuide, IsoView } from '../iso-engine';
 import { clockTimes, film, shotAt } from './director';
 import { PALETTE, decodeFrame } from './frames';
 import { createHealer } from './heal';
+import { createPolicyDriver, stylePolicyUi, type PolicyRun } from './policy-run';
+import { ACTIONS, FAULTS, SLO, type Fault, type ServiceOutcome } from '../policy/service';
 import {
   START,
   analyticsFor,
@@ -34,8 +38,6 @@ type Rect = { x: number; y: number; w: number; h: number };
 
 const FRAMES_URL = '/replay/pr11-gr.json';
 const WEIGHTS_URL = '/nca/gr.bin';
-/** A fault's walk through the system, from injection to verdict. */
-const RUN_MS = 3000;
 const IDLE_TICK_MS = 250;
 /** The cut brush, as a fraction of the grid side: the same as the GR monogram and ./frames.ts cut. */
 const BRUSH = 0.12;
@@ -62,10 +64,14 @@ const SANDBOX = 4;
 const JUDGE = 3;
 const BUILDER = 2;
 const PLAN = 0;
+const MONITOR = 7;
+/** The toy service's nodes (builder, sandbox, judge, prod) on the topology: prod is where main lands. */
+const SVC_NODE = [BUILDER, SANDBOX, JUDGE, PLAN];
 
 export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: Strings; track: (p: Record<string, string>) => void }) {
   const { api, card, track, strings } = o;
   const copy = strings.replayCanvas;
+  const pc = strings.policyCanvas;
   const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lang: Lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
   const events = replay.events as Ev[];
@@ -80,6 +86,31 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   const badge = $('[data-replay-badge]');
   const live = $('[data-replay-live]');
   const faultBtn = $<HTMLButtonElement>('[data-sim-fault]');
+  // The fault menu (the button starts a bad deploy at once, as in #23; the menu picks another) and the
+  // policy's label are made here, with this chunk: the page's HTML bytes are at their budget.
+  const canvasWrap = $('.iso-canvas-container');
+  const menu = document.createElement('div');
+  menu.className = 'sim-fault-menu';
+  menu.id = 'iso-fault-menu';
+  menu.setAttribute('role', 'group');
+  menu.setAttribute('aria-label', strings.faultMenu);
+  menu.hidden = true;
+  const kinds = (['latency', 'node_down', 'bad_deploy', 'surge'] as const).map((k) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.simFaultKind = k;
+    b.textContent = strings.faultKinds[k];
+    menu.append(b);
+    return b;
+  });
+  const policyLabel = document.createElement('p');
+  policyLabel.className = 'policy-label';
+  policyLabel.setAttribute('data-policy-label', '');
+  policyLabel.hidden = true;
+  canvasWrap?.append(menu, policyLabel);
+  faultBtn?.setAttribute('aria-controls', menu.id);
+  faultBtn?.setAttribute('aria-expanded', 'false');
+  kinds.forEach((b) => (b.textContent = strings.faultKinds[b.dataset.simFaultKind as keyof typeof strings.faultKinds] ?? ''));
   const judgeBtn = $<HTMLButtonElement>('[data-sim-judge]');
   const judgeState = $('[data-sim-judge-state]');
   const resumeBtn = $<HTMLButtonElement>('[data-replay-resume]');
@@ -113,9 +144,18 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     })
     .catch(() => {});
 
-  // The visitor's run.
-  let run: { judge: boolean; ms: number; outcome: Outcome; done: boolean } | null = null;
-  let shown: Outcome | null = null; // the verdict on screen (data-outcome), set when its animation lands
+  // The visitor's fault run: the learned policy on the toy service.
+  const pol = createPolicyDriver({
+    rm,
+    onTick: policyTick,
+    onOutcome: policyOutcome,
+    onError: () => {
+      message = '';
+      paint();
+      api.redraw();
+    },
+  });
+  let shown: Outcome | ServiceOutcome | null = null; // the verdict on screen (data-outcome), set when it lands
   let message = '';
   let messageNode = SANDBOX;
   let focusNode: number | null = null;
@@ -130,14 +170,15 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   let camKey = '';
   let idleTimer: ReturnType<typeof setInterval> | undefined;
 
-  const busy = () => (run !== null && !run.done) || healing;
+  const busy = () => (pol.run !== null && !pol.run.done) || healing;
 
   function apply(next: SimState) {
     const a = analyticsFor(s, next);
     // Outcomes go out when they land on screen, not when the rules decide them.
     if (a && a.action !== 'outcome') track({ action: a.action });
     if (s.mode === 'live' && next.mode === 'replay') {
-      run = null;
+      stopPolicy();
+      closeMenu();
       shown = null;
       liveFrame = null;
       healing = false;
@@ -184,7 +225,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     }
   }
 
-  function land(outcome: Outcome, text: string, node: number) {
+  function land(outcome: Outcome | ServiceOutcome, text: string, node: number) {
     shown = outcome;
     message = text;
     messageNode = node;
@@ -195,29 +236,66 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     api.redraw();
   }
 
-  function fault() {
-    const next = injectFault(s, 'logic');
-    run = { judge: next.judge, ms: 0, outcome: next.outcome!, done: false };
+  /** A fault: the button's is a bad deploy (as in #23); the menu picks another, replacing it. */
+  function fault(kind: Fault = 'bad_deploy', replace = false) {
+    stylePolicyUi();
     shown = null;
     focusNode = null;
     liveFrame = null;
-    message = copy.faultRun;
-    messageNode = BUILDER;
+    message = pc.run[kind as keyof typeof pc.run] ?? copy.faultRun;
+    messageNode = kind === 'bad_deploy' ? BUILDER : MONITOR;
     landed = '';
-    apply(next);
+    gen++;
+    pol.start(kind, s.judge, replace);
+    policyLabel.hidden = false;
+    apply({ ...takeover(s), outcome: null, caughtBy: null });
     announce(message);
-    if (rm) finishRun();
   }
-  function finishRun() {
-    if (!run) return;
-    run.done = true;
-    run.ms = RUN_MS;
-    if (run.outcome === 'caught') land('caught', copy.caughtLive, JUDGE);
-    else land('shipped', copy.shippedWhy, PLAN);
+
+  function policyTick(r: PolicyRun) {
+    set('data-policy-action', ACTIONS[r.action]);
+    set('data-policy-confidence', r.confidence.toFixed(2));
+    policyLabel.textContent = `${strings.policyLabel(r.params)} · ${strings.toyService}`;
+    api.redraw();
+  }
+
+  function policyOutcome(r: PolicyRun, o: ServiceOutcome) {
+    const n = String(r.svc.resolvedAt);
+    if (o === 'caught') land('caught', copy.caughtLive, JUDGE);
+    else if (o === 'shipped') land('shipped', copy.shippedWhy, PLAN);
+    else if (o === 'recovered') land('recovered', (r.svc.first === 'shipped' ? pc.rolledBack : pc.recovered).replace('{n}', n), PLAN);
+    else land('failed', pc.failed, PLAN);
+  }
+
+  function stopPolicy() {
+    pol.reset();
+    set('data-policy-action', null);
+    set('data-policy-confidence', null);
+    policyLabel.hidden = true;
+  }
+
+  function openMenu() {
+
+    stylePolicyUi();
+    menu.hidden = false;
+    faultBtn?.setAttribute('aria-expanded', 'true');
+  }
+  function closeMenu() {
+    if (menu.hidden) return;
+    menu.hidden = true;
+    faultBtn?.setAttribute('aria-expanded', 'false');
+  }
+  function pick(el: HTMLElement) {
+    const kind = el.getAttribute('data-sim-fault-kind') as Fault;
+    if (!(FAULTS as readonly string[]).includes(kind)) return;
+    const inMenu = document.activeElement && menu?.contains(document.activeElement);
+    closeMenu();
+    fault(kind, true);
+    if (inMenu) faultBtn?.focus();
   }
 
   function judge() {
-    run = null;
+    stopPolicy();
     shown = null;
     message = '';
     apply(toggleJudge(s));
@@ -268,7 +346,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
       }
       liveFrame = base;
     }
-    run = null;
+    stopPolicy();
     shown = null;
     focusNode = null;
     healing = true;
@@ -334,7 +412,20 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     stops.forEach((st, i) => st.classList.toggle('is-current', i === index));
   }
 
-  faultBtn?.addEventListener('click', fault);
+  faultBtn?.addEventListener('click', () => {
+    fault();
+    openMenu();
+  });
+  kinds.forEach((b) => b.addEventListener('click', () => pick(b)));
+  menu?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    closeMenu();
+    faultBtn?.focus();
+  });
+  document.addEventListener('pointerdown', (e) => {
+    const t = e.target as Node;
+    if (menu && !menu.hidden && !menu.contains(t) && !faultBtn?.contains(t)) closeMenu();
+  });
   judgeBtn?.addEventListener('click', judge);
   resumeBtn?.addEventListener('click', back);
   pauseBtn?.addEventListener('click', () => setPaused(!paused));
@@ -686,92 +777,138 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     }
   }
 
+  /** A small tag on the canvas: dark box, coloured border and text. */
+  function tag(v: IsoView, text: string, color: string, x: number, y: number) {
+    const { ctx } = v;
+    ctx.save();
+    ctx.font = `800 ${v.width < 520 ? 9.5 : 11}px ${MONO}`;
+    const w = Math.min(ctx.measureText(text).width + 14, v.width - 16);
+    const h = v.width < 520 ? 18 : 21;
+    const left = Math.max(8, Math.min(v.width - w - 8, x - w / 2));
+    ctx.fillStyle = 'rgba(11, 12, 16, 0.9)';
+    ctx.fillRect(left, y, w, h);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(left, y, w, h);
+    ctx.fillStyle = color;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(fit(ctx, text, w - 14), left + 7, y + h / 2 + 1);
+    ctx.restore();
+  }
+
+  /** Where the last decision acted: the drained node, the judge, prod (main), or the monitor. */
+  function actingNode(r: PolicyRun): number {
+    const a = ACTIONS[r.action];
+    if (a === 'isolate' && r.target >= 0) return SVC_NODE[r.target];
+    if (a === 'block_merge') return JUDGE;
+    if (a === 'rollback' || a === 'scale' || a === 'page_human') return PLAN;
+    return MONITOR;
+  }
+
+  /** The policy's run: node health, the change in the pipeline, the decision, the dashboard strip. */
+  function drawPolicy(v: IsoView, r: PolicyRun) {
+    const { ctx } = v;
+    const narrow = v.width < 520;
+    camera(null, 0.9, [BUILDER, SANDBOX, JUDGE, PLAN]);
+    const m = r.svc.m;
+    SVC_NODE.forEach((ni, k) => {
+      const a = v.anchor(ni);
+      if (!a || !inCanvas(v, a)) return;
+      const n = r.svc.nodes[k];
+      const h = m.health[k];
+      const color = n.isolated ? MUTED : h < 0.5 ? RED : h < 0.85 ? YELLOW : LIME;
+      ctx.save();
+      // Above the node's label: its health light, and the drained mark.
+      ctx.fillStyle = INK;
+      ctx.fillRect(a.x - 24, a.y - 40, 14, 14);
+      ctx.fillStyle = color;
+      ctx.fillRect(a.x - 22, a.y - 38, 10, 10);
+      if (n.isolated) {
+        ctx.font = `700 ${narrow ? 8.5 : 9.5}px ${MONO}`;
+        ctx.fillStyle = MUTED;
+        ctx.textAlign = 'right';
+        ctx.fillText(pc.drained, a.x - 30, a.y - 29);
+      }
+      ctx.restore();
+    });
+    const c = r.svc.change;
+    if (c) {
+      const a = v.anchor(SVC_NODE[c.stage - 1]);
+      if (a) {
+        // The change waiting at this stage, next to the health light.
+        ctx.fillStyle = INK;
+        ctx.fillRect(a.x - 4, a.y - 40, 14, 14);
+        ctx.fillStyle = c.bad || c.broken ? RED : PAPER;
+        ctx.fillRect(a.x - 2, a.y - 38, 10, 10);
+      }
+    }
+    if (r.ticks > 0) {
+      const a = v.anchor(actingNode(r));
+      const text = `${pc.policy}: ${ACTIONS[r.action]} (${r.confidence.toFixed(2)})`;
+      if (a && inCanvas(v, a)) tag(v, text, ACTIONS[r.action] === 'noop' ? '#E2E0D8' : LIME, a.x, a.y + 14);
+    }
+    // The dashboard the policy reads, in one line above the label.
+    const pool = r.svc.nodes.filter((n) => !n.isolated).length;
+    const parts: [string, boolean][] = [
+      [`${pc.queue} ${m.queue.toFixed(1)}`, m.queue < 1],
+      [`${pc.errors} ${(m.errors * 100).toFixed(1)}%`, m.errors < SLO.errors],
+      [`p95 ${Math.round(m.p95)} ms`, m.p95 < SLO.p95],
+      [`${pc.nodes} ${pool}/4`, pool === 4],
+    ];
+    ctx.save();
+    ctx.font = `700 ${narrow ? 9.5 : 11}px ${MONO}`;
+    const y = v.height - (narrow ? 38 : 44);
+    const gap = narrow ? 10 : 16;
+    const widths = parts.map(([t]) => ctx.measureText(t).width);
+    const total = widths.reduce((a, b) => a + b, 0) + gap * (parts.length - 1);
+    ctx.fillStyle = 'rgba(11, 12, 16, 0.85)';
+    ctx.fillRect(4, y - 2, Math.min(v.width - 8, total + 16), narrow ? 17 : 20);
+    let x = 12;
+    parts.forEach(([t, ok], i) => {
+      ctx.fillStyle = ok ? '#E2E0D8' : RED;
+      ctx.fillText(t, x, y + (narrow ? 11 : 13));
+      x += widths[i] + gap;
+    });
+    ctx.restore();
+
+    const low = Math.min(v.height * 0.62, v.height - 80);
+    if (shown === 'caught') stamp(v, copy.caught, RED, v.width / 2, low, 1, `run${gen}c`);
+    else if (shown === 'recovered') stamp(v, pc.recoveredStamp, LIME, v.width / 2, low, 1, `run${gen}r`);
+    else if (shown === 'failed') stamp(v, pc.failedStamp, RED, v.width / 2, low, 1, `run${gen}f`);
+    else if (shown === 'shipped') {
+      // Shipped: a red band across the scene. The explanation is in the caption, calmly.
+      if (landed !== `ship${gen}`) {
+        landed = `ship${gen}`;
+        api.shake(4);
+      }
+      const h = narrow ? 34 : 46;
+      ctx.save();
+      ctx.fillStyle = RED;
+      ctx.fillRect(0, low - h / 2, v.width, h);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = `900 ${narrow ? 17 : 24}px ${MONO}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(copy.shipped, v.width / 2, low + 1);
+      ctx.restore();
+    }
+  }
+
   /** The visitor's run: the scene as they left the film, plus whatever they did. */
   function drawLive(v: IsoView, i: number) {
-    const { ctx } = v;
-    if (run) {
-      camera(null, 0.9, run.judge ? [BUILDER, SANDBOX, JUDGE] : [BUILDER, SANDBOX, PLAN]);
-    } else if (healing || shown === 'healed' || shown === 'unhealed') {
-      // Not while the stroke is drawn: the tile must stay under the pointer.
-      camera(SANDBOX, 1.2, [SANDBOX]);
-    } else if (focusNode !== null) {
-      camera(focusNode, 1.22, [focusNode]);
+    const r = pol.run;
+    if (r) drawPolicy(v, r);
+    else {
+      if (healing || shown === 'healed' || shown === 'unhealed') {
+        // Not while the stroke is drawn: the tile must stay under the pointer.
+        camera(SANDBOX, 1.2, [SANDBOX]);
+      } else if (focusNode !== null) {
+        camera(focusNode, 1.22, [focusNode]);
+      }
+      drawTile(v, liveFrame ?? rec?.frames[0] ?? null, null, 0, 1.15, liveFrame ? '' : copy.cutHint);
     }
-    // The cut hint only when nothing else is going on: not over a fault run or the SHIPPED band.
-    const label = run || liveFrame ? '' : copy.cutHint;
-    drawTile(v, liveFrame ?? rec?.frames[0] ?? null, null, 0, 1.15, label);
-
-    if (run) {
-      // The fault walks Builder → Sandbox (the tests pass: it is a logic bug) → judge, or past it.
-      const pr = run.ms / RUN_MS;
-      const path = run.judge ? [BUILDER, SANDBOX] : [BUILDER, SANDBOX, PLAN];
-      const legs = run.judge ? [[0, 0.35]] : [[0, 0.35], [0.5, 0.8]];
-      let at: { x: number; y: number } | null = null;
-      legs.forEach(([t0, t1], k) => {
-        const a = v.anchor(path[k]);
-        const b = v.anchor(path[k + 1]);
-        if (!a || !b || pr < t0) return;
-        const q = Math.min(1, (pr - t0) / (t1 - t0));
-        at = { x: a.x + (b.x - a.x) * q, y: a.y + (b.y - a.y) * q };
-      });
-      const sb = v.anchor(SANDBOX);
-      if (pr >= 0.35 && sb) {
-        ctx.save();
-        ctx.font = `800 ${v.width < 520 ? 9 : 10.5}px ${MONO}`;
-        const tw = ctx.measureText(copy.testsGreen).width + 12;
-        ctx.fillStyle = LIME;
-        ctx.fillRect(sb.x - tw / 2, sb.y + 8, tw, 18);
-        ctx.strokeStyle = INK;
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(sb.x - tw / 2, sb.y + 8, tw, 18);
-        ctx.fillStyle = INK;
-        ctx.textAlign = 'center';
-        ctx.fillText(copy.testsGreen, sb.x, sb.y + 21);
-        ctx.restore();
-      }
-      if (run.judge && pr >= 0.5 && sb) beam(v, JUDGE, sb, (pr - 0.5) / 0.15, YELLOW);
-      if (run.judge && pr >= 0.75) {
-        // Rolled back: the change goes back to the builder.
-        const a = v.anchor(SANDBOX);
-        const b = v.anchor(BUILDER);
-        if (a && b) {
-          const q = Math.min(1, (pr - 0.75) / 0.25);
-          at = { x: a.x + (b.x - a.x) * q, y: a.y + (b.y - a.y) * q };
-        }
-      }
-      if (at) {
-        const { x, y } = at as { x: number; y: number };
-        ctx.fillStyle = INK;
-        ctx.fillRect(x - 7, y - 7, 14, 14);
-        ctx.fillStyle = run.judge && pr >= 0.75 ? LIME : RED;
-        ctx.fillRect(x - 5, y - 5, 10, 10);
-      }
-      const low = Math.min(tile ? tile.y + tile.h + 40 : v.height * 0.62, v.height - 30);
-      if (run.judge && pr >= 0.68) stamp(v, copy.caught, RED, v.width / 2, low, ((pr - 0.68) * RUN_MS) / 1000, `run${gen}`);
-      if (!run.judge && pr >= 0.8) {
-        // Shipped: a red band across the scene. The explanation is in the caption, calmly.
-        const k = rm ? 1 : ease(((pr - 0.8) * RUN_MS) / 300);
-        if (k >= 0.95 && landed !== `ship${gen}`) {
-          landed = `ship${gen}`;
-          api.shake(4);
-        }
-        const h = v.width < 520 ? 34 : 46;
-        const y = low - h / 2;
-        ctx.save();
-        ctx.globalAlpha = k;
-        ctx.fillStyle = RED;
-        ctx.fillRect(0, y, v.width, h);
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = `900 ${v.width < 520 ? 17 : 24}px ${MONO}`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(copy.shipped, v.width / 2, y + h / 2 + 1);
-        ctx.restore();
-      }
-    }
-
-    // A fault run is scripted, and says so; the GR cut runs the real model, so it does not.
-    const mode = run ? `${strings.yourRun} · ${strings.simulated}` : strings.yourRun;
+    // A fault runs the learned policy on a toy service, and says so; the GR cut runs the real model.
+    const mode = r ? `${strings.yourRun} · ${strings.toyService}` : strings.yourRun;
     if (message) caption(v, messageNode, `${mode} · ${v.nodes[messageNode].num} · ${v.nodes[messageNode].short}`, message, [], 1);
     else caption(v, events[i].node, kickerOf(v, i), events[i].caption[lang], [], 1);
   }
@@ -783,10 +920,6 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
         track({ action: 'replay' });
       }
       if (s.mode === 'replay' && !rm && !paused) s = tick(s, v.dt, F.length);
-      if (run && !run.done) {
-        run.ms += v.dt;
-        if (run.ms >= RUN_MS) finishRun();
-      }
       const { index, progress } = shotAt(F, s.t);
       if (s.mode === 'replay' && !landed.endsWith(String(index))) landed = '';
       paint();
@@ -796,7 +929,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
       return !rm;
     },
     node,
-    fault,
+    fault: () => fault(),
     pointer(type, x, y) {
       if (type === 'down') {
         if (!tile || x < tile.x - 10 || x > tile.x + tile.w + 10 || y < tile.y - 10 || y > tile.y + tile.h + 10) return false;
@@ -851,7 +984,10 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     detach,
     /** A control (or a timeline click at clientX `x`) the visitor used before this chunk had loaded. */
     handle(el: Element, x = 0) {
-      if (el.matches('[data-sim-fault]')) fault();
+      if (el.matches('[data-sim-fault]')) {
+        fault();
+        openMenu();
+      } else if (el.matches('[data-sim-fault-kind]')) pick(el as HTMLElement);
       else if (el.matches('[data-sim-judge]')) judge();
       else if (el.matches('[data-replay-resume]')) back();
       else if (el.matches('[data-replay-pause]')) setPaused(!paused);
