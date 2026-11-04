@@ -3,7 +3,9 @@
 // Facts come from `gh pr view`; the copy comes from the hand-curated src/data/build-story-highlights.json.
 // The page renders src/data/build-story.json and derives every number from it with computeStats().
 //
-// Usage: bun run build-story   (needs an authenticated `gh`; rerun after each merge and commit the JSON).
+// Usage: bun run build-story   (needs an authenticated `gh`). .github/workflows/build-story.yml runs it on
+// every push to main and proposes the result as one bot PR; a PR without highlights shows up pending
+// (facts only) until Gleb writes its copy. PRs that only touch build-story data are left out.
 // Not part of `bun run build`: Vercel has no GitHub token, so the build only reads the committed file.
 // Replay: bun scripts/build-story.ts --replay 11 [--stdout] writes src/data/replay-pr11.json (or prints it)
 // from build-story.json and local git only, no gh: the hero topology's replay of that PR's agent run.
@@ -28,6 +30,8 @@ export type GhPr = {
   deletions: number;
   changedFiles: number;
   commits: GhCommit[];
+  /** Only the CLI asks for it (`files`), to leave data-only PRs out. */
+  files?: { path: string }[];
 };
 
 export type Finding = L10n & {
@@ -41,6 +45,8 @@ export type Highlight = {
   findings: Finding[];
   /** Only for PRs without a red-test-first commit: why (e.g. made before the loop existed). */
   preLoop?: L10n;
+  /** Only for PRs without a red-test-first commit made after the loop existed: the literal reason. */
+  noRedTest?: L10n;
   /** Only where the PR body says an independent review or judge ran: what it said, close to the body's words. */
   review?: L10n;
   /** The commit where the red test went green, when it can be named (must be a commit of this PR). */
@@ -76,10 +82,13 @@ export type Entry = {
   changedFiles: number;
   redTest: RedTest | null;
   commits: Commit[];
-  visitorChange: L10n;
-  humanDecision: L10n;
+  /** No highlight yet: the card shows facts only until Gleb writes the copy. Absent on curated entries. */
+  pending?: true;
+  visitorChange?: L10n;
+  humanDecision?: L10n;
   findings: Finding[];
   preLoop?: L10n;
+  noRedTest?: L10n;
   review?: L10n;
   green?: RedTest;
   ciVerdicts: CiVerdict[];
@@ -99,7 +108,7 @@ const commitUrl = (sha: string, repo: string) => `${gh(repo)}/commit/${sha}`;
 
 // Red only by how the subject starts: "Fix the failing test" is an implementation commit.
 export function classifyCommit(subject: string): Role {
-  if (/^(Red test:|Add a failing test)/.test(subject)) return 'red';
+  if (/^(Red test:|Add a failing test|Add failing tests)/.test(subject)) return 'red';
   if (/^Merge (pull request|remote-tracking branch|branch)\b/.test(subject)) return 'merge';
   return 'impl';
 }
@@ -117,7 +126,76 @@ export function redTestOf(commits: GhCommit[], repo = REPO): RedTest | null {
   return { sha: first.oid, subject: subjectOf(first), url: commitUrl(first.oid, repo) };
 }
 
-export function toEntry(pr: GhPr, h: Highlight, repo = REPO): Entry {
+// A PR that only refreshes the build-story data (#15, every bot PR) is bookkeeping, not loop work.
+// Leaving it out is also the workflow's loop guard: merging the bot's PR adds no entry about itself.
+const DATA_FILE = /^src\/data\/build-story[^/]*\.json$/;
+export function isDataOnly(paths: string[]): boolean {
+  return paths.length > 0 && paths.every((p) => DATA_FILE.test(p));
+}
+
+// Any bot's PR (bot/publora-sync, bot/build-story) is bookkeeping too: it would otherwise become a
+// pending card, and merging bot/build-story would make a story about itself. No file list means unknown,
+// so not data-only.
+export function isBookkeeping(pr: { headRefName: string; files?: { path: string }[] }): boolean {
+  return pr.headRefName.startsWith('bot/') || isDataOnly((pr.files ?? []).map((f) => f.path));
+}
+
+// A red commit may add a stub its test imports, nothing more: a NEW file holding only the
+// "Not implemented yet" comment, type-only imports and declarations, inert constants, and functions
+// whose whole body throws 'not implemented' (or calls such a function). A modified file is never one,
+// since editing a real module under the same comment would slip code in before the test.
+const THROW = String.raw`\{ throw new Error\('not implemented'\);? \}`;
+export function isPlaceholder(status: string, content: string): boolean {
+  if (status !== 'A' || !/^\/\/.*\bNot implemented yet: tests\/\S+ is red first/m.test(content)) return false;
+  const code = content.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  // Top-level statements: split at `;`, and at a closing `}` at depth 0 when a new statement follows.
+  const statements: string[] = [];
+  let depth = 0;
+  let quote = '';
+  let cur = '';
+  for (let i = 0; i < code.length; i++) {
+    const ch = code[i];
+    cur += ch;
+    if (quote) {
+      if (ch === quote && code[i - 1] !== '\\') quote = '';
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') quote = ch;
+    else if ('({['.includes(ch)) depth++;
+    else if (')}]'.includes(ch)) depth--;
+    const rest = code.slice(i + 1).trimStart();
+    if (depth === 0 && (ch === ';' || (ch === '}' && (rest === '' || /^(export|import|const|let|var|function|class|interface|type)\b/.test(rest))))) {
+      statements.push(cur);
+      cur = '';
+    }
+  }
+  if (depth !== 0 || quote || cur.trim()) return false;
+  const throwers = new Set<string>();
+  const params = String.raw`\([^)]*\)`;
+  const throwing = new RegExp(
+    String.raw`^(?:export )?(?:function (\w+)${params}(?:: [^{]+)? ${THROW}|const (\w+)(?:: [^=]+)? = ${params}(?:: [^=]+?)? => ${THROW});?$`,
+  );
+  const calling = new RegExp(String.raw`^(?:export )?const \w+(?:: [^=]+)? = ${params}(?:: .+?)? => (\w+)\(\);?$`);
+  const inert = /^(?:export )?const \w+(?:: [^=]+)? = (?:-?\d[\d_.]*|'[^']*'|"[^"]*"|true|false|null|[[{][^()=`]*[\]}](?: as const)?);?$/;
+  for (const raw of statements) {
+    const st = raw.replace(/\s+/g, ' ').trim();
+    if (st === '' || st === ';') continue;
+    if (/^import type [^;]+ from '[^']+';?$/.test(st) || /^export (?:type|interface) /.test(st)) continue;
+    const t = st.match(throwing);
+    if (t) {
+      throwers.add(t[1] ?? t[2]);
+      continue;
+    }
+    const c = st.match(calling);
+    if (c && throwers.has(c[1])) continue;
+    if (inert.test(st)) continue;
+    return false;
+  }
+  return throwers.size > 0;
+}
+
+// Without a highlight the entry carries only what git and GitHub know: copy in Gleb's voice waits for him.
+export function toEntry(pr: GhPr, h: Highlight | undefined, repo = REPO): Entry {
   const entry: Entry = {
     number: pr.number,
     title: pr.title,
@@ -134,12 +212,15 @@ export function toEntry(pr: GhPr, h: Highlight, repo = REPO): Entry {
       role: classifyCommit(c.messageHeadline),
       url: commitUrl(c.oid, repo),
     })),
-    visitorChange: h.visitorChange,
-    humanDecision: h.humanDecision,
-    findings: h.findings ?? [],
+    findings: [],
     ciVerdicts: [],
   };
+  if (!h) return { ...entry, pending: true };
+  entry.visitorChange = h.visitorChange;
+  entry.humanDecision = h.humanDecision;
+  entry.findings = h.findings ?? [];
   if (h.preLoop) entry.preLoop = h.preLoop;
+  if (h.noRedTest) entry.noRedTest = h.noRedTest;
   if (h.review) entry.review = h.review;
   if (h.green) {
     const c = pr.commits.find((x) => x.oid === h.green);
@@ -153,6 +234,15 @@ export function toEntry(pr: GhPr, h: Highlight, repo = REPO): Entry {
 export function carryCiVerdicts(old: Pick<Story, 'prs'> | null, fresh: Entry[]): Entry[] {
   const kept = new Map((old?.prs ?? []).map((p) => [p.number, p.ciVerdicts ?? []]));
   return fresh.map((p) => ({ ...p, ciVerdicts: kept.get(p.number) ?? p.ciVerdicts }));
+}
+
+// The workflow proposes a PR only when the file changed, so an unchanged story must come back as
+// `prev` itself: a newer main commit (e.g. the merge of the bot's own PR) or a new timestamp alone
+// is not a change.
+export function nextStory(prev: Story | null, prs: Entry[], throughSha: string, now: string): Story {
+  const carried = carryCiVerdicts(prev, prs);
+  if (prev && JSON.stringify(prev.prs) === JSON.stringify(carried)) return prev;
+  return { repo: REPO, generatedAt: now, throughSha, prs: carried };
 }
 
 export function computeStats(prs: Entry[]): Stats {
@@ -177,11 +267,18 @@ export function validate(story: Story): string[] {
   for (const p of story.prs) {
     const n = `#${p.number}`;
     if (p.url !== `${base}/pull/${p.number}`) problems.push(`${n}: url ${p.url} is not ${base}/pull/${p.number}`);
-    if (!p.redTest && !isL10n(p.preLoop)) problems.push(`${n}: no red test first and no preLoop reason (EN + RU)`);
+    // A pending entry waits for all of its copy, including the reason it has no red test.
+    if (!p.pending && !p.redTest && !isL10n(p.preLoop) && !isL10n(p.noRedTest))
+      problems.push(`${n}: no red test first and no preLoop or noRedTest reason (EN + RU)`);
     if (p.redTest && p.commits.find((c) => c.sha === p.redTest!.sha)?.role !== 'red')
       problems.push(`${n}: red test ${p.redTest.sha} is not a red commit of this PR`);
-    if (!isL10n(p.visitorChange)) problems.push(`${n}: visitorChange needs EN and Russian RU`);
-    if (!isL10n(p.humanDecision)) problems.push(`${n}: humanDecision needs EN and Russian RU`);
+    if (p.pending) {
+      if (p.visitorChange || p.humanDecision || p.review || p.findings?.length) problems.push(`${n}: a pending entry carries no copy`);
+    } else {
+      if (!isL10n(p.visitorChange)) problems.push(`${n}: visitorChange needs EN and Russian RU`);
+      if (!isL10n(p.humanDecision)) problems.push(`${n}: humanDecision needs EN and Russian RU`);
+    }
+    if (p.noRedTest !== undefined && !isL10n(p.noRedTest)) problems.push(`${n}: noRedTest needs EN and Russian RU`);
     if (!Array.isArray(p.ciVerdicts)) problems.push(`${n}: ciVerdicts must be a list`);
     if (p.review !== undefined && !isL10n(p.review)) problems.push(`${n}: review needs EN and Russian RU`);
     if (p.green && p.commits.find((c) => c.sha === p.green!.sha)?.role !== 'impl')
@@ -391,6 +488,14 @@ export function replayFor(story: Story, git: GitReader, number: number, board: S
 const run = (args: string[]) => execFileSync('gh', args, { encoding: 'utf8' });
 const git = (args: string[]) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 
+// Non-test files a red commit may add because they only produce test fixtures, never site code.
+// Named one by one, with the reason, so the red-commit check stays strict for everything else.
+const RED_COMMIT_TOOLING: Record<string, string[]> = {
+  // #25: the export script that wrote tests/fixtures/vad/hello.json in the same commit; the weights it
+  // also writes (public/vad/) came with the implementation.
+  '373ee08136cb9275248c2e5477fbc6fdf00a4c40': ['scripts/vad/export.py'],
+};
+
 const replayAt = process.argv.indexOf('--replay');
 if (import.meta.main && replayAt >= 0) {
   // Local only: build-story.json plus git, never gh.
@@ -418,21 +523,36 @@ if (import.meta.main && replayAt >= 0) {
   const numbers: number[] = JSON.parse(run(['pr', 'list', '--repo', REPO, '--state', 'merged', '--limit', '1000', '--json', 'number'])).map(
     (p: { number: number }) => p.number,
   );
-  const fields = 'number,title,url,mergedAt,headRefName,additions,deletions,changedFiles,commits';
+  const fields = 'number,title,url,mergedAt,headRefName,additions,deletions,changedFiles,commits,files';
   const early: string[] = [];
+  // No highlight is not an error any more: the entry is pending until Gleb writes its copy.
   const prs = numbers
     .map((n) => JSON.parse(run(['pr', 'view', String(n), '--repo', REPO, '--json', fields])) as GhPr)
+    .filter((pr) => !isBookkeeping(pr))
     .sort((a, b) => a.mergedAt.localeCompare(b.mergedAt))
-    .flatMap((pr) => {
-      const h = highlights[String(pr.number)];
-      if (!h) return early.push(`#${pr.number}: no entry in build-story-highlights.json`), [];
-      return [toEntry(pr, h, REPO)];
-    });
+    .map((pr) => toEntry(pr, highlights[String(pr.number)], REPO));
+  const listed = new Set(prs.map((p) => String(p.number)));
+  for (const k of Object.keys(highlights)) if (!listed.has(k)) early.push(`#${k}: highlight for a PR that is not in the story (bookkeeping or not merged)`);
   // A red-test commit is only a test: anything outside tests/ means code landed before (or with) it.
+  // Two exceptions carry no behaviour: a new placeholder stub (isPlaceholder) and RED_COMMIT_TOOLING.
+  // A commit git can't see (a squash-merged PR whose branch is gone, not in the fetched pull refs) is
+  // a warning, not a crash: the PR still counts by what gh reports.
   for (const p of prs)
     for (const c of p.commits.filter((x) => x.role === 'red')) {
-      const files = git(['show', '--name-only', '--format=', c.sha]).split('\n').filter(Boolean);
-      const code = files.filter((f) => !f.startsWith('tests/'));
+      let changed: [string, string][];
+      try {
+        changed = git(['show', '--name-status', '--format=', c.sha])
+          .split('\n')
+          .filter(Boolean)
+          .map((l) => l.split('\t') as [string, string]);
+      } catch {
+        console.warn(`! #${p.number}: red commit ${c.sha.slice(0, 7)} is not in local git; its files were not checked`);
+        continue;
+      }
+      const code = changed
+        .filter(([, f]) => !f.startsWith('tests/') && !RED_COMMIT_TOOLING[c.sha]?.includes(f))
+        .filter(([status, f]) => !(status === 'A' && isPlaceholder(status, git(['show', `${c.sha}:${f}`]))))
+        .map(([, f]) => f);
       if (code.length) early.push(`#${p.number}: red commit ${c.sha.slice(0, 7)} touches ${code.join(', ')}`);
     }
 
@@ -442,21 +562,21 @@ if (import.meta.main && replayAt >= 0) {
   } catch {}
   const throughSha = git(['merge-base', 'HEAD', 'origin/main']);
 
-  // A rerun with nothing new keeps the old timestamp, so the committed file only changes with the data.
+  // An unchanged story keeps the file byte for byte (nextStory), so the workflow proposes nothing.
   const out = resolve(root, 'src/data/build-story.json');
   let prev: Story | null = null;
   try {
     prev = JSON.parse(readFileSync(out, 'utf8'));
   } catch {}
-  const carried = carryCiVerdicts(prev, prs);
-  const same = prev && prev.throughSha === throughSha && JSON.stringify(prev.prs) === JSON.stringify(carried);
-  const story: Story = { repo: REPO, generatedAt: same ? prev!.generatedAt : new Date().toISOString(), throughSha, prs: carried };
+  const story = nextStory(prev, prs, throughSha, new Date().toISOString());
   const problems = [...early, ...validate(story)];
   if (problems.length) {
     console.error(problems.join('\n'));
     process.exit(1);
   }
   writeFileSync(out, JSON.stringify(story, null, 2) + '\n');
-  const s = computeStats(carried);
+  const s = computeStats(story.prs);
+  const pending = story.prs.filter((p) => p.pending).map((p) => `#${p.number}`);
   console.log(`✓ src/data/build-story.json: ${s.prs} PRs, ${s.redFirst} red-test-first, ${s.findings} findings, ${s.commits} commits`);
+  if (pending.length) console.log(`  pending notes: ${pending.join(', ')}`);
 }
