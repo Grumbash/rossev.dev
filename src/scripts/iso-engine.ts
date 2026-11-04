@@ -243,7 +243,8 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     const badgeEl = document.getElementById('iso-hud-badge');
     const textEl = document.getElementById('iso-hud-text');
     if (badgeEl) {
-      badgeEl.textContent = node.code;
+      // Under a guide the bar names the node the way the canvas labels do.
+      badgeEl.textContent = guide ? `${node.num} · ${node.short}` : node.code;
       badgeEl.style.background = node.top;
       badgeEl.style.color = node.top === '#FF5500' || node.top === '#FF3385' ? '#FFFFFF' : '#0A0A0A';
     }
@@ -1223,6 +1224,8 @@ export function initIsoArchitectureEngine(): IsoApi | null {
       const sc = nodeScreenCache[idx];
       if (!sc) return;
       if ((focusIdx >= 0 || spotlight) && !sc.isRelevant) return;
+      // A phone's overview has no room for eight labels: only the replay's cast (plan, builder, judge, sandbox).
+      if (width < 480 && focusIdx < 0 && !spotlight && ![0, 2, 3, 4].includes(idx)) return;
       if (activeStratum !== 'all' && node.stratum !== activeStratum) return;
 
       const text = `${node.num} · ${node.short}`;
@@ -1522,6 +1525,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     setGuide(g) {
       guide = g;
       if (!g) spotlight = null;
+      window.updateIsoHudText();
       ensureLoopRunning();
     },
     aim(target, zoom = 1.1, snap = false) {

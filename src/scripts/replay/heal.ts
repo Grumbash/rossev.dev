@@ -43,6 +43,9 @@ export function createHealer(weightsUrl: string) {
       strokes: [number, number, number, number][],
       onFrame: (idx: Uint8Array) => void
     ): Promise<{ mse: number } | null> {
+      // Taken before any await: a cancel() while the weights load or the GR grows must still win.
+      const mine = ++job;
+      const stale = () => mine !== job;
       ready ??= fetch(weightsUrl)
         .then((res) => {
           if (!res.ok) throw new Error(`weights: HTTP ${res.status}`);
@@ -55,9 +58,8 @@ export function createHealer(weightsUrl: string) {
           return { ca, grown: ca.rgba() };
         });
       const { ca, grown } = await ready;
-      const mine = ++job;
+      if (stale()) return null;
       for (const [x0, y0, x1, y1] of strokes) cut(ca, x0, y0, x1, y1);
-      const stale = () => mine !== job;
       if (!(await stepFor(ca, HEAL_STEPS, () => onFrame(quantize(ca.rgba())), stale))) return null;
       const rgba = ca.rgba();
       let sum = 0;
