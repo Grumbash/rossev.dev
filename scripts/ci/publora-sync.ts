@@ -56,7 +56,7 @@ export const MAX_CALLS = 80;
 const ACTIVITY = /(?:share|ugcPost|activity)[-:](\d{15,})/;
 
 /** The numeric activity id in a vanity url, a feed url or a URN; null when there is none. */
-export const activityId = (s: string) => String(s ?? '').match(ACTIVITY)?.[1] ?? null;
+export const activityId = (s: string | undefined) => String(s ?? '').match(ACTIVITY)?.[1] ?? null;
 
 /** UTC date of a LinkedIn snowflake id: the top bits are the ms timestamp. */
 export const publishedDate = (id: string) => new Date(Number(BigInt(id) >> 22n)).toISOString().slice(0, 10);
@@ -266,7 +266,10 @@ export function checkEntry(p: BlogPost): string[] {
   if (!/^post-\d+$/.test(a.id ?? '')) e.push('id: not post-<n>');
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(a.slug ?? '')) e.push('slug: not kebab-case');
   const id = activityId(a.url ?? '');
-  if (!isLinkedinUrl(a.url) || !id) e.push('url: not a LinkedIn post url with an activity id');
+  // No url: a hand-written post first published on the site, which then must carry its text.
+  if (a.url === undefined) {
+    if (a.body === undefined) e.push('url: none, so the post needs its full text in body');
+  } else if (!isLinkedinUrl(a.url) || !id) e.push('url: not a LinkedIn post url with an activity id');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(a.published ?? '')) e.push('published: not YYYY-MM-DD');
   else if (id && a.published !== publishedDate(id)) e.push(`published: ${a.published} but the LinkedIn id says ${publishedDate(id)}`);
   if (!CATEGORIES.includes(a.category)) e.push('category: unknown');
