@@ -108,7 +108,7 @@ If I edit the entry in the PR, the next run leaves the branch alone: it only rew
 
 ## Analytics
 
-Vercel Web Analytics and Speed Insights count pageviews and performance. Custom funnel events go to [Umami Cloud](https://cloud.umami.is) (free; Vercel Hobby has no custom events). The Umami script only loads when `PUBLIC_UMAMI_WEBSITE_ID` is set in the Vercel project env, and only reports on `rossev.dev`.
+Vercel Web Analytics and Speed Insights count pageviews and performance (plain `/_vercel/*/script.js` tags, see Security headers). Custom funnel events go to [Umami Cloud](https://cloud.umami.is) (free; Vercel Hobby has no custom events). The Umami script only loads when `PUBLIC_UMAMI_WEBSITE_ID` is set in the Vercel project env, and only reports on `rossev.dev`.
 
 To track a new control, declare the event and its props (max 2) in `EVENTS` in `src/scripts/analytics.ts`, then tag the element: `data-track="<event>"` plus `data-track-<prop>="<value>"`. One delegated click listener sends it, so HTMX partials work too. `bun test` fails on undeclared names or props.
 
@@ -138,6 +138,12 @@ Every cal.com link carries `?utm_source=rossev.dev&utm_medium=site&utm_content=<
 cal.com sends visitors to `/booked` after they book: event type → Advanced → Redirect on booking → `https://rossev.dev/booked/`, with "Forward parameters" on. Without forwarding there is no `uid` and no `utm_content`, so no `booking_confirmed` is sent. The forwarded query also carries the booking (email, name, phone, guests...). A classic inline script in the page's `<head>` keeps only whether a `uid` is present and the `utm_content` placement (`bookingSource()`), then strips the whole query before the deferred Umami and Vercel scripts read the URL. Vercel's server logs still see the full redirect URL. Reschedules are not counted: cal.com forwards the booking page's `rescheduleUid`, and a non-empty one means no event.
 
 Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` and `build-story` bookings start on `/writing/*` and `/how-its-built/` (and their `/ru/` twins), so a `/` (path) first step makes it a home-only funnel; prepend it only for that. A booking made from a `/ru/` page carries `lang=ru` (`calUrl`); `/booked/` forwards it to `/ru/booked/` before anything is tracked.
+
+## Security headers
+
+`vercel.json` sends them on every path: HSTS, `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin` (a Referer never carries a path or query, so the `/booked/` PII stays out of it), a `Permissions-Policy` that gives the microphone to this origin only, COOP, and a CSP. The CSP allows scripts from this origin, Umami Cloud and three inline scripts by their sha256 hash: the theme bootstrap in `Base.astro` and the `/booked` query strip (EN and RU). No `'unsafe-inline'`, no eval, no `blob:`. So markup has no `onclick=`: a control names its handler in `data-action` (plus `data-arg`), and `src/scripts/actions.ts` dispatches from one listener, only to the actions it lists. Vercel Analytics and Speed Insights load as plain `/_vercel/*/script.js` tags, and the VAD worklet is `public/vad/tap-worklet.js`.
+
+`tests/security-headers.test.ts` builds the site and fails when an inline script's hash is missing from `script-src` (it prints the hash to add) or a listed hash is no longer emitted. Changing the theme snippet or `bookingSource()` means updating `vercel.json` in the same PR.
 
 ## License
 
