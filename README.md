@@ -89,7 +89,7 @@ gh secret set PUBLORA_API_KEY --repo Grumbash/rossev.dev      # Publora → Sett
 gh secret set PUBLORA_SYNC_TOKEN --repo Grumbash/rossev.dev   # fine-grained PAT, see below
 ```
 
-`PUBLORA_SYNC_TOKEN` is a fine-grained personal access token for this repo only, with Contents and Pull requests set to read and write. It is needed because a PR opened with the default `GITHUB_TOKEN` does not trigger `perf.yml`, and the repo does not let GitHub Actions create PRs. Give it an expiry and rotate it like the OpenRouter key.
+`PUBLORA_SYNC_TOKEN` is a fine-grained personal access token for this repo only, with Contents and Pull requests set to read and write. It is needed because a PR opened with the default `GITHUB_TOKEN` does not trigger `perf.yml`, and the repo does not let GitHub Actions create PRs. Give it an expiry and rotate it like the OpenRouter key. It can write the repo, so it only ever reaches the `publish` job, which runs no package code: the `sync` job (packages, the sync, tests, build) hands it three files as an artifact, and the protect-main ruleset (PRs only, no bypass) keeps the token off `main`. `tests/ci.test.ts` holds every workflow to that.
 
 Run it now instead of waiting for the schedule:
 
