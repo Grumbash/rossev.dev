@@ -64,6 +64,18 @@ describe('vad demo state machine', () => {
     }
   });
 
+  test('leaving the page mid-run resets to idle, so a page restored from the back/forward cache works again', () => {
+    for (const busy of ['asking', 'loading', 'calibrating', 'listening'] as const) {
+      expect(next({ ...initial, phase: busy }, { type: 'stop' }, ok)).toEqual(initial);
+    }
+    expect(next({ ...initial, phase: 'detected', ms: 90 }, { type: 'stop' }, ok).phase).toBe('detected');
+  });
+
+  test('Save-Data and unsupported can be retried (the visitor may have changed the setting)', () => {
+    expect(next({ ...initial, phase: 'savedata' }, { type: 'start' }, ok).phase).toBe('asking');
+    expect(next({ ...initial, phase: 'unsupported' }, { type: 'start' }, ok).phase).toBe('asking');
+  });
+
   test('events out of order do nothing', () => {
     expect(next(initial, { type: 'onset', ms: 5 }, ok)).toEqual(initial);
     expect(next(initial, { type: 'loaded' }, ok)).toEqual(initial);

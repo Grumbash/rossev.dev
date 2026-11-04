@@ -106,6 +106,16 @@ describe('audio stays on the device', () => {
       expect({ f, hit: read(`src/scripts/vad/${f}`).match(NETWORK)?.[0] ?? null }).toEqual({ f, hit: null });
   });
 
+  test('the built worker has no network calls either', () => {
+    const workers = readdirSync('dist/_astro').filter((f) => f.startsWith('worker-') && read(join('dist/_astro', f)).includes('VAD weights'));
+    expect(workers.length).toBe(1);
+    expect(read(join('dist/_astro', workers[0]))).not.toMatch(NETWORK);
+  });
+
+  test('the progress percentage stays out of the screen-reader announcements', () => {
+    expect(read('dist/cases/sully/index.html')).toMatch(/<span data-vad-progress aria-hidden="true">/);
+  });
+
   test('the demo fetches exactly one thing: the weights, before any audio exists', () => {
     const demo = read('src/scripts/vad/demo.ts');
     expect(demo.match(/\bfetch\s*\(/g)?.length).toBe(1);

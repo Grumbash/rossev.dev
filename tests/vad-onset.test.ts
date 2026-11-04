@@ -69,6 +69,17 @@ describe('onset timer on a mocked VAD stream', () => {
     expect(onset!.voiceFrame).toBe(21);
   });
 
+  test('digital silence at the start of a mic stream does not pin the noise floor to zero', () => {
+    // Chrome and Safari often deliver exact zeros for the first few hundred ms.
+    const zeros: Frame[] = Array.from({ length: 8 }, () => ({ rms: 0, prob: 0.01, inferMs: 0.4 }));
+    const timer = createOnsetTimer();
+    for (const f of zeros) timer.push(f);
+    expect(timer.ready).toBe(false);
+    const onset = run([...zeros, ...quiet(60), { rms: 0.1, prob: 0.9, inferMs: 0.4 }]);
+    expect(onset!.voiceFrame).toBe(onset!.speechFrame);
+    expect(onset!.ms).toBeCloseTo(FRAME_MS + 0.4, 5);
+  });
+
   test('frameRms', () => {
     expect(frameRms(new Float32Array(512))).toBe(0);
     expect(frameRms(new Float32Array(512).fill(0.5))).toBeCloseTo(0.5, 6);
