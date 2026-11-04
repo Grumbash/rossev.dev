@@ -67,4 +67,5 @@ out.push(`Total cost: $${cost.toFixed(5)}`);
 
 const md = redact(out.join('\n') + '\n', [key]);
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, md);
-else console.log(md);
+// Also in the log: the summary is not readable from the gh CLI.
+console.log(md);
