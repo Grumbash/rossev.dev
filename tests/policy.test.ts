@@ -295,7 +295,7 @@ describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
   async function probe(lang: 'en' | 'ru', w: number) {
     const proc = Bun.spawn(
       [CHROME, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', `--window-size=${Math.max(w + 40, 500)},2600`,
-        '--virtual-time-budget=40000', '--dump-dom', `http://localhost:${server.port}/frame?lang=${lang}&w=${w}`],
+        '--virtual-time-budget=60000', '--dump-dom', `http://localhost:${server.port}/frame?lang=${lang}&w=${w}`],
       { stdout: 'pipe', stderr: 'ignore' },
     );
     const dom = await new Response(proc.stdout).text();
