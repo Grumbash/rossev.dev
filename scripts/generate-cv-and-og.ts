@@ -98,272 +98,353 @@ function generateLlmsTxt(): void {
 // ============================================================================
 // 2. GENERATE /public/gleb-rosev-cv.pdf FROM SINGLE SOURCE OF TRUTH + CANARY #42
 // ============================================================================
-function sanitizePdfText(input: string): string {
-  return input
-    .replace(/—/g, '--')
-    .replace(/–/g, '-')
-    .replace(/→/g, '->')
-    .replace(/▸/g, '>')
-    .replace(/·/g, '|')
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/[^\x20-\x7E]/g, '')
-    .replace(/\\/g, '\\\\')
-    .replace(/\(/g, '\\(')
-    .replace(/\)/g, '\\)');
+// A small flow-layout engine over the PDF base-14 fonts: text is measured with the Adobe AFM widths,
+// wrapped to the column, and paginated with a header and a footer band reserved on every page.
+// Text streams stay uncompressed WinAnsi, so the PDF is plain selectable text for an ATS.
+
+// Advance widths (1/1000 em) for WinAnsi 32..126, from the Adobe Helvetica / Helvetica-Bold AFM files.
+// prettier-ignore
+const HELVETICA = [
+  278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278, 556, 556, 556, 556, 556, 556, 556, 556,
+  556, 556, 278, 278, 584, 584, 584, 556, 1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778,
+  667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556, 333, 556, 556, 500, 556, 556, 278, 556,
+  556, 222, 222, 500, 222, 833, 556, 556, 556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584,
+];
+// prettier-ignore
+const HELVETICA_BOLD = [
+  278, 333, 474, 556, 556, 889, 722, 238, 333, 333, 389, 584, 278, 333, 278, 278, 556, 556, 556, 556, 556, 556, 556, 556,
+  556, 556, 333, 333, 584, 584, 584, 611, 975, 722, 722, 722, 722, 667, 611, 778, 722, 278, 556, 722, 611, 833, 722, 778,
+  667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 333, 278, 333, 584, 556, 333, 556, 611, 556, 611, 556, 333, 611,
+  611, 278, 278, 556, 278, 889, 611, 611, 611, 611, 389, 556, 333, 611, 556, 778, 556, 556, 500, 389, 280, 389, 584,
+];
+// The few typographic characters the CV uses outside ASCII: WinAnsi byte and width in each font.
+const WIN_ANSI_EXTRA: Record<string, { byte: number; regular: number; bold: number }> = {
+  '‘': { byte: 0x91, regular: 222, bold: 278 },
+  '’': { byte: 0x92, regular: 222, bold: 278 },
+  '“': { byte: 0x93, regular: 333, bold: 500 },
+  '”': { byte: 0x94, regular: 333, bold: 500 },
+  '•': { byte: 0x95, regular: 350, bold: 350 },
+  '–': { byte: 0x96, regular: 556, bold: 556 },
+  '—': { byte: 0x97, regular: 1000, bold: 1000 },
+  '·': { byte: 0xb7, regular: 278, bold: 278 },
+};
+
+// F1 = Helvetica, F2 = Helvetica-Bold, F3 = Courier-Bold (monospaced, 600 units per glyph).
+type Font = 'F1' | 'F2' | 'F3';
+type Rgb = [number, number, number];
+
+// Arrows have no WinAnsi glyph: "15s → 0s" reads as "15s to 0s". Anything else unknown fails the build.
+const normalizePdfText = (input: string) => input.replace(/\s*→\s*/g, ' to ');
+
+function glyphWidth(ch: string, font: Font): number {
+  if (font === 'F3') return 600;
+  const code = ch.charCodeAt(0);
+  if (code >= 32 && code <= 126) return (font === 'F2' ? HELVETICA_BOLD : HELVETICA)[code - 32];
+  const extra = WIN_ANSI_EXTRA[ch];
+  if (!extra) throw new Error(`CV PDF: no WinAnsi glyph for "${ch}" (U+${code.toString(16)})`);
+  return font === 'F2' ? extra.bold : extra.regular;
 }
 
-function wrapText(text: string, maxChars: number): string[] {
-  const words = text.split(/\s+/);
+function textWidth(text: string, font: Font, size: number): number {
+  let units = 0;
+  for (const ch of normalizePdfText(text)) units += glyphWidth(ch, font);
+  return (units * size) / 1000;
+}
+
+// A PDF literal string in WinAnsi bytes (latin1 when the file is written).
+function pdfString(text: string): string {
+  let out = '';
+  for (const ch of normalizePdfText(text)) {
+    glyphWidth(ch, 'F1');
+    const extra = WIN_ANSI_EXTRA[ch];
+    const c = extra ? String.fromCharCode(extra.byte) : ch;
+    out += c === '\\' || c === '(' || c === ')' ? `\\${c}` : c;
+  }
+  return out;
+}
+
+function wrapToWidth(text: string, font: Font, size: number, maxW: number): string[] {
   const lines: string[] = [];
   let current = '';
-  for (const w of words) {
-    if (!current) {
-      current = w;
-    } else if (current.length + 1 + w.length <= maxChars) {
-      current += ' ' + w;
-    } else {
+  for (const word of normalizePdfText(text).split(/\s+/).filter(Boolean)) {
+    const next = current ? `${current} ${word}` : word;
+    if (current && textWidth(next, font, size) > maxW) {
       lines.push(current);
-      current = w;
-    }
+      current = word;
+    } else current = next;
   }
   if (current) lines.push(current);
   return lines;
 }
 
+// Info dictionary strings use PDFDocEncoding, where the dashes sit at other bytes than in WinAnsi.
+const pdfDocString = (text: string) =>
+  normalizePdfText(text)
+    .replace(/—/g, '\x84')
+    .replace(/–/g, '\x85')
+    .replace(/[\\()]/g, (c) => `\\${c}`);
+
+const enDashRange = (period: string) => period.replace(/\s*—\s*/g, ' – ');
+
 function generatePdfCv(): void {
-  // Page dimensions: A4 (595.28 x 841.89 pt)
+  // A4 in points; all layout y values below are measured from the top of the page.
   const W = 595.28;
   const H = 841.89;
-  const marginX = 34;
+  const marginX = 46;
   const contentW = W - marginX * 2;
+  const bodyTop = 66; // where content starts on pages after the first
+  const footerBand = { top: H - 44, h: 24 };
+  const bodyBottom = footerBand.top - 16; // lowest baseline a body line may use
 
-  const ops: string[] = [];
+  const INK: Rgb = [0.07, 0.07, 0.08];
+  const MUTED: Rgb = [0.36, 0.36, 0.38];
+  const RULE: Rgb = [0.78, 0.76, 0.72];
+  const PAPER: Rgb = [0.973, 0.965, 0.945];
+  const DARK: Rgb = [0.05, 0.05, 0.07];
+  const LIME: Rgb = [0.784, 1.0, 0.0];
 
-  const drawRectFill = (x: number, yTop: number, w: number, h: number, r: number, g: number, b: number) => {
-    const pdfY = H - yTop - h;
-    ops.push(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg`);
-    ops.push(`${x.toFixed(2)} ${pdfY.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re f`);
+  const BODY = 9.5;
+  const LEADING = 13.4;
+
+  interface Link {
+    x: number;
+    yTop: number;
+    w: number;
+    h: number;
+    uri: string;
+  }
+  const pages: { ops: string[]; links: Link[] }[] = [];
+  let ops: string[] = [];
+  let links: Link[] = [];
+  let y = 0;
+
+  const rgb = (c: Rgb, op: 'rg' | 'RG') => `${c[0].toFixed(3)} ${c[1].toFixed(3)} ${c[2].toFixed(3)} ${op}`;
+  const fillRect = (x: number, yTop: number, w: number, h: number, c: Rgb) => {
+    ops.push(rgb(c, 'rg'));
+    ops.push(`${x.toFixed(2)} ${(H - yTop - h).toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re f`);
   };
-
-  const drawRectStroke = (
-    x: number,
-    yTop: number,
-    w: number,
-    h: number,
-    lineW: number,
-    r: number,
-    g: number,
-    b: number
-  ) => {
-    const pdfY = H - yTop - h;
+  const hRule = (yTop: number, c: Rgb, lineW = 0.6) => {
     ops.push(`${lineW.toFixed(2)} w`);
-    ops.push(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} RG`);
-    ops.push(`${x.toFixed(2)} ${pdfY.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re S`);
+    ops.push(rgb(c, 'RG'));
+    ops.push(`${marginX.toFixed(2)} ${(H - yTop).toFixed(2)} m ${(marginX + contentW).toFixed(2)} ${(H - yTop).toFixed(2)} l S`);
   };
-
-  const drawLine = (x1: number, y1Top: number, x2: number, y2Top: number, lineW: number, r: number, g: number, b: number) => {
-    ops.push(`${lineW.toFixed(2)} w`);
-    ops.push(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} RG`);
-    ops.push(`${x1.toFixed(2)} ${(H - y1Top).toFixed(2)} m ${x2.toFixed(2)} ${(H - y2Top).toFixed(2)} l S`);
-  };
-
-  // F1 = Helvetica, F2 = Helvetica-Bold, F3 = Courier-Bold
-  const drawText = (
-    text: string,
-    x: number,
-    yTop: number,
-    font: 'F1' | 'F2' | 'F3',
-    size: number,
-    r = 0.04,
-    g = 0.04,
-    b = 0.04
-  ) => {
-    const pdfY = H - yTop;
+  // One text object per run, at a baseline measured from the top. Returns the run's width.
+  const text = (s: string, x: number, baseline: number, font: Font, size: number, c: Rgb = INK, uri?: string) => {
     ops.push('BT');
     ops.push(`/${font} ${size.toFixed(2)} Tf`);
-    ops.push(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg`);
-    ops.push(`${x.toFixed(2)} ${pdfY.toFixed(2)} Td`);
-    ops.push(`(${sanitizePdfText(text)}) Tj`);
+    ops.push(rgb(c, 'rg'));
+    ops.push(`${x.toFixed(2)} ${(H - baseline).toFixed(2)} Td`);
+    ops.push(`(${pdfString(s)}) Tj`);
     ops.push('ET');
+    const w = textWidth(s, font, size);
+    if (x + w > marginX + contentW + 0.5) throw new Error(`CV PDF: "${s}" runs past the right margin`);
+    if (uri) links.push({ x, yTop: baseline - size * 0.8, w, h: size * 1.05, uri });
+    return w;
+  };
+  const textRight = (s: string, right: number, baseline: number, font: Font, size: number, c: Rgb = INK) =>
+    text(s, right - textWidth(s, font, size), baseline, font, size, c);
+
+  const newPage = () => {
+    ops = [];
+    links = [];
+    pages.push({ ops, links });
+    fillRect(0, 0, W, H, PAPER);
+    if (pages.length > 1) {
+      // Running head: who and where, so a printed page 2 stands on its own.
+      text(`${PROFILE.name.en} — CV`, marginX, 38, 'F2', 8.5, INK);
+      textRight('rossev.dev', marginX + contentW, 38, 'F1', 8.5, MUTED);
+      hRule(44, RULE);
+      y = bodyTop;
+    }
+  };
+  // Keep a block together: start a new page when it would cross into the footer band.
+  const ensure = (height: number) => {
+    if (y + height > bodyBottom) newPage();
   };
 
-  // Paper background (#F8F6F1)
-  drawRectFill(0, 0, W, H, 0.973, 0.965, 0.945);
+  // ---------- Page 1 header ----------
+  newPage();
+  const headTop = 34;
+  const headH = 82;
+  fillRect(marginX, headTop, contentW, headH, DARK);
+  fillRect(marginX, headTop, 6, headH, LIME);
+  const headX = marginX + 20;
+  text(PROFILE.name.en.toUpperCase(), headX, headTop + 30, 'F2', 22, PAPER);
+  text(`Founding Engineer, AI Agents · YAGNI (yagni.app) · ${PROFILE.location.en}`, headX, headTop + 48, 'F1', 10.5, LIME);
+  const contacts: { label: string; uri?: string }[] = [
+    { label: PROFILE.email, uri: `mailto:${PROFILE.email}` },
+    { label: PROFILE.phone },
+    { label: PROFILE.linkedinHandle, uri: PROFILE.linkedin },
+    { label: PROFILE.githubHandle, uri: PROFILE.github },
+    { label: 'rossev.dev', uri: 'https://rossev.dev' },
+  ];
+  let cx = headX;
+  const contactBase = headTop + 67;
+  contacts.forEach((c, i) => {
+    if (i > 0) cx += text('·', cx + 5, contactBase, 'F1', 8.5, [0.55, 0.55, 0.58]) + 10;
+    cx += text(c.label, cx, contactBase, 'F1', 8.5, [0.88, 0.88, 0.86], c.uri);
+  });
+  y = headTop + headH + 26;
 
-  // Brutalist Header Banner (#0A0A0A with #C8FF00 accent strip)
-  drawRectFill(marginX, 22, contentW, 66, 0.04, 0.04, 0.05);
-  drawRectFill(marginX, 22, 8, 66, 0.784, 1.0, 0.0); // Lime accent bar
-
-  // Name & Role in Header
-  drawText('GLEB ROSEV', marginX + 18, 44, 'F2', 19, 0.96, 0.95, 0.92);
-  drawRectFill(marginX + 150, 30, 214, 15, 0.784, 1.0, 0.0);
-  drawText('FOUNDING ENGINEER, AI AGENTS', marginX + 155, 41, 'F3', 8.5, 0.04, 0.04, 0.04);
-
-  drawText(
-    'YAGNI (yagni.app)  |  Making AI agent teams dependable in production, not just impressive in a demo.',
-    marginX + 18,
-    59,
-    'F1',
-    8.6,
-    0.0,
-    0.898,
-    1.0
-  );
-
-  const contactStrip = `${PROFILE.email}  |  ${PROFILE.phone}  |  ${PROFILE.linkedinHandle}  |  ${PROFILE.githubHandle}  |  Tbilisi, Georgia`;
-  drawText(contactStrip, marginX + 18, 76, 'F3', 6.8, 0.88, 0.88, 0.88);
-
-  let y = 102;
-
-  // Section helper
-  const drawSectionHeader = (kicker: string, title: string, accentR: number, accentG: number, accentB: number) => {
-    drawRectFill(marginX, y, contentW, 15, 0.91, 0.89, 0.85);
-    drawRectFill(marginX, y, 6, 15, accentR, accentG, accentB);
-    drawRectStroke(marginX, y, contentW, 15, 1.0, 0.04, 0.04, 0.04);
-    drawText(`${kicker} // ${title}`, marginX + 12, y + 10.8, 'F2', 8.5, 0.04, 0.04, 0.04);
-    y += 23;
+  // ---------- Building blocks ----------
+  const section = (title: string) => {
+    ensure(22 + LEADING * 3);
+    fillRect(marginX, y - 8, 7, 7, LIME);
+    text(title.toUpperCase(), marginX + 13, y, 'F2', 10.5, INK);
+    hRule(y + 5, INK, 0.8);
+    y += 20;
+  };
+  const paragraph = (s: string, x: number, width: number, font: Font, size: number, c: Rgb, leading: number) => {
+    for (const line of wrapToWidth(s, font, size, width)) {
+      text(line, x, y, font, size, c);
+      y += leading;
+    }
+  };
+  const bulletIndent = 12;
+  const bulletLines = (s: string) => wrapToWidth(s, 'F1', BODY, contentW - bulletIndent);
+  const bullet = (s: string) => {
+    const lines = bulletLines(s);
+    ensure(lines.length * LEADING);
+    lines.forEach((line, i) => {
+      if (i === 0) text('•', marginX + 2, y, 'F1', BODY, INK);
+      text(line, marginX + bulletIndent, y, 'F1', BODY, INK);
+      y += LEADING;
+    });
+    y += 1.5;
   };
 
-  // 01. EXECUTIVE SUMMARY
-  drawSectionHeader('01', 'EXECUTIVE SUMMARY & OPERATING MODEL', 0.784, 1.0, 0.0);
-  const bioLines = wrapText(`${PROFILE.bio.en} ${PROFILE.medToAiStory.en}`, 108);
-  for (const line of bioLines) {
-    drawText(line, marginX + 4, y, 'F1', 8.2, 0.08, 0.08, 0.08);
-    y += 10.5;
-  }
-  y += 5;
+  // ---------- Summary ----------
+  section('Summary');
+  paragraph(`${PROFILE.bio.en} ${PROFILE.medToAiStory.en}`, marginX, contentW, 'F1', BODY, INK, LEADING);
+  y += 12;
 
-  // 02. PRODUCTION EXPERIENCE (Synchronized with EXPERIENCE array in profile.ts)
-  drawSectionHeader('02', 'EXPERIENCE & PRODUCTION SYSTEMS IMPACT', 0.0, 0.898, 1.0);
+  // ---------- Experience ----------
+  section('Experience');
+  EXPERIENCE.forEach((exp, idx) => {
+    const domainLines = wrapToWidth(exp.domain.en, 'F1', 9, contentW);
+    const focus = exp.metrics.join(' · ');
+    const focusLines = wrapToWidth(focus, 'F2', 8.5, contentW);
+    const firstBullet = bulletLines(exp.highlights.en[0] ?? '').length;
+    // Role, company, context and the first bullet never split from each other.
+    ensure(14 + 13 + domainLines.length * 12 + focusLines.length * 12 + firstBullet * LEADING + 4);
 
-  for (const exp of EXPERIENCE) {
-    // Role + Company Header Row
-    drawRectFill(marginX + 2, y - 8, 4, 10, 0.04, 0.04, 0.04);
-    drawText(`${exp.role.en}  @  ${exp.company}`, marginX + 10, y, 'F2', 9.0, 0.04, 0.04, 0.04);
-    const sanitizedMeta = sanitizePdfText(`${exp.period.en} | ${exp.location.en}`);
-    const metaFontSize = 6.8;
-    const metaWidth = sanitizedMeta.length * (metaFontSize * 0.6);
-    drawText(`${exp.period.en} | ${exp.location.en}`, W - marginX - metaWidth - 2, y, 'F3', metaFontSize, 0.25, 0.25, 0.25);
-    y += 10.5;
+    text(exp.role.en, marginX, y, 'F2', 10.5, INK);
+    textRight(enDashRange(exp.period.en), marginX + contentW, y, 'F1', 9, MUTED);
+    y += 14;
+    const companyW = text(exp.company, marginX, y, 'F2', 9.5, INK, exp.url);
+    text(exp.location.en, marginX + companyW + 8, y, 'F1', 9, MUTED);
+    y += 13;
+    paragraph(exp.domain.en, marginX, contentW, 'F1', 9, MUTED, 12);
+    paragraph(focus, marginX, contentW, 'F2', 8.5, MUTED, 12);
+    y += 4;
+    for (const h of exp.highlights.en) bullet(h);
+    if (idx < EXPERIENCE.length - 1) y += 9;
+  });
+  y += 12;
 
-    // Domain + Metrics line
-    const domainStr = `${exp.domain.en}  [${exp.metrics.join(' / ')}]`;
-    const domainLines = wrapText(domainStr, 114);
-    for (const dLine of domainLines) {
-      drawText(dLine, marginX + 10, y, 'F1', 7.6, 0.22, 0.22, 0.22);
-      y += 9.5;
-    }
-
-    // Bullets
-    for (const bullet of exp.highlights.en) {
-      const bLines = wrapText(bullet, 108);
-      bLines.forEach((bLine, idx) => {
-        const prefix = idx === 0 ? '> ' : '  ';
-        drawText(prefix + bLine, marginX + 12, y, 'F1', 7.8, 0.06, 0.06, 0.06);
-        y += 9.4;
-      });
-    }
-    y += 5.5;
-  }
-
-  // 03. CORE TECHNICAL CAPABILITIES
-  drawSectionHeader('03', 'CORE CAPABILITIES & STACK MATRIX', 1.0, 0.839, 0.0);
+  // ---------- Skills ----------
+  section('Skills');
+  const labelW = 150;
   for (const cap of CAPABILITIES) {
-    const capLine = `${cap.title.en}: `;
-    drawText(capLine, marginX + 4, y, 'F2', 7.8, 0.04, 0.04, 0.04);
-    const skillsStr = cap.skills.join('  |  ');
-    const wrappedSkills = wrapText(skillsStr, 92);
-    wrappedSkills.forEach((sLine, idx) => {
-      drawText(sLine, marginX + (idx === 0 ? 148 : 148), y, 'F1', 7.6, 0.12, 0.12, 0.12);
-      y += 9.5;
+    const lines = wrapToWidth(cap.skills.join(' · '), 'F1', BODY, contentW - labelW);
+    ensure(lines.length * LEADING);
+    text(cap.title.en, marginX, y, 'F2', 8.5, INK);
+    for (const line of lines) {
+      text(line, marginX + labelW, y, 'F1', BODY, INK);
+      y += LEADING;
+    }
+    y += 3;
+  }
+  y += 12;
+
+  // ---------- Education & Languages ----------
+  section('Education & Languages');
+  ensure(LEADING * 3);
+  text('Belarusian State University', marginX, y, 'F2', 10, INK);
+  textRight('2015 – 2019', marginX + contentW, y, 'F1', 9, MUTED);
+  y += LEADING;
+  text('Medicine (medical degree)', marginX, y, 'F1', BODY, INK);
+  y += LEADING + 4;
+  const langW = text('Languages:', marginX, y, 'F2', BODY, INK);
+  const langs = PROFILE.languages.map((l) => l.en.replace(/\s*·\s*(.+)$/, ' ($1)')).join(', ');
+  text(langs, marginX + langW + 5, y, 'F1', BODY, INK);
+  y += LEADING;
+
+  // ---------- Footer band on every page ----------
+  // Page 1 says where the CV comes from; the last page carries canary #42 for whoever read this far.
+  pages.forEach((page, i) => {
+    ops = page.ops;
+    links = page.links;
+    fillRect(marginX, footerBand.top, contentW, footerBand.h, DARK);
+    fillRect(marginX, footerBand.top, 6, footerBand.h, LIME);
+    const base = footerBand.top + 15;
+    const last = i === pages.length - 1;
+    const note = last
+      ? 'Canary #42: one source for this PDF, rossev.dev and /llms.txt. Read this far? Say “canary #42” when we talk.'
+      : 'COMPILED FROM SRC/DATA/PROFILE.TS · AI CONTEXT: ROSSEV.DEV/LLMS.TXT';
+    const noteFont: Font = last ? 'F1' : 'F3';
+    const pageLabel = `${i + 1} / ${pages.length}`;
+    const room = contentW - 30 - textWidth(pageLabel, 'F1', 7.5) - 12;
+    if (textWidth(note, noteFont, 7.5) > room) throw new Error('CV PDF: footer note does not fit its band');
+    text(note, marginX + 16, base, noteFont, 7.5, last ? [0.86, 0.88, 0.9] : LIME);
+    textRight(pageLabel, marginX + contentW - 12, base, 'F1', 7.5, [0.6, 0.62, 0.66]);
+  });
+  if (pages.length > 2) console.warn(`⚠ CV PDF runs to ${pages.length} pages; the target is 2. Trim src/data/profile.ts.`);
+
+  // ---------- Assemble PDF 1.4 ----------
+  // Object numbers: 1 catalog, 2 pages, 3-5 fonts, 6 info, then per page: page, contents, link annots.
+  const objects: string[] = [];
+  const pageIds: number[] = [];
+  let nextId = 7;
+  const pageObjects: string[] = [];
+  for (const page of pages) {
+    const pageId = nextId++;
+    const contentId = nextId++;
+    const annotIds = page.links.map(() => nextId++);
+    pageIds.push(pageId);
+    const stream = Buffer.from(page.ops.join('\n'), 'latin1');
+    const annots = annotIds.length ? ` /Annots [${annotIds.map((id) => `${id} 0 R`).join(' ')}]` : '';
+    pageObjects.push(
+      `${pageId} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W.toFixed(2)} ${H.toFixed(2)}] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents ${contentId} 0 R${annots} >>\nendobj`
+    );
+    pageObjects.push(`${contentId} 0 obj\n<< /Length ${stream.length} >>\nstream\n${stream.toString('latin1')}\nendstream\nendobj`);
+    page.links.forEach((l, k) => {
+      const rect = [l.x, H - l.yTop - l.h, l.x + l.w, H - l.yTop].map((v) => v.toFixed(2)).join(' ');
+      pageObjects.push(
+        `${annotIds[k]} 0 obj\n<< /Type /Annot /Subtype /Link /Rect [${rect}] /Border [0 0 0] /A << /S /URI /URI (${pdfString(l.uri)}) >> >>\nendobj`
+      );
     });
   }
-  y += 4;
-
-  // 04. EDUCATION & LANGUAGES
-  drawSectionHeader('04', 'EDUCATION & LANGUAGES', 1.0, 0.333, 0.0);
-  drawText(
-    'Belarusian State University -- Medicine (2015 -- 2019)    |    Languages: English (C1 Advanced)  /  Russian (Native)',
-    marginX + 4,
-    y,
-    'F2',
-    8.1,
-    0.04,
-    0.04,
-    0.04
-  );
-  y += 14;
-
-  // ==========================================================================
-  // 05. CANARY #42 FOOTER (VISIBLE STRIP)
-  // ==========================================================================
-  const footerY = H - 38;
-  drawRectFill(marginX, footerY, contentW, 22, 0.05, 0.05, 0.07);
-  drawRectFill(marginX, footerY, 6, 22, 0.784, 1.0, 0.0);
-  drawText(
-    'AUTO-COMPILED FROM SRC/DATA/PROFILE.TS  //  CANARY #42  //  AI CONTEXT: /LLMS.TXT',
-    marginX + 12,
-    footerY + 9.5,
-    'F3',
-    6.9,
-    0.784,
-    1.0,
-    0.0
-  );
-  drawText(
-    'One source for this PDF, rossev.dev and /llms.txt. Read this far? You found canary #42: say it when we talk.',
-    marginX + 12,
-    footerY + 18,
-    'F1',
-    6.5,
-    0.75,
-    0.78,
-    0.82
-  );
-
-  // Outer Neo-Brutalist page frame
-  drawLine(marginX, 22, marginX + contentW, 22, 1.5, 0.04, 0.04, 0.04);
-
-  const contentStream = ops.join('\n');
-  const streamBytes = Buffer.from(contentStream, 'ascii');
-
-  // Assemble PDF 1.4 objects with exact byte offsets
-  const objects: string[] = [];
   objects.push('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj');
-  objects.push('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj');
+  objects.push(`2 0 obj\n<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pages.length} >>\nendobj`);
+  objects.push('3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj');
+  objects.push('4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\nendobj');
+  objects.push('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>\nendobj');
   objects.push(
-    `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W.toFixed(2)} ${H.toFixed(2)}] /Resources << /Font << /F1 4 0 R /F2 5 0 R /F3 6 0 R >> >> /Contents 7 0 R >>\nendobj`
-  );
-  objects.push('4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj');
-  objects.push('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\nendobj');
-  objects.push('6 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>\nendobj');
-  objects.push(`7 0 obj\n<< /Length ${streamBytes.length} >>\nstream\n${contentStream}\nendstream\nendobj`);
-  objects.push(
-    `8 0 obj\n<< /Title (Gleb Rosev - Founding Engineer, AI Agents @ YAGNI) /Author (Gleb Rosev) /Subject (${sanitizePdfText(
+    `6 0 obj\n<< /Title (${pdfDocString(`${PROFILE.name.en} — Founding Engineer, AI Agents @ YAGNI`)}) /Author (${PROFILE.name.en}) /Subject (${pdfDocString(
       CANARY_TEXT
-    )}) /Keywords (Gleb Rosev, Founding Engineer, YAGNI, yagni.app, Sully.ai, AI Agents, Agent Benchmarks, Voice AI, TypeScript, Canary #42) /Creator (Programmatic TypeScript CV Compiler - src/data/profile.ts) /Producer (Gleb Rosev Neo-Brutalist PDF Engine v2.0) >>\nendobj`
+    )}) /Keywords (Gleb Rosev, Founding Engineer, YAGNI, yagni.app, Sully.ai, AI Agents, Agent Benchmarks, Voice AI, TypeScript, Canary #42) /Creator (Programmatic TypeScript CV Compiler - src/data/profile.ts) /Producer (rossev.dev CV compiler) >>\nendobj`
   );
+  objects.push(...pageObjects);
 
   let pdf = '%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';
   const offsets: number[] = [];
-
   for (const obj of objects) {
-    offsets.push(Buffer.byteLength(pdf, 'binary'));
+    offsets.push(Buffer.byteLength(pdf, 'latin1'));
     pdf += obj + '\n';
   }
 
-  const xrefOffset = Buffer.byteLength(pdf, 'binary');
+  const xrefOffset = Buffer.byteLength(pdf, 'latin1');
   pdf += `xref\n0 ${objects.length + 1}\n`;
   pdf += '0000000000 65535 f \n';
   for (const off of offsets) {
     pdf += `${String(off).padStart(10, '0')} 00000 n \n`;
   }
 
-  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R /Info 8 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R /Info 6 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
 
-  writeFileSync(resolve(PUBLIC_DIR, 'gleb-rosev-cv.pdf'), Buffer.from(pdf, 'binary'));
-  console.log('✓ Generated public/gleb-rosev-cv.pdf from src/data/profile.ts (with canary #42)');
+  writeFileSync(resolve(PUBLIC_DIR, 'gleb-rosev-cv.pdf'), Buffer.from(pdf, 'latin1'));
+  console.log(`✓ Generated public/gleb-rosev-cv.pdf from src/data/profile.ts (${pages.length} pages, with canary #42)`);
 }
 
 // ============================================================================
