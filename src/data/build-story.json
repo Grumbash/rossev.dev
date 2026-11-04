@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-04T20:32:23.686Z",
-  "throughSha": "ec73acd073e051d52cd41fff46b31d87b0dceb98",
+  "generatedAt": "2026-11-04T21:12:27.386Z",
+  "throughSha": "4c401bb52a3adec68f7d835e428fb22d50bd83b0",
   "prs": [
     {
       "number": 1,
@@ -1956,6 +1956,50 @@
           "subject": "The build story refreshes again: a placeholder stub needs only the \"Not implemented yet\" marker (#27), the round-1 NCA weights are a named test fixture (#32), and code in a red commit is a warning that drops that PR's red-test-first instead of failing the whole refresh (#31)",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/c9d2a40fbf10093ba6d501f06066d7a3a604a8ef"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 41,
+      "title": "Publora sync: check out main with full history",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/41",
+      "mergedAt": "2026-11-04T20:53:20Z",
+      "branch": "claude/publora-sync-full-history",
+      "additions": 28,
+      "deletions": 16,
+      "changedFiles": 3,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "5cb5f3e9fdffd4df6a38a6289a5132a9281666cd",
+          "subject": "The Publora sync checks out main with full history: bun test reads old commits (build story, replay), and a shallow clone failed the bot's run before it could open its PR",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5cb5f3e9fdffd4df6a38a6289a5132a9281666cd"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 42,
+      "title": "Posts written on the site, distributed through Publora drafts",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/42",
+      "mergedAt": "2026-11-04T20:57:01Z",
+      "branch": "claude/writing-source",
+      "additions": 875,
+      "deletions": 16,
+      "changedFiles": 5,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "0691170c9cdc3fd1f1b7a0c66d7bacf704775049",
+          "subject": "Posts written on the site: src/content/writing/<slug>.md (title, category, distribute, text in English or Russian) gets the other language, the brief and a Publora draft from a bot commit on its PR, and the Publora sync links the LinkedIn copy by its draft id",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/0691170c9cdc3fd1f1b7a0c66d7bacf704775049"
         }
       ],
       "findings": [],
