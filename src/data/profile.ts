@@ -68,6 +68,9 @@ export interface BlogPost {
   // Optional longer text for the post page only. A small Markdown subset: see ./post-body.ts.
   body?: { en: string; ru: string };
   color: string;
+  // The Publora draft of a post written in src/content/writing (scripts/ci/writing.ts): when it
+  // goes out on LinkedIn, the Publora sync gives the post its url instead of adding a second entry.
+  publora?: string;
 }
 
 // "30-SEC BRIEF · 3-MIN ORIGINAL": what the reader gets here vs. on LinkedIn. With a body the
