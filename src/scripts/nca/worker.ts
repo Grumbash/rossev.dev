@@ -24,8 +24,9 @@ export type FromWorker =
 const STEPS_PER_SECOND = 40;
 const TICK_MS = 1000 / 30;
 const MAX_STEPS_PER_TICK = 4; // a slow device grows slower instead of falling behind
-// The loop runs until the healer (./healer.ts) sees the pattern stop changing (a bite
-// ~300 steps, a large loss up to ~2500) and then rests until the next bite or reset.
+// The loop runs until the healer (./healer.ts) settles: a bite or cut ~200–450 steps, a
+// loss too large to heal is given up by step 380 and regrown (~400–800 more), and then it
+// rests until the next bite or reset.
 const GROWN_STEPS = 300;
 // The page shows a notice for 2.5 s; no second one while it is up.
 const NOTICE_MS = 3000;
