@@ -82,6 +82,16 @@ describe('generator (pure functions on real gh output)', () => {
     ).toEqual(['a'.repeat(40), 'c'.repeat(40), 'b'.repeat(40), '3'.repeat(40), '4'.repeat(40)]);
   });
 
+  // GitHub keeps each PR's commits and branch name as they were; the page shows main's history.
+  test('a commit with a twin on main takes its subject too, and an entry stores no branch name', async () => {
+    const { onMain, toEntry } = await gen();
+    const main = [{ sha: 'a'.repeat(40), authoredAt: '2026-11-03T20:00:00+04:00', subject: "Merge remote-tracking branch 'origin/main' into neural-ca" }];
+    const [c] = onMain([{ oid: '1'.repeat(40), messageHeadline: "Merge remote-tracking branch 'origin/main' into old/neural-ca", messageBody: '', authoredDate: '2026-11-03T16:00:00Z' }], main);
+    expect(c).toMatchObject({ oid: 'a'.repeat(40), messageHeadline: main[0].subject });
+    expect('branch' in toEntry(fixture(18), undefined, REPO)).toBe(false);
+    expect(JSON.parse(readFileSync('src/data/build-story.json', 'utf8')).prs.filter((p: any) => 'branch' in p)).toEqual([]);
+  });
+
   test('a PR from a bot/ branch is not a story entry either', async () => {
     const { isBookkeeping } = await gen();
     const pr = (headRefName: string, paths: string[]) => ({ headRefName, files: paths.map((path) => ({ path })) });
