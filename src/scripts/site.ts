@@ -1,4 +1,4 @@
-// Global helpers every page's markup calls from onclick: theme, URL params, clipboard; and the
+// Global helpers every page's markup calls through data-action (scripts/actions.ts): theme, URL params, clipboard; and the
 // language links, which carry the current ?query and #anchor over to the other locale's page.
 // The no-flash theme bootstrap stays inline in Base.astro's <head>; this runs as a module.
 declare global {

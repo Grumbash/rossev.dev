@@ -1,0 +1,98 @@
+{
+  "pr": 11,
+  "label": {
+    "en": "Replay of a real agent run on this site · PR #11",
+    "ru": "Повтор реального прогона агентов на этом сайте · PR #11"
+  },
+  "url": "https://github.com/Grumbash/rossev.dev/pull/11",
+  "mergedAt": "2026-11-03T20:56:01Z",
+  "events": [
+    {
+      "t": "2026-11-03T20:14:13+04:00",
+      "kind": "plan",
+      "node": 0,
+      "sha": "6151777add1a736c719b97cef9adf95b434208ff",
+      "caption": {
+        "en": "Plan: a failing test first. GR grows from one cell and regrows after a bite",
+        "ru": "План: сначала падающий тест. GR растёт из одной клетки и отрастает после укуса"
+      }
+    },
+    {
+      "t": "2026-11-03T23:43:36+04:00",
+      "kind": "diff",
+      "node": 2,
+      "sha": "7f6064e500dfd45c1268f82e4d13912fb4b5d087",
+      "caption": {
+        "en": "The builder writes the model: each cell senses its neighbours, then updates",
+        "ru": "Builder пишет модель: каждая клетка ощущает соседей и обновляется"
+      },
+      "lines": [
+        "p[c * 3] = state[base + c];",
+        "p[c * 3 + 1] = (tr + 2 * r + br - tl - 2 * l - bl) / 8;",
+        "p[c * 3 + 2] = (bl + 2 * b + br - tl - 2 * t - tr) / 8;",
+        "if (this.rng() < this.fireRate) this.update(cell, next);",
+        "if (region[cell] && !(preAlive[cell] && postAlive[cell])) next.fill(0, cell * ch, (cell + 1) * ch);"
+      ]
+    },
+    {
+      "t": "2026-11-03T23:43:36+04:00",
+      "kind": "test",
+      "node": 4,
+      "sha": "7f6064e500dfd45c1268f82e4d13912fb4b5d087",
+      "testsAt": "6151777add1a736c719b97cef9adf95b434208ff",
+      "caption": {
+        "en": "The sandbox runs the checks: all green, but they only test round bites",
+        "ru": "Песочница гоняет проверки: всё зелёное, но проверяются только круглые укусы"
+      },
+      "lines": [
+        "grows GR from a single seed cell",
+        "regrows after a bite out of the centre",
+        "regrows after a bite out of the left edge",
+        "stays stable long after it has grown"
+      ]
+    },
+    {
+      "t": "2026-11-03T23:43:36+04:00",
+      "kind": "catch",
+      "node": 3,
+      "sha": "7f6064e500dfd45c1268f82e4d13912fb4b5d087",
+      "reproduced": true,
+      "caption": {
+        "en": "The judge catches it: after a vertical cut the G grows back as an R",
+        "ru": "Судья ловит ошибку: после вертикального разреза G отрастает как R"
+      }
+    },
+    {
+      "t": "2026-11-03T23:43:36+04:00",
+      "kind": "fix",
+      "node": 4,
+      "sha": "662bf5800a68368eae63308271d2947c92cd2d94",
+      "lines": [
+        "a vertical cut between the letters"
+      ],
+      "caption": {
+        "en": "The catch becomes a red test: heal drag strokes, not only round bites",
+        "ru": "Находка становится красным тестом: заживать после штрихов, а не только укусов"
+      }
+    },
+    {
+      "t": "2026-11-03T23:43:36+04:00",
+      "kind": "fix",
+      "node": 2,
+      "sha": "7f6064e500dfd45c1268f82e4d13912fb4b5d087",
+      "caption": {
+        "en": "Retrained on strokes from the start: the cut heals and the G stays a G",
+        "ru": "Сеть переобучена на штрихах с нуля: разрез заживает, G остаётся G"
+      }
+    },
+    {
+      "t": "2026-11-03T20:56:01Z",
+      "kind": "merge",
+      "node": 0,
+      "caption": {
+        "en": "Merged, with the known limit written down",
+        "ru": "Смержено в main, известное ограничение записано"
+      }
+    }
+  ]
+}

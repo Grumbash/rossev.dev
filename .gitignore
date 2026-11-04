@@ -23,3 +23,9 @@ dist/
 
 # Publora sync scratch (PR body)
 .publora/
+
+# Build-story refresh scratch (PR body)
+.build-story/
+
+# home-flat test: scratch copy of the site with long fixture posts
+.home-flat/

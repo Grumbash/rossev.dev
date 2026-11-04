@@ -99,7 +99,7 @@ describe('runtime (initAnalytics)', () => {
     };
     return e;
   };
-  // Capture listeners, then the element's own onclick, then bubble listeners.
+  // Capture listeners, then the data-action handler (registered first), then the analytics bubble listener.
   const dispatch = (type: string, event: any, onclick?: () => void) => {
     for (const l of docListeners[type] ?? []) if (l.capture) l.fn(event);
     onclick?.();
@@ -298,12 +298,13 @@ describe('built markup', () => {
       expect(t.attrs['data-track']).toBe('post_open');
       expect(`/partials/${t.attrs['data-track-id']}`).toBe(t.attrs['hx-get'].replace('post-post-', 'post-'));
     }
-    expect(tracked(grid, 'post_linkedin').length).toBe(opens.length);
+    // Home cards lead to the post on the site; LinkedIn is linked from the brief and the post page.
+    expect(tracked(grid, 'post_linkedin').length).toBe(0);
     expect(values(tracked(reader, 'post_linkedin'), 'id')).toEqual(['post-3']);
   });
 
   test('every topology control is tracked with an action', () => {
-    const topo = page.filter((t) => /window\.(setIso|triggerIso|toggleIso|resetIso|fireIso|stepIso|openDomainBlueprint)/.test(t.attrs.onclick ?? ''));
+    const topo = page.filter((t) => /^(setIso|triggerIso|toggleIso|resetIso|fireIso|stepIso|openDomainBlueprint)/.test(t.attrs['data-action'] ?? ''));
     expect(topo.length).toBeGreaterThan(5);
     for (const t of topo) {
       expect(t.attrs['data-track']).toBe('topology_interact');

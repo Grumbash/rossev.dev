@@ -4,7 +4,7 @@
 // the diff is untrusted input, so the model gets no tools, its answer is rendered as inert
 // text, the job has minimal permissions, and the key is read only from the repo secret.
 import { describe, expect, test } from 'bun:test';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import {
   MARKER,
   buildMessages,
@@ -440,4 +440,48 @@ describe('the gate moved from pre-push to CI', () => {
     expect(readme).not.toMatch(/There's no CI/);
     expect(readme).not.toContain('pre-push');
   });
+});
+
+// The bot PAT (PUBLORA_SYNC_TOKEN) can write this repo. A job that installs or runs the lockfile's
+// packages may run a compromised one, and with passwordless sudo on the runner that code owns the
+// whole VM (git, gh, hooks). So the PAT lives only in jobs that run no package code at all, on a
+// fresh VM, and the GITHUB_TOKEN never gets contents: write.
+describe('every workflow keeps the write token away from package code', () => {
+  const dir = '.github/workflows';
+  const files = readdirSync(dir).filter((f) => /\.ya?ml$/.test(f));
+  const parse = (f: string) => Bun.YAML.parse(readFileSync(`${dir}/${f}`, 'utf8')) as any;
+  const PACKAGE_CODE = /\b(bun|bunx|npm|npx|node|yarn|pnpm)\b/;
+  const SAFE_USES = /^actions\/(checkout|download-artifact)@[0-9a-f]{40}$/;
+
+  test('there are workflows to check', () => {
+    expect(files.length).toBeGreaterThan(0);
+  });
+
+  for (const f of files) {
+    const wf = parse(f);
+    const jobs = Object.entries(wf.jobs ?? {}) as [string, any][];
+
+    test(`${f}: a job with PUBLORA_SYNC_TOKEN runs no package code and uses only checkout and download-artifact`, () => {
+      for (const [, job] of jobs) {
+        if (!JSON.stringify(job).includes('secrets.PUBLORA_SYNC_TOKEN')) continue;
+        for (const s of job.steps ?? []) {
+          if (s.run) expect(String(s.run)).not.toMatch(PACKAGE_CODE);
+          if (s.uses) expect(String(s.uses)).toMatch(SAFE_USES);
+        }
+      }
+    });
+
+    test(`${f}: the PAT never reaches every job at once (workflow env, secrets: inherit)`, () => {
+      expect(JSON.stringify(wf.env ?? {})).not.toContain('PUBLORA_SYNC_TOKEN');
+      for (const [, job] of jobs) expect(job.secrets).not.toBe('inherit');
+    });
+
+    test(`${f}: the GITHUB_TOKEN never gets contents: write`, () => {
+      expect(wf.permissions).toBeDefined();
+      for (const p of [wf.permissions, ...jobs.map(([, j]) => j.permissions)]) {
+        if (p && typeof p === 'object') expect(p.contents).not.toBe('write');
+        expect(p).not.toBe('write-all');
+      }
+    });
+  }
 });
