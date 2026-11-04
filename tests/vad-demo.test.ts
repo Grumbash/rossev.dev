@@ -14,8 +14,9 @@ setDefaultTimeout(120_000);
 const read = (p: string) => readFileSync(p, 'utf8');
 const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
 const WEIGHTS_FILE = 'silero-vad-v6.2.3.bin';
-// Anything that would mean the demo's model, runtime or worker is fetched or preloaded.
-const DEMO_URL = /silero|\/vad\/|\.onnx|onnxruntime|ort-wasm/i;
+// Anything that would mean the demo's model, runtime or worker is fetched or preloaded. (The copy
+// names "Silero VAD v6" in words; only the weights file name has the hyphen.)
+const DEMO_URL = /silero-vad|\/vad\/|\.onnx|onnxruntime|ort-wasm/i;
 
 /** The page's own scripts and modulepreloads, plus everything they import statically. */
 function eagerJs(html: string): string[] {
@@ -38,14 +39,6 @@ const PAGES = {
   en: ['dist/cases/sully/index.html', 'dist/partials/case-sully/index.html'],
   ru: ['dist/ru/cases/sully/index.html', 'dist/ru/partials/case-sully/index.html'],
 } as const;
-const partialPath = (p: string) => {
-  try {
-    statSync(p);
-    return p;
-  } catch {
-    return p.replace('/index.html', '.html');
-  }
-};
 
 beforeAll(() => {
   execSync('bun run build', { stdio: 'ignore' });
@@ -56,7 +49,7 @@ describe('voice demo markup', () => {
     test(`the Sully case (page and home fragment) has the trigger and the privacy line in ${lang.toUpperCase()}`, () => {
       const d = t(lang).vad;
       for (const p of PAGES[lang]) {
-        const html = decode(read(partialPath(p)));
+        const html = decode(read(p));
         expect(html).toContain('data-vad-start');
         expect(html).toContain(d.start);
         expect(html).toContain(d.privacy);
@@ -86,7 +79,7 @@ describe('nothing loads before the click', () => {
   const pages = ['dist/index.html', 'dist/ru/index.html', ...PAGES.en, ...PAGES.ru];
 
   test('no model, runtime or worker URL in any of these pages', () => {
-    for (const p of pages) expect(read(partialPath(p))).not.toMatch(DEMO_URL);
+    for (const p of pages) expect(read(p)).not.toMatch(DEMO_URL);
   });
 
   test('no model, runtime or worker URL in the JavaScript they load up front', () => {

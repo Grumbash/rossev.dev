@@ -151,6 +151,31 @@ export const en = {
       'How it works: each cell holds 16 numbers, reads its 3×3 neighbourhood through Sobel filters and updates through one 128-unit hidden layer. Trained to grow from a single cell and to heal after cuts and bites, after <a class="text-link" href="https://distill.pub/2020/growing-ca/" target="_blank" rel="noopener noreferrer">Mordvintsev et al., Distill 2020 ↗</a>',
     reset: 'Reset'
   },
+  vad: {
+    kicker: 'TRY IT // VOICE ACTIVITY DETECTION',
+    lead:
+      'At Sully the agent greeted callers while the line was still ringing, so they picked up to ~15 s of silence. The fix: wait until the person speaks, then greet. Here is that building block, running in your browser: Silero VAD v6, a 0.5 MB model that hears speech in 32 ms frames.',
+    beforeValue: '~15 s',
+    before: 'Sully, before the fix: dead air at pickup',
+    afterLabel: 'This model, on your device: time to notice your voice',
+    start: 'Say hello',
+    privacy: 'Audio stays on your device; nothing is recorded or sent.',
+    asking: 'Allow the microphone to start.',
+    loading: 'Loading the model (0.5 MB, once):',
+    calibrating: 'Measuring the room for a moment. Stay quiet…',
+    listening: 'Listening. Say hello.',
+    detected: 'Heard you after',
+    quiet: "Didn't hear anything for 15 s: about as long as a Sully caller waited. Try again closer to the mic.",
+    denied: 'Microphone access was blocked. Nothing was recorded. Allow it in the site settings to try.',
+    nomic: 'No microphone found.',
+    unsupported: "This browser can't run the demo: it needs microphone access and AudioWorklet.",
+    savedata: 'Paused to save your data: the demo downloads a 0.5 MB model. On a faster connection it runs right here.',
+    error: 'Something went wrong. Nothing was recorded.',
+    ms: 'ms',
+    compute: 'ms of compute for that frame on this device.',
+    how:
+      'Measured from the 32 ms frame where your voice rose above the room to the model’s decision, plus the compute time; good to ±32 ms. Mic and OS buffering before the page gets the audio are not counted. At Sully the win was not a faster model but the agent waiting for a voice instead of a ringing line.'
+  },
   writing: {
     beyond: 'Beyond the CV',
     kicker: 'Writing',
