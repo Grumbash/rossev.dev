@@ -28,7 +28,8 @@ const MAX_STEPS_PER_TICK = 4; // a slow device grows slower instead of falling b
 // loss too large to heal is given up by step 380 and regrown (~400–800 more), and then it
 // rests until the next bite or reset.
 const GROWN_STEPS = 300;
-// The page shows a notice for 2.5 s; no second one while it is up.
+// The page shows a notice for 2.5 s; no second one while it is up. Longer than 2.5 s
+// so a regrow right as the notice fades doesn't flash it straight back.
 const NOTICE_MS = 3000;
 // Under reduced motion a regrow skips to the grown monogram, but only once the gesture
 // that caused it has been still this long: growing out of sight blocks the worker for
