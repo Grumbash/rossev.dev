@@ -12,7 +12,7 @@ import { EVENTS } from '../src/scripts/analytics';
 import { en } from '../src/i18n/en';
 import { ru } from '../src/i18n/ru';
 import { injectFault as ruleFault, START, toggleJudge } from '../src/scripts/replay/sim';
-import { ACTIONS, FAULTS, OBS_SIZE, createService, inject, observe, outcome, step, type Fault } from '../src/scripts/policy/service';
+import { ACTIONS, FAULTS, OBS_P95, OBS_SIZE, createService, inject, observe, outcome, step, type Fault } from '../src/scripts/policy/service';
 import { handRules } from '../src/scripts/policy/rules';
 import { expert } from '../src/scripts/policy/expert';
 import { act, decodePolicy, paramCount, type Policy } from '../src/scripts/policy/net';
@@ -60,6 +60,28 @@ describe('toy service simulator', () => {
     let s = createService(3, { judge: true });
     for (let i = 0; i < 50; i++) s = step(s, ACTIONS.indexOf('noop')).state;
     expect(outcome(s)).toBeNull();
+  });
+
+  // On the page a visitor injects fault after fault into one running service.
+  test('a second fault mid-episode starts from a clean slate: an old surge or overload does not linger', () => {
+    for (const first of ['overload', 'surge'] as const) {
+      let s = inject(createService(11, { judge: true }), first);
+      for (let i = 0; i < 40; i++) s = step(s, expert(s)).state;
+      s = inject(s, 'latency');
+      for (let i = 0; i < 40 && outcome(s) !== 'recovered'; i++) s = step(s, expert(s)).state;
+      expect(outcome(s)).toBe('recovered');
+    }
+  });
+
+  test('injecting another fault does not silently clear a slow dependency', () => {
+    let s = inject(createService(12, { judge: true }), 'latency');
+    for (let i = 0; i < 4; i++) s = step(s, ACTIONS.indexOf('noop')).state;
+    s = inject(s, 'broken_test');
+    for (let i = 0; i < 6; i++) s = step(s, ACTIONS.indexOf('noop')).state;
+    const p95 = observe(s)[OBS_P95];
+    let clean = inject(createService(12, { judge: true }), 'broken_test');
+    for (let i = 0; i < 10; i++) clean = step(clean, ACTIONS.indexOf('noop')).state;
+    expect(p95).toBeGreaterThan(observe(clean)[OBS_P95] * 2);
   });
 
   test('the policy never sees the hidden fault: observations do not encode it', () => {
