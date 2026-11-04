@@ -9,6 +9,7 @@ import css from './monogram.css?inline';
 const WEIGHTS_URL = '/nca/gr.bin';
 const BRUSH = 0.12; // eraser radius as a fraction of the grid side, same as the tests
 const KEY_BITE = 0.15; // a keyboard bite is one bigger stamp
+const NOTICE_MS = 2500;
 
 type Point = { x: number; y: number };
 
@@ -19,6 +20,7 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
   const section = document.querySelector<HTMLElement>('.nca-section');
   const canvas = document.getElementById('nca-canvas') as HTMLCanvasElement | null;
   const fallback = section?.querySelector('.nca-fallback');
+  const notice = section?.querySelector<HTMLElement>('.nca-notice');
   const ctx = canvas?.getContext('2d');
   if (!section || !canvas || !ctx) return;
   document.head.appendChild(document.createElement('style')).textContent = css;
@@ -27,6 +29,44 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
   let worker: Worker | null = null;
   let size = canvas.width;
   let inView = false;
+  let noticeTimer: ReturnType<typeof setTimeout> | undefined;
+  // One persistent line inside the live region: a new notice replaces its text.
+  const noticeLine = document.createElement('span');
+
+  // The live region is in the page from the start (empty), so filling it is announced.
+  if (notice) notice.hidden = false;
+
+  // Over the canvas wherever the grid put it (.nca-block is the offset parent); kept
+  // there on resize while the notice is up.
+  function placeNotice(): void {
+    if (!notice) return;
+    notice.style.left = `${canvas!.offsetLeft}px`;
+    notice.style.top = `${canvas!.offsetTop}px`;
+    notice.style.width = `${canvas!.offsetWidth}px`;
+    notice.style.height = `${canvas!.offsetHeight}px`;
+  }
+
+  function hideNotice(): void {
+    noticeLine.textContent = '';
+    noticeLine.remove();
+    window.removeEventListener('resize', placeNotice);
+  }
+
+  /** Shows a worker notice over the canvas for a moment; screen readers hear it once. */
+  function showNotice(text: string | undefined): void {
+    if (!notice || !text) return;
+    placeNotice();
+    window.addEventListener('resize', placeNotice);
+    // Cleared first and filled a moment later, so the same text again is a change a
+    // screen reader announces (a clear and refill in one task can be coalesced away).
+    noticeLine.textContent = '';
+    if (!noticeLine.isConnected) notice.appendChild(noticeLine);
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(() => {
+      noticeLine.textContent = text;
+      noticeTimer = setTimeout(hideNotice, NOTICE_MS);
+    }, 50);
+  }
 
   const send = (msg: ToWorker, transfer: Transferable[] = []) => worker?.postMessage(msg, transfer);
   const syncVisibility = () => send({ type: 'visible', visible: inView && !document.hidden });
@@ -55,6 +95,10 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
       const msg = event.data;
       if (msg.type === 'error') {
         fail(msg.message);
+        return;
+      }
+      if (msg.type === 'notice') {
+        showNotice(notice?.dataset.regrowing);
         return;
       }
       if (msg.size !== size) {
