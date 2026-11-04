@@ -21,7 +21,16 @@ const read = (p: string) => readFileSync(p, 'utf8');
 const gz = (s: string) => gzipSync(s, { level: 9 }).length;
 const canonical = (html: string) => html.match(/<link[^>]*rel="canonical"[^>]*href="([^"]*)"/)?.[1];
 const title = (html: string) => html.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.trim() ?? '';
-const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
+// Every entity Astro may emit: post titles and texts carry quotes, &, < and > (&#34;, &#38;, &lt;).
+const decode = (s: string) =>
+  s
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 const casesOnHome = CASE_STUDIES.filter((c) => EXPERIENCE.some((e) => e.caseId === c.id));
 
 let home = '';
