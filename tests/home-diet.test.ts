@@ -50,11 +50,9 @@ describe('home bytes', () => {
     expect(gz(home)).toBeLessThanOrEqual(HOME_GZIP_TARGET);
   });
 
-  test(`inline scripts (not JSON-LD, not Vercel's own tags) total at most ${INLINE_SCRIPT_GZIP_MAX} B gzipped`, () => {
+  test(`inline scripts (not JSON-LD) total at most ${INLINE_SCRIPT_GZIP_MAX} B gzipped`, () => {
     const inline = [...home.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)]
       .filter(([, attrs, body]) => body.trim() && !/application\/ld\+json/.test(attrs) && !/src=/.test(attrs))
-      // <Analytics/> and <SpeedInsights/> render their own tiny loaders; they are not page code.
-      .filter(([, , body]) => !body.includes('@vercel/'))
       .map(([, , body]) => body);
     const total = inline.reduce((sum, s) => sum + gz(s), 0);
     expect(total, `inline: ${inline.map((s) => s.trim().slice(0, 60)).join(' | ')}`).toBeLessThanOrEqual(INLINE_SCRIPT_GZIP_MAX);

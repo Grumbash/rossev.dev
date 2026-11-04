@@ -28,7 +28,7 @@ const nextInline = inline
       'hx-trigger': 'open-brief',
       'hx-target': '#post-reader-slot',
       'hx-swap': 'innerHTML transition:true',
-      onclick: 'window.openBrief && window.openBrief(this, event)'
+      'data-action': 'openBrief'
     }
   : {};
 ---
@@ -85,8 +85,8 @@ const nextInline = inline
     <button
       type="button"
       class="brutal-btn brutal-btn-sm"
-      data-url={pageUrl}
-      onclick="window.copyToClipboard && window.copyToClipboard(this.dataset.url)"
+      data-action="copy"
+      data-copy={pageUrl}
     >
       {d.copyLink}
     </button>

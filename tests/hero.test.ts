@@ -119,7 +119,12 @@ describe('contacts are compact', () => {
 describe.skipIf(!existsSync(CHROME))('layout at 375×812', () => {
   const PROBE = `<script>(async()=>{
     await document.fonts.ready;
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    // Headless virtual time stops producing frames once the page is idle, so a frame may never
+    // come; getBoundingClientRect lays the page out itself, the frame only lets it settle.
+    await Promise.race([
+      new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
+      new Promise((r) => setTimeout(r, 500)),
+    ]);
     const card = document.querySelector('.hero-card');
     const bottom = (el) => (el ? Math.round(el.getBoundingClientRect().bottom) : -1);
     const out = document.createElement('pre');

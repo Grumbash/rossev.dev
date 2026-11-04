@@ -22,8 +22,9 @@ describe(PATH, () => {
     expect(wf.concurrency?.['cancel-in-progress']).toBe(false);
   });
 
-  test('may write contents and pull requests, nothing else', () => {
-    expect(wf.permissions).toEqual({ contents: 'write', 'pull-requests': 'write' });
+  test('the GITHUB_TOKEN only reads; every write goes through the PAT in `publish`', () => {
+    expect(wf.permissions).toEqual({ contents: 'read', 'pull-requests': 'read' });
+    expect(wf.jobs.publish.needs).toBe('refresh');
   });
 
   test('checks out main with full history: throughSha and the red-commit check need it', () => {
@@ -47,10 +48,12 @@ describe(PATH, () => {
   });
 
   // A PR opened with GITHUB_TOKEN triggers no workflows, so perf.yml would never gate it.
-  test('opens the PR with the fine-grained PAT, falling back to GITHUB_TOKEN', () => {
+  test('opens the PR with the fine-grained PAT, from `publish`, on a sha checked to be on main', () => {
     const pr = steps.find((s) => /gh pr (create|edit)/.test(String(s.run ?? '')));
     expect(pr).toBeDefined();
-    expect(String(pr.env?.GH_TOKEN ?? '')).toMatch(/secrets\.PUBLORA_SYNC_TOKEN\s*\|\|\s*secrets\.GITHUB_TOKEN/);
+    expect(wf.jobs.publish.steps).toContain(pr);
+    expect(String(pr.env?.GH_TOKEN ?? '')).toBe('${{ secrets.PUBLORA_SYNC_TOKEN }}');
+    expect(scripts).toMatch(/git merge-base --is-ancestor "\$SHA" origin\/main/);
     expect(String(pr.env?.BRANCH ?? '')).toBe(BRANCH);
     expect(pr.run).toMatch(/gh pr create[^\n]*--base main[^\n]*--head "\$BRANCH"/);
     expect(pr.run).toMatch(/gh pr list[^\n]*--head "\$BRANCH"/);
