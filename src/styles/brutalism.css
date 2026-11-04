@@ -1060,13 +1060,6 @@ a {
   color: var(--ink-muted);
 }
 
-.post-tags {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--ink-muted);
-  margin-bottom: 14px;
-}
-
 .post-actions {
   display: flex;
   align-items: center;
