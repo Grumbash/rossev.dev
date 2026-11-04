@@ -21,7 +21,16 @@ const read = (p: string) => readFileSync(p, 'utf8');
 const gz = (s: string) => gzipSync(s, { level: 9 }).length;
 const canonical = (html: string) => html.match(/<link[^>]*rel="canonical"[^>]*href="([^"]*)"/)?.[1];
 const title = (html: string) => html.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.trim() ?? '';
-const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
+// Every entity Astro may emit: post titles and texts carry quotes, &, < and > (&#34;, &#38;, &lt;).
+const decode = (s: string) =>
+  s
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 const casesOnHome = CASE_STUDIES.filter((c) => EXPERIENCE.some((e) => e.caseId === c.id));
 
 let home = '';
@@ -41,11 +50,9 @@ describe('home bytes', () => {
     expect(gz(home)).toBeLessThanOrEqual(HOME_GZIP_TARGET);
   });
 
-  test(`inline scripts (not JSON-LD, not Vercel's own tags) total at most ${INLINE_SCRIPT_GZIP_MAX} B gzipped`, () => {
+  test(`inline scripts (not JSON-LD) total at most ${INLINE_SCRIPT_GZIP_MAX} B gzipped`, () => {
     const inline = [...home.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)]
       .filter(([, attrs, body]) => body.trim() && !/application\/ld\+json/.test(attrs) && !/src=/.test(attrs))
-      // <Analytics/> and <SpeedInsights/> render their own tiny loaders; they are not page code.
-      .filter(([, , body]) => !body.includes('@vercel/'))
       .map(([, , body]) => body);
     const total = inline.reduce((sum, s) => sum + gz(s), 0);
     expect(total, `inline: ${inline.map((s) => s.trim().slice(0, 60)).join(' | ')}`).toBeLessThanOrEqual(INLINE_SCRIPT_GZIP_MAX);

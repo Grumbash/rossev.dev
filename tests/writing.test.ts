@@ -41,7 +41,18 @@ const graph = (html: string): any[] => {
   const ld = JSON.parse(raw);
   return ld['@graph'] ?? [ld];
 };
-const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
+// Every entity Astro may emit: post titles and texts carry quotes, &, < and > (&#34;, &#38;, &lt;).
+const decode = (s: string) =>
+  s
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+// text() collapses whitespace, so expected strings are compared the same way.
+const squash = (s: string) => s.replace(/\s+/g, ' ').trim();
 const text = (html: string) =>
   decode(html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ');
 
@@ -63,7 +74,7 @@ function expectReaderFooter(html: string, i: number) {
   // Moving on to the next post is an open, whether it swaps inline or navigates.
   expect(nextLink!.attrs['data-track']).toBe('post_open');
   expect(nextLink!.attrs['data-track-id']).toBe(next.id);
-  expect(text(html)).toContain(next.title.en);
+  expect(text(html)).toContain(squash(next.title.en));
 
   const copy = tags.find((t) => Object.values(t.attrs).some((v) => v.includes(`${SITE}${pagePath(post.slug)}`)) && t.tag === 'button');
   expect(copy, 'copy-link button carrying the post page url').toBeDefined();
@@ -135,6 +146,10 @@ describe('post data', () => {
     expect(ldFull.url).toBe(url);
   });
 
+  test('JSON-LD cannot close its <script>: model-written titles go through it', () => {
+    expect(read('src/layouts/Base.astro')).toMatch(/JSON\.stringify\(jsonLd\)\.replace\(\/<\/g, '\\\\u003c'\)/);
+  });
+
   test('the templates take those labels and the JSON-LD from the shared helpers', () => {
     expect(read('src/components/BlogGrid.astro')).toContain('cardReadTime(post)');
     expect(read('src/components/BlogGrid.astro')).not.toMatch(/MIN ORIGINAL/);
@@ -145,8 +160,8 @@ describe('post data', () => {
 
   test('the read time is honest about where the text is: the original on LinkedIn, or the full post here', () => {
     const stub = BLOG_POSTS[0];
-    expect(readTimeLabel({ ...stub, body: undefined })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN ORIGINAL`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ОРИГИНАЛ` });
-    expect(readTimeLabel({ ...stub, body: { en: 'a', ru: 'б' } })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN FULL POST`, ru: `30 СЕК РАЗБОР · ${stub.originalMinutes} МИН ПОЛНЫЙ ТЕКСТ` });
+    expect(readTimeLabel({ ...stub, body: undefined })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN ORIGINAL`, ru: `КОНСПЕКТ НА 30 СЕК · ОРИГИНАЛ ${stub.originalMinutes} МИН` });
+    expect(readTimeLabel({ ...stub, body: { en: 'a', ru: 'б' } })).toEqual({ en: `30-SEC BRIEF · ${stub.originalMinutes}-MIN FULL POST`, ru: `КОНСПЕКТ НА 30 СЕК · ПОЛНЫЙ ТЕКСТ ${stub.originalMinutes} МИН` });
   });
 
   test('slugs are unique, url-safe, and every post has a publication date matching its LinkedIn id', () => {
@@ -198,8 +213,8 @@ describe('every post has an indexable page', () => {
       test('shows the brief in both languages (EN here, RU on /ru/) with an honest read time', () => {
         const t = text(html());
         const ru = text(ruPages[p.slug]);
-        expect(t).toContain(p.title.en);
-        expect(ru).toContain(p.title.ru);
+        expect(t).toContain(squash(p.title.en));
+        expect(ru).toContain(squash(p.title.ru));
         expect(t).toMatch(/30-sec brief/i);
         // The minutes describe the LinkedIn original, so they come from the data, not a constant.
         const min = (p as any).originalMinutes;
@@ -276,7 +291,7 @@ describe('grid cards are crawlable links that still open the inline reader', () 
         // htmx cancels every click on an <a href hx-get>, so a plain click must reach htmx through
         // a custom trigger that modifier clicks never fire; otherwise cmd-click can't open a tab.
         expect(card!.attrs['hx-trigger']).toBe('open-brief');
-        expect(card!.attrs.onclick).toContain('openBrief');
+        expect(card!.attrs['data-action']).toBe('openBrief');
       }
       // No post opener is a bare button any more.
       expect(tags.filter((t) => t.tag === 'button' && t.attrs['data-track'] === 'post_open')).toEqual([]);

@@ -1,6 +1,7 @@
 ---
 import type { CaseStudy } from '../data/profile';
 import { t, type Locale } from '../i18n';
+import VadDemo from './VadDemo.astro';
 
 interface Props {
   study: CaseStudy;
@@ -21,7 +22,7 @@ const arch = study.architecture[lang];
       <span style="margin-left: 8px; text-decoration: underline;">{study.company}</span>
     </div>
     <div style="font-size: 0.78rem;">
-      {study.location} · {study.period}
+      {study.location[lang]} · {study.period[lang]}
     </div>
   </div>
 
@@ -57,5 +58,7 @@ const arch = study.architecture[lang];
         ))}
       </ul>
     </div>}
+
+    {study.id === 'sully' && <VadDemo lang={lang} />}
   </div>
 </div>

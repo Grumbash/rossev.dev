@@ -27,6 +27,41 @@ interface ProjectedPoint {
   scale: number;
 }
 
+// What a guide (the PR #11 replay, src/scripts/replay/player.ts) gets to draw over the scene with.
+export interface IsoView {
+  ctx: CanvasRenderingContext2D;
+  width: number;
+  height: number;
+  /** Milliseconds since the previous frame (capped), for anything that runs on a clock. */
+  dt: number;
+  project: (x: number, y: number, z: number) => ProjectedPoint;
+  nodes: TopologyNode[];
+  /** Screen point above a node's roof, where its label hangs; null before its first draw. */
+  anchor: (idx: number) => { x: number; y: number } | null;
+}
+
+// A guide takes the canvas over from free play: node clicks, the F key and pointer drags go to it,
+// and it draws after the scene. Explore detaches it (setGuide(null)) and free play is back.
+export interface IsoGuide {
+  /** Draws over the scene; returns true while it needs more frames. */
+  draw: (v: IsoView) => boolean;
+  node: (idx: number) => void;
+  fault: () => void;
+  /** Canvas-relative pointer; true claims the gesture (no camera drag, no click) until 'up'. */
+  pointer: (type: 'down' | 'move' | 'up', x: number, y: number) => boolean;
+}
+
+export interface IsoApi {
+  setGuide: (g: IsoGuide | null) => void;
+  /** Camera on a node, between several, or the overview (null). `snap` skips the easing. */
+  aim: (target: number | number[] | null, zoom?: number, snap?: boolean) => void;
+  /** Only these nodes stay lit (an empty list dims all); null is free play's own highlighting. */
+  spotlight: (nodes: number[] | null) => void;
+  /** A short decaying shake of the whole scene, in pixels. */
+  shake: (px: number) => void;
+  redraw: () => void;
+}
+
 interface NodeScreenBounds {
   minX: number;
   maxX: number;
@@ -39,11 +74,16 @@ interface NodeScreenBounds {
   isHighlighted: boolean;
 }
 
-export function initIsoArchitectureEngine(): void {
+export function initIsoArchitectureEngine(): IsoApi | null {
   const canvas = document.getElementById('iso-arch-canvas') as HTMLCanvasElement | null;
-  if (!canvas) return;
+  if (!canvas) return null;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx) return null;
+
+  let guide: IsoGuide | null = null;
+  let guideGesture = false; // the guide claimed the current pointer gesture
+  let spotlight: number[] | null = null;
+  let shake = 0;
 
   let currentDomain: 'yagni' | 'voice' | 'saas' = 'yagni';
   let selectedNode = 1; // 02 · AGENT CORE
@@ -78,7 +118,7 @@ export function initIsoArchitectureEngine(): void {
   let isCanvasVisible = true;
   let rafId: number | null = null;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Phones get a still poster: one frame per change, no rAF loop until Play (or a story step).
+  // Phones get a still poster: one frame per change, no rAF loop until Play (or a take-over).
   const posterQuery = window.matchMedia('(max-width: 480px)');
   let playing = !posterQuery.matches;
 
@@ -160,9 +200,9 @@ export function initIsoArchitectureEngine(): void {
     card.style.borderColor = node.top;
 
     const stratumNames: Record<string, { en: string; ru: string }> = {
-      '1': { en: 'STRATUM L+1 · ORBITAL TELEMETRY (+74m)', ru: 'ЯРУС L+1 · ОРБИТАЛЬНЫЙ РАДАР (+74м)' },
-      '0': { en: 'STRATUM L0 · CORE EXECUTION DECK (0m)', ru: 'ЯРУС L0 · ОСНОВНОЕ ЯДРО (0м)' },
-      '-1': { en: 'STRATUM L-1 · SUBTERRANEAN VAULT (-68m)', ru: 'ЯРУС L-1 · ПОДЗЕМНЫЙ БУНКЕР (-68м)' }
+      '1': { en: 'STRATUM L+1 · ORBITAL TELEMETRY (+74m)', ru: 'СЛОЙ L+1 · НАБЛЮДАЕМОСТЬ И ЭВАЛЫ (+74 м)' },
+      '0': { en: 'STRATUM L0 · CORE EXECUTION DECK (0m)', ru: 'СЛОЙ L0 · ЯДРО СИСТЕМЫ (0 м)' },
+      '-1': { en: 'STRATUM L-1 · SUBTERRANEAN VAULT (-68m)', ru: 'СЛОЙ L-1 · ИЗОЛЯЦИЯ И ДАННЫЕ (−68 м)' }
     };
 
     const titleEl = document.getElementById('iso-insp-title');
@@ -203,7 +243,8 @@ export function initIsoArchitectureEngine(): void {
     const badgeEl = document.getElementById('iso-hud-badge');
     const textEl = document.getElementById('iso-hud-text');
     if (badgeEl) {
-      badgeEl.textContent = node.code;
+      // Under a guide the bar names the node the way the canvas labels do.
+      badgeEl.textContent = guide ? `${node.num} · ${node.short}` : node.code;
       badgeEl.style.background = node.top;
       badgeEl.style.color = node.top === '#FF5500' || node.top === '#FF3385' ? '#FFFFFF' : '#0A0A0A';
     }
@@ -217,6 +258,12 @@ export function initIsoArchitectureEngine(): void {
   window.focusIsoNode = function (idx: number) {
     const nodes = ISO_DOMAINS[currentDomain].nodes;
     if (!nodes[idx]) return;
+    // Under a guide a node is the guide's business: no exploded node, no dossier.
+    if (guide) {
+      selectedNode = idx;
+      guide.node(idx);
+      return;
+    }
     lockedNode = idx;
     selectedNode = idx;
     nodeFlash[idx] = 1.0;
@@ -302,6 +349,7 @@ export function initIsoArchitectureEngine(): void {
   };
 
   window.triggerIsoFault = function (keepFocus = false) {
+    if (guide) return guide.fault();
     const target = lockedNode >= 0 ? lockedNode : 2;
     faultSim.active = true;
     faultSim.progress = 0;
@@ -347,7 +395,7 @@ export function initIsoArchitectureEngine(): void {
     window.updateIsoHudText();
   };
 
-  // Stop a fault run before it heals. The guided story listens for iso:aborted to leave "healing".
+  // Stop a fault run before it heals (iso:aborted says so).
   window.clearIsoFault = function () {
     if (!faultSim.active) return;
     faultSim.active = false;
@@ -392,7 +440,16 @@ export function initIsoArchitectureEngine(): void {
   }
 
   // Pointer & Touch Handling (Prevents Vertical Scroll Trap on Smartphones!)
+  const local = (e: PointerEvent) => {
+    const r = canvas.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top] as const;
+  };
   canvas.addEventListener('pointerdown', (e) => {
+    guideGesture = !!guide?.pointer('down', ...local(e));
+    if (guideGesture) {
+      canvas.setPointerCapture?.(e.pointerId);
+      return;
+    }
     isDragging = true;
     dragMoved = false;
     touchDragDecided = false;
@@ -406,6 +463,10 @@ export function initIsoArchitectureEngine(): void {
   });
 
   canvas.addEventListener('pointermove', (e) => {
+    if (guideGesture) {
+      guide?.pointer('move', ...local(e));
+      return;
+    }
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
@@ -462,7 +523,15 @@ export function initIsoArchitectureEngine(): void {
     }
   });
 
-  canvas.addEventListener('pointerup', () => {
+  const endGuideGesture = (e: PointerEvent) => {
+    if (!guideGesture) return false;
+    guideGesture = false;
+    guide?.pointer('up', ...local(e));
+    return true;
+  };
+  canvas.addEventListener('pointercancel', endGuideGesture);
+  canvas.addEventListener('pointerup', (e) => {
+    if (endGuideGesture(e)) return;
     if (!dragMoved && isDragging) {
       if (hoveredNode >= 0) {
         if (lockedNode === hoveredNode) {
@@ -472,7 +541,7 @@ export function initIsoArchitectureEngine(): void {
         }
       } else if (lockedNode >= 0) {
         window.resetIsoCamera();
-      } else {
+      } else if (!guide) {
         window.fireIsoPacket();
       }
     }
@@ -756,7 +825,9 @@ export function initIsoArchitectureEngine(): void {
     edges.forEach(([uIdx, vIdx], eIdx) => {
       const u = nodes[uIdx];
       const v = nodes[vIdx];
-      const isRel = focusIdx === -1 || focusIdx === uIdx || focusIdx === vIdx;
+      const isRel = spotlight
+        ? spotlight.includes(uIdx) && spotlight.includes(vIdx)
+        : focusIdx === -1 || focusIdx === uIdx || focusIdx === vIdx;
 
       const uDeck = project3D(u.x, 2, u.z);
       const vDeck = project3D(v.x, 2, v.z);
@@ -781,7 +852,7 @@ export function initIsoArchitectureEngine(): void {
       ctx.strokeStyle = isFaultEdge
         ? '#FF2A55'
         : isRel
-        ? focusIdx >= 0
+        ? focusIdx >= 0 || spotlight
           ? '#C8FF00'
           : 'rgba(0, 229, 255, 0.55)'
         : 'rgba(255, 255, 255, 0.08)';
@@ -796,7 +867,7 @@ export function initIsoArchitectureEngine(): void {
         const sp = project3D(px, py, pz);
         ctx.fillStyle = '#0A0A0A';
         ctx.fillRect(sp.x - 4, sp.y - 4, 8, 8);
-        ctx.fillStyle = focusIdx >= 0 ? '#C8FF00' : '#00E5FF';
+        ctx.fillStyle = focusIdx >= 0 || spotlight ? '#C8FF00' : '#00E5FF';
         ctx.fillRect(sp.x - 2.5, sp.y - 2.5, 5, 5);
       }
     });
@@ -806,8 +877,10 @@ export function initIsoArchitectureEngine(): void {
     if (!ctx) return;
     const isHovered = idx === hoveredNode;
     const isLocked = idx === lockedNode;
-    const isSelected = idx === selectedNode && lockedNode === -1 && hoveredNode === -1;
-    const isRelevant = focusIdx === -1 || isNodeConnected(focusIdx, idx);
+    const isSelected = spotlight ? idx === spotlight[0] : idx === selectedNode && lockedNode === -1 && hoveredNode === -1;
+    const isRelevant = spotlight
+      ? spotlight.includes(idx) || idx === hoveredNode
+      : focusIdx === -1 || isNodeConnected(focusIdx, idx);
 
     const stratumMatch = activeStratum === 'all' || activeStratum === node.stratum;
     const alpha = !stratumMatch ? 0.18 : isRelevant ? 1.0 : 0.28;
@@ -1150,7 +1223,9 @@ export function initIsoArchitectureEngine(): void {
     nodes.forEach((node, idx) => {
       const sc = nodeScreenCache[idx];
       if (!sc) return;
-      if (focusIdx >= 0 && !sc.isRelevant) return;
+      if ((focusIdx >= 0 || spotlight) && !sc.isRelevant) return;
+      // A phone's overview has no room for eight labels: only the replay's cast (plan, builder, judge, sandbox).
+      if (width < 480 && focusIdx < 0 && !spotlight && ![0, 2, 3, 4].includes(idx)) return;
       if (activeStratum !== 'all' && node.stratum !== activeStratum) return;
 
       const text = `${node.num} · ${node.short}`;
@@ -1258,6 +1333,7 @@ export function initIsoArchitectureEngine(): void {
     }
 
     const frames = lastFrameTs === null ? 1 : Math.min((ts - lastFrameTs) / (1000 / 60), 4);
+    const dt = lastFrameTs === null ? 1000 / 60 : Math.min(ts - lastFrameTs, 100);
     lastFrameTs = ts;
     clock += frames;
 
@@ -1273,7 +1349,13 @@ export function initIsoArchitectureEngine(): void {
     camFocusY += (targetFocusY - camFocusY) * camEase;
     camFocusZ += (targetFocusZ - camFocusZ) * camEase;
 
-    ctx?.clearRect(0, 0, width, height);
+    if (!ctx) return;
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    if (shake > 0.3) {
+      ctx.translate(Math.sin(clock * 2.1) * shake, Math.cos(clock * 1.7) * shake * 0.6);
+      shake *= Math.pow(0.86, frames);
+    } else shake = 0;
 
     const domainObj = ISO_DOMAINS[currentDomain];
     const nodes = domainObj.nodes;
@@ -1314,7 +1396,6 @@ export function initIsoArchitectureEngine(): void {
         faultSim.active = false;
         document.getElementById('btn-iso-fault')?.classList.remove('active');
         if (statusEl) statusEl.textContent = 'INCIDENT RESOLVED · ZERO CUSTOMER IMPACT';
-        // The guided story waits for this to show its case link.
         window.dispatchEvent(new CustomEvent('iso:healed'));
       }
     }
@@ -1357,6 +1438,20 @@ export function initIsoArchitectureEngine(): void {
 
     drawFaultSimulationFX(nodes);
     drawTopLayerLabels(nodes, focusIdx);
+    const guideBusy =
+      guide?.draw({
+        ctx,
+        width,
+        height,
+        dt,
+        project: project3D,
+        nodes,
+        anchor: (i) => {
+          const sc = nodeScreenCache[i];
+          return sc ? { x: sc.anchorX, y: sc.anchorY } : null;
+        }
+      }) ?? false;
+    ctx.restore();
 
     if (!prefersReducedMotion || traceWave.active || faultSim.active) {
       edgePackets.forEach((p) => {
@@ -1381,7 +1476,7 @@ export function initIsoArchitectureEngine(): void {
       playing &&
       shouldKeepAnimating({
         reducedMotion: prefersReducedMotion,
-        dragging: isDragging,
+        dragging: isDragging || guideBusy || shake > 0,
         traceActive: traceWave.active,
         faultActive: faultSim.active,
         residual
@@ -1420,9 +1515,59 @@ export function initIsoArchitectureEngine(): void {
     }
   });
 
-  // A ?domain= deep link is applied by the guided story when Explore opens (topology-story-dom.ts):
-  // the card always opens on the YAGNI story, so nothing switches after first paint.
+  // A ?domain= deep link is applied when Explore opens (topology-replay.ts): the card always opens
+  // on the YAGNI replay, so nothing switches after first paint.
 
   window.updateIsoHudText();
   ensureLoopRunning();
+
+  return {
+    setGuide(g) {
+      guide = g;
+      if (!g) spotlight = null;
+      window.updateIsoHudText();
+      ensureLoopRunning();
+    },
+    aim(target, zoom = 1.1, snap = false) {
+      const nodes = ISO_DOMAINS[currentDomain].nodes;
+      const list = (target === null ? [] : Array.isArray(target) ? target : [target]).filter((i) => nodes[i]);
+      lockedNode = -1;
+      if (!list.length) {
+        targetFocusX = 0;
+        targetFocusY = 8;
+        targetFocusZ = 0;
+        targetZoom = 0.86;
+      } else {
+        const avg = (f: (n: TopologyNode) => number) => list.reduce((s, i) => s + f(nodes[i]), 0) / list.length;
+        targetFocusX = avg((n) => n.x) * 0.62;
+        targetFocusY = avg((n) => n.baseY + n.h * 0.6);
+        targetFocusZ = avg((n) => n.z) * 0.62;
+        targetZoom = zoom;
+      }
+      targetPitch = 0.54;
+      if (snap) {
+        camFocusX = targetFocusX;
+        camFocusY = targetFocusY;
+        camFocusZ = targetFocusZ;
+        camZoom = targetZoom;
+        camPitch = targetPitch;
+        camYaw = targetYaw;
+      }
+      ensureLoopRunning();
+    },
+    spotlight(list) {
+      spotlight = list;
+      // The bottom bar names the node the guide is on.
+      if (list?.length) {
+        selectedNode = list[0];
+        window.updateIsoHudText();
+      }
+      ensureLoopRunning();
+    },
+    shake(px) {
+      shake = prefersReducedMotion ? 0 : px;
+      ensureLoopRunning();
+    },
+    redraw: ensureLoopRunning
+  };
 }

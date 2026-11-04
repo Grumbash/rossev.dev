@@ -39,6 +39,103 @@ describe('generator (pure functions on real gh output)', () => {
     expect(classifyCommit('Add /booked: a cal.com booking becomes booking_confirmed')).toBe('impl');
     // "failing test" mentioned later in a subject is not a red-test commit.
     expect(classifyCommit('Fix the failing test in CI')).toBe('impl');
+    // The plural form is how #18, #20, #22 and #24 started.
+    expect(classifyCommit('Add failing tests: home under 32 KB gzip, 6 latest posts')).toBe('red');
+    expect(classifyCommit(fixture(18).commits[0].messageHeadline)).toBe('red');
+  });
+
+  // A PR that only refreshes the build-story data (#15, every bot PR) is bookkeeping, not loop work.
+  // Leaving it out is also the loop guard: merging the bot's PR must not produce a story about itself.
+  test('a PR that only touches build-story data is not a story entry', async () => {
+    const { isDataOnly } = await gen();
+    const paths = (pr: any) => pr.files.map((f: any) => f.path);
+    expect(isDataOnly(paths(fixture(15)))).toBe(true);
+    expect(isDataOnly(['src/data/build-story.json'])).toBe(true);
+    expect(isDataOnly(paths(fixture(18)))).toBe(false);
+    expect(isDataOnly(['src/data/build-story.json', 'src/pages/[...locale]/how-its-built.astro'])).toBe(false);
+    expect(isDataOnly(['src/data/posts.json'])).toBe(false);
+    expect(isDataOnly([])).toBe(false);
+  });
+
+  // Any bot's PR is bookkeeping too: publora-sync merges bot/publora-sync PRs that touch posts.json,
+  // and each would otherwise become a pending card and drag "red test first" down.
+  test('a PR from a bot/ branch is not a story entry either', async () => {
+    const { isBookkeeping } = await gen();
+    const pr = (headRefName: string, paths: string[]) => ({ headRefName, files: paths.map((path) => ({ path })) });
+    expect(isBookkeeping(pr('bot/publora-sync', ['src/data/posts.json', 'public/llms.txt']))).toBe(true);
+    expect(isBookkeeping(pr('bot/build-story', ['src/data/build-story.json']))).toBe(true);
+    expect(isBookkeeping(fixture(15))).toBe(true);
+    expect(isBookkeeping(fixture(18))).toBe(false);
+    expect(isBookkeeping(pr('claude/robot-arm', ['src/pages/x.astro']))).toBe(false);
+    expect(isBookkeeping({ headRefName: 'claude/x' })).toBe(false);
+  });
+
+  // A red commit may add a stub its test imports, but only a new file that does nothing but throw:
+  // editing a real module under the same comment would slip code in before the test.
+  test('a red commit may add placeholder stubs, never change an existing file', async () => {
+    const { isPlaceholder } = await gen();
+    const stub = '// Not implemented yet: tests/x.test.ts is red first.\nexport function run(): never {\n  throw new Error(\'not implemented\');\n}\n';
+    expect(isPlaceholder('A', stub)).toBe(true);
+    expect(isPlaceholder('M', stub)).toBe(false);
+    expect(isPlaceholder('A', 'export const add = (a: number, b: number) => a + b;\n')).toBe(false);
+    expect(isPlaceholder('A', stub + 'export const real = (a: number) => a * 2;\n')).toBe(false);
+    for (const sha of ['91b3c30', '546c305', 'c6684bb']) {
+      const added = execSync(`git show --diff-filter=A --name-only --format= ${sha}`, { encoding: 'utf8' }).split('\n').filter((f) => f && !f.startsWith('tests/'));
+      expect(added.length, sha).toBeGreaterThan(0);
+      for (const f of added) expect(isPlaceholder('A', execSync(`git show ${sha}:${f}`, { encoding: 'utf8' })), `${sha} ${f}`).toBe(true);
+    }
+  });
+
+  // New PRs show up with what git and GitHub know; the copy in Gleb's voice waits for him.
+  test('a PR without highlights becomes a pending entry: facts only, no invented copy', async () => {
+    const { toEntry, validate, computeStats } = await gen();
+    const e = toEntry(fixture(18), undefined, REPO);
+    expect(e.pending).toBe(true);
+    expect(e.redTest?.sha).toBe(fixture(18).commits[0].oid);
+    expect(e.url).toBe(`${GH}/pull/18`);
+    expect(e.visitorChange).toBeUndefined();
+    expect(e.humanDecision).toBeUndefined();
+    expect(e.review).toBeUndefined();
+    expect(e.findings).toEqual([]);
+    expect(validate({ repo: REPO, prs: [e] })).toEqual([]);
+    // Pending and without a red test: the reason is copy too, so it waits as well.
+    expect(validate({ repo: REPO, prs: [toEntry(fixture(1), undefined, REPO)] })).toEqual([]);
+    expect(computeStats([e]).findings).toBe(0);
+    // A curated entry is never pending, and a half-written one is a problem, not a pending card.
+    const ok = { visitorChange: { en: 'x', ru: 'х' }, humanDecision: { en: 'x', ru: 'х' }, findings: [] };
+    expect(toEntry(fixture(12), ok, REPO).pending).toBeUndefined();
+    const half = toEntry(fixture(12), { visitorChange: { en: 'x', ru: 'х' } } as any, REPO);
+    expect(validate({ repo: REPO, prs: [half] }).join('\n')).toMatch(/#12\b/);
+  });
+
+  test('a PR without a red test first says why: before the loop, or another reason', async () => {
+    const { toEntry, validate } = await gen();
+    const ok = { visitorChange: { en: 'x', ru: 'х' }, humanDecision: { en: 'x', ru: 'х' }, findings: [] };
+    expect(validate({ repo: REPO, prs: [toEntry(fixture(1), { ...ok, noRedTest: { en: 'Tests came with the code.', ru: 'Тесты пришли вместе с кодом.' } }, REPO)] })).toEqual([]);
+  });
+
+  // The workflow opens a PR only when the data file changed. A run after a bot PR merges sees the
+  // same PRs and a newer main commit: that alone must leave the file byte for byte as it was.
+  test('nextStory keeps the previous data untouched when only the main commit moved', async () => {
+    const { toEntry, nextStory } = await gen();
+    const h = { visitorChange: { en: 'x', ru: 'х' }, humanDecision: { en: 'x', ru: 'х' }, findings: [] };
+    const verdict = { kind: 'judge', verdict: 'SHIP', summary: { en: 'ok', ru: 'ок' }, url: `${GH}/pull/12#issuecomment-1`, at: '2026-11-05T00:00:00Z' };
+    const prev = {
+      repo: REPO,
+      generatedAt: '2026-11-04T00:00:00.000Z',
+      throughSha: 'a'.repeat(40),
+      prs: [{ ...toEntry(fixture(12), h, REPO), ciVerdicts: [verdict] }],
+    };
+    const same = nextStory(prev, [toEntry(fixture(12), h, REPO)], 'b'.repeat(40), '2026-11-05T00:00:00.000Z');
+    expect(JSON.stringify(same)).toBe(JSON.stringify(prev));
+
+    const grown = nextStory(prev, [toEntry(fixture(12), h, REPO), toEntry(fixture(18), undefined, REPO)], 'b'.repeat(40), '2026-11-05T00:00:00.000Z');
+    expect(grown.throughSha).toBe('b'.repeat(40));
+    expect(grown.generatedAt).toBe('2026-11-05T00:00:00.000Z');
+    expect(grown.prs.map((p: any) => p.number)).toEqual([12, 18]);
+    expect(grown.prs[0].ciVerdicts).toEqual([verdict]);
+
+    expect(nextStory(null, [toEntry(fixture(12), h, REPO)], 'b'.repeat(40), '2026-11-05T00:00:00.000Z').throughSha).toBe('b'.repeat(40));
   });
 
   test('the red test counts only when it is the first non-merge commit of the PR', async () => {
@@ -135,27 +232,46 @@ describe('committed data (src/data/build-story.json)', () => {
   test('every PR merged up to the commit the data was generated through is in the data', () => {
     expect(story.throughSha).toMatch(/^[0-9a-f]{40}$/);
     execSync(`git merge-base --is-ancestor ${story.throughSha} HEAD`);
-    const merged = execSync(`git log --merges --format=%s ${story.throughSha}`, { encoding: 'utf8' })
+    // Merges that only refreshed the build-story data, and any bot's merge, are left out (see isBookkeeping).
+    const dataOnly = (sha: string, subject: string) =>
+      / from [^/]+\/bot\//.test(subject) ||
+      execSync(`git diff --name-only ${sha}^1 ${sha}`, { encoding: 'utf8' })
+        .split('\n')
+        .filter(Boolean)
+        .every((f) => /^src\/data\/build-story[^/]*\.json$/.test(f));
+    const merged = execSync(`git log --merges --format=%H%x09%s ${story.throughSha}`, { encoding: 'utf8' })
       .split('\n')
-      .map((s) => s.match(/^Merge pull request #(\d+) from /)?.[1])
-      .filter(Boolean)
-      .map(Number);
+      .map((l) => l.split('\t'))
+      .map(([sha, s]) => ({ sha, s, n: Number(s?.match(/^Merge pull request #(\d+) from /)?.[1]) }))
+      .filter((m) => m.n);
     expect(merged.length).toBeGreaterThan(0);
     const have = new Set(story.prs.map((p: any) => p.number));
-    expect(merged.filter((n) => !have.has(n))).toEqual([]);
+    expect(merged.filter((m) => !have.has(m.n) && !dataOnly(m.sha, m.s)).map((m) => m.n)).toEqual([]);
+    expect(merged.filter((m) => have.has(m.n) && dataOnly(m.sha, m.s)).map((m) => m.n)).toEqual([]);
   });
 
-  test('no PR lacks a red-test-first commit unless it says why, in both languages', () => {
+  test('catches up with main: every PR through #24 is in, the data-only #15 is not', () => {
+    const have = story.prs.map((p: any) => p.number);
+    for (const n of [16, 17, 18, 19, 20, 21, 22, 23, 24]) expect(have).toContain(n);
+    expect(have).not.toContain(15);
+  });
+
+  test('no curated PR lacks a red-test-first commit unless it says why, in both languages', () => {
     for (const p of story.prs) {
       if (p.redTest) {
         expect(p.redTest.url).toBe(`${GH}/commit/${p.redTest.sha}`);
         expect(p.commits.find((c: any) => c.sha === p.redTest.sha)?.role).toBe('red');
-      } else expect(isL10n(p.preLoop), `#${p.number} preLoop`).toBe(true);
+      } else if (!p.pending) expect(isL10n(p.preLoop) || isL10n(p.noRedTest), `#${p.number} preLoop or noRedTest`).toBe(true);
     }
   });
 
-  test('every PR says what changed for visitors and what the human decided, EN and RU', () => {
+  test('every curated PR says what changed for visitors and what the human decided, EN and RU', () => {
     for (const p of story.prs) {
+      expect(Array.isArray(p.ciVerdicts), `#${p.number} ciVerdicts slot`).toBe(true);
+      if (p.pending) {
+        expect(p.findings, `#${p.number} pending findings`).toEqual([]);
+        continue;
+      }
       expect(isL10n(p.visitorChange), `#${p.number} visitorChange`).toBe(true);
       expect(isL10n(p.humanDecision), `#${p.number} humanDecision`).toBe(true);
       expect(Array.isArray(p.ciVerdicts), `#${p.number} ciVerdicts slot`).toBe(true);
@@ -169,10 +285,15 @@ describe('committed data (src/data/build-story.json)', () => {
   test('the curated copy in the data is the highlights file as it is now (the generator was rerun)', () => {
     for (const p of story.prs) {
       const h = highlights[String(p.number)];
-      expect(h, `#${p.number} has highlights`).toBeDefined();
-      for (const k of ['visitorChange', 'humanDecision', 'findings', 'preLoop'])
+      // Pending exactly when there is no highlight to show.
+      expect(!!p.pending, `#${p.number} pending`).toBe(!h);
+      if (!h) continue;
+      for (const k of ['visitorChange', 'humanDecision', 'titleRu', 'findings', 'preLoop', 'noRedTest'])
         expect(p[k] ?? null, `#${p.number}.${k}`).toEqual(h[k] ?? null);
     }
+    // No highlight is orphaned (e.g. #15's after it left the story).
+    const numbers = new Set(story.prs.map((p: any) => String(p.number)));
+    expect(Object.keys(highlights).filter((k) => !numbers.has(k))).toEqual([]);
   });
 });
 
@@ -222,21 +343,38 @@ describe(`built ${PATH}`, () => {
       expect(hrefs(c)).toContain(`${GH}/pull/${p.number}`);
       if (p.redTest) expect(hrefs(c)).toContain(p.redTest.url);
       const t = text(c);
+      if (p.pending) {
+        // Facts only, marked as waiting for the human's notes.
+        expect(c).toMatch(/data-pending/);
+        continue;
+      }
+      expect(c).not.toMatch(/data-pending/);
       expect(t).toContain(p.visitorChange.en);
       expect(t).toContain(p.humanDecision.en);
       for (const f of p.findings) {
         expect(t).toContain(f.en);
         expect(hrefs(c)).toContain(f.ref);
       }
-      if (!p.redTest) expect(t).toContain(p.preLoop.en);
+      if (!p.redTest) expect(t).toContain((p.preLoop ?? p.noRedTest).en);
     }
+  });
+
+  // The committed data may have no pending PR at a given moment, so the page's pending branch is
+  // pinned in its source: a bot PR must render, in both languages, without copy.
+  test('the page renders a pending card in both languages', () => {
+    const src = read('src/pages/[...locale]/how-its-built.astro');
+    expect(src).toMatch(/data-pending/);
+    expect(src).toMatch(/pending/);
   });
 
   test('the RU page carries the same cards in Russian', () => {
     const ru = text(read(`dist/ru${PATH}index.html`));
     for (const p of story.prs) {
-      expect(ru).toContain(p.visitorChange.ru);
-      expect(ru).toContain(p.humanDecision.ru);
+      if (p.pending) continue;
+      // text() folds every whitespace run, no-break spaces in «35 758» included; fold the copy the same way.
+      expect(ru).toContain(p.visitorChange.ru.replace(/\s+/g, ' '));
+      expect(ru).toContain(p.humanDecision.ru.replace(/\s+/g, ' '));
+      if (p.titleRu) expect(ru).toContain(p.titleRu);
     }
   });
 
