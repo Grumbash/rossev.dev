@@ -256,7 +256,7 @@ export const en = {
     home: '← Home',
     kicker: 'Receipts',
     title: 'How this site was built',
-    lead: 'Agents wrote the code, I did the planning. That is easy to say, so here are the receipts: every merged PR of this site, with the test committed red before the code (all but the first PR, made before this loop), what was caught before merge, and what I decided.',
+    lead: 'Agents wrote the code, I did the planning. That is easy to say, so here are the receipts: every merged PR of this site except data refreshes and bot PRs, with the test committed red before the code (a card without one says why, or that the reason is still to come), what was caught before merge, and what I decided.',
     scopeHtml: (homeHref: string) =>
       `The PR count and percentages on <a class="text-link" href="${homeHref}">the home page</a> are about my work at YAGNI, not this site. This page shows the same loop on this site’s own PRs.`,
     loopTitle: 'How the loop runs now',
@@ -283,6 +283,8 @@ export const en = {
     forVisitors: 'For visitors',
     redGreen: 'Red → green',
     redTest: 'Red test',
+    noRedTest: 'No red test first — reason still to come',
+    pending: 'My notes on this PR are still to come: for now the card shows only what git and GitHub record.',
     review: 'Review',
     caught: 'Caught before merge',
     decided: 'What I decided',
