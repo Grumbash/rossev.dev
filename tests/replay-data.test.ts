@@ -21,6 +21,17 @@ const weightsFrom = (p: string) => {
   return decodeWeights(bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength));
 };
 
+// A test name is in the source literally, or matches a template title like `regrows after a bite out of the ${name}`
+// whose ${...} part is one of the string literals in that file.
+function nameIn(src: string, name: string): boolean {
+  if (src.includes(name)) return true;
+  const literals = new Set([...src.matchAll(/'([^'\n]+)'/g)].map((m) => m[1]));
+  for (const m of src.matchAll(/test\(`([^`]*)\$\{\w+\}([^`]*)`/g)) {
+    if (name.startsWith(m[1]) && name.endsWith(m[2]) && literals.has(name.slice(m[1].length, name.length - m[2].length))) return true;
+  }
+  return false;
+}
+
 type L10n = { en: string; ru: string };
 type ReplayEvent = {
   t: string;
@@ -129,12 +140,13 @@ describe('replay data (src/data/replay-pr11.json)', () => {
     const named = replay.events.filter((e) => (e.kind === 'test' || e.kind === 'fix') && e.lines?.length);
     for (const e of named) {
       const src = git('show', `${e.testsAt ?? e.sha}:tests/nca.test.ts`);
-      for (const name of e.lines!) expect(src).toContain(name);
+      for (const name of e.lines!) expect(nameIn(src, name)).toBe(true);
     }
     const tests = replay.events.filter((e) => e.kind === 'test');
     expect(tests.reduce((n, e) => n + (e.lines?.length ?? 0), 0)).toBeGreaterThanOrEqual(3);
     for (const e of tests) expect(e.testsAt).toBe('6151777add1a736c719b97cef9adf95b434208ff');
     expect(tests.flatMap((e) => e.lines!).some((n) => /cut/.test(n))).toBe(false);
+    expect(tests.flatMap((e) => e.lines!).some((n) => /bite/.test(n))).toBe(true);
     const fix = replay.events.find((e) => e.kind === 'fix' && e.sha === '662bf5800a68368eae63308271d2947c92cd2d94');
     expect(fix?.lines ?? []).toContain('a vertical cut between the letters');
   });
@@ -173,6 +185,40 @@ describe('reproduced G→R frames (public/replay/pr11-gr.json)', () => {
     expect(rec.source.en).toMatch(/not in git/i);
     expect(rec.source.ru).toMatch(/PR #11/);
     expect(readFileSync(ROUND1).equals(readFileSync('public/nca/gr.bin'))).toBe(false);
+  });
+
+  // The sandbox's "all green" is a claim too: run the 6151777 assertions (bites-era tests) on round 1.
+  test('the round-1 weights pass the tests that existed then (why the sandbox was green)', () => {
+    const target = readJson('scripts/nca/target.json');
+    const w = weightsFrom(ROUND1);
+    const mseOf = (ca: NeuralCA) => {
+      const out = ca.rgba();
+      let sum = 0;
+      for (let i = 0; i < out.length; i++) sum += (out[i] - target.rgba[i]) ** 2;
+      return sum / out.length;
+    };
+    const grown = (seed: number) => {
+      const ca = new NeuralCA(w, mulberry32(seed));
+      ca.seed();
+      ca.step(300);
+      return ca;
+    };
+    expect(mseOf(grown(1))).toBeLessThan(0.01);
+    for (const [fx, fy] of [[0.5, 0.5], [0.3, 0.5], [0.65, 0.7]]) {
+      const ca = grown(2);
+      ca.damage(fx * ca.size, fy * ca.size, 0.2 * ca.size);
+      expect(mseOf(ca)).toBeGreaterThan(0.01);
+      ca.step(300);
+      expect(mseOf(ca)).toBeLessThan(0.01);
+    }
+    const stable = grown(3);
+    stable.step(1000);
+    expect(mseOf(stable)).toBeLessThan(0.015);
+  });
+
+  test('says the weights are a float16 copy of a source JSON, with its sha256', () => {
+    expect(rec.source.en).toMatch(/float16/);
+    expect(rec.sourceSha256).toMatch(/^[0-9a-f]{64}$/);
   });
 
   test('the round-1 weights grow GR fine: the bug only shows after a cut', () => {
