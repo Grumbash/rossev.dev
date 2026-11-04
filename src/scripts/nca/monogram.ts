@@ -30,23 +30,37 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
   let size = canvas.width;
   let inView = false;
   let noticeTimer: ReturnType<typeof setTimeout> | undefined;
+  // One persistent line inside the live region: a new notice replaces its text.
+  const noticeLine = document.createElement('span');
 
   // The live region is in the page from the start (empty), so filling it is announced.
   if (notice) notice.hidden = false;
 
-  /** Shows a worker notice over the canvas for a moment; screen readers hear it once. */
-  function showNotice(text: string | undefined): void {
-    if (!notice || !text) return;
-    // Over the canvas wherever the grid put it; .nca-block is the offset parent.
+  // Over the canvas wherever the grid put it (.nca-block is the offset parent); kept
+  // there on resize while the notice is up.
+  function placeNotice(): void {
+    if (!notice) return;
     notice.style.left = `${canvas!.offsetLeft}px`;
     notice.style.top = `${canvas!.offsetTop}px`;
     notice.style.width = `${canvas!.offsetWidth}px`;
     notice.style.height = `${canvas!.offsetHeight}px`;
-    const line = document.createElement('span');
-    line.textContent = text;
-    notice.replaceChildren(line);
+  }
+
+  function hideNotice(): void {
+    noticeLine.textContent = '';
+    noticeLine.remove();
+    window.removeEventListener('resize', placeNotice);
+  }
+
+  /** Shows a worker notice over the canvas for a moment; screen readers hear it once. */
+  function showNotice(text: string | undefined): void {
+    if (!notice || !text) return;
+    placeNotice();
+    window.addEventListener('resize', placeNotice);
+    noticeLine.textContent = text;
+    if (!noticeLine.isConnected) notice.appendChild(noticeLine);
     clearTimeout(noticeTimer);
-    noticeTimer = setTimeout(() => notice.replaceChildren(), NOTICE_MS);
+    noticeTimer = setTimeout(hideNotice, NOTICE_MS);
   }
 
   const send = (msg: ToWorker, transfer: Transferable[] = []) => worker?.postMessage(msg, transfer);
