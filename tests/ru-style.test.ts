@@ -7,23 +7,11 @@ import { execSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { RU_BANNED, ruBannedRe, ruStyleProblems } from '../src/i18n/ru-style';
+
 setDefaultTimeout(180_000);
 
-// Cyrillic has no \b: a match must not continue a Russian word on the left.
-const w = (src: string) => new RegExp(`(?<![а-яё])(?:${src})`, 'giu');
-export const BANNED: [RegExp, string][] = [
-  [w('влит[а-яё]*|влива[а-яё]*'), 'merge is «мерж/смержить», not «влить»'],
-  [w('закоммичен[а-яё]* красн'), 'red test: «сначала красный тест»'],
-  [w('залечива[а-яё]*'), 'NCA heals: «заживает»'],
-  [w('контур[а-яё]* само'), 'self-improving loop: «цикл самоулучшения»'],
-  [w('арендатор[а-яё]*'), 'tenant: «тенант» or «клиент»'],
-  [w('строительн[а-яё]* блок'), 'building block: «кирпичик»'],
-  [w('сканирует'), 'skim: «пробегать глазами»'],
-  [w('ярус[а-яё]*|бункер[а-яё]*|орбитальн[а-яё]*|укреплённ[а-яё]*'), 'EN scene metaphor translated literally'],
-  [w('ГАРАНТИЯ:|ЗАЩИТА:'), 'guardrail: «гардрейл»'],
-  [w('нанимаете под'), 'hiring for: «ищете людей в»'],
-  [w('ждёшь|ответь|напиши|можешь|тебе|твой|твоя'), 'the reader is «вы» everywhere'],
-];
+const BANNED = RU_BANNED.map(([src, why]) => [ruBannedRe(src), why] as const);
 
 const files: string[] = [];
 const walk = (dir: string) => {
@@ -37,6 +25,13 @@ const walk = (dir: string) => {
 beforeAll(() => {
   execSync('bun run build', { stdio: 'ignore' });
   walk('dist');
+});
+
+describe('the banned list', () => {
+  test('catches the stand-ins and «ты», passes the IT terms the guide keeps', () => {
+    expect(ruStyleProblems('Влито в main. Пока ждёшь: ЗАЩИТА: тенант').length).toBe(3);
+    expect(ruStyleProblems('Смерженный PR, фидбек, фикс, ГАРДРЕЙЛ: харнесс, эвалы, влияние, ответственность')).toEqual([]);
+  });
 });
 
 describe('RU copy follows docs/ru-style.md', () => {
