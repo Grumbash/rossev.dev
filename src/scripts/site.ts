@@ -25,6 +25,8 @@ export function initSite() {
   };
   document.addEventListener('click', carry, true);
   document.addEventListener('auxclick', carry, true);
+  // Right-click -> "Open in new tab" / "Copy link" reads the href too.
+  document.addEventListener('contextmenu', carry, true);
 
   window.toggleSiteTheme = () => {
     const next = (root.getAttribute('data-theme') || 'light') === 'light' ? 'dark' : 'light';

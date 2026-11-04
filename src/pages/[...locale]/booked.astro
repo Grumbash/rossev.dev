@@ -5,19 +5,30 @@
 import { BLOG_POSTS, PROFILE, postPath } from '../../data/profile';
 import Base from '../../layouts/Base.astro';
 import { PLACEMENTS, bookingSource } from '../../scripts/analytics';
-import { localeOf, localePath, localeStaticPaths, t } from '../../i18n';
+import { DEFAULT_LOCALE, LOCALES, localeOf, localePath, localeStaticPaths, t } from '../../i18n';
 
 // cal.com redirects to /booked/; /ru/booked/ is its Russian twin for the language switch.
 export const getStaticPaths = localeStaticPaths;
 const lang = localeOf(Astro.params.locale);
 const d = t(lang);
+// Locales with their own /<lang>/booked/ page (the default one is /booked/ itself).
+const prefixed = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
 const post = BLOG_POSTS.find((p) => p.slug === 'the-new-ai-bottleneck')!;
 
 // Classic and inline, so it runs during parsing, before the deferred trackers. It is bookingSource() itself:
 // its source is inlined, with PLACEMENTS declared beside it for its default argument.
+// cal.com always redirects to /booked/; a booking made from a /ru/ page carries lang=ru (calUrl), so the
+// visitor is sent on, query and all, to /ru/booked/, which then reads and strips it as usual.
 const strip = `(function () {
   var q = location.search;
   if (!q) return;
+  try {
+    var lang = new URLSearchParams(q).get('lang');
+    if (lang && lang !== ${JSON.stringify(lang)} && ${JSON.stringify(prefixed)}.indexOf(lang) >= 0) {
+      location.replace('/' + lang + '/booked/' + q + location.hash);
+      return;
+    }
+  } catch (e) {}
   try {
     var PLACEMENTS = ${JSON.stringify(PLACEMENTS)};
     var s = (${bookingSource.toString()})(q);
