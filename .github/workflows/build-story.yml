@@ -1,0 +1,174 @@
+# The build story follows main by itself: on every push to main, `bun run build-story` regenerates
+# src/data/build-story.json from `gh pr view`. When the file changed it must pass `bun test` and
+# `bun run build`, then lands as ONE PR from the fixed branch bot/build-story, recreated from main.
+# A newly merged PR without an entry in build-story-highlights.json shows up pending (facts only);
+# Gleb writes its copy in that PR or later. It never pushes to main: Gleb merges.
+#
+# Why a PAT (secret PUBLORA_SYNC_TOKEN, shared with publora-sync.yml): a PR opened with GITHUB_TOKEN
+# does not trigger other workflows, so perf.yml would never gate it, and this repo does not allow
+# GitHub Actions to create pull requests. The PAT's existing scopes (this repo only; Contents and
+# Pull requests read/write) cover the push and the PR. Without it the run falls back to
+# GITHUB_TOKEN: the push works, the PR step fails.
+#
+# The loop guard: merging a bot PR is a push to main, so this workflow runs again. The script leaves
+# out every PR from a bot/ branch (bot/build-story, bot/publora-sync) and every PR that only touches
+# src/data/build-story*.json (#15 was one), so the PR list is the same as before. With the same PRs
+# the script returns the previous story untouched, keeping its old throughSha and generatedAt: a
+# newer main commit or a new timestamp is never the only change. `git diff --quiet` then finds
+# nothing and the run ends without a commit or a PR. The same holds when Gleb merges the bot PR
+# after writing highlights in it: the regenerated file already matches.
+#
+# Squash merges, "Update branch" and undeleted branches leave commits on bot/build-story that main
+# never gets. So a human commit only stops the bot while its OPEN PR exists; with no open PR the
+# branch is recreated from main.
+name: build-story
+
+# Quoted: YAML 1.1 parsers (Bun.YAML in the tests) read a bare `on` as the boolean true.
+"on":
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: build-story
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0 # throughSha, the red-commit check and the bot-branch guard read history
+          persist-credentials: false
+
+      # Red-test commits of a squash-merged PR whose branch is gone live only under refs/pull/N/head.
+      - name: Fetch every PR head
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c "http.https://github.com/.extraheader=$auth" fetch --quiet --no-tags origin '+refs/pull/*/head:refs/remotes/pull/*'
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.3.0
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
+
+      # Reads PRs only; the PAT is used when present so both steps act as the same identity.
+      - name: Regenerate the build story
+        run: bun run build-story
+        env:
+          GH_TOKEN: ${{ secrets.PUBLORA_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - id: diff
+        name: Did the data change?
+        run: |
+          if git diff --quiet -- src/data/build-story.json; then
+            echo "changed=0" >> "$GITHUB_OUTPUT"
+            echo "::notice::The build story is up to date; nothing to propose."
+          else
+            echo "changed=1" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Main already has this data (e.g. the refresh landed through another PR): an open bot PR is stale.
+      # One with a human commit holds work in review and stays open.
+      - name: Close a stale bot PR
+        if: steps.diff.outputs.changed == '0'
+        env:
+          GH_TOKEN: ${{ secrets.PUBLORA_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          BRANCH: bot/build-story
+        run: |
+          set -euo pipefail
+          pr=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+          [ -z "$pr" ] && exit 0
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c "http.https://github.com/.extraheader=$auth" fetch --quiet origin "$BRANCH"
+          if git log --format=%ae HEAD..FETCH_HEAD | grep -qv '^41898283+github-actions\[bot\]@users.noreply.github.com$'; then
+            echo "::warning::Main already has the current build story, but PR #$pr has commits by someone other than the bot; leaving it open. Merge or close it by hand."
+            exit 0
+          fi
+          gh pr close "$pr" --repo "$GITHUB_REPOSITORY" --comment "Main already has the current build story (regenerated at $GITHUB_SHA), so this refresh is stale. Closed by build-story.yml."
+
+      - if: steps.diff.outputs.changed == '1'
+        run: bun test
+
+      - if: steps.diff.outputs.changed == '1'
+        run: bun run build
+
+      # The body lists the PRs this refresh adds, read from the data, never from PR text in a shell.
+      - if: steps.diff.outputs.changed == '1'
+        name: Write the PR body
+        run: |
+          mkdir -p .build-story
+          git show HEAD:src/data/build-story.json > .build-story/before.json
+          bun -e '
+            const read = (p) => JSON.parse(require("node:fs").readFileSync(p, "utf8"));
+            const before = new Set(read(".build-story/before.json").prs.map((p) => p.number));
+            const now = read("src/data/build-story.json").prs;
+            const added = now.filter((p) => !before.has(p.number));
+            const pending = now.filter((p) => p.pending);
+            const line = (p) => `- #${p.number} ${p.title}${p.pending ? " (pending notes)" : ""}`;
+            const body = [
+              "Regenerated by .github/workflows/build-story.yml after a push to main.",
+              "",
+              added.length ? "Added to /how-its-built/:" : "No new PRs; existing entries changed (copy, CI verdicts or facts).",
+              ...added.map(line),
+              "",
+              pending.length
+                ? `Pending notes (facts only on the page until highlights exist): ${pending.map((p) => "#" + p.number).join(", ")}. Add them to src/data/build-story-highlights.json, here or in any branch, and rerun bun run build-story (or let this workflow do it after the merge).`
+                : "No PR is pending notes.",
+            ].join("\n");
+            require("node:fs").writeFileSync(".build-story/pr-body.md", body + "\n");
+          '
+
+      - name: Push bot/build-story and open or update the PR
+        if: steps.diff.outputs.changed == '1'
+        env:
+          GH_TOKEN: ${{ secrets.PUBLORA_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          BRANCH: bot/build-story
+          TITLE: Refresh the build story
+          PR_BODY_PATH: .build-story/pr-body.md
+        run: |
+          set -euo pipefail
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git_auth() { git -c "http.https://github.com/.extraheader=$auth" "$@"; }
+
+          pr=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+          expect=$(git_auth ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          # A human commit (highlights written in review) is never overwritten while its PR is open.
+          # Without an open PR the branch is leftover (merged, squashed, closed) and is recreated from main.
+          if [ -n "$pr" ] && [ -n "$expect" ]; then
+            git_auth fetch --quiet origin "$BRANCH"
+            if git log --format=%ae HEAD..FETCH_HEAD | grep -qv '^41898283+github-actions\[bot\]@users.noreply.github.com$'; then
+              echo "::warning::PR #$pr ($BRANCH) has commits by someone other than the bot, so this refresh was not pushed. To unblock: merge or close PR #$pr; the next push to main (or Run workflow) proposes a fresh refresh."
+              exit 0
+            fi
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898283+github-actions[bot]@users.noreply.github.com'
+          git switch --create "$BRANCH"
+          git add src/data/build-story.json
+          git commit --quiet --message "$TITLE"
+          # The lease is the sha seen above (empty: the branch must not exist yet).
+          git_auth push --force-with-lease="refs/heads/$BRANCH:$expect" origin "HEAD:refs/heads/$BRANCH"
+
+          if [ -n "$pr" ]; then
+            gh pr edit "$pr" --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$PR_BODY_PATH"
+          else
+            gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$BRANCH" --title "$TITLE" --body-file "$PR_BODY_PATH"
+          fi
