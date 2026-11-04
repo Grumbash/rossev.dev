@@ -86,8 +86,9 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   const badge = $('[data-replay-badge]');
   const live = $('[data-replay-live]');
   const faultBtn = $<HTMLButtonElement>('[data-sim-fault]');
-  // The fault menu (the button starts a bad deploy at once, as in #23; the menu picks another) and the
-  // policy's label are made here, with this chunk: the page's HTML bytes are at their budget.
+  // The fault menu (the button opens it; a pick injects that fault) and the policy's label are made
+  // here, with this chunk: the page's HTML bytes are at their budget. The menu follows the button in
+  // the tab order and sits over the bottom-left of the canvas, clear of the caption.
   const canvasWrap = $('.iso-canvas-container');
   const menu = document.createElement('div');
   menu.className = 'sim-fault-menu';
@@ -107,10 +108,11 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   policyLabel.className = 'policy-label';
   policyLabel.setAttribute('data-policy-label', '');
   policyLabel.hidden = true;
-  canvasWrap?.append(menu, policyLabel);
+  if (faultBtn) faultBtn.after(menu);
+  else canvasWrap?.append(menu);
+  canvasWrap?.append(policyLabel);
   faultBtn?.setAttribute('aria-controls', menu.id);
   faultBtn?.setAttribute('aria-expanded', 'false');
-  kinds.forEach((b) => (b.textContent = strings.faultKinds[b.dataset.simFaultKind as keyof typeof strings.faultKinds] ?? ''));
   const judgeBtn = $<HTMLButtonElement>('[data-sim-judge]');
   const judgeState = $('[data-sim-judge-state]');
   const resumeBtn = $<HTMLButtonElement>('[data-replay-resume]');
@@ -150,12 +152,15 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     onTick: policyTick,
     onOutcome: policyOutcome,
     onError: () => {
-      message = '';
+      stopPolicy();
+      message = pc.loadFailed;
+      announce(message);
       paint();
       api.redraw();
     },
   });
   let shown: Outcome | ServiceOutcome | null = null; // the verdict on screen (data-outcome), set when it lands
+  let firstShown: ServiceOutcome | null = null; // a policy run's first verdict (data-first-outcome): shipped before a rollback
   let message = '';
   let messageNode = SANDBOX;
   let focusNode: number | null = null;
@@ -225,28 +230,29 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     }
   }
 
-  function land(outcome: Outcome | ServiceOutcome, text: string, node: number) {
+  function land(outcome: Outcome | ServiceOutcome, text: string, node: number, said = text) {
     shown = outcome;
     message = text;
     messageNode = node;
     s = { ...s, idleMs: 0 };
     track({ action: 'outcome', outcome });
-    announce(text);
+    announce(said);
     paint();
     api.redraw();
   }
 
-  /** A fault: the button's is a bad deploy (as in #23); the menu picks another, replacing it. */
-  function fault(kind: Fault = 'bad_deploy', replace = false) {
+  /** A fault picked in the menu (or F on the canvas: a bad deploy, as in #23), run by the learned policy. */
+  function fault(kind: Fault = 'bad_deploy') {
     stylePolicyUi();
     shown = null;
+    firstShown = null;
     focusNode = null;
     liveFrame = null;
     message = pc.run[kind as keyof typeof pc.run] ?? copy.faultRun;
     messageNode = kind === 'bad_deploy' ? BUILDER : MONITOR;
     landed = '';
     gen++;
-    pol.start(kind, s.judge, replace);
+    pol.start(kind, s.judge);
     policyLabel.hidden = false;
     apply({ ...takeover(s), outcome: null, caughtBy: null });
     announce(message);
@@ -261,37 +267,51 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
 
   function policyOutcome(r: PolicyRun, o: ServiceOutcome) {
     const n = String(r.svc.resolvedAt);
-    if (o === 'caught') land('caught', copy.caughtLive, JUDGE);
-    else if (o === 'shipped') land('shipped', copy.shippedWhy, PLAN);
-    else if (o === 'recovered') land('recovered', (r.svc.first === 'shipped' ? pc.rolledBack : pc.recovered).replace('{n}', n), PLAN);
-    else land('failed', pc.failed, PLAN);
+    firstShown ??= o;
+    let text: string;
+    let at = PLAN;
+    if (o === 'caught') [text, at] = [pc.caught, JUDGE];
+    else if (o === 'shipped') text = pc.shipped;
+    else if (o === 'recovered') text = (r.svc.first === 'shipped' ? pc.rolledBack : r.paged ? pc.recoveredPaged : pc.recovered).replace('{n}', n);
+    else text = pc.failed;
+    // Screen readers hear the verdict and the decision that ended it, never every tick.
+    land(o, text, at, r.ticks ? `${text} ${pc.lastAction}: ${ACTIONS[r.action]}, ${r.confidence.toFixed(2)}.` : text);
   }
 
   function stopPolicy() {
     pol.reset();
+    firstShown = null;
     set('data-policy-action', null);
     set('data-policy-confidence', null);
     policyLabel.hidden = true;
   }
 
   function openMenu() {
-
     stylePolicyUi();
     menu.hidden = false;
     faultBtn?.setAttribute('aria-expanded', 'true');
+    // Over the bottom-left of the canvas, above the dashboard strip: the caption stays readable.
+    const wrapRect = canvasWrap?.getBoundingClientRect();
+    const parent = (menu.offsetParent as HTMLElement | null)?.getBoundingClientRect();
+    if (wrapRect && parent) {
+      const narrow = wrapRect.width < 520;
+      menu.style.left = `${wrapRect.left - parent.left + 8}px`;
+      menu.style.top = `${wrapRect.bottom - parent.top - menu.offsetHeight - (narrow ? 64 : 58)}px`;
+    }
+    kinds[0].focus();
   }
-  function closeMenu() {
+  function closeMenu(refocus = false) {
     if (menu.hidden) return;
     menu.hidden = true;
     faultBtn?.setAttribute('aria-expanded', 'false');
+    if (refocus) faultBtn?.focus();
   }
+  const toggleMenu = () => (menu.hidden ? openMenu() : closeMenu());
   function pick(el: HTMLElement) {
     const kind = el.getAttribute('data-sim-fault-kind') as Fault;
     if (!(FAULTS as readonly string[]).includes(kind)) return;
-    const inMenu = document.activeElement && menu?.contains(document.activeElement);
-    closeMenu();
-    fault(kind, true);
-    if (inMenu) faultBtn?.focus();
+    closeMenu(true);
+    fault(kind);
   }
 
   function judge() {
@@ -391,12 +411,13 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     const liveMode = s.mode === 'live';
     const stamp = liveMode ? (shown === 'caught' || shown === 'shipped' ? shown : '') : stampFor(index, rm || still ? 1 : progress);
     const offer = attached && showResumePrompt(s);
-    const key = [index, s.mode, s.judge, shown, offer, stamp].join('|');
+    const key = [index, s.mode, s.judge, shown, firstShown, offer, stamp].join('|');
     if (key === painted) return;
     painted = key;
     set('data-replay-shot', String(index));
     set('data-replay-stamp', stamp);
     set('data-outcome', shown);
+    set('data-first-outcome', firstShown);
     card.classList.toggle('is-live', liveMode);
     if (badge) badge.textContent = liveMode ? strings.yourRun : strings.replayBadge;
     judgeBtn?.setAttribute('aria-pressed', String(s.judge));
@@ -412,19 +433,15 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     stops.forEach((st, i) => st.classList.toggle('is-current', i === index));
   }
 
-  faultBtn?.addEventListener('click', () => {
-    fault();
-    openMenu();
-  });
+  faultBtn?.addEventListener('click', toggleMenu);
   kinds.forEach((b) => b.addEventListener('click', () => pick(b)));
-  menu?.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    closeMenu();
-    faultBtn?.focus();
+  // Escape anywhere closes the menu and hands focus back to the button; a press elsewhere closes it.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) closeMenu(true);
   });
   document.addEventListener('pointerdown', (e) => {
     const t = e.target as Node;
-    if (menu && !menu.hidden && !menu.contains(t) && !faultBtn?.contains(t)) closeMenu();
+    if (!menu.hidden && !menu.contains(t) && !faultBtn?.contains(t)) closeMenu();
   });
   judgeBtn?.addEventListener('click', judge);
   resumeBtn?.addEventListener('click', back);
@@ -857,7 +874,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     ];
     ctx.save();
     ctx.font = `700 ${narrow ? 9.5 : 11}px ${MONO}`;
-    const y = v.height - (narrow ? 38 : 44);
+    const y = v.height - (narrow ? 50 : 44);
     const gap = narrow ? 10 : 16;
     const widths = parts.map(([t]) => ctx.measureText(t).width);
     const total = widths.reduce((a, b) => a + b, 0) + gap * (parts.length - 1);
@@ -874,6 +891,18 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     const low = Math.min(v.height * 0.62, v.height - 80);
     if (shown === 'caught') stamp(v, copy.caught, RED, v.width / 2, low, 1, `run${gen}c`);
     else if (shown === 'recovered') stamp(v, pc.recoveredStamp, LIME, v.width / 2, low, 1, `run${gen}r`);
+    if (rm && firstShown === 'shipped' && shown !== 'shipped') {
+      // Reduced motion lands both at once: the ship stays on screen as a slim band above the result.
+      ctx.save();
+      ctx.fillStyle = RED;
+      ctx.fillRect(0, low - (narrow ? 52 : 64), v.width, narrow ? 18 : 22);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = `900 ${narrow ? 11 : 13}px ${MONO}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(copy.shipped, v.width / 2, low - (narrow ? 43 : 53));
+      ctx.restore();
+    }
     else if (shown === 'failed') stamp(v, pc.failedStamp, RED, v.width / 2, low, 1, `run${gen}f`);
     else if (shown === 'shipped') {
       // Shipped: a red band across the scene. The explanation is in the caption, calmly.
@@ -966,9 +995,13 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     s = { ...s, idleMs: 0 };
     syncIdle();
     api.setGuide(guide);
+    pol.resume();
     paint();
   }
   function detach() {
+    // Explore takes the canvas: the policy run waits where it is and goes on when Explore closes.
+    pol.pause();
+    closeMenu();
     attached = false;
     syncIdle();
     paint();
@@ -984,10 +1017,8 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     detach,
     /** A control (or a timeline click at clientX `x`) the visitor used before this chunk had loaded. */
     handle(el: Element, x = 0) {
-      if (el.matches('[data-sim-fault]')) {
-        fault();
-        openMenu();
-      } else if (el.matches('[data-sim-fault-kind]')) pick(el as HTMLElement);
+      if (el.matches('[data-sim-fault]')) toggleMenu();
+      else if (el.matches('[data-sim-fault-kind]')) pick(el as HTMLElement);
       else if (el.matches('[data-sim-judge]')) judge();
       else if (el.matches('[data-replay-resume]')) back();
       else if (el.matches('[data-replay-pause]')) setPaused(!paused);
