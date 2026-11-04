@@ -29,3 +29,6 @@ dist/
 
 # home-flat test: scratch copy of the site with long fixture posts
 .home-flat/
+
+# Local notes and drafts, never part of the site
+/docs/
