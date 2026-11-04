@@ -59,6 +59,29 @@ describe('generator (pure functions on real gh output)', () => {
 
   // Any bot's PR is bookkeeping too: publora-sync merges bot/publora-sync PRs that touch posts.json,
   // and each would otherwise become a pending card and drag "red test first" down.
+  // Main's history was rewritten once; GitHub's PR commit lists keep the old ids.
+  test('a PR commit main does not contain becomes its rewritten twin on main: same author time, then subject', async () => {
+    const { onMain } = await gen();
+    const main = [
+      { sha: 'a'.repeat(40), authoredAt: '2026-11-03T20:14:13+04:00', subject: 'Red test: a neural cellular automaton grows GR from one cell and regrows it after damage' },
+      { sha: 'b'.repeat(40), authoredAt: '2026-11-03T21:00:00+04:00', subject: 'First of two in one second' },
+      { sha: 'c'.repeat(40), authoredAt: '2026-11-03T21:00:00+04:00', subject: 'Second of two in one second' },
+    ];
+    const gh = (oid: string, messageHeadline: string, authoredDate?: string) => ({ oid, messageHeadline, authoredDate });
+    expect(
+      onMain(
+        [
+          gh('1'.repeat(40), 'Red test: a neural cellular automaton grows GR from one cell and regr…', '2026-11-03T16:14:13Z'),
+          gh('2'.repeat(40), 'Second of two in one second', '2026-11-03T17:00:00Z'),
+          gh('b'.repeat(40), 'First of two in one second', '2026-11-03T17:00:00Z'),
+          gh('3'.repeat(40), 'Nothing on main at this time', '2026-11-03T18:00:00Z'),
+          gh('4'.repeat(40), 'No date from gh'),
+        ],
+        main,
+      ).map((c) => c.oid),
+    ).toEqual(['a'.repeat(40), 'c'.repeat(40), 'b'.repeat(40), '3'.repeat(40), '4'.repeat(40)]);
+  });
+
   test('a PR from a bot/ branch is not a story entry either', async () => {
     const { isBookkeeping } = await gen();
     const pr = (headRefName: string, paths: string[]) => ({ headRefName, files: paths.map((path) => ({ path })) });
@@ -79,7 +102,7 @@ describe('generator (pure functions on real gh output)', () => {
     expect(isPlaceholder('M', stub)).toBe(false);
     expect(isPlaceholder('A', 'export const add = (a: number, b: number) => a + b;\n')).toBe(false);
     expect(isPlaceholder('A', stub + 'export const real = (a: number) => a * 2;\n')).toBe(false);
-    for (const sha of ['91b3c30', '546c305', 'c6684bb']) {
+    for (const sha of ['b0c0a84', 'd5e8fe9', '3b04b9d']) {
       const added = execSync(`git show --diff-filter=A --name-only --format= ${sha}`, { encoding: 'utf8' }).split('\n').filter((f) => f && !f.startsWith('tests/'));
       expect(added.length, sha).toBeGreaterThan(0);
       for (const f of added) expect(isPlaceholder('A', execSync(`git show ${sha}:${f}`, { encoding: 'utf8' })), `${sha} ${f}`).toBe(true);
