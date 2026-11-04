@@ -47,9 +47,10 @@
         "en": "Acted on two outside reviews: a friend's UX notes and a WebGL engineer's. Kept the 3D topology in the hero, cut the sections that repeated each other.",
         "ru": "Взял в работу два внешних ревью: UX-заметки друга и отзыв WebGL-инженера. 3D-топологию в hero оставил, повторяющиеся разделы убрал."
       },
+      "titleRu": "Перестроил сайт: посетитель сначала видит, кто я, чем занимаюсь и как со мной связаться, и понимает, что кликабельно",
       "preLoop": {
         "en": "One commit, made before this loop existed: no red test first.",
-        "ru": "Один коммит, сделанный до появления этого цикла: красного теста первым нет."
+        "ru": "Один коммит, сделанный до появления этого цикла: красного теста до кода нет."
       },
       "review": {
         "en": "An independent review found no blockers; its confirmed findings were fixed before merge.",
@@ -100,6 +101,7 @@
         "en": "One name per fact: the Kingpin −80% is feedback analysis time everywhere, and the 28 YAGNI PRs are the first week, not the first 8 days.",
         "ru": "У каждого факта одно название: −80% в Kingpin везде время анализа фидбека, а 28 PR в YAGNI — первая неделя, а не первые 8 дней."
       },
+      "titleRu": "Страница, её JSON-LD и llms.txt говорят обо мне одно и то же, с одними и теми же цифрами",
       "green": {
         "sha": "33a22dda47abcaa950660dfc9c10b333ba7aafcc",
         "subject": "Make the page, its JSON-LD and llms.txt agree on who Gleb is and on the numbers",
@@ -156,6 +158,7 @@
         "en": "Events go to Umami Cloud: Vercel Hobby has no custom events and keeps data for a month.",
         "ru": "События отправляются в Umami Cloud: в Vercel Hobby нет своих событий, а данные хранятся месяц."
       },
+      "titleRu": "Воронку конверсии теперь можно измерить: события Umami и UTM на cal.com",
       "green": {
         "sha": "bc1eae53ff23d385a7345ed592f42666e8b815a3",
         "subject": "Make the conversion funnel measurable with Umami events and UTM on cal.com links",
@@ -206,6 +209,7 @@
         "en": "The 28 YAGNI PRs say who did what: agents wrote 98% of the code, I did 97% of the planning.",
         "ru": "28 PR в YAGNI теперь говорят, кто что сделал: 98% кода написали агенты, 97% планирования — моё."
       },
+      "titleRu": "Hero цепляет за 5 секунд: строка ценности, цифры и кнопка созвона до первого скролла",
       "green": {
         "sha": "b20962dc980572959d28ce4d0b246d1627a97011",
         "subject": "Give the hero a 5-second hook: value line, stats and an intro-call CTA above the fold",
@@ -256,6 +260,7 @@
         "en": "No GitHub Actions: the gate runs on git push and blocks it.",
         "ru": "Без GitHub Actions: проверка стоит на git push и блокирует его."
       },
+      "titleRu": "Каждый пуш проверяется бюджетами производительности, за ними следит агент perf-watchdog",
       "green": {
         "sha": "9b45487e2bc7a8d1ae12874c239d9725e05a2a58",
         "subject": "Gate every push on byte and Lighthouse budgets, and ask a perf-watchdog agent what got slower when it fails",
@@ -300,6 +305,7 @@
         "en": "Kept the scope to reduced motion. Two side issues, a right-click drag and the canvas font fallback, are written down in the PR, not fixed.",
         "ru": "Ограничил задачу режимом reduced motion. Две побочные проблемы, перетаскивание правой кнопкой и запасной шрифт на канвасе, записаны в PR, но не исправлены."
       },
+      "titleRu": "Canvas в hero не крутит цикл анимации при reduced motion",
       "review": {
         "en": "An independent review also checked the wake-ups under reduced motion: fault and drag run to the end and then idle, and the canvas is redrawn after resize.",
         "ru": "Независимое ревью отдельно проверило пробуждения при reduced motion: сбой и перетаскивание доигрывают до конца и затихают, а после resize канвас перерисовывается."
@@ -348,6 +354,7 @@
         "en": "Post pages keep one book-a-call link, the reader's. No link from home to /writing/ yet: that section was being changed in another branch.",
         "ru": "На страницах постов одна ссылка на созвон, в конце конспекта. Ссылки с главной на /writing/ пока нет: этот раздел менялся в другой ветке."
       },
+      "titleRu": "У каждого поста своя индексируемая страница, а конспект заканчивается следующим шагом",
       "green": {
         "sha": "6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8",
         "subject": "Give every post its own page, link cards to it, and end the brief with a next step",
@@ -392,6 +399,7 @@
         "en": "Dropped the 89%: it counted agent/ branch names, so it couldn't be backed up, and it contradicted the 98%.",
         "ru": "Убрал 89%: эта цифра считала имена веток agent/, подтвердить её нечем, и она спорила с 98%."
       },
+      "titleRu": "Карточка YAGNI больше не утверждает, что 89% PR написали агенты; остаётся одна цифра — 98% кода",
       "green": {
         "sha": "7b74687b647452b723dddcb0b56c3469dae19619",
         "subject": "The YAGNI card drops the unprovable 89% of PRs; 98% of the code is the one agent share",
@@ -488,6 +496,7 @@
         "en": "Merged with the limit written down: 11 of 720 healing checks still miss the bar, and Reset recovers. A sharper WebGL version stays a follow-up.",
         "ru": "Смержил с записанным ограничением: 11 из 720 проверок заживления всё ещё не проходят порог, Reset это исправляет. Более чёткая версия на WebGL — на потом."
       },
+      "titleRu": "Нейронный клеточный автомат выращивает монограмму GR в блоке «Вне резюме», и она заживает, когда посетитель её режет или откусывает",
       "review": {
         "en": "Written by an independent writer agent and reviewed by three independent judge passes; every confirmed finding was fixed.",
         "ru": "Код написал независимый агент, дифф прошли три независимые проверки-судьи; каждое подтверждённое замечание исправлено."
@@ -531,6 +540,7 @@
         "en": "Count booked calls, not just clicks on Book a call, and keep none of the booking details: only the link it came from survives.",
         "ru": "Считать забронированные созвоны, а не только клики по кнопке, и не хранить данные брони: сохраняется только то, с какой ссылки пришли."
       },
+      "titleRu": "Страница /booked: настоящая запись через cal.com становится шагом воронки, а персональные данные брони никуда не утекают",
       "green": {
         "sha": "f01970d4970f7208c8025471769deed4dbbc39b8",
         "subject": "Add /booked: a cal.com booking becomes booking_confirmed{source} with no booking PII",
@@ -597,6 +607,7 @@
         "en": "Only this site’s PRs count here: the hero’s 28 PRs are YAGNI’s, and the page says so. Each card also shows what the human decided, not only what was caught.",
         "ru": "Здесь считаются только PR этого сайта: 28 PR из hero — это YAGNI, и страница так и говорит. В каждой карточке есть и то, что решил человек, а не только то, что поймали."
       },
+      "titleRu": "Как собран этот сайт: каждый смерженный PR с красным тестом, тем, что поймали, и тем, что решил я",
       "review": {
         "en": "Written by an independent writer agent and reviewed by an independent judge pass: ship after fixes. Its findings were fixed before merge.",
         "ru": "Код написал независимый агент, дифф проверил независимый судья: «можно мержить после правок». Его замечания исправлены до мержа."
@@ -691,6 +702,7 @@
         "en": "The model is called only on a breach, usually on a free model, and its answer is made inert before it is posted. The LLM code review stays local on purpose.",
         "ru": "Модель вызывается только при пробитом бюджете, обычно бесплатная, а её ответ обезвреживается перед публикацией. LLM-ревью кода намеренно остаётся локальным."
       },
+      "titleRu": "Perf-гейт на каждом PR в GitHub Actions и watchdog на OpenRouter, который объясняет превышения в одном закреплённом комментарии",
       "review": {
         "en": "An independent judge reviewed the diff: ship after fixes. Its fixes are in.",
         "ru": "Дифф проверил независимый судья: «можно мержить после правок». Его правки внесены."
@@ -742,9 +754,10 @@
         "en": "Canary #42 stays as an easter egg for people who read the CV to the end, worded as a fact rather than an instruction to an AI. A known overlap in the CV footer was left for later.",
         "ru": "Canary #42 остаётся пасхалкой для тех, кто дочитал резюме до конца, но сформулирован как факт, а не как указание для ИИ. Известное наложение в подвале резюме оставил на потом."
       },
+      "titleRu": "Полировка P2: подписи фильтров, кириллические шрифты, текст canary #42, телефон только в CV",
       "noRedTest": {
         "en": "Four small fixes, one commit each: every commit brought its test together with the change, so no test was committed red on its own first.",
-        "ru": "Четыре мелкие правки, по коммиту на каждую: тест приходил в том же коммите, что и изменение, поэтому отдельного красного теста первым нет."
+        "ru": "Четыре мелкие правки, по коммиту на каждую: тест приходил в том же коммите, что и изменение, поэтому отдельного красного теста до кода нет."
       }
     },
     {
@@ -785,6 +798,7 @@
         "en": "The note only invites, never instructs, and lives only in llms.txt: the CV and the footer stay for humans.",
         "ru": "Записка только приглашает и ничего не требует, и живёт только в llms.txt: резюме и подвал сайта остаются для людей."
       },
+      "titleRu": "llms.txt оставляет языковым моделям, которые его читают, мягкий boop и хайку-канарейку",
       "green": {
         "sha": "9ec415c4d55f3ca6fcd664d2ffc1815ad95a46c6",
         "subject": "llms.txt leaves a soft boop and a canary haiku for the language models that read it",
@@ -845,6 +859,7 @@
         "en": "The topology should say what problem it solves, not just look clever. Merged with two known gaps written down: some node labels overlap on the phone poster, and the header status line stays English-only.",
         "ru": "Топология должна говорить, какую задачу решает, а не просто выглядеть эффектно. Смержил с двумя записанными недочётами: на постере для телефона часть подписей узлов наезжает друг на друга, а строка статуса в шапке остаётся только на английском."
       },
+      "titleRu": "Топология в hero рассказывает историю в 3 шага и заканчивается кейсом YAGNI",
       "review": {
         "en": "Implemented by an agent and reviewed by a separate judge that saw only the diff, the tests and the task. Its findings were fixed before merge.",
         "ru": "Код написал агент, проверил отдельный судья, которому дали только дифф, тесты и задачу. Его замечания исправлены до мержа."
@@ -940,7 +955,8 @@
       "humanDecision": {
         "en": "The site is the original, LinkedIn the copy. The drafts are written by Haiku 5.5 with GLM-5.3 Flash as the fallback, picked in a bake-off of 13 cheap models on two real posts. The bot never pushes to main.",
         "ru": "Оригинал — сайт, копия — LinkedIn. Черновики пишет Haiku 5.5, запасная модель — GLM-5.3 Flash; обе выбраны в сравнении 13 недорогих моделей на двух реальных постах. В main бот никогда не пушит."
-      }
+      },
+      "titleRu": "Ежедневная синхронизация Publora: посты из LinkedIn становятся двуязычными страницами с полным текстом через один PR бота"
     },
     {
       "number": 21,
@@ -980,6 +996,7 @@
         "en": "A permanent redirect, not a second copy, so the two files can never drift apart.",
         "ru": "Постоянный редирект, а не вторая копия, чтобы два файла никогда не разошлись."
       },
+      "titleRu": "/llm.txt редиректит на /llms.txt: в этом имени агенты ошибаются чаще всего",
       "green": {
         "sha": "f1a81f6e07679928f617cbf935a1916037f7680a",
         "subject": "/llm.txt redirects to /llms.txt, the name agents most often misspell",
@@ -1035,12 +1052,13 @@
       "ciVerdicts": [],
       "visitorChange": {
         "en": "The home page got lighter: the 6 latest posts plus a link to all of them, page scripts in bundled modules, and each architecture case on its own page, loaded into home only when opened. Home HTML went from 35,758 to 30,270 B gzipped.",
-        "ru": "Главная стала легче: 6 последних постов и ссылка на все, скрипты страницы в собранных модулях, а у каждого кейса своя страница, которая подгружается на главную только при открытии. HTML главной уменьшился с 35 758 до 30 270 байт в gzip."
+        "ru": "Главная стала легче: 6 последних постов и ссылка на все, скрипты страницы в собранных модулях, а у каждого кейса своя страница, которая подгружается на главную только при открытии. HTML главной уменьшился с 35 758 до 30 270 байт в gzip."
       },
       "humanDecision": {
         "en": "Budgets unchanged: the home page made room by shedding weight, not by raising the limit.",
         "ru": "Бюджеты не менял: главная освободила место, сбросив вес, а не за счёт поднятого лимита."
-      }
+      },
+      "titleRu": "Диета главной: 6 последних постов, собранные скрипты страницы, кейсы на отдельных страницах"
     },
     {
       "number": 22,
@@ -1091,12 +1109,13 @@
       "ciVerdicts": [],
       "visitorChange": {
         "en": "Each language is its own page: English at /, Russian at /ru/, with hreflang and a language link that keeps your place. Home HTML went from 30,266 to 23,218 B gzipped.",
-        "ru": "У каждого языка своя страница: английская на /, русская на /ru/, с hreflang и переключателем языка, который сохраняет место на странице. HTML главной уменьшился с 30 266 до 23 218 байт в gzip."
+        "ru": "У каждого языка своя страница: английская на /, русская на /ru/, с hreflang и переключателем языка, который сохраняет место на странице. HTML главной уменьшился с 30 266 до 23 218 байт в gzip."
       },
       "humanDecision": {
         "en": "Static pages per locale instead of hidden duplicate spans, with typed dictionaries: a missing or extra key fails the build. English stays the default.",
         "ru": "Отдельные статические страницы для каждого языка вместо скрытых дублей текста, словари типизированы: пропущенный или лишний ключ ломает сборку. Английский остаётся языком по умолчанию."
-      }
+      },
+      "titleRu": "Статический i18n: EN на /, RU на /ru/, типизированные словари, hreflang и переключатель языка ссылкой"
     },
     {
       "number": 23,
@@ -1206,6 +1225,7 @@
         "en": "Show a real run, labelled as a replay, rather than an illustration, and check everything in it against git. The scripted fault in the take-over is marked as simulated.",
         "ru": "Показывать реальный прогон с пометкой, что это повтор, а не иллюстрацию, и сверять всё в нём с git. Сценарная ошибка при перехвате управления помечена как симуляция."
       },
+      "titleRu": "Топология в hero повторяет реальный прогон агентов на этом сайте (PR #11), и посетитель может взять управление на себя",
       "review": {
         "en": "Implemented by an agent and reviewed by independent judges that saw only the diff, the tests and the task, once for the data layer and once for the UI. Their findings were fixed before merge.",
         "ru": "Код написал агент, проверили независимые судьи, которым дали только дифф, тесты и задачу: один раз слой данных, один раз интерфейс. Их замечания исправлены до мержа."
@@ -1265,7 +1285,8 @@
       "humanDecision": {
         "en": "Two pages instead of cutting sections to fit one. The build fails on text past the margin rather than shipping it, with no new dependencies.",
         "ru": "Две страницы вместо того, чтобы урезать разделы ради одной. Сборка падает на тексте за полями, а не выпускает его, и без новых зависимостей."
-      }
+      },
+      "titleRu": "CV в PDF: две чистые страницы с потоковой вёрсткой, шапкой и подвалом"
     },
     {
       "number": 25,
@@ -1331,8 +1352,9 @@
       },
       "humanDecision": {
         "en": "Port Silero VAD to TypeScript instead of loading an ONNX runtime, which would have meant about 3.4 MB per click. The page says plainly that at Sully the win was not a faster model but the agent waiting for a voice instead of a ringing line.",
-        "ru": "Перенести Silero VAD на TypeScript вместо загрузки ONNX-рантайма, который весил бы около 3,4 МБ на каждый клик. Текст на странице прямо говорит, что в Sully выигрыш дала не быстрая модель, а то, что агент ждёт голос, а не звонящую линию."
-      }
+        "ru": "Перенести Silero VAD на TypeScript вместо загрузки ONNX-рантайма, который весил бы около 3,4 МБ на каждый клик. Текст на странице прямо говорит, что в Sully выигрыш дала не быстрая модель, а то, что агент ждёт голос, а не здоровается под гудки."
+      },
+      "titleRu": "Демо VAD в кейсе Sully: услышьте 15 с → 0 прямо в своём браузере"
     },
     {
       "number": 26,
@@ -1362,15 +1384,16 @@
       "ciVerdicts": [],
       "visitorChange": {
         "en": "Nothing changes on the page until the sync's next bot PR is merged. That PR is meant to bring every own LinkedIn post since August 2025 to /writing/ with its full text. The Writing descriptions now say the site carries full posts.",
-        "ru": "На странице ничего не меняется, пока не смержен следующий PR бота синхронизации. Этот PR должен принести в /writing/ все мои посты из LinkedIn с августа 2025 года с полным текстом. Описания раздела Writing теперь говорят, что на сайте полные посты."
+        "ru": "На странице ничего не меняется, пока не смержен следующий PR бота синхронизации. Этот PR должен принести в /writing/ все мои посты из LinkedIn с августа 2025 года с полным текстом. Описания раздела «Блог» теперь говорят, что на сайте полные посты."
       },
       "humanDecision": {
         "en": "Backfill everything in one run, about $0.04 with Haiku, under a time budget instead of post-count caps. One bad draft is skipped with its reason instead of blocking the whole PR.",
         "ru": "Загрузить всё одним прогоном, около $0,04 с Haiku, с ограничением по времени вместо лимита на число постов. Один неудачный черновик пропускается с указанием причины, а не блокирует весь PR."
       },
+      "titleRu": "Синхронизация Publora: все мои посты с августа 2025 года за один прогон, и задача бота остаётся зелёной",
       "noRedTest": {
         "en": "Two commits, each bringing its tests together with the change: no test was committed red on its own first.",
-        "ru": "Два коммита, и каждый приносил тесты вместе с изменением: отдельного красного теста первым нет."
+        "ru": "Два коммита, и каждый приносил тесты вместе с изменением: отдельного красного теста до кода нет."
       }
     }
   ]
