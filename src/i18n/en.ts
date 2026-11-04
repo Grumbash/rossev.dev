@@ -15,7 +15,7 @@ export const en = {
     homeTwitterDescription: 'Making AI agent teams dependable in production, not just impressive in a demo.',
     writingTitle: 'Writing — Gleb Rosev',
     writingDescription:
-      'Field notes by Gleb Rosev on production AI agents, systems and engineering leadership: 30-second briefs of his LinkedIn posts.',
+      'Field notes by Gleb Rosev on production AI agents, systems and engineering leadership: every post in full, with a 30-second brief.',
     bookedTitle: 'Booked — Gleb Rosev',
     bookedDescription: 'Your call with Gleb Rosev is booked. A calendar invite from cal.com is on its way.',
     buildTitle: 'How this site was built — Gleb Rosev',

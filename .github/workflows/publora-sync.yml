@@ -13,8 +13,11 @@
 name: publora-sync
 
 on:
+  # Two daily slots: GitHub delays or drops scheduled runs under load (the first 06:17 run never
+  # came), and a run with nothing new does nothing.
   schedule:
     - cron: '17 6 * * *'
+    - cron: '43 17 * * *'
   workflow_dispatch:
 
 permissions:
