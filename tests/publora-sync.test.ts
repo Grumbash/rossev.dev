@@ -301,7 +301,7 @@ describe('the model draft is validated, never trusted', () => {
     expect(validateDraft(e, src).ok).toBe(false);
   });
 
-  test('the Russian follows docs/ru-style.md: a banned stand-in or «ты» rejects the draft, IT anglicisms pass', () => {
+  test('the Russian follows src/i18n/ru-style.ts: a banned stand-in or «ты» rejects the draft, IT anglicisms pass', () => {
     const d = structuredClone(DRAFT_NEW);
     d.bullets.ru[2] = 'Сократите очередь на ревью: пока ждёшь, PR уже влит в main.';
     const r = validateDraft(d, src);
@@ -314,7 +314,7 @@ describe('the model draft is validated, never trusted', () => {
   });
 });
 
-describe('the Russian adaptation prompt follows docs/ru-style.md', () => {
+describe('the Russian adaptation prompt follows src/i18n/ru-style.ts', () => {
   const p = systemPrompt();
   test('keeps IT terms as engineers say them and names the stand-ins it must not use', () => {
     for (const s of ['мерж', 'фидбек', 'гардрейл', 'влить', '«вы»', 'десятичная запятая']) expect(p).toContain(s);
