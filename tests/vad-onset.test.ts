@@ -4,7 +4,8 @@
 // Runs on a mocked probability stream, then on the fixture audio with the real model's probabilities.
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
-import { FRAME_MS, createOnsetTimer, frameRms, latencyBucket, type Frame } from '../src/scripts/vad/onset';
+import { FRAME_MS, createOnsetTimer, frameRms, type Frame } from '../src/scripts/vad/onset';
+import { latencyBucket } from '../src/scripts/vad/states';
 
 const quiet = (n: number): Frame[] => Array.from({ length: n }, () => ({ rms: 0.002, prob: 0.02, inferMs: 0.4 }));
 const run = (frames: Frame[]) => {
