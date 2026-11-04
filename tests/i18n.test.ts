@@ -25,7 +25,16 @@ const alternates = (html: string) =>
       .map((m) => [m[0].match(/hreflang="([^"]+)"/)?.[1], m[0].match(/href="([^"]+)"/)?.[1]])
       .filter(([l]) => l),
   ) as Record<string, string>;
-const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
+// Every entity Astro may emit: post titles and texts carry quotes, &, < and > (&#34;, &#38;, &lt;).
+const decode = (s: string) =>
+  s
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 const bodyText = (html: string) =>
   decode(
     html

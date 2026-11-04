@@ -70,7 +70,7 @@ function generateLlmsTxt(): void {
   }
   lines.push('');
 
-  lines.push('## Writing (30-second briefs; the LinkedIn post is the original)');
+  lines.push('## Writing (full posts on rossev.dev, each with a 30-second brief; also on LinkedIn)');
   for (const post of BLOG_POSTS) {
     lines.push(`- [${post.title.en}](https://rossev.dev${postPath(post)}) (${post.published}): ${post.takeaway.en}`);
   }
