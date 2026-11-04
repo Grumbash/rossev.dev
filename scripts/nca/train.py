@@ -24,6 +24,13 @@ Files:
   scripts/nca/target.json   the training target, premultiplied RGBA, row-major. Read,
                             not regenerated, unless you pass --write-target.
 
+After new weights or a new target: run `bun scripts/nca/gen-baseline.ts` (it rewrites
+src/scripts/nca/baseline.ts, the target signature the page's recovery guard judges
+"grown" against; tests/nca-baseline.test.ts fails until you do), then re-check the
+guard's tolerances in src/scripts/nca/healer.ts on ~50 seeds: every cleanly grown GR
+(MSE < 0.002) must pass the target check, and `bun test tests/nca-regrow.test.ts` must
+stay green.
+
 Also, without training:
   train.py --to-bin old/gr.json      convert float32 JSON weights to --out (how the shipped
                                      gr.bin was made from the original gr.json); refuses to

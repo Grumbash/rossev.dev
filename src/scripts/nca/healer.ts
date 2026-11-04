@@ -97,12 +97,17 @@ export function emptyShape(): Shape {
 const STILL_ALIVE = 0.02; // of the baseline alive count
 const STILL_SHAPE = 0.04; // signature distance, see `distance`
 const STILL_EDGE = 1; // px each bbox edge may wobble
-// "Looks grown": close to the GR target. Measured on 400 seeds: every grown GR with MSE
-// < 0.002 is within alive 1.01–1.05, bbox IoU ≥ 0.90 and distance ≤ 0.035 of it; the
+// "Looks grown": close to the GR target. Measured against it on 400 grown seeds: every one
+// with MSE < 0.002 has alive ratio 1.01–1.05, bbox IoU ≥ 0.90 and distance ≤ 0.035; the
 // visibly crooked ones (MSE ~0.0095, the kind a heal also gets stuck in) measure 0.048–0.053.
+// The distance bar sits just above the clean ones: by 0.039 a heal can be at MSE ~0.005.
 const ALIVE_TOLERANCE = 0.15;
 const MIN_BBOX_IOU = 0.85;
-const MAX_SHAPE_DISTANCE = 0.042;
+const MAX_SHAPE_DISTANCE = 0.037;
+/** How close a heal of a crooked grown GR must come back to that grown frame. Heals back
+ * to it measure 0.003–0.027 from it; one that went visibly worse (MSE 0.005 → 0.010)
+ * measured 0.035. */
+const MAX_REST_DISTANCE = 0.03;
 /** Regrows started by a wrong shape in a row: a backstop, so a model that keeps failing
  * (or broken weights that never grow) stops instead of regrowing forever. */
 const MAX_AUTO_REGROWS = 3;
@@ -122,7 +127,11 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   const rgba = new Float32Array(n * n * 4);
   const anchor = emptyShape(); // start of the current still window
   const now = emptyShape(); // last measured frame
-  const rest = emptyShape(); // how it looked when it last came to rest (grown or settled)
+  // The last state the visitor saw that the model really produced as "grown": the silent
+  // first grow, or a settle that passed the target check. Never a heal accepted only by
+  // resemblance to it, nor a give-up settle, so it cannot drift away from GR bite by bite.
+  const rest = emptyShape();
+  let restCrooked = false; // `rest` itself fails the target check (a crooked grow)
   const rows = new Uint16Array(n);
   const cols = new Uint16Array(n);
 
@@ -174,19 +183,21 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
     return inter / (area(a) + area(b) - inter);
   }
 
-  function like(s: Shape, ref: Shape): boolean {
+  function like(s: Shape, ref: Shape, maxDistance = MAX_SHAPE_DISTANCE): boolean {
     return (
       Math.abs(s.alive - ref.alive) <= ALIVE_TOLERANCE * target.alive &&
       iou(s, ref) >= MIN_BBOX_IOU &&
-      distance(s, ref) <= MAX_SHAPE_DISTANCE
+      distance(s, ref) <= maxDistance
     );
   }
 
-  /** Whether a frame looks grown: like the GR target, or, for a heal, like it looked before
-   * the damage. A grown monogram is a little crooked now and then (MSE ~0.009, ~4% of
-   * grows); a bite that heals back to that is a heal, not a reason to throw it away. */
+  /** Whether a frame looks grown: like the GR target. One exception: a monogram that grew
+   * a little crooked (MSE ~0.009, ~4% of grows) and is bitten may heal back to that same
+   * crooked state, a heal rather than a reason to throw it away. That reference is the
+   * grown frame itself and never moves while it is crooked (see `rest`), so it cannot
+   * ratchet; when the monogram is a clean GR, only the target counts. */
   function looksGrown(s: Shape): boolean {
-    return like(s, target) || (!growing && rest.alive > 0 && like(s, rest));
+    return like(s, target) || (!growing && restCrooked && like(s, rest, MAX_REST_DISTANCE));
   }
 
   function isStill(s: Shape): boolean {
@@ -220,7 +231,10 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   function settle(): HealerStatus {
     settled = true;
     growing = quiet = false;
-    copy(now, rest);
+    if (like(now, target)) {
+      copy(now, rest);
+      restCrooked = false;
+    }
     return 'settled';
   }
 
@@ -238,7 +252,7 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
 
     /** The last frame against the GR target: what the shape check looks at. */
     stats() {
-      return { alive: now.alive / target.alive, iou: iou(now, target), distance: distance(now, target) };
+      return { alive: now.alive / target.alive, iou: iou(now, target), distance: distance(now, target), fromRest: distance(now, rest), restIou: iou(now, rest) };
     },
 
     /** Seeds and grows out of sight to the finished monogram. */
@@ -247,6 +261,8 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
       ca.step(grownSteps);
       measure(now);
       autoRegrows = 0;
+      copy(now, rest); // whatever the model grew is what the visitor first sees
+      restCrooked = !like(now, target);
       settle();
     },
 
