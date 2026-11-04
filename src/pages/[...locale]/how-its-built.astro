@@ -1,7 +1,8 @@
 ---
 // The receipts for "agents wrote the code, I did the planning": every merged PR of this site with its
 // red test, what was caught before merge, what I decided, and links to the real commits. A review or
-// judge is shown only where the PR itself says one ran (`review`), never implied. Renders
+// judge is shown only where the PR itself says one ran (`review`), never implied. A PR the workflow
+// added before I wrote its notes is `pending`: its card shows only facts, never placeholder copy. Renders
 // src/data/build-story.json (made by `bun run build-story`); every number here is computed from it.
 import Base from '../../layouts/Base.astro';
 import story from '../../data/build-story.json';
@@ -117,19 +118,22 @@ const LOOP = [
           const commits = p.commits.filter((c) => c.role !== 'merge').length;
           return (
             <>
-              <article class="brutal-box bs-card" data-pr={p.number}>
+              <article class="brutal-box bs-card" data-pr={p.number} data-pending={p.pending ? '' : undefined}>
                 <div class="bs-card-head">
                   <span class="label">
                     PR #{p.number} · {b.merged}{' '}
                     <time datetime={p.mergedAt}>{day(p.mergedAt)}</time>
                   </span>
-                  <h3 class="bs-card-title" lang="en">{p.title}</h3>
+                  {lang === 'ru' && p.titleRu ? <h3 class="bs-card-title">{p.titleRu}</h3> : <h3 class="bs-card-title" lang="en">{p.title}</h3>}
                 </div>
+                {p.pending && <p class="bs-pending">{b.pending}</p>}
                 <dl class="bs-rows">
-                  <div>
-                    <dt class="label">{b.forVisitors}</dt>
-                    <dd>{p.visitorChange[lang]}</dd>
-                  </div>
+                  {p.visitorChange && (
+                    <div>
+                      <dt class="label">{b.forVisitors}</dt>
+                      <dd>{p.visitorChange[lang]}</dd>
+                    </div>
+                  )}
                   <div>
                     <dt class="label">
                       {g ? b.redGreen : b.redTest}
@@ -147,8 +151,10 @@ const LOOP = [
                             </span>
                           )}
                         </>
+                      ) : (p.preLoop ?? p.noRedTest) ? (
+                        <>{(p.preLoop ?? p.noRedTest)![lang]}</>
                       ) : (
-                        <>{p.preLoop![lang]}</>
+                        <>{b.noRedTest}</>
                       )}
                     </dd>
                   </div>
@@ -181,10 +187,12 @@ const LOOP = [
                       </dd>
                     </div>
                   )}
-                  <div>
-                    <dt class="label">{b.decided}</dt>
-                    <dd>{p.humanDecision[lang]}</dd>
-                  </div>
+                  {p.humanDecision && (
+                    <div>
+                      <dt class="label">{b.decided}</dt>
+                      <dd>{p.humanDecision[lang]}</dd>
+                    </div>
+                  )}
                 </dl>
                 <div class="bs-card-foot">
                   <a class="text-link" href={p.url}>{b.onGithub(p.number)}</a>
@@ -356,6 +364,13 @@ const LOOP = [
     padding-left: 18px;
     display: grid;
     gap: 6px;
+  }
+  .bs-pending {
+    margin: 0 0 10px;
+    font-size: 0.86rem;
+    color: var(--ink-muted);
+    border-left: 4px solid var(--border);
+    padding-left: 10px;
   }
   .bs-card-foot {
     display: flex;

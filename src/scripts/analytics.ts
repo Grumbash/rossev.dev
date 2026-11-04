@@ -16,7 +16,7 @@ export const EVENTS = {
   // LinkedIn profile link. placement: hero|writing|footer|reader
   linkedin_click: ['placement'],
   // A job's architecture case (<details class="job-case">) opened by the visitor (not the ?case= auto-open on load),
-  // including via the topology BLUEPRINT button (also sends topology_interact{blueprint}), the story's YAGNI case link
+  // including via the topology BLUEPRINT button (also sends topology_interact{blueprint}), the topology card's YAGNI case link
   // (also topology_interact{case}) and the GR monogram bridge link (also nca_interact{case}). id: case study id
   case_open: ['id'],
   // Toolbox skill clicked to highlight jobs. skill: the skill name
@@ -30,14 +30,22 @@ export const EVENTS = {
   post_linkedin: ['id'],
   // Writing filter tab. filter: all|ai|leadership|systems|delivery
   post_filter: ['filter'],
-  // Topology used, once per action per page view.
+  // Topology used, once per action per page view (per action and outcome for outcomes).
   // action: domain|fault|xray|reset|packet|stratum|step|blueprint (free play, behind Explore),
-  // drag (horizontal drag on the canvas), and the guided story:
-  // step2|step3|heal|case|play|explore (arrived at step 2/3, Break & heal, YAGNI case link, phone Play, Explore toggle)
-  topology_interact: ['action'],
+  // drag (horizontal drag on the canvas), case|play|explore (YAGNI case link, phone Play, Explore toggle),
+  // and the PR #11 replay: replay|takeover|resume|scrub (the film first started, the visitor took over,
+  // the film came back (Resume or by itself), a timeline stop used) and outcome, with
+  // outcome: caught|shipped|recovered|failed for a fault run of the learned policy on the toy service (caught
+  // before merge, shipped with the judge off, recovered, or it could not keep up), and of the whole set
+  // caught|shipped|healed|unhealed the last two are the visitor's cut on the mini GR regrown by the real model, or not
+  topology_interact: ['action', 'outcome'],
   // nca_interact: GR monogram (neural cellular automaton) used, once per action per page view.
   // action: drag (pointer erase) | key (Enter/Space bite) | reset | case (bridge link to the YAGNI case)
   nca_interact: ['action'],
+  // Voice demo in the Sully case ("Say hello"), sent by src/scripts/vad/loader.ts on a state change.
+  // action: start (clicked, mic asked) | denied | detected | error (no mic, unsupported browser, failed load);
+  // ms: detected only, bucket of the onset latency <100|100-199|200-399|400-799|800+
+  vad_demo: ['action', 'ms'],
   // Language switch to a different language. to: en|ru
   lang_switch: ['to'],
   // Theme toggle. to: light|dark (read after the toggle)
@@ -127,11 +135,11 @@ export function initAnalytics(): void {
     track('booking_confirmed', { source: (PLACEMENTS as readonly string[]).includes(booked) ? booked : 'unknown' });
   }
 
-  // Capture phase runs before the element's onclick, so this is the language before the click.
+  // Capture phase runs before the data-action handler, so this is the language before the click.
   let langBefore: string | null = null;
   document.addEventListener('click', () => (langBefore = root.getAttribute('lang')), true);
 
-  // Bubble phase on document: runs after the element's own onclick handler.
+  // Bubble phase on document, registered after initActions: runs after the data-action handler.
   const onClick = (e: Event) => {
     const el = (e.target as Element | null)?.closest?.<HTMLElement>('[data-track]');
     const ev = el && eventFromDataset(el.dataset);

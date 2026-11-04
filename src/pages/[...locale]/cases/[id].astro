@@ -21,7 +21,7 @@ const d = t(lang);
 
 <Base
   title={`${study.title[lang]} · ${d.meta.name}`}
-  description={d.meta.caseDescription(study.company, study.period, study.summary[lang])}
+  description={d.meta.caseDescription(study.company, study.period[lang], study.summary[lang])}
   ogType="article"
 >
   <section class="section-block">
