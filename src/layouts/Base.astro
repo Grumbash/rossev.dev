@@ -169,7 +169,7 @@ const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
           </button>
           {cta && (
             <a
-              href={calUrl('nav')}
+              href={calUrl('nav', lang)}
               data-track="cta_book"
               data-track-placement="nav"
               target="_blank"
@@ -196,7 +196,7 @@ const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
               <p class="footer-lead">{d.footer.lead}</p>
               <div class="hero-actions">
                 {cta && (
-                  <a href={calUrl('footer')} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime" data-track="cta_book" data-track-placement="footer">
+                  <a href={calUrl('footer', lang)} target="_blank" rel="noopener noreferrer" class="brutal-btn brutal-btn-lime" data-track="cta_book" data-track-placement="footer">
                     {d.footer.bookCall}
                   </a>
                 )}

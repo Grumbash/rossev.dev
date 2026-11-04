@@ -123,7 +123,7 @@ Every cal.com link carries `?utm_source=rossev.dev&utm_medium=site&utm_content=<
 
 cal.com sends visitors to `/booked` after they book: event type → Advanced → Redirect on booking → `https://rossev.dev/booked/`, with "Forward parameters" on. Without forwarding there is no `uid` and no `utm_content`, so no `booking_confirmed` is sent. The forwarded query also carries the booking (email, name, phone, guests...). A classic inline script in the page's `<head>` keeps only whether a `uid` is present and the `utm_content` placement (`bookingSource()`), then strips the whole query before the deferred Umami and Vercel scripts read the URL. Vercel's server logs still see the full redirect URL. Reschedules are not counted: cal.com forwards the booking page's `rescheduleUid`, and a non-empty one means no event.
 
-Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` and `build-story` bookings start on `/writing/*` and `/how-its-built/`, so a `/` (path) first step makes it a home-only funnel; prepend it only for that.
+Umami funnel: `cta_book` (event) → `booking_confirmed` (event). Use the event, not the `/booked` path: a reload re-counts the pageview, but the stripped URL has no `uid` to send the event again. `reader` and `build-story` bookings start on `/writing/*` and `/how-its-built/` (and their `/ru/` twins), so a `/` (path) first step makes it a home-only funnel; prepend it only for that. A booking made from a `/ru/` page carries `lang=ru` (`calUrl`); `/booked/` forwards it to `/ru/booked/` before anything is tracked.
 
 ## License
 

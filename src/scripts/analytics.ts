@@ -94,11 +94,14 @@ export function eventFromDataset(dataset: Record<string, string | undefined>): {
   return { name: name as EventName, props: Object.keys(props).length ? props : undefined };
 }
 
-export function calUrl(placement: Placement): string {
+// `lang`: the page's locale, when not English. cal.com forwards it to /booked/, which sends the
+// visitor on to the confirmation page in their language (/ru/booked/).
+export function calUrl(placement: Placement, lang = 'en'): string {
   const url = new URL(PROFILE.calendar);
   url.searchParams.set('utm_source', 'rossev.dev');
   url.searchParams.set('utm_medium', 'site');
   url.searchParams.set('utm_content', placement);
+  if (lang !== 'en') url.searchParams.set('lang', lang);
   return url.toString();
 }
 
