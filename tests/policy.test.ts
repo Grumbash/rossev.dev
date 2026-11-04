@@ -214,6 +214,15 @@ describe('page copy and analytics', () => {
     expect(en.topology.toyService).toMatch(/toy/i);
   });
 
+  test('policy outcomes credit the policy, not a judge or a person that the toy service does not have', () => {
+    for (const d of [en, ru]) {
+      expect(d.topology.policyCanvas.caught.length).toBeGreaterThan(10);
+      expect(d.topology.policyCanvas.shipped.length).toBeGreaterThan(10);
+    }
+    expect(en.topology.policyCanvas.caught).toMatch(/polic/i);
+    expect(en.topology.policyCanvas.shipped).not.toMatch(/person/i);
+  });
+
   test('outcome analytics include recovered and failed', () => {
     const src = readFileSync('src/scripts/analytics.ts', 'utf8');
     expect(src).toMatch(/caught\|shipped\|recovered\|failed/);
@@ -238,6 +247,18 @@ describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
       confidence: card.getAttribute('data-policy-confidence'), label: $('[data-policy-label]')?.textContent.trim() ?? null,
       h: Math.round(card.getBoundingClientRect().height) });
     const out = { before: fetched().length };
+    // The button only opens the menu (focus on its first item); nothing is injected until a pick.
+    $('[data-sim-fault]').click(); await wait(1200);
+    out.menuOnly = { action: card.getAttribute('data-policy-action'), expanded: $('[data-sim-fault]').getAttribute('aria-expanded'),
+      focus: document.activeElement?.getAttribute('data-sim-fault-kind') ?? null };
+    document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(200);
+    out.afterEscape = { expanded: $('[data-sim-fault]').getAttribute('aria-expanded'), focusOnButton: document.activeElement === $('[data-sim-fault]') };
+    // A slow dependency picked on its own is judged as a slow dependency, not as a caught deploy.
+    $('[data-sim-fault]').click(); await wait(300); $('[data-sim-fault-kind="latency"]').click(); await wait(8000); out.latency = snap();
+    // Explore pauses the policy run: no outcome lands behind free play.
+    $('[data-sim-fault]').click(); await wait(300); $('[data-sim-fault-kind="surge"]').click(); await wait(600);
+    $('[data-story-explore]').click(); const o0 = card.getAttribute('data-outcome'); await wait(6000);
+    out.exploreHeld = card.getAttribute('data-outcome') === o0; $('[data-story-explore]').click(); await wait(300);
     const pick = async (kind) => { $('[data-sim-fault]').click(); await wait(200); $('[data-sim-fault-kind="' + kind + '"]').click(); };
     await pick('node_down'); await wait(1500); out.during = snap(); await wait(6000); out.nodeDown = snap(); out.after = fetched().length;
     await pick('bad_deploy'); await wait(6000); out.badOn = snap();
@@ -287,6 +308,10 @@ describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
   for (const [lang, w] of [['en', 1440], ['ru', 375]] as const) {
     test(`${lang} at ${w}: the policy decides per tick, recovers a node, blocks a bad deploy, ships it with the judge off`, async () => {
       const r = await probe(lang, w);
+      expect(r.menuOnly).toEqual({ action: null, expanded: 'true', focus: 'latency' });
+      expect(r.afterEscape).toEqual({ expanded: 'false', focusOnButton: true });
+      expect(r.latency.outcome).toBe('recovered');
+      expect(r.exploreHeld).toBe(true);
       expect(r.before).toBe(0); // the weights load only when a fault is injected
       expect(r.after).toBe(1);
       expect(ACTIONS as readonly string[]).toContain(r.during.action);
