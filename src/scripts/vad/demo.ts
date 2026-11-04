@@ -14,6 +14,10 @@ export type Mic = { stream?: MediaStream; error?: string };
 const WEIGHTS_URL = '/vad/silero-vad-v6.2.3.bin';
 // As long as a Sully caller sat in silence before the fix.
 const QUIET_MS = 15_000;
+// From mic permission to the model listening (download, worker, worklet); past this it's an error.
+const SETUP_MS = 30_000;
+// The model's input is 16 kHz; a context below that (an 8 kHz headset) can't feed it.
+const MIN_RATE = 16_000;
 // Copies each 128-sample render quantum to the worker's port, batched to ~1024 samples.
 const WORKLET = `registerProcessor('vad-tap', class extends AudioWorkletProcessor {
   constructor() { super(); this.out = null; this.buf = new Float32Array(1024); this.n = 0;
@@ -57,29 +61,41 @@ export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Prom
   let worker: Worker | null = null;
   let source: MediaStreamAudioSourceNode | null = null;
   let tap: AudioWorkletNode | null = null;
-  let quiet = 0;
+  let timer = 0;
   let stopped = false;
   const stop = () => {
     if (stopped) return;
     stopped = true;
-    clearTimeout(quiet);
+    clearTimeout(timer);
     stream?.getTracks().forEach((t) => t.stop());
     tap?.port.postMessage(null);
     tap?.disconnect();
     source?.disconnect();
     worker?.terminate();
     ctx.close().catch(() => {});
-    window.removeEventListener('pagehide', stop);
+    window.removeEventListener('pagehide', leave);
   };
-  window.addEventListener('pagehide', stop);
+  // A page restored from the back/forward cache must not show a run that is no longer there.
+  const leave = () => {
+    stop();
+    dispatch({ type: 'stop' });
+  };
+  window.addEventListener('pagehide', leave);
   const fail = () => {
     stop();
     dispatch({ type: 'fail' });
   };
+  // Every way out releases the mic: setup that hangs fails, and listening ends after QUIET_MS.
+  const arm = (ms: number, end: () => void) => {
+    clearTimeout(timer);
+    timer = window.setTimeout(end, ms);
+  };
 
   if (dispatch({ type: 'mic', error: stream ? undefined : (error ?? 'Error') }).phase !== 'loading') return stop();
 
+  arm(SETUP_MS, fail);
   try {
+    if (ctx.sampleRate < MIN_RATE) throw new Error(`sample rate ${ctx.sampleRate}`);
     const weights = await download(WEIGHTS_URL, (loaded) => dispatch({ type: 'progress', loaded, total: WEIGHTS_BYTES }));
     if (stopped) return;
     worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
@@ -105,7 +121,7 @@ export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Prom
     return fail();
   }
 
-  const timer = createOnsetTimer();
+  const onsetTimer = createOnsetTimer();
   const meter = root.querySelector<HTMLElement>('[data-vad-meter]');
   const infer = root.querySelector<HTMLElement>('[data-vad-infer]');
   worker.onmessage = (event: MessageEvent<FromWorker>) => {
@@ -114,17 +130,18 @@ export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Prom
     if (msg.type === 'error') return fail();
     if (msg.type === 'ready') {
       dispatch({ type: 'loaded' });
-      return;
-    }
-    const wasReady = timer.ready;
-    const onset = timer.push(msg);
-    if (!wasReady && timer.ready) {
-      dispatch({ type: 'ready' });
-      quiet = window.setTimeout(() => {
+      // Covers the room check too: a room that never goes quiet, or a mic that sends nothing, ends here.
+      arm(QUIET_MS, () => {
         stop();
         dispatch({ type: 'timeout' });
-      }, QUIET_MS);
+      });
+      return;
     }
+    // The home fragment can be replaced mid-run; nobody is looking, so let go of the mic.
+    if (!root.isConnected) return leave();
+    const wasReady = onsetTimer.ready;
+    const onset = onsetTimer.push(msg);
+    if (!wasReady && onsetTimer.ready) dispatch({ type: 'ready' });
     meter?.style.setProperty('--vad-p', msg.prob.toFixed(2));
     if (onset) {
       if (infer) infer.textContent = onset.inferMs.toFixed(1);

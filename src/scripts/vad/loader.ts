@@ -6,9 +6,7 @@
 import { track } from '../analytics';
 import { loadVadDemo } from './load-demo';
 import type { Mic } from './demo';
-import { analyticsFor, envOf, initial, next, type State, type VadEvent } from './states';
-
-const BUSY = ['asking', 'loading', 'calibrating', 'listening'];
+import { analyticsFor, envOf, initial, isBusy, next, type State, type VadEvent } from './states';
 
 export function renderVad(root: HTMLElement, s: State): void {
   root.dataset.vadPhase = s.phase;
@@ -16,8 +14,8 @@ export function renderVad(root: HTMLElement, s: State): void {
   const pct = root.querySelector('[data-vad-progress]');
   if (pct) pct.textContent = `${Math.round(s.progress * 100)}%`;
   if (s.ms !== null) root.querySelectorAll('[data-vad-ms]').forEach((el) => (el.textContent = String(Math.round(s.ms!))));
-  const btn = root.querySelector<HTMLButtonElement>('[data-vad-start]');
-  if (btn) btn.disabled = BUSY.includes(s.phase);
+  // aria-disabled, not disabled: the button keeps focus, and a click while busy is a no-op in next().
+  root.querySelector('[data-vad-start]')?.setAttribute('aria-disabled', String(isBusy(s.phase)));
 }
 
 export function initVadLoader(): void {
