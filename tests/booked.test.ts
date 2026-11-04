@@ -118,7 +118,11 @@ describe('built /booked', () => {
     const attrs: Record<string, string> = {};
     const urls: string[] = [];
     const sent: unknown[][] = [];
-    const location = { pathname, search, hash: '', href: `https://rossev.dev${pathname}${search}`, origin: 'https://rossev.dev' };
+    const replaced: string[] = [];
+    const location = {
+      pathname, search, hash: '', href: `https://rossev.dev${pathname}${search}`, origin: 'https://rossev.dev',
+      replace: (u: string) => replaced.push(u),
+    };
     const documentElement = {
       getAttribute: (k: string) => attrs[k] ?? null,
       setAttribute: (k: string, v: string) => (attrs[k] = String(v)),
@@ -140,7 +144,7 @@ describe('built /booked', () => {
     window.window = window;
     const ctx = { ...window, window, console: { log() {}, error() {} } };
     for (const s of headScripts(h)) runInNewContext(s.code, ctx);
-    return { attrs, urls, sent };
+    return { attrs, urls, sent, replaced };
   }
 
   beforeAll(() => {
@@ -202,6 +206,29 @@ describe('built /booked', () => {
     const leaked = JSON.stringify({ attrs, urls, sent });
     for (const p of PII) expect(leaked).not.toContain(p);
     expect(sent).toEqual([]);
+  });
+
+  test('a booking from a /ru/ page goes on to /ru/booked/ with its query, untracked on the way', () => {
+    const ru = runHead(html, '/booked/', `${REDIRECT}&lang=ru`);
+    expect(ru.replaced).toEqual([`/ru/booked/${REDIRECT}&lang=ru`]);
+    expect(ru.attrs['data-booking-source']).toBeUndefined();
+    expect(ru.urls).toEqual([]);
+    // There the usual read-and-strip runs: placement kept, URL clean, no second hop.
+    const there = runHead(read('dist/ru/booked/index.html'), '/ru/booked/', `${REDIRECT}&lang=ru`);
+    expect(there.replaced).toEqual([]);
+    expect(there.attrs['data-booking-source']).toBe('hero');
+    expect(there.urls).toEqual(['/ru/booked/']);
+    // English bookings and unknown languages stay put.
+    expect(runHead(html, '/booked/', REDIRECT).replaced).toEqual([]);
+    expect(runHead(html, '/booked/', `${REDIRECT}&lang=xx`).replaced).toEqual([]);
+  });
+
+  test('RU pages tag their cal.com links with lang=ru; EN pages do not', () => {
+    const cal = (page: string) => [...page.matchAll(/href="(https:\/\/cal\.com[^"]+)"/g)].map((m) => new URL(m[1].replace(/&amp;/g, '&')));
+    const ru = cal(read('dist/ru/index.html'));
+    expect(ru.length).toBeGreaterThan(0);
+    for (const u of ru) expect(u.searchParams.get('lang')).toBe('ru');
+    for (const u of cal(read('dist/index.html'))) expect(u.searchParams.has('lang')).toBe(false);
   });
 
   test('a visit without a booking reports nothing and still cleans the URL', () => {
