@@ -22,7 +22,8 @@ for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c) && !
 ---
 
 <svg class="hire-qr-code" viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label} xmlns="http://www.w3.org/2000/svg">
-  <rect width={size} height={size} rx="3" fill="#F2EEE6" />
+  {/* Square, so it fills the page's square frame without dark corners showing through. */}
+  <rect width={size} height={size} fill="#F2EEE6" />
   <g fill="#0A0A0A">{dots.map(([r, c]) => <circle cx={QUIET + c + 0.5} cy={QUIET + r + 0.5} r="0.49" />)}</g>
   {FINDERS.map(([r, c]) => (
     <g>
