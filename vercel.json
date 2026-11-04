@@ -55,6 +55,11 @@
   ],
   "redirects": [
     {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "statusCode": 301
+    },
+    {
       "source": "/llm.txt",
       "destination": "/llms.txt",
       "statusCode": 301
