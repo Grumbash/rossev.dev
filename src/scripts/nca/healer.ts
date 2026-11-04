@@ -3,12 +3,12 @@
 // were, and it settles into a wrong stable shape (a long bar) or, with weaker weights,
 // regrows one letter as the other. The healer watches the pattern through cheap stats
 // read off the RGBA buffer and compares them with the GR training target's signature
-// (./baseline.ts, a few dozen numbers: the page does not ship the target image). When
-// too little is left, or the pattern does not end up as GR, it regrows it honestly
-// from a single cell. It also decides when the pattern has stopped changing, so the
-// worker's loop runs exactly as long as healing takes instead of a fixed budget.
+// (./baseline.ts, generated: the page does not ship the target image). When too little
+// is left, or the pattern does not end up as GR, it regrows it honestly from a single
+// cell. It also decides when the pattern has stopped changing, so the worker's loop
+// runs exactly as long as healing takes instead of a fixed budget.
 // Thresholds are measured on public/nca/gr.bin and scripts/nca/gr-round1.bin; see
-// tests/nca-regrow.test.ts.
+// tests/nca-regrow.test.ts and tests/nca-baseline.test.ts.
 import type { NeuralCA } from './model';
 import { GR_BASELINE } from './baseline';
 
@@ -21,93 +21,76 @@ export type HealerStatus = 'running' | 'settled' | 'regrowing';
 export interface HealerOptions {
   /** What "grown" looks like; defaults to the GR training target's signature. */
   baseline?: Shape & { size: number };
-  /** Steps the silent first grow takes. */
+  /** Steps a silent grow takes. */
   grownSteps?: number;
   /** After damage, fewer alive cells than this fraction of the baseline regrows at once. */
   minAliveFraction?: number;
   /** Steps without change before a pattern that looks grown counts as settled. */
   settleWindow?: number;
   /** Steps after damage by which a heal must look grown, or it is given up and regrown.
-   * Bites and cuts look grown by ~200 (distance ≤ 0.03); losses that never heal (top
-   * 50–60% kept) are still ≥ 0.05 off at 400 and stay that way. */
+   * Bites and cuts look grown by ~200; losses that never heal (top 50–60% kept) are
+   * still far off at 400 and stay that way. */
   healDeadline?: number;
   /** The same for a growth from one cell (a regrow or Reset), which takes longer. */
   growDeadline?: number;
 }
 
-/** Coarse signature of a frame: alive count, bounding box, and per block of a GRID×GRID
- * grid its alive cells and its green mass (the R sits on a lime block, the G is black). */
+/** Coarse signature of a frame: alive count and, per block of a GRID×GRID grid, its
+ * alive cells and its green mass (the R sits on a lime block, the G is black). */
 export interface Shape {
   alive: number;
-  x0: number;
-  y0: number;
-  x1: number;
-  y1: number;
   occ: ArrayLike<number> & { [k: number]: number };
   green: ArrayLike<number> & { [k: number]: number };
 }
 
-export const GRID = 4;
-/** Rows and columns with fewer live cells than this are left out of the bounding box. */
-const BBOX_MIN_CELLS = 3;
+/** 8×8 blocks of 7×7 cells. Measured on 640 frames (400 grows, 240 heals): every clean one
+ * (MSE < 0.002) is within distance 0.045 of the target and every crooked one (MSE >
+ * 0.005) is at 0.049 or more. 4×4 blocks overlapped (0.042 vs 0.033) and needed a bbox
+ * check on top, whose trimmed edges swing on clean GRs. */
+export const GRID = 8;
 
 /** Signature of a premultiplied RGBA frame (`size`×`size`, row-major), written into `s`.
  * A cell is alive when its alpha is above `aliveThreshold`, as in the model. The same
  * function makes the shipped GR baseline from the training target (scripts/nca/gen-baseline.ts). */
-export function measureShape(rgba: ArrayLike<number>, size: number, aliveThreshold: number, s: Shape = emptyShape(), rows = new Uint16Array(size), cols = new Uint16Array(size)): Shape {
+export function measureShape(rgba: ArrayLike<number>, size: number, aliveThreshold: number, s: Shape = emptyShape()): Shape {
   s.alive = 0;
   for (let k = 0; k < GRID * GRID; k++) s.occ[k] = s.green[k] = 0;
-  rows.fill(0);
-  cols.fill(0);
   for (let y = 0; y < size; y++) {
     const row = Math.floor((y * GRID) / size) * GRID;
     for (let x = 0; x < size; x++) {
       const i = (y * size + x) * 4;
       if (rgba[i + 3] <= aliveThreshold) continue;
       s.alive++;
-      rows[y]++;
-      cols[x]++;
       const k = row + Math.floor((x * GRID) / size);
       s.occ[k]++;
       s.green[k] += rgba[i + 1];
-    }
-  }
-  // Bounding box of the rows and columns that hold a stroke: a lone live cell at the
-  // edge (the model leaves one now and then) would otherwise swing it by many pixels.
-  s.x0 = s.y0 = size;
-  s.x1 = s.y1 = -1;
-  for (let k = 0; k < size; k++) {
-    if (rows[k] >= BBOX_MIN_CELLS) {
-      if (s.y0 === size) s.y0 = k;
-      s.y1 = k;
-    }
-    if (cols[k] >= BBOX_MIN_CELLS) {
-      if (s.x0 === size) s.x0 = k;
-      s.x1 = k;
     }
   }
   return s;
 }
 
 export function emptyShape(): Shape {
-  return { alive: 0, x0: 0, y0: 0, x1: 0, y1: 0, occ: new Float64Array(GRID * GRID), green: new Float64Array(GRID * GRID) };
+  return { alive: 0, occ: new Float64Array(GRID * GRID), green: new Float64Array(GRID * GRID) };
 }
-// Settling: a frame within these of the window's anchor frame counts as unchanged.
-// The automaton fires cells at random, so a still GR jitters by ~±10 alive cells (1%).
-const STILL_ALIVE = 0.02; // of the baseline alive count
-const STILL_SHAPE = 0.04; // signature distance, see `distance`
-const STILL_EDGE = 1; // px each bbox edge may wobble
-// "Looks grown": close to the GR target. Measured against it on 400 grown seeds: every one
-// with MSE < 0.002 has alive ratio 1.01–1.05, bbox IoU ≥ 0.90 and distance ≤ 0.035; the
-// visibly crooked ones (MSE ~0.0095, the kind a heal also gets stuck in) measure 0.048–0.053.
-// The distance bar sits just above the clean ones: by 0.039 a heal can be at MSE ~0.005.
+
+// Settling: a frame within these of the window's anchor frame counts as unchanged. A still
+// GR jitters (cells fire at random) by up to 1.4% in alive count and 0.014 in distance.
+const STILL_ALIVE = 0.02; // of the target alive count
+const STILL_SHAPE = 0.025; // signature distance, see `distance`
+// "Looks grown": within these of the target (see GRID for the distance calibration).
 const ALIVE_TOLERANCE = 0.15;
-const MIN_BBOX_IOU = 0.85;
-const MAX_SHAPE_DISTANCE = 0.037;
-/** How close a heal of a crooked grown GR must come back to that grown frame. Heals back
- * to it measure 0.003–0.027 from it; one that went visibly worse (MSE 0.005 → 0.010)
- * measured 0.035. */
-const MAX_REST_DISTANCE = 0.03;
+const MAX_SHAPE_DISTANCE = 0.047;
+/** A heal that looks grown at its deadline but is still changing gets this many more steps
+ * to come to rest before it is judged again; settling it mid-change froze half-healed
+ * frames on screen (MSE 0.007 that would have reached 0.0003). */
+const DEADLINE_GRACE = 400;
+/** Silent grows retried when one comes out crooked (~4% of grows): the first grow is out of
+ * sight behind the static GR, so the page simply never starts from a crooked monogram. */
+const SILENT_GROW_RETRIES = 3;
+/** A silent grow must be this close to the target, stricter than a heal: starting a little
+ * off (MSE ~0.004 at 0.045) leaves no room for the jitter later heals add. ~9% of grows are
+ * retried for it, about 0.7 s each out of sight. */
+const GROWN_MAX_DISTANCE = 0.04;
 /** Regrows started by a wrong shape in a row: a backstop, so a model that keeps failing
  * (or broken weights that never grow) stops instead of regrowing forever. */
 const MAX_AUTO_REGROWS = 3;
@@ -127,13 +110,6 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   const rgba = new Float32Array(n * n * 4);
   const anchor = emptyShape(); // start of the current still window
   const now = emptyShape(); // last measured frame
-  // The last state the visitor saw that the model really produced as "grown": the silent
-  // first grow, or a settle that passed the target check. Never a heal accepted only by
-  // resemblance to it, nor a give-up settle, so it cannot drift away from GR bite by bite.
-  const rest = emptyShape();
-  let restCrooked = false; // `rest` itself fails the target check (a crooked grow)
-  const rows = new Uint16Array(n);
-  const cols = new Uint16Array(n);
 
   let settled = true;
   let growing = false; // growing from one cell (a regrow or Reset), not healing
@@ -145,15 +121,11 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   /** Reads the CA into `rgba` and its signature into `s`. */
   function measure(s: Shape): void {
     ca.rgba(rgba);
-    measureShape(rgba, n, aliveThreshold, s, rows, cols);
+    measureShape(rgba, n, aliveThreshold, s);
   }
 
   function copy(from: Shape, to: Shape): void {
     to.alive = from.alive;
-    to.x0 = from.x0;
-    to.y0 = from.y0;
-    to.x1 = from.x1;
-    to.y1 = from.y1;
     for (let k = 0; k < GRID * GRID; k++) {
       to.occ[k] = from.occ[k];
       to.green[k] = from.green[k];
@@ -163,7 +135,7 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   /** L1 distance of the block signatures, as a fraction of the target's totals. Cell
    * counts and green mass add up on one scale: a lime cell has green ≈ 1 and a black one
    * ≈ 0, so the green term is a count of lime cells. A G turned into a lime-backed R moves
-   * the green term; a letter changing shape moves the counts. */
+   * the green term; a letter changing shape or place moves the counts. */
   function distance(a: Shape, b: Shape): number {
     let d = 0;
     let total = 0;
@@ -174,41 +146,13 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
     return total > 0 ? d / total : 1;
   }
 
-  function iou(a: Shape, b: Shape): number {
-    if (a.alive === 0 || b.alive === 0) return 0;
-    const w = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) + 1;
-    const h = Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0) + 1;
-    const inter = w > 0 && h > 0 ? w * h : 0;
-    const area = (s: Shape) => (s.x1 - s.x0 + 1) * (s.y1 - s.y0 + 1);
-    return inter / (area(a) + area(b) - inter);
-  }
-
-  function like(s: Shape, ref: Shape, maxDistance = MAX_SHAPE_DISTANCE): boolean {
-    return (
-      Math.abs(s.alive - ref.alive) <= ALIVE_TOLERANCE * target.alive &&
-      iou(s, ref) >= MIN_BBOX_IOU &&
-      distance(s, ref) <= maxDistance
-    );
-  }
-
-  /** Whether a frame looks grown: like the GR target. One exception: a monogram that grew
-   * a little crooked (MSE ~0.009, ~4% of grows) and is bitten may heal back to that same
-   * crooked state, a heal rather than a reason to throw it away. That reference is the
-   * grown frame itself and never moves while it is crooked (see `rest`), so it cannot
-   * ratchet; when the monogram is a clean GR, only the target counts. */
-  function looksGrown(s: Shape): boolean {
-    return like(s, target) || (!growing && restCrooked && like(s, rest, MAX_REST_DISTANCE));
+  /** Whether a frame looks like the grown GR. */
+  function looksGrown(s: Shape, maxDistance = MAX_SHAPE_DISTANCE): boolean {
+    return Math.abs(s.alive - target.alive) <= ALIVE_TOLERANCE * target.alive && distance(s, target) <= maxDistance;
   }
 
   function isStill(s: Shape): boolean {
-    return (
-      Math.abs(s.alive - anchor.alive) <= STILL_ALIVE * target.alive &&
-      Math.abs(s.x0 - anchor.x0) <= STILL_EDGE &&
-      Math.abs(s.x1 - anchor.x1) <= STILL_EDGE &&
-      Math.abs(s.y0 - anchor.y0) <= STILL_EDGE &&
-      Math.abs(s.y1 - anchor.y1) <= STILL_EDGE &&
-      distance(s, anchor) <= STILL_SHAPE
-    );
+    return Math.abs(s.alive - anchor.alive) <= STILL_ALIVE * target.alive && distance(s, anchor) <= STILL_SHAPE;
   }
 
   /** Starts watching from the current frame. */
@@ -231,16 +175,14 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   function settle(): HealerStatus {
     settled = true;
     growing = quiet = false;
-    if (like(now, target)) {
-      copy(now, rest);
-      restCrooked = false;
-    }
     return 'settled';
   }
 
   const healer = {
-    /** Regrows since creation, from damage or from a wrong shape. */
+    /** Regrows since creation, from damage or from a wrong shape. Silent grows don't count. */
     regrows: 0,
+    /** Grows the last grow() took (1 + silent retries). */
+    growTries: 0,
     /** Grid side, in cells. */
     size: n,
     /** The RGBA buffer (premultiplied, 0..1, row-major) of the last measured frame. */
@@ -252,17 +194,19 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
 
     /** The last frame against the GR target: what the shape check looks at. */
     stats() {
-      return { alive: now.alive / target.alive, iou: iou(now, target), distance: distance(now, target), fromRest: distance(now, rest), restIou: iou(now, rest) };
+      return { alive: now.alive / target.alive, distance: distance(now, target) };
     },
 
-    /** Seeds and grows out of sight to the finished monogram. */
+    /** Seeds and grows out of sight to the finished monogram, again if it came out crooked. */
     grow(): void {
-      ca.seed();
-      ca.step(grownSteps);
-      measure(now);
+      for (let tries = 1; ; tries++) {
+        ca.seed();
+        ca.step(grownSteps);
+        measure(now);
+        healer.growTries = tries;
+        if (looksGrown(now, GROWN_MAX_DISTANCE) || tries > SILENT_GROW_RETRIES) break;
+      }
       autoRegrows = 0;
-      copy(now, rest); // whatever the model grew is what the visitor first sees
-      restCrooked = !like(now, target);
       settle();
     },
 
@@ -318,9 +262,12 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
         stillFor = 0;
       }
       const grown = looksGrown(now);
-      const pastDeadline = since >= (growing ? growDeadline : healDeadline);
-      if (grown && (stillFor >= settleWindow || pastDeadline)) return settle();
-      if (!pastDeadline) return 'running';
+      const deadline = growing ? growDeadline : healDeadline;
+      // Settles only once it has stopped changing. At the deadline a shape that does not
+      // look grown is regrown; one that does but is still changing gets DEADLINE_GRACE more
+      // steps to come to rest, and is settled as it is only after that.
+      if (grown && (stillFor >= settleWindow || since >= deadline + DEADLINE_GRACE)) return settle();
+      if (since < deadline || grown) return 'running';
       if (autoRegrows >= MAX_AUTO_REGROWS) return settle(); // give up: leave it as it is
       autoRegrows++;
       regrow();
