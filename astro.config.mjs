@@ -18,6 +18,13 @@ export default defineConfig({
       i18n: { defaultLocale: 'en', locales: { en: 'en', ru: 'ru' } }
     })
   ],
+  // A small <script> would otherwise be inlined, and every inline script needs its own CSP hash in
+  // vercel.json. Page scripts stay files under /_astro/ ('self'); fonts and images keep the default.
+  vite: {
+    build: {
+      assetsInlineLimit: (file) => (/\.(js|ts)$/.test(file) ? false : undefined)
+    }
+  },
   devToolbar: {
     enabled: false
   }

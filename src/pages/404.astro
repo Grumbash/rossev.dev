@@ -1,0 +1,114 @@
+---
+// Vercel serves this one page for every missing path, in every locale. It is the site's look without
+// Base: Base's canonical and hreflang would point at a /404/ that is not a page. Both languages are in
+// the markup; src/scripts/not-found.ts shows the visitor's one and first rescues a path typed in the
+// Russian keyboard layout. The joke is the site's own loop: a red test that never got its agent.
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/space-grotesk/wght.css';
+import '@fontsource-variable/syne/wght.css';
+import '../styles/fonts-cyrillic.css';
+import '../styles/brutalism.css';
+import { LOCALES, localePath, t } from '../i18n';
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t('en').notFound.pageTitle}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main class="container nf">
+      {LOCALES.map((l) => {
+        const n = t(l).notFound;
+        return (
+          <section data-lang={l} data-title={n.pageTitle} hidden={l !== 'en'} lang={l}>
+            <span class="section-kicker">{n.kicker}</span>
+            <h1 class="section-title nf-title">{n.title}</h1>
+            <pre class="brutal-box nf-run" aria-hidden="true"><span class="nf-dim">$ bun test site.test.ts</span>
+<span class="nf-fail">✗</span> GET <span data-path>/…</span>
+    expected  <span class="nf-ok">a page</span>
+    received  <span class="nf-fail">404 Not Found</span>
+
+<span class="nf-ok">0 pass</span> · <span class="nf-fail">1 fail</span></pre>
+            <p class="nf-lead">{n.lead}</p>
+            <nav class="nf-links">
+              <a class="brutal-btn brutal-btn-lime" href={localePath(l, '/')}>{n.home}</a>
+              <a class="brutal-btn" href={localePath(l, '/hire/')}>{n.hire}</a>
+              <a class="brutal-btn" href={localePath(l, '/writing/')}>{n.writing}</a>
+              <a class="brutal-btn" href={localePath(l, '/how-its-built/')}>{n.built}</a>
+            </nav>
+          </section>
+        );
+      })}
+    </main>
+    <script>
+      import { initNotFound } from '../scripts/not-found';
+      initNotFound();
+    </script>
+  </body>
+</html>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .nf-title {
+    max-width: 14ch;
+  }
+
+  .nf-run {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 28px 0;
+    padding: 20px 22px;
+    max-width: 560px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .nf-dim {
+    color: var(--ink-muted);
+  }
+
+  .nf-fail {
+    color: var(--pink);
+    font-weight: 700;
+  }
+
+  .nf-ok {
+    color: var(--ink);
+    background: var(--lime);
+    padding: 0 4px;
+  }
+
+  html[data-theme='dark'] .nf-ok {
+    color: #0a0a0a;
+  }
+
+  .nf-lead {
+    max-width: 560px;
+    font-size: 17px;
+    margin: 0 0 28px;
+  }
+
+  .nf-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .nf-links a {
+    text-decoration: none;
+  }
+</style>

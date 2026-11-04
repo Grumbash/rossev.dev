@@ -271,6 +271,17 @@ export const en = {
     qrCaption: 'On a laptop? Scan with your phone to save my contact or book from there.',
     qrLabel: 'QR code: rossev.dev/c, my contact card'
   },
+  // /404.html: one page for every locale, the script shows the visitor's language
+  notFound: {
+    pageTitle: '404 — Gleb Rosev',
+    kicker: '404 · red test',
+    title: 'This page is still a failing test',
+    lead: 'On this site every feature starts as a test that fails, then an agent writes the code that makes it pass. This page never got its agent.',
+    home: '← Home',
+    hire: 'Work with me',
+    writing: 'Writing',
+    built: 'How this site was built'
+  },
   // /c: the card behind the QR code on the phone case
   card: {
     title: 'Gleb Rosev — contact card',
