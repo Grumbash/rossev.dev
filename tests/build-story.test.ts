@@ -102,7 +102,10 @@ describe('generator (pure functions on real gh output)', () => {
     expect(isPlaceholder('M', stub)).toBe(false);
     expect(isPlaceholder('A', 'export const add = (a: number, b: number) => a + b;\n')).toBe(false);
     expect(isPlaceholder('A', stub + 'export const real = (a: number) => a * 2;\n')).toBe(false);
-    for (const sha of ['b0c0a84', 'd5e8fe9', '3b04b9d']) {
+    // The marker is the comment; naming the red test in it is optional (#27's policy stubs don't).
+    expect(isPlaceholder('A', stub.replace(': tests/x.test.ts is red first.', '.'))).toBe(true);
+    expect(isPlaceholder('A', stub.replace('// Not implemented yet: tests/x.test.ts is red first.\n', ''))).toBe(false);
+    for (const sha of ['b0c0a84', 'd5e8fe9', '3b04b9d', '20c7787']) {
       const added = execSync(`git show --diff-filter=A --name-only --format= ${sha}`, { encoding: 'utf8' }).split('\n').filter((f) => f && !f.startsWith('tests/'));
       expect(added.length, sha).toBeGreaterThan(0);
       for (const f of added) expect(isPlaceholder('A', execSync(`git show ${sha}:${f}`, { encoding: 'utf8' })), `${sha} ${f}`).toBe(true);
