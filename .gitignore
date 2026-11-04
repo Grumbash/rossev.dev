@@ -23,3 +23,6 @@ dist/
 
 # Publora sync scratch (PR body)
 .publora/
+
+# Build-story refresh scratch (PR body)
+.build-story/
