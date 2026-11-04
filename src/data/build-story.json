@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-04T12:56:55.793Z",
-  "throughSha": "9f2880caea8a453c8a75c3408ca397def6860d70",
+  "generatedAt": "2026-11-04T20:32:23.686Z",
+  "throughSha": "ec73acd073e051d52cd41fff46b31d87b0dceb98",
   "prs": [
     {
       "number": 1,
@@ -1395,6 +1395,572 @@
         "en": "Two commits, each bringing its tests together with the change: no test was committed red on its own first.",
         "ru": "Два коммита, и каждый приносил тесты вместе с изменением: отдельного красного теста до кода нет."
       }
+    },
+    {
+      "number": 27,
+      "title": "A tiny learned policy keeps a toy service alive while visitors inject faults",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/27",
+      "mergedAt": "2026-11-04T13:09:27Z",
+      "branch": "claude/self-healing-policy",
+      "additions": 1910,
+      "deletions": 119,
+      "changedFiles": 17,
+      "redTest": {
+        "sha": "20c7787aa77e1347545434e0fdcb42b7d0c2107e",
+        "subject": "Red test: a learned policy keeps a toy service alive under visitor faults, beats doing nothing, matches a frozen runbook, and still fails honestly without the judge or beyond capacity",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/20c7787aa77e1347545434e0fdcb42b7d0c2107e"
+      },
+      "commits": [
+        {
+          "sha": "20c7787aa77e1347545434e0fdcb42b7d0c2107e",
+          "subject": "Red test: a learned policy keeps a toy service alive under visitor faults, beats doing nothing, matches a frozen runbook, and still fails honestly without the judge or beyond capacity",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/20c7787aa77e1347545434e0fdcb42b7d0c2107e"
+        },
+        {
+          "sha": "6ae43352feabecaee2f52f261c0b0ce0c1a93856",
+          "subject": "Red test: a second fault mid-episode starts from a clean slate and does not clear a slow dependency",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6ae43352feabecaee2f52f261c0b0ce0c1a93856"
+        },
+        {
+          "sha": "1a0016eeee9303457680dcd137234b43d0e40dba",
+          "subject": "The toy service, the frozen on-call runbook (fixed per review: retry only without a queue, isolate only with user-facing errors), the privileged teacher, evaluation and rollout export",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1a0016eeee9303457680dcd137234b43d0e40dba"
+        },
+        {
+          "sha": "6fdd6118b4492cc926c71fb042e2021a7a5212c0",
+          "subject": "A learned policy (1,031 params, imitation + DAgger) keeps the toy service alive in the take-over: per-tick action and confidence on the canvas, honest caught / recovered / shipped / failed",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6fdd6118b4492cc926c71fb042e2021a7a5212c0"
+        },
+        {
+          "sha": "76824379df8d85a323e665167dfbf576d7f27021",
+          "subject": "Red test: the fault button opens a menu and injects nothing on its own, a picked slow dependency is judged as one, Explore pauses the policy run, policy outcomes credit the policy",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/76824379df8d85a323e665167dfbf576d7f27021"
+        },
+        {
+          "sha": "a8f306118087feac61b06811d95e94a32537af67",
+          "subject": "Judge fixes: the fault button opens a menu and a pick injects exactly that fault, Explore pauses the run, a failed weights load releases the take-over, policy outcomes credit the policy, the honesty label wraps on phones",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a8f306118087feac61b06811d95e94a32537af67"
+        },
+        {
+          "sha": "5046126cd1ccc254f83afc98d8878f57075d156d",
+          "subject": "Merge remote-tracking branch 'origin/main' into claude/self-healing-policy",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5046126cd1ccc254f83afc98d8878f57075d156d"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 28,
+      "title": "Keep /how-its-built/ up to date with main through one bot PR, and catch it up through #26",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/28",
+      "mergedAt": "2026-11-04T13:29:48Z",
+      "branch": "claude/build-story-auto",
+      "additions": 1651,
+      "deletions": 99,
+      "changedFiles": 13,
+      "redTest": {
+        "sha": "3c5138a320222baa409a4870b77d29adfe62e891",
+        "subject": "Red test: the build story refreshes itself in one bot PR, skips data-only PRs, shows new PRs as pending and catches up through #24",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/3c5138a320222baa409a4870b77d29adfe62e891"
+      },
+      "commits": [
+        {
+          "sha": "3c5138a320222baa409a4870b77d29adfe62e891",
+          "subject": "Red test: the build story refreshes itself in one bot PR, skips data-only PRs, shows new PRs as pending and catches up through #24",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3c5138a320222baa409a4870b77d29adfe62e891"
+        },
+        {
+          "sha": "5959f9ffbc1ffe951b9ce14b17d2cbb6095e5f42",
+          "subject": "Red test: bot/ branch PRs stay out of the build story, and a red commit may only add placeholder stubs",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5959f9ffbc1ffe951b9ce14b17d2cbb6095e5f42"
+        },
+        {
+          "sha": "999f4897671c6c0f246054a4f36409853d8badd0",
+          "subject": "The build story refreshes itself: a bot PR after every push to main, bot and data-only PRs left out, new PRs pending until Gleb's notes, caught up through #26",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/999f4897671c6c0f246054a4f36409853d8badd0"
+        },
+        {
+          "sha": "c2ba414a5fd56cea65820a16d85d15047704bdf6",
+          "subject": "Merge remote-tracking branch 'origin/main' into claude/build-story-auto",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c2ba414a5fd56cea65820a16d85d15047704bdf6"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 31,
+      "title": "Russian copy that reads like an engineer wrote it, not a translator",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/31",
+      "mergedAt": "2026-11-04T15:49:39Z",
+      "branch": "claude/ru-copy-ac92ff",
+      "additions": 489,
+      "deletions": 220,
+      "changedFiles": 20,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "8e7447ebd4c6b1d46c87c4264f32806b6f60818a",
+          "subject": "RU style guide: keep IT terms as engineers say them, fix syntax, register and consistency",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8e7447ebd4c6b1d46c87c4264f32806b6f60818a"
+        },
+        {
+          "sha": "3f9f986762d95e7d619923bdb8f87d4f136aa4fb",
+          "subject": "RU style guide: blog categories Деливери and Лидерство",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3f9f986762d95e7d619923bdb8f87d4f136aa4fb"
+        },
+        {
+          "sha": "718328ded09569bc3bc18b6db3e5ed7e789e4af9",
+          "subject": "Red test: built RU pages use no fake-Russian stand-ins for IT terms, no literal scene metaphors and no «ты»",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/718328ded09569bc3bc18b6db3e5ed7e789e4af9"
+        },
+        {
+          "sha": "627c819dcbc0c787d6f2e090dff7035ba30dc5bd",
+          "subject": "Red test: the Publora validator rejects RU drafts the style guide bans, the prompt carries the guide, new categories get ДЕЛИВЕРИ and ЛИДЕРСТВО",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/627c819dcbc0c787d6f2e090dff7035ba30dc5bd"
+        },
+        {
+          "sha": "9a31001ad3d1d80a6b9934f7ee0707210964a3df",
+          "subject": "Publora: the RU prompt carries the style guide, the validator rejects the forms it bans, new categories get the site labels",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9a31001ad3d1d80a6b9934f7ee0707210964a3df"
+        },
+        {
+          "sha": "faea596e7fcbdca9705a2d8a9a925ff4eb82b515",
+          "subject": "One-off, delete before merge: an Actions job regenerates two posts with the new RU prompt next to the entries on main",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/faea596e7fcbdca9705a2d8a9a925ff4eb82b515"
+        },
+        {
+          "sha": "3216a2068eb4c0a3fc10980058a99a13e04d1548",
+          "subject": "Rewrite the Russian copy to docs/ru-style.md: Russian word order, no канцелярит or literal scene metaphors, «вы» everywhere, one term per idea, numbers and dates per the guide",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3216a2068eb4c0a3fc10980058a99a13e04d1548"
+        },
+        {
+          "sha": "e44bd443c29a939f3b2ca785d4eed6524a028365",
+          "subject": "Merge remote-tracking branch 'origin/main' into claude/ru-copy-ac92ff",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e44bd443c29a939f3b2ca785d4eed6524a028365"
+        },
+        {
+          "sha": "89c94787f9eaf91fff9f6824b54756d2f7667c5d",
+          "subject": "Replay caption: «Смержено в main», merge stays an IT term per the guide",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/89c94787f9eaf91fff9f6824b54756d2f7667c5d"
+        },
+        {
+          "sha": "95e2f4939c909b9800e1cdd5a221df58bd9200c4",
+          "subject": "Red test: /ru/ shows no English units, counts or dates, blog categories carry the guide labels, the banned list catches more forms of «влить», «ты» and the scene calques",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/95e2f4939c909b9800e1cdd5a221df58bd9200c4"
+        },
+        {
+          "sha": "4117baf5ee9cdd09047a0cb6e858e1e0cec2b921",
+          "subject": "Judge fixes: metric values, case periods and places in Russian on /ru/, Russian PR card titles, clearer CTA, build lead, L+1 layer name and a dozen phrasings",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4117baf5ee9cdd09047a0cb6e858e1e0cec2b921"
+        },
+        {
+          "sha": "4d9fc122e3822f1543e4de485ef019176aff0790",
+          "subject": "Posts keep their original RU text; only the category labels follow the guide",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4d9fc122e3822f1543e4de485ef019176aff0790"
+        },
+        {
+          "sha": "39ab5e2b3896c620d0d259868c44faae19278cc9",
+          "subject": "The /ru/ units check skips text marked lang=\"en\": GitHub titles and commit subjects quoted as is",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/39ab5e2b3896c620d0d259868c44faae19278cc9"
+        },
+        {
+          "sha": "58d77375489e9d20039c65daec6648d5eeebba5f",
+          "subject": "One-off sample: print the comparison to the log too",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/58d77375489e9d20039c65daec6648d5eeebba5f"
+        },
+        {
+          "sha": "a0dbd14623d999cde392da67d7c3e54f4de95e05",
+          "subject": "Remove the one-off RU sample job: the new prompt is approved",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a0dbd14623d999cde392da67d7c3e54f4de95e05"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 29,
+      "title": "Security hardening: the bot PAT stays off package code, strict CSP and security headers",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/29",
+      "mergedAt": "2026-11-04T15:49:54Z",
+      "branch": "claude/security-audit-f94fb7",
+      "additions": 585,
+      "deletions": 130,
+      "changedFiles": 25,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "9e37b06735cec3150a8733236790873042cd6975",
+          "subject": "Red: no workflow gives the bot PAT to a job that runs package code, and no GITHUB_TOKEN gets contents: write",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9e37b06735cec3150a8733236790873042cd6975"
+        },
+        {
+          "sha": "7516d965a3f679c56d721e36335f6545a06e6b30",
+          "subject": "The Publora sync pushes from a second job on a fresh VM: the PAT never shares a runner with package code, and the GITHUB_TOKEN only reads",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7516d965a3f679c56d721e36335f6545a06e6b30"
+        },
+        {
+          "sha": "ce5716ac3a1bb5a88fb878929465fa8475a8a1eb",
+          "subject": "Red: vercel.json sends HSTS, nosniff, framing, referrer, permissions and a hash-based script CSP the built site runs under",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ce5716ac3a1bb5a88fb878929465fa8475a8a1eb"
+        },
+        {
+          "sha": "1c6634deb5c0c19bcb8a482513460fb3693c8b03",
+          "subject": "A strict CSP and the security headers on every path: inline onclick becomes data-action with one delegated listener, Vercel analytics load as plain same-origin scripts, the VAD worklet is a file, and the three inline scripts left are allowed by hash",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1c6634deb5c0c19bcb8a482513460fb3693c8b03"
+        },
+        {
+          "sha": "ff322f1c9f19864b69f6c60cffafa945e2504fef",
+          "subject": "Drop the unused @vercel/analytics and @vercel/speed-insights packages; README documents the security headers and how to update a CSP hash",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ff322f1c9f19864b69f6c60cffafa945e2504fef"
+        },
+        {
+          "sha": "97387373ddd8ceb07ced52aa4afcbab6890d4d6e",
+          "subject": "Red: publish checks the sha from sync is on main, the human-commit guard survives pipefail; data-action names and args, and the PAT at workflow level, are tested",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/97387373ddd8ceb07ced52aa4afcbab6890d4d6e"
+        },
+        {
+          "sha": "fe51935de1b3d2b0a9fb4814bb0ea6a5773fccb7",
+          "subject": "Publish cuts the bot branch only from a sha on main, and the human-commit guard survives pipefail and warns",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/fe51935de1b3d2b0a9fb4814bb0ea6a5773fccb7"
+        },
+        {
+          "sha": "807857019967731213eded4d3fd3bd7a85e9888d",
+          "subject": "The 375px hero probe no longer waits forever for a frame headless virtual time never draws once the page is idle",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/807857019967731213eded4d3fd3bd7a85e9888d"
+        },
+        {
+          "sha": "1a9f165e042cb8a6bf3816b84c0b0527bad3e229",
+          "subject": "Merge remote-tracking branch 'origin/main' into claude/security-audit-f94fb7",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1a9f165e042cb8a6bf3816b84c0b0527bad3e229"
+        },
+        {
+          "sha": "b8fd9434ace080ea8a27ddf3188861e547ff9ef5",
+          "subject": "The build story refresh pushes from a second job too: the PAT never shares a runner with package code, the GITHUB_TOKEN only reads, the bot branch is cut only from a sha on main",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b8fd9434ace080ea8a27ddf3188861e547ff9ef5"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 30,
+      "title": "Home's post cards no longer grow with the post, so the Publora sync's long posts fit home's budget",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/30",
+      "mergedAt": "2026-11-04T15:50:08Z",
+      "branch": "claude/home-flat-cards",
+      "additions": 90,
+      "deletions": 18,
+      "changedFiles": 5,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "6e337019be30c0d8cd16cc899ac1af82c9597f82",
+          "subject": "Home's post cards no longer grow with the post: title-only, so the Publora sync's long posts keep home under its 26 KB budget",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6e337019be30c0d8cd16cc899ac1af82c9597f82"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 32,
+      "title": "The GR monogram regrows from one cell when a heal fails, instead of settling into a bar",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/32",
+      "mergedAt": "2026-11-04T16:23:34Z",
+      "branch": "claude/nca-regrow-guard",
+      "additions": 846,
+      "deletions": 41,
+      "changedFiles": 13,
+      "redTest": {
+        "sha": "4eb6cedb4462b1f9f4130958844388a4c2624fc7",
+        "subject": "Red test: a monogram erased down to a strip regrows from one cell instead of settling into a bar",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/4eb6cedb4462b1f9f4130958844388a4c2624fc7"
+      },
+      "commits": [
+        {
+          "sha": "4eb6cedb4462b1f9f4130958844388a4c2624fc7",
+          "subject": "Red test: a monogram erased down to a strip regrows from one cell instead of settling into a bar",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4eb6cedb4462b1f9f4130958844388a4c2624fc7"
+        },
+        {
+          "sha": "3993429f96b328a5ec0025a6dd6228bd372b51af",
+          "subject": "A recovery guard regrows the GR monogram from one cell when too little is left or the shape settles wrong",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3993429f96b328a5ec0025a6dd6228bd372b51af"
+        },
+        {
+          "sha": "50be4cb5b58c081afb9c2c641aafa214ca3a2247",
+          "subject": "Red test: one gesture regrows once, half-lost monograms decide within ~30 s on every seed and end as a clean GR",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/50be4cb5b58c081afb9c2c641aafa214ca3a2247"
+        },
+        {
+          "sha": "a9bf372a39805cc952ed133c2052d48f6dca83f8",
+          "subject": "One gesture regrows once, a half-lost monogram is decided within 1000 steps, and a crooked GR is regrown instead of kept",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a9bf372a39805cc952ed133c2052d48f6dca83f8"
+        },
+        {
+          "sha": "f67100cfe6a3ebff0bc42a91f5e8439c7e40d330",
+          "subject": "Red test: the guard judges against the real GR, not one grown frame, and gives up a hopeless heal within ~10 s",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f67100cfe6a3ebff0bc42a91f5e8439c7e40d330"
+        },
+        {
+          "sha": "3a8d17e5b003651f4423f6eb5b9c1bb16c28cfe5",
+          "subject": "The guard judges against stats of the real GR and gives up a hopeless heal at step 380",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3a8d17e5b003651f4423f6eb5b9c1bb16c28cfe5"
+        },
+        {
+          "sha": "a9be37f75822ed83f86a4ec340cfba26e6edc366",
+          "subject": "Red test: a sequence of bites or one cut never settles on a crooked GR",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a9be37f75822ed83f86a4ec340cfba26e6edc366"
+        },
+        {
+          "sha": "280f21054eb8aa0099b4900773ab80800fa1a7e0",
+          "subject": "The rest-frame exception can no longer ratchet a clean GR into a crooked one",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/280f21054eb8aa0099b4900773ab80800fa1a7e0"
+        },
+        {
+          "sha": "36e033e65fb69d653d36eceda01eab08c88cfe92",
+          "subject": "Red test: the page never starts from a crooked GR, and a heal is never frozen half-done at the deadline",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/36e033e65fb69d653d36eceda01eab08c88cfe92"
+        },
+        {
+          "sha": "f6d36eef19de5edec8655658f9c1676451b59f94",
+          "subject": "A crooked first grow is regrown out of sight, so the rest-frame exception is gone; a still-changing heal gets grace at the deadline",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f6d36eef19de5edec8655658f9c1676451b59f94"
+        },
+        {
+          "sha": "863cb23e192e4b46ab8813221b56e47046fa784d",
+          "subject": "Merge remote-tracking branch 'origin/main' into claude/nca-regrow-guard",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/863cb23e192e4b46ab8813221b56e47046fa784d"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 34,
+      "title": "IndexNow ping after each production deploy",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/34",
+      "mergedAt": "2026-11-04T17:42:48Z",
+      "branch": "claude/indexnow",
+      "additions": 93,
+      "deletions": 0,
+      "changedFiles": 4,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "ed3dbcbf75ddf28e7ad751c33b3ed1e453ecf970",
+          "subject": "IndexNow after each production deploy: Bing hears about every sitemap URL within hours, with the key file served from public/ to prove ownership",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ed3dbcbf75ddf28e7ad751c33b3ed1e453ecf970"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 35,
+      "title": "Long-form posts first published here: the self-healing monogram and the no-Three.js hero",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/35",
+      "mergedAt": "2026-11-04T18:30:02Z",
+      "branch": "claude/self-healing-monogram-post",
+      "additions": 278,
+      "deletions": 37,
+      "changedFiles": 10,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "125c50dc800e6420d6e7f62ffac6c38341c405b0",
+          "subject": "A long-form post first published here: \"My Logo Heals Itself. Then I Erased It Into a Stick.\" (EN + RU); a post needs no LinkedIn url when it carries its full text, and that text renders headings, lists, links, bold, italic and code",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/125c50dc800e6420d6e7f62ffac6c38341c405b0"
+        },
+        {
+          "sha": "bfbe614fc32ddd8eb54d2e520fec358f044dc180",
+          "subject": "A second long-form post: \"I Skipped Three.js for My Hero Scene. A WebGL Dev Found the Bug in One Sentence.\" (EN + RU); a post's full text can hold ``` code blocks, kept verbatim and scrolling inside their box on phones",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/bfbe614fc32ddd8eb54d2e520fec358f044dc180"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 36,
+      "title": "Publora sync: a LinkedIn copy of a site-first post links to it instead of duplicating it",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/36",
+      "mergedAt": "2026-11-04T18:49:25Z",
+      "branch": "claude/publora-link-site-posts",
+      "additions": 101,
+      "deletions": 9,
+      "changedFiles": 4,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "b306f2f21cd6c6dce462baefc79860f153233c3a",
+          "subject": "The Publora sync links a LinkedIn copy to the post first published here: a LinkedIn post that links to rossev.dev/writing/<slug>/ gives that post its url and keeps its earlier date, with no model call and no second entry",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b306f2f21cd6c6dce462baefc79860f153233c3a"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 37,
+      "title": "Long-form posts: no closing question; Lighthouse 1.0 stated as at launch",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/37",
+      "mergedAt": "2026-11-04T19:26:08Z",
+      "branch": "claude/drop-closing-questions",
+      "additions": 4,
+      "deletions": 4,
+      "changedFiles": 1,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "86ad1073f49b14931dbdf5492e148457d7d6fb75",
+          "subject": "The two long-form posts end without an ask-the-audience question, and the monogram post says Lighthouse 1.0 was at launch",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/86ad1073f49b14931dbdf5492e148457d7d6fb75"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 33,
+      "title": "/sitemap.xml redirects to /sitemap-index.xml for crawlers that ask for the usual name",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/33",
+      "mergedAt": "2026-11-04T19:26:29Z",
+      "branch": "claude/sitemap-alias",
+      "additions": 25,
+      "deletions": 0,
+      "changedFiles": 2,
+      "redTest": {
+        "sha": "b41ceb501b4121d4a2e30c5f9b78831dcd7ad596",
+        "subject": "Red test: /sitemap.xml permanently redirects to /sitemap-index.xml",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/b41ceb501b4121d4a2e30c5f9b78831dcd7ad596"
+      },
+      "commits": [
+        {
+          "sha": "b41ceb501b4121d4a2e30c5f9b78831dcd7ad596",
+          "subject": "Red test: /sitemap.xml permanently redirects to /sitemap-index.xml",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b41ceb501b4121d4a2e30c5f9b78831dcd7ad596"
+        },
+        {
+          "sha": "f7d95ce6eb2d3d6d5930cfac88446fb7e73ebd32",
+          "subject": "/sitemap.xml redirects to /sitemap-index.xml for crawlers that ask for the usual name",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f7d95ce6eb2d3d6d5930cfac88446fb7e73ebd32"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 38,
+      "title": "No meta files in the repo: RU style rules live in src/i18n/ru-style.ts; docs/ and .claude/ stay local",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/38",
+      "mergedAt": "2026-11-04T19:42:42Z",
+      "branch": "claude/no-meta-files",
+      "additions": 26,
+      "deletions": 89,
+      "changedFiles": 6,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "3a7459ada25734841588fb0db08025f2dc511b96",
+          "subject": "No meta files in the repo: the RU style guide moves from docs/ru-style.md into the header of src/i18n/ru-style.ts, next to the banned list it explains, and docs/ and .claude/ stay local",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3a7459ada25734841588fb0db08025f2dc511b96"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 39,
+      "title": "Build story: unblock the refresh on #27, #31 and #32",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/39",
+      "mergedAt": "2026-11-04T20:31:44Z",
+      "branch": "claude/build-story-red-commits",
+      "additions": 16,
+      "deletions": 5,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "c9d2a40fbf10093ba6d501f06066d7a3a604a8ef",
+          "subject": "The build story refreshes again: a placeholder stub needs only the \"Not implemented yet\" marker (#27), the round-1 NCA weights are a named test fixture (#32), and code in a red commit is a warning that drops that PR's red-test-first instead of failing the whole refresh (#31)",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c9d2a40fbf10093ba6d501f06066d7a3a604a8ef"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
     }
   ]
 }
