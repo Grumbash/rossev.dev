@@ -19,7 +19,7 @@ export type L10n = { en: string; ru: string };
 export type Role = 'red' | 'merge' | 'impl';
 
 /** The commit shape `gh pr view --json commits` returns (the fields this script reads). */
-export type GhCommit = { oid: string; messageHeadline: string; messageBody?: string };
+export type GhCommit = { oid: string; messageHeadline: string; messageBody?: string; authoredDate?: string };
 export type GhPr = {
   number: number;
   title: string;
@@ -198,6 +198,27 @@ export function isPlaceholder(status: string, content: string): boolean {
 }
 
 // Without a highlight the entry carries only what git and GitHub know: copy in Gleb's voice waits for him.
+/** One commit of main as `git log --format=%H%x00%aI%x00%s` prints it. */
+export type MainCommit = { sha: string; authoredAt: string; subject: string };
+
+/**
+ * Main's history was rewritten once (2026-11-04: docs/ and AI co-author trailers dropped), but GitHub
+ * keeps each PR's commit list as it was. A PR commit main does not contain is replaced by its
+ * rewritten twin on main: same author time, and the subject gh shows (cut at ~70 chars with "…")
+ * when several commits share that second. Commits main contains, or with no single twin, stay.
+ */
+export function onMain(commits: GhCommit[], main: MainCommit[]): GhCommit[] {
+  const shas = new Set(main.map((c) => c.sha));
+  return commits.map((c) => {
+    if (shas.has(c.oid) || !c.authoredDate) return c;
+    const at = Date.parse(c.authoredDate);
+    const head = c.messageHeadline.replace(/…$/, '');
+    const same = main.filter((m) => Date.parse(m.authoredAt) === at);
+    const twins = same.length > 1 ? same.filter((m) => m.subject.startsWith(head)) : same;
+    return twins.length === 1 ? { ...c, oid: twins[0].sha } : c;
+  });
+}
+
 export function toEntry(pr: GhPr, h: Highlight | undefined, repo = REPO): Entry {
   const entry: Entry = {
     number: pr.number,
@@ -338,13 +359,13 @@ export type GitReader = {
 };
 
 // The round-1 implementation never reached git: it was rewritten before its first commit, so the run's
-// steps point at the implementation it became (7f6064e, also the finding's own ref). The sandbox step
+// steps point at the implementation it became (19f2dbc, also the finding's own ref). The sandbox step
 // quotes the tests that existed then (`testsAt`: the first red test, bites only, no cut). The strokes
-// red test and the retrain were authored in the same second as 7f6064e.
+// red test and the retrain were authored in the same second as 19f2dbc.
 const SHA = {
-  red: '6151777add1a736c719b97cef9adf95b434208ff',
-  strokes: '662bf5800a68368eae63308271d2947c92cd2d94',
-  impl: '7f6064e500dfd45c1268f82e4d13912fb4b5d087',
+  red: 'ead95cff3b5fe2180c6ea6f69d9d906e7eb8578f',
+  strokes: '85abfee4dc9c6eef4003a8e44d1f2e84d9dab9ac',
+  impl: '19f2dbcc2f73de42886406c972e1db0576c903f5',
 };
 
 export const STORYBOARDS: Record<number, Storyboard> = {
@@ -498,7 +519,7 @@ const git = (args: string[]) => execFileSync('git', args, { encoding: 'utf8' }).
 const RED_COMMIT_TOOLING: Record<string, string[]> = {
   // #25: the export script that wrote tests/fixtures/vad/hello.json in the same commit; the weights it
   // also writes (public/vad/) came with the implementation.
-  '373ee08136cb9275248c2e5477fbc6fdf00a4c40': ['scripts/vad/export.py'],
+  'f5177fb85eb143ee75fb1e54db148207b8148818': ['scripts/vad/export.py'],
 };
 
 const replayAt = process.argv.indexOf('--replay');
@@ -529,11 +550,19 @@ if (import.meta.main && replayAt >= 0) {
     (p: { number: number }) => p.number,
   );
   const fields = 'number,title,url,mergedAt,headRefName,additions,deletions,changedFiles,commits,files';
+  const mainLog: MainCommit[] = git(['log', '--format=%H%x00%aI%x00%s', 'HEAD'])
+    .split('\n')
+    .filter(Boolean)
+    .map((l) => {
+      const [sha, authoredAt, subject] = l.split('\0');
+      return { sha, authoredAt, subject };
+    });
   const early: string[] = [];
   // No highlight is not an error any more: the entry is pending until Gleb writes its copy.
   const prs = numbers
     .map((n) => JSON.parse(run(['pr', 'view', String(n), '--repo', REPO, '--json', fields])) as GhPr)
     .filter((pr) => !isBookkeeping(pr))
+    .map((pr) => ({ ...pr, commits: onMain(pr.commits, mainLog) }))
     .sort((a, b) => a.mergedAt.localeCompare(b.mergedAt))
     .map((pr) => toEntry(pr, highlights[String(pr.number)], REPO));
   const listed = new Set(prs.map((p) => String(p.number)));

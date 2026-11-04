@@ -49,10 +49,10 @@
       {
         "en": "The red test pinned one name for the Kingpin −80%: it was triage time in some places and feedback analysis in others.",
         "ru": "Красный тест закрепил одно название для −80% в Kingpin: где-то это было время триажа, где-то анализ фидбека.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/33a22dda47abcaa950660dfc9c10b333ba7aafcc"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/9d2a0e28cb5d46878e6efbd46d22e12449d6aa30"
       }
     ],
-    "green": "33a22dda47abcaa950660dfc9c10b333ba7aafcc"
+    "green": "9d2a0e28cb5d46878e6efbd46d22e12449d6aa30"
   },
   "3": {
     "titleRu": "Воронку конверсии теперь можно измерить: события Umami и UTM на cal.com",
@@ -65,7 +65,7 @@
       "ru": "События отправляются в Umami Cloud: в Vercel Hobby нет своих событий, а данные хранятся месяц."
     },
     "findings": [],
-    "green": "bc1eae53ff23d385a7345ed592f42666e8b815a3"
+    "green": "af59b54a27c2f25bf1ad677024fdf9fd6d23dc89"
   },
   "4": {
     "titleRu": "Каждый пуш проверяется бюджетами производительности, за ними следит агент perf-watchdog",
@@ -78,7 +78,7 @@
       "ru": "Без GitHub Actions: проверка стоит на git push и блокирует его."
     },
     "findings": [],
-    "green": "9b45487e2bc7a8d1ae12874c239d9725e05a2a58"
+    "green": "eea3da5fc0c1a655707cb3c873fa93086b1bc45b"
   },
   "5": {
     "titleRu": "Hero цепляет за 5 секунд: строка ценности, цифры и кнопка созвона до первого скролла",
@@ -91,7 +91,7 @@
       "ru": "28 PR в YAGNI теперь говорят, кто что сделал: 98% кода написали агенты, 97% планирования — моё."
     },
     "findings": [],
-    "green": "b20962dc980572959d28ce4d0b246d1627a97011"
+    "green": "9d6c36bb37cf1bc6884071ef0ab5448a831e9d22"
   },
   "6": {
     "titleRu": "Canvas в hero не крутит цикл анимации при reduced motion",
@@ -108,7 +108,7 @@
       "en": "An independent review also checked the wake-ups under reduced motion: fault and drag run to the end and then idle, and the canvas is redrawn after resize.",
       "ru": "Независимое ревью отдельно проверило пробуждения при reduced motion: сбой и перетаскивание доигрывают до конца и затихают, а после resize канвас перерисовывается."
     },
-    "green": "e4db380b17f1db72905332063eee6b330b4e71c9"
+    "green": "31598465b8a82f1ba7cf00c35ce40a6b256765f8"
   },
   "7": {
     "titleRu": "У каждого поста своя индексируемая страница, а конспект заканчивается следующим шагом",
@@ -121,7 +121,7 @@
       "ru": "На страницах постов одна ссылка на созвон, в конце конспекта. Ссылки с главной на /writing/ пока нет: этот раздел менялся в другой ветке."
     },
     "findings": [],
-    "green": "6ff9e6fc8abb6192f09733edbdcac1355ec2a6e8"
+    "green": "81ced602a44b251ff24623eb0a6ad2a5069c3bb4"
   },
   "8": {
     "titleRu": "Карточка YAGNI больше не утверждает, что 89% PR написали агенты; остаётся одна цифра — 98% кода",
@@ -134,7 +134,7 @@
       "ru": "Убрал 89%: эта цифра считала имена веток agent/, подтвердить её нечем, и она спорила с 98%."
     },
     "findings": [],
-    "green": "7b74687b647452b723dddcb0b56c3469dae19619"
+    "green": "db6c8e7898dd275e29d2e442fca0a55a3d31c081"
   },
   "11": {
     "titleRu": "Нейронный клеточный автомат выращивает монограмму GR в блоке «Вне резюме», и она заживает, когда посетитель её режет или откусывает",
@@ -150,17 +150,17 @@
       {
         "en": "A vertical cut made the G grow back as an R. Fixed by training on strokes, not only round bites.",
         "ru": "После вертикального разреза G отрастала как R. Исправлено обучением на штрихах, а не только на круглых укусах.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/7f6064e500dfd45c1268f82e4d13912fb4b5d087"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/19f2dbcc2f73de42886406c972e1db0576c903f5"
       },
       {
         "en": "A full wipe left a dead blank square. Now it re-seeds.",
         "ru": "После полного стирания оставался мёртвый пустой квадрат. Теперь монограмма растёт заново.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/7f6064e500dfd45c1268f82e4d13912fb4b5d087"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/19f2dbcc2f73de42886406c972e1db0576c903f5"
       },
       {
         "en": "Training could overwrite better weights. Now it only saves a checkpoint that beats the shipped one.",
         "ru": "Обучение могло перезаписать более удачные веса. Теперь оно сохраняет только чекпойнт, который лучше текущего.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/fdd511cefd16e805b2fa49a947190bb63d42610b"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/c2b0230cf74236af00eb73cd245a060b194e10c7"
       }
     ],
     "review": {
@@ -179,7 +179,7 @@
       "ru": "Считать забронированные созвоны, а не только клики по кнопке, и не хранить данные брони: сохраняется только то, с какой ссылки пришли."
     },
     "findings": [],
-    "green": "f01970d4970f7208c8025471769deed4dbbc39b8"
+    "green": "2eddc6206f7af9c18686c0f33da83c557b2d77b8"
   },
   "13": {
     "titleRu": "Perf-гейт на каждом PR в GitHub Actions и watchdog на OpenRouter, который объясняет превышения в одном закреплённом комментарии",
@@ -227,24 +227,24 @@
       {
         "en": "The hero link sat right after the YAGNI numbers and read as proof of them. Now it says it is the same loop on this site’s own PRs.",
         "ru": "Ссылка в hero стояла сразу после цифр YAGNI и читалась как их доказательство. Теперь она говорит, что это тот же цикл на PR этого сайта.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/87b70d5f4db419cf737d55e6bd782c6adf196c36"
       },
       {
         "en": "The page claimed a judge step for every PR, but only three PR descriptions record a review. Now a card mentions a review only where its PR says one ran.",
         "ru": "Страница приписывала шаг судьи каждому PR, хотя ревью записано только в трёх описаниях. Теперь карточка упоминает ревью, только если о нём сказано в PR.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/37af6d8820ae058c1b46234a80e5524258c26cab"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/87b70d5f4db419cf737d55e6bd782c6adf196c36"
       },
       {
         "en": "The freshness test would have turned main red after every merge. Now the data records the main commit it covers.",
         "ru": "Тест свежести ронял бы main после каждого мержа. Теперь данные помнят, по какой коммит main они собраны.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/a5acd79503175c3194e31900e9356803c57a1e9c"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/9a0a81e72edebe44b1abcbdb68c3a8b1540bb7ae"
       }
     ],
     "review": {
       "en": "Written by an independent writer agent and reviewed by an independent judge pass: ship after fixes. Its findings were fixed before merge.",
       "ru": "Код написал независимый агент, дифф проверил независимый судья: «можно мержить после правок». Его замечания исправлены до мержа."
     },
-    "green": "37af6d8820ae058c1b46234a80e5524258c26cab"
+    "green": "87b70d5f4db419cf737d55e6bd782c6adf196c36"
   },
   "16": {
     "titleRu": "Полировка P2: подписи фильтров, кириллические шрифты, текст canary #42, телефон только в CV",
@@ -273,7 +273,7 @@
       "ru": "Записка только приглашает и ничего не требует, и живёт только в llms.txt: резюме и подвал сайта остаются для людей."
     },
     "findings": [],
-    "green": "9ec415c4d55f3ca6fcd664d2ffc1815ad95a46c6"
+    "green": "9ca4d5327562a2863bb22760897b656bb392a5bf"
   },
   "18": {
     "titleRu": "Топология в hero рассказывает историю в 3 шага и заканчивается кейсом YAGNI",
@@ -306,7 +306,7 @@
       "en": "Implemented by an agent and reviewed by a separate judge that saw only the diff, the tests and the task. Its findings were fixed before merge.",
       "ru": "Код написал агент, проверил отдельный судья, которому дали только дифф, тесты и задачу. Его замечания исправлены до мержа."
     },
-    "green": "edf2ae170b13a6e06175096db56a9fc669b2e033"
+    "green": "70ac697f20e83cec14c068a5437a935427415971"
   },
   "19": {
     "titleRu": "Ежедневная синхронизация Publora: посты из LinkedIn становятся двуязычными страницами с полным текстом через один PR бота",
@@ -322,7 +322,7 @@
       {
         "en": "A broken backfill file stopped the whole sync. Now it is skipped, and backfill URLs must be LinkedIn.",
         "ru": "Сломанный файл бэкфилла останавливал всю синхронизацию. Теперь он пропускается, а ссылки в бэкфилле должны вести на LinkedIn.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/7a1e2ba961ca154077178b4159ae84baa3bfba1f"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/f24e0ab585cc863dcc12697089322f409ba4cb62"
       }
     ]
   },
@@ -340,12 +340,12 @@
       {
         "en": "A deep link with ?case= could open the case before analytics was listening, so the automatic open could be counted as a case_open. Now the restore waits until every module has run.",
         "ru": "Ссылка с ?case= могла открыть кейс раньше, чем аналитика начинала слушать события, и автоматическое открытие могло засчитаться как case_open. Теперь восстановление ждёт, пока отработают все модули.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/7a19a4589cdfafed0217292d3ad251e178e781c3"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/9afd53b9effb4d86bbeca6b5d4829bf67b3a27a9"
       },
       {
         "en": "Page scripts could run before the global helpers they call. Now the helpers load first.",
         "ru": "Скрипты страницы могли запуститься раньше глобальных функций, которые они вызывают. Теперь эти функции загружаются первыми.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/7a19a4589cdfafed0217292d3ad251e178e781c3"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/9afd53b9effb4d86bbeca6b5d4829bf67b3a27a9"
       }
     ]
   },
@@ -360,7 +360,7 @@
       "ru": "Постоянный редирект, а не вторая копия, чтобы два файла никогда не разошлись."
     },
     "findings": [],
-    "green": "f1a81f6e07679928f617cbf935a1916037f7680a"
+    "green": "8bd053b57f26266a944b385f1126a850bc272b3d"
   },
   "22": {
     "titleRu": "Статический i18n: EN на /, RU на /ru/, типизированные словари, hreflang и переключатель языка ссылкой",
@@ -376,12 +376,12 @@
       {
         "en": "A booking made from a Russian page landed on the English /booked/. Now it lands on /ru/booked/.",
         "ru": "Бронь, сделанная с русской страницы, вела на английскую /booked/. Теперь она ведёт на /ru/booked/.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/d695bdc2e3be2211a3b89f92eaced52ec44351f1"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/f2a8caeadcdf524b274739a663ff110c5a2fa590"
       },
       {
         "en": "The language link dropped ?query#anchor on right-click. Now it keeps them.",
         "ru": "Переключатель языка терял ?query#anchor при клике правой кнопкой. Теперь сохраняет.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/d695bdc2e3be2211a3b89f92eaced52ec44351f1"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/f2a8caeadcdf524b274739a663ff110c5a2fa590"
       }
     ]
   },
@@ -399,17 +399,17 @@
       {
         "en": "The sandbox step showed a test that only existed after the catch. Now it names the bite tests that existed then.",
         "ru": "Шаг песочницы показывал тест, который появился только после находки. Теперь он называет тесты на укусы, которые были тогда.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/297523331fe7e519db800b142ece8107a0aa26a6"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/1dc08ea222472e866625073bcc4f6568706e8c41"
       },
       {
         "en": "Autoplay flooded the live region and could not be paused. Now the film pauses and the live region stays quiet.",
         "ru": "Автовоспроизведение засыпало live-регион сообщениями, и его нельзя было поставить на паузу. Теперь фильм ставится на паузу, а live-регион молчит.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/408fd94c5a90e94614a2347ec4dad10ebd9a9d10"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/e6b29ba34b3b8262a6d0a2a604a79f063ec955a9"
       },
       {
         "en": "A cancelled live heal could still land later. Now a stale heal never lands.",
         "ru": "Отменённое заживление могло всё равно сработать позже. Теперь устаревшее заживление не применяется.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/408fd94c5a90e94614a2347ec4dad10ebd9a9d10"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/e6b29ba34b3b8262a6d0a2a604a79f063ec955a9"
       }
     ],
     "review": {
@@ -431,12 +431,12 @@
       {
         "en": "Not every line was checked against the footer band. Now every paragraph and bullet line is.",
         "ru": "Проверялись не все строки: какие-то могли залезть в полосу подвала. Теперь проверяется каждая строка абзацев и списков.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/f076f9a7078fbe114555675077f7ae12b96cb51b"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/d98ec80d2819566ed5da22fa29a9e9410fa36110"
       },
       {
         "en": "A section heading could end up alone at the bottom of a page. Now it keeps its first entry.",
         "ru": "Заголовок раздела мог остаться один внизу страницы. Теперь он не отрывается от первой записи.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/f076f9a7078fbe114555675077f7ae12b96cb51b"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/d98ec80d2819566ed5da22fa29a9e9410fa36110"
       }
     ]
   },
@@ -454,17 +454,17 @@
       {
         "en": "Digital silence at mic start could set the noise floor. Now the floor can't go below −80 dBFS.",
         "ru": "Цифровая тишина в начале записи могла задать уровень шума. Теперь он не опускается ниже −80 dBFS.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/99fb99a347b53b7f6637662f97dbf8fcfe46d222"
       },
       {
         "en": "A stalled setup could keep the mic on. A watchdog and a timeout now always release it.",
         "ru": "Зависшая инициализация могла оставить микрофон включённым. Теперь сторожевой таймер и тайм-аут всегда его освобождают.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/99fb99a347b53b7f6637662f97dbf8fcfe46d222"
       },
       {
         "en": "Leaving the page did not reset a running demo. Now it returns to idle.",
         "ru": "Уход со страницы не сбрасывал запущенное демо. Теперь оно возвращается в исходное состояние.",
-        "ref": "https://github.com/Grumbash/rossev.dev/commit/9b80f8e329283849b2af4603208d0dbc9b388472"
+        "ref": "https://github.com/Grumbash/rossev.dev/commit/99fb99a347b53b7f6637662f97dbf8fcfe46d222"
       }
     ]
   },
