@@ -48,13 +48,15 @@ export interface BlogPost {
   id: string;
   // Page at /writing/<slug>/. Never change a published slug: it is the canonical URL.
   slug: string;
-  // UTC date of the LinkedIn original, from the snowflake id in `url` (top bits = ms timestamp).
+  // UTC date of the LinkedIn original, from the snowflake id in `url` (top bits = ms timestamp);
+  // for a post first published here, the day it went up.
   published: string;
   category: 'ai' | 'leadership' | 'systems' | 'delivery';
   categoryLabel: { en: string; ru: string };
   // Read time of the LinkedIn original; the brief itself is a 30-second read.
   originalMinutes: number;
-  url: string;
+  // The LinkedIn post. None for a post first published here (it then has a body).
+  url?: string;
   title: { en: string; ru: string };
   takeaway: { en: string; ru: string };
   tags: string[];
@@ -63,7 +65,7 @@ export interface BlogPost {
     quote: { en: string; ru: string };
     bullets: { en: string[]; ru: string[] };
   };
-  // Optional longer text for the post page only. Paragraphs split on blank lines.
+  // Optional longer text for the post page only. A small Markdown subset: see ./post-body.ts.
   body?: { en: string; ru: string };
   color: string;
 }
@@ -84,8 +86,13 @@ export const cardReadTime = (post: BlogPost) =>
     : { en: `${post.originalMinutes}-MIN ORIGINAL`, ru: `ОРИГИНАЛ ${post.originalMinutes} МИН` };
 
 // With the full text on the site, LinkedIn is where the post was also published, not the original.
+// Null for a post that is not on LinkedIn at all.
 export const linkedinLabel = (post: BlogPost) =>
-  post.body ? { en: 'ALSO ON LINKEDIN ↗', ru: 'ТАКЖЕ В LINKEDIN ↗' } : { en: 'ORIGINAL POST ON LINKEDIN ↗', ru: 'ОРИГИНАЛ В LINKEDIN ↗' };
+  !post.url
+    ? null
+    : post.body
+      ? { en: 'ALSO ON LINKEDIN ↗', ru: 'ТАКЖЕ В LINKEDIN ↗' }
+      : { en: 'ORIGINAL POST ON LINKEDIN ↗', ru: 'ОРИГИНАЛ В LINKEDIN ↗' };
 
 // The inline reader shows the brief only; when the page has the full text, it links there.
 export const fullPostLink = (post: BlogPost, inline: boolean) =>
@@ -95,7 +102,7 @@ const SITE_URL = 'https://rossev.dev/';
 
 // The BlogPosting node of a post page, in that page's language (/writing/... en, /ru/writing/... ru).
 // Without a body the LinkedIn post is the original (isBasedOn); with the full text here this page
-// is the original and LinkedIn another copy (sameAs).
+// is the original and LinkedIn another copy (sameAs). A post only on this site has neither.
 export const blogPostingLd = (post: BlogPost, url: string, image: string, lang: 'en' | 'ru' = 'en'): Record<string, unknown> => ({
   '@type': 'BlogPosting',
   '@id': `${url}#post`,
@@ -107,8 +114,8 @@ export const blogPostingLd = (post: BlogPost, url: string, image: string, lang: 
   author: { '@id': `${SITE_URL}#person` },
   publisher: { '@id': `${SITE_URL}#person` },
   isPartOf: { '@id': `${SITE_URL}#website` },
-  ...(post.body ? {} : { isBasedOn: post.url }),
-  sameAs: post.url,
+  ...(post.url && !post.body ? { isBasedOn: post.url } : {}),
+  ...(post.url ? { sameAs: post.url } : {}),
   inLanguage: lang,
   keywords: post.tags,
   image
