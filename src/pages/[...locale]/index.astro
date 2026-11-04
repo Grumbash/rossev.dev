@@ -632,6 +632,8 @@ const jsonLd = {
                 hidden
               ></canvas>
               <svg class="nca-canvas nca-fallback" viewBox="0 0 112 112" width="56" height="56" aria-hidden="true"><rect x="56" y="24" width="46" height="64" fill="#C8FF00"/><path fill="#0A0A0A" d="M28 82Q23 82 19 80Q15 77 12 73Q10 68 10 62V50Q10 40 15 35Q21 30 30 30Q39 30 44 35Q49 40 49 48V48H40V48Q40 45 39 43Q38 41 36 40Q34 38 30 38Q25 38 22 42Q19 45 19 50V62Q19 67 22 71Q25 74 30 74Q35 74 38 71Q40 68 40 64V63H28V55H49V81H41V76H39Q39 77 38 79Q37 80 34 81Q32 82 28 82ZM60 81V31H82Q86 31 90 33Q93 34 95 37Q97 40 97 44V45Q97 50 95 52Q93 55 90 57V58Q93 58 94 60Q96 62 96 65V81H86V66Q86 64 86 63Q85 62 83 62H69V81ZM69 54H81Q84 54 86 52Q88 50 88 47V46Q88 43 86 41Q84 40 81 40H69Z"/></svg>
+              {/* Polite live region for the worker's notices; monogram.ts shows it over the canvas. */}
+              <p class="nca-notice" aria-live="polite" data-regrowing={d.nca.regrowing} data-nca-live hidden></p>
               <span id="nca-label" class="visually-hidden">
                 {d.nca.label}<span data-nca-live>{d.nca.labelLive}</span>
               </span>
