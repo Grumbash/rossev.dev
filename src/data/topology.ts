@@ -240,7 +240,7 @@ export const ISO_DOMAINS: Record<'yagni' | 'voice' | 'saas', TopologyDomain> = {
         layers: [
           { tag: 'L3 · TIMELINE REPLAY', desc: { en: 'Frame-accurate audio + ASR + LLM + Tool timeline', ru: 'Покадровая шкала аудио, ASR, LLM и вызовов инструментов' } },
           { tag: 'L2 · DRIFT DETECTOR', desc: { en: 'Flags latency spikes or ASR degradation live', ru: 'На лету замечает скачки задержки и деградацию ASR' } },
-          { tag: 'L1 · INCIDENT TRIAGE', desc: { en: 'Cuts root-cause debugging from hours to minutes', ru: 'Причина инцидента находится за минуты, а не часы' } }
+          { tag: 'L1 · INCIDENT TRIAGE', desc: { en: 'Cuts root-cause debugging from hours to minutes', ru: 'Находит причину инцидента за минуты, а не за часы' } }
         ],
         guard: { en: 'GUARDRAIL: Full end-to-end call observability across audio, LLM & EHR.', ru: 'ГАРДРЕЙЛ: Сквозная трассировка звонка от аудиопотока до ответа МИС.' }
       }
@@ -275,7 +275,7 @@ export const ISO_DOMAINS: Record<'yagni' | 'voice' | 'saas', TopologyDomain> = {
           { tag: 'L2 · DOMAIN SERVICES', desc: { en: 'Modular NestJS bounded contexts & CQRS', ru: 'Модульные доменные сервисы NestJS с чёткими границами' } },
           { tag: 'L1 · QUERY PIPELINE', desc: { en: 'Optimized read projections (850ms -> 220ms TTFB)', ru: 'Оптимизированные выборки (снижение TTFB с 850 до 220 мс)' } }
         ],
-        guard: { en: 'GUARDRAIL: 4x faster TTFB (220ms) under heavy multi-tenant wholesale load.', ru: 'ГАРДРЕЙЛ: TTFB в 4 раза быстрее (220 мс) под высокой мультитенантной нагрузкой.' }
+        guard: { en: 'GUARDRAIL: 4x faster TTFB (220ms) under heavy multi-tenant wholesale load.', ru: 'ГАРДРЕЙЛ: TTFB в 4 раза ниже (220 мс) под высокой мультитенантной оптовой нагрузкой.' }
       },
       {
         num: '03', code: '03 · CATALOG & PRICING', short: 'CATALOG', metric: 'TIERED B2B',

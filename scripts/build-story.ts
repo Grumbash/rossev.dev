@@ -40,6 +40,8 @@ export type Finding = L10n & {
 };
 
 export type Highlight = {
+  /** The card title on /ru/: the PR title in Russian. The GitHub title stays the EN card title. */
+  titleRu?: string;
   visitorChange: L10n;
   humanDecision: L10n;
   findings: Finding[];
@@ -86,6 +88,7 @@ export type Entry = {
   pending?: true;
   visitorChange?: L10n;
   humanDecision?: L10n;
+  titleRu?: string;
   findings: Finding[];
   preLoop?: L10n;
   noRedTest?: L10n;
@@ -218,6 +221,7 @@ export function toEntry(pr: GhPr, h: Highlight | undefined, repo = REPO): Entry 
   if (!h) return { ...entry, pending: true };
   entry.visitorChange = h.visitorChange;
   entry.humanDecision = h.humanDecision;
+  if (h.titleRu) entry.titleRu = h.titleRu;
   entry.findings = h.findings ?? [];
   if (h.preLoop) entry.preLoop = h.preLoop;
   if (h.noRedTest) entry.noRedTest = h.noRedTest;
@@ -279,6 +283,7 @@ export function validate(story: Story): string[] {
       if (!isL10n(p.humanDecision)) problems.push(`${n}: humanDecision needs EN and Russian RU`);
     }
     if (p.noRedTest !== undefined && !isL10n(p.noRedTest)) problems.push(`${n}: noRedTest needs EN and Russian RU`);
+    if (p.titleRu !== undefined && !CYRILLIC.test(p.titleRu)) problems.push(`${n}: titleRu needs Russian`);
     if (!Array.isArray(p.ciVerdicts)) problems.push(`${n}: ciVerdicts must be a list`);
     if (p.review !== undefined && !isL10n(p.review)) problems.push(`${n}: review needs EN and Russian RU`);
     if (p.green && p.commits.find((c) => c.sha === p.green!.sha)?.role !== 'impl')
