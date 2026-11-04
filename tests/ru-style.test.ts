@@ -8,6 +8,9 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { RU_BANNED, ruBannedRe, ruStyleProblems } from '../src/i18n/ru-style';
+import { ru } from '../src/i18n/ru';
+import type { BlogPost } from '../src/data/profile';
+import { CATEGORY_LABELS } from '../scripts/ci/publora-sync';
 
 setDefaultTimeout(180_000);
 
@@ -31,12 +34,35 @@ describe('the banned list', () => {
   test('catches the stand-ins and «ты», passes the IT terms the guide keeps', () => {
     expect(ruStyleProblems('Влито в main. Пока ждёшь: ЗАЩИТА: тенант').length).toBe(3);
     expect(ruStyleProblems('Смерженный PR, фидбек, фикс, ГАРДРЕЙЛ: харнесс, эвалы, влияние, ответственность')).toEqual([]);
+    expect(ruStyleProblems('Ответьте на письмо, влиться в команду, финансовые вливания, укрепление')).toEqual([]);
+    for (const bad of ['PR влили в main', 'залечит разрез', 'Укрепил CI/CD', 'укрепленный агент', 'Нажми Enter', 'ты', 'сканируют резюме'])
+      expect(ruStyleProblems(bad).length).toBe(1);
   });
 });
 
 describe('RU copy follows docs/ru-style.md', () => {
   test('built pages contain Russian copy at all', () => {
     expect(readFileSync('dist/ru/index.html', 'utf8')).toMatch(/[а-яё]{4}/i);
+  });
+
+  // Values and dates are shared strings unless localized: «8+ YRS», «15s → 0s», «NOV 2026 — PRESENT».
+  test('/ru/ pages show no English units, counts or dates', () => {
+    const EN = /\b\d+(?:[.,]\d+)?\+?\s?(?:YRS|ENG|ms|s)\b|\b\d+ PRs\b|\bPRESENT\b|\b(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\w* \d{4}\b/gi;
+    const hits: string[] = [];
+    for (const f of files.filter((f) => f.startsWith('dist/ru/') && f.endsWith('.html'))) {
+      const html = readFileSync(f, 'utf8').replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '');
+      for (const m of html.matchAll(EN)) hits.push(`${f}: …${html.slice(Math.max(0, m.index! - 40), m.index! + 30)}…`);
+    }
+    expect(hits).toEqual([]);
+  });
+
+  test('blog categories carry the guide labels, and the filters match them', () => {
+    const labels = Object.fromEntries((JSON.parse(readFileSync('src/data/posts.json', 'utf8')) as BlogPost[]).map((p) => [p.category, p.categoryLabel.ru]));
+    const want = { ai: 'AI-СИСТЕМЫ', leadership: 'ЛИДЕРСТВО', systems: 'СИСТЕМЫ', delivery: 'ДЕЛИВЕРИ' } as Record<string, string>;
+    for (const [c, l] of Object.entries(labels)) expect(l).toBe(want[c]);
+    expect(Object.values(CATEGORY_LABELS).map((l) => l.ru)).toEqual(Object.values(want));
+    const w = ru.writing;
+    expect([w.filterAi, w.filterLeadership, w.filterSystems, w.filterDelivery].map((s) => s.toUpperCase())).toEqual(Object.values(want));
   });
 
   for (const [re, why] of BANNED)
