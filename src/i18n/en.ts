@@ -69,11 +69,13 @@ export const en = {
     title: '3D SYSTEM ARCHITECTURE TOPOLOGY',
     replayBadge: 'REPLAY · PR #11',
     yourRun: 'YOUR RUN',
+    simulated: 'simulated',
     injectFault: 'Inject a fault',
     judge: 'Judge',
     judgeOn: 'on',
     judgeOff: 'off',
     resume: '▶ Resume replay',
+    pause: 'Pause the replay',
     timeline: 'Replay timeline: one stop per event of the run',
     // Drawn on the canvas by src/scripts/replay/player.ts; {mse} is the regrown GR's error.
     replayCanvas: {
@@ -81,7 +83,7 @@ export const en = {
       caught: 'CAUGHT BEFORE MERGE',
       merged: 'MERGED · PR #11',
       shipped: 'SHIPPED',
-      shippedWhy: 'It shipped: the tests were green and nobody else looked at it. This is why the judge exists.',
+      shippedWhy: 'It shipped: the tests were green and the person approving saw nothing wrong. This is why the judge exists.',
       faultRun: 'A bug the tests do not cover is on its way to main.',
       testsGreen: 'TESTS ✓ GREEN',
       caughtLive: 'The judge caught it before merge. The change goes back to the builder.',
