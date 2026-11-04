@@ -90,6 +90,11 @@ export const en = {
         surge: 'Traffic is climbing. The policy sees only the dashboard, not the cause.'
       },
       recovered: 'Recovered: back within the SLO after {n} ticks, decided from the dashboard alone.',
+      recoveredPaged: 'Recovered: back within the SLO after {n} ticks, after the policy paged a human.',
+      caught: 'Caught before merge: the policy blocked it on the judge’s risk signal. The change goes back to the builder.',
+      shipped: 'It shipped: the change passed the tests and, with the judge off, nothing flagged it. This is why the judge exists.',
+      loadFailed: 'The policy did not load, so nothing ran. Try again.',
+      lastAction: 'Last action',
       rolledBack: 'It shipped, then the policy rolled it back: within the SLO again after {n} ticks.',
       failed: 'Failed: the policy could not keep up and the service stayed outside its SLO.',
       recoveredStamp: 'RECOVERED',
