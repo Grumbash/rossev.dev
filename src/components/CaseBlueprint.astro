@@ -1,6 +1,7 @@
 ---
 import type { CaseStudy } from '../data/profile';
 import { t, type Locale } from '../i18n';
+import VadDemo from './VadDemo.astro';
 
 interface Props {
   study: CaseStudy;
@@ -57,5 +58,7 @@ const arch = study.architecture[lang];
         ))}
       </ul>
     </div>}
+
+    {study.id === 'sully' && <VadDemo lang={lang} />}
   </div>
 </div>

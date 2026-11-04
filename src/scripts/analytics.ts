@@ -42,6 +42,10 @@ export const EVENTS = {
   // nca_interact: GR monogram (neural cellular automaton) used, once per action per page view.
   // action: drag (pointer erase) | key (Enter/Space bite) | reset | case (bridge link to the YAGNI case)
   nca_interact: ['action'],
+  // Voice demo in the Sully case ("Say hello"), sent by src/scripts/vad/loader.ts on a state change.
+  // action: start (clicked, mic asked) | denied | detected | error (no mic, unsupported browser, failed load);
+  // ms: detected only, bucket of the onset latency <100|100-199|200-399|400-799|800+
+  vad_demo: ['action', 'ms'],
   // Language switch to a different language. to: en|ru
   lang_switch: ['to'],
   // Theme toggle. to: light|dark (read after the toggle)
