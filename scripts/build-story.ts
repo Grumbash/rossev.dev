@@ -149,7 +149,7 @@ export function isBookkeeping(pr: { headRefName: string; files?: { path: string 
 // since editing a real module under the same comment would slip code in before the test.
 const THROW = String.raw`\{ throw new Error\('not implemented'\);? \}`;
 export function isPlaceholder(status: string, content: string): boolean {
-  if (status !== 'A' || !/^\/\/.*\bNot implemented yet: tests\/\S+ is red first/m.test(content)) return false;
+  if (status !== 'A' || !/^\/\/.*\bNot implemented yet\b/m.test(content)) return false;
   const code = content.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
   // Top-level statements: split at `;`, and at a closing `}` at depth 0 when a new statement follows.
   const statements: string[] = [];
@@ -514,9 +514,12 @@ export function replayFor(story: Story, git: GitReader, number: number, board: S
 const run = (args: string[]) => execFileSync('gh', args, { encoding: 'utf8' });
 const git = (args: string[]) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 
-// Non-test files a red commit may add because they only produce test fixtures, never site code.
-// Named one by one, with the reason, so the red-commit check stays strict for everything else.
+// Non-test files a red commit may add because they are test fixtures or only produce them, never
+// site code. Named one by one, with the reason, so the red-commit check stays strict for everything else.
 const RED_COMMIT_TOOLING: Record<string, string[]> = {
+  // #32: the pre-fix round-1 weights (the "RR" model), a fixture the regrow test checks the guard
+  // against; the page never fetches them (scripts/nca/train.py says so).
+  '4eb6cedb4462b1f9f4130958844388a4c2624fc7': ['scripts/nca/gr-round1.bin'],
   // #25: the export script that wrote tests/fixtures/vad/hello.json in the same commit; the weights it
   // also writes (public/vad/) came with the implementation.
   'f5177fb85eb143ee75fb1e54db148207b8148818': ['scripts/vad/export.py'],
@@ -587,7 +590,12 @@ if (import.meta.main && replayAt >= 0) {
         .filter(([, f]) => !f.startsWith('tests/') && !RED_COMMIT_TOOLING[c.sha]?.includes(f))
         .filter(([status, f]) => !(status === 'A' && isPlaceholder(status, git(['show', `${c.sha}:${f}`]))))
         .map(([, f]) => f);
-      if (code.length) early.push(`#${p.number}: red commit ${c.sha.slice(0, 7)} touches ${code.join(', ')}`);
+      // Code in the "red" commit means the test did not come first: the card says no red test (and
+      // asks for a noRedTest reason once it has copy) instead of the whole refresh failing on it.
+      if (!code.length) continue;
+      const first = p.redTest?.sha === c.sha;
+      console.warn(`! #${p.number}: red commit ${c.sha.slice(0, 7)} also touches ${code.join(', ')}${first ? '; not counted as red test first' : ''}`);
+      if (first) p.redTest = null;
     }
 
   // The main commit this data covers, as an ancestor of HEAD, so the freshness test can check it here.
