@@ -10,3 +10,29 @@
   outline: 3px solid var(--orange);
   outline-offset: 2px;
 }
+
+/* Worker notices ("regrowing from a single cell"): a polite live region laid over the
+   canvas by monogram.ts, so showing it moves nothing and never blocks erasing. The
+   canvas is light in both themes, so the colours are fixed too. */
+.nca-block {
+  position: relative;
+}
+
+.nca-notice {
+  position: absolute;
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.nca-notice span {
+  background: #0A0A0A;
+  color: #F4F0EA;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 6px 8px;
+}

@@ -31,7 +31,8 @@ export class NeuralCA {
   private readonly ch: number;
   private readonly hidden: number;
   private readonly fireRate: number;
-  private readonly aliveThreshold: number;
+  /** Alpha above which a cell counts as alive. */
+  readonly aliveThreshold: number;
   // Weights are rounded to float32, the precision torch trained them in, then
   // held as doubles: mixing float32 loads into double arithmetic is slower.
   private readonly w1: Float64Array;
