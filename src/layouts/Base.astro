@@ -132,6 +132,7 @@ const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
         <nav class="nav-links" aria-label={d.nav.sections}>
           <a class="nav-link" href={anchor('experience')}>{d.nav.experience}</a>
           <a class="nav-link" href={anchor('writing')}>{d.nav.writing}</a>
+          <a class="nav-link" href={localePath(lang, '/hire/')} aria-current={path === '/hire/' ? 'page' : undefined}>{d.nav.hire}</a>
           <a class="nav-link" href={anchor('contact')}>{d.nav.contact}</a>
         </nav>
 
@@ -215,6 +216,9 @@ const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
                 <a class="text-link" href={PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                 <a class="text-link" href="/gleb-rosev-cv.pdf" target="_blank" download="Gleb_Rosev_Founding_Engineer_CV.pdf" data-track="cv_download" data-track-placement="footer">
                   {d.footer.cv}
+                </a>
+                <a class="text-link" href={localePath(lang, '/hire/')} aria-current={path === '/hire/' ? 'page' : undefined}>
+                  {d.footer.hire}
                 </a>
                 <a class="text-link" href={localePath(lang, '/how-its-built/')} aria-current={path === '/how-its-built/' ? 'page' : undefined}>
                   {d.footer.howBuilt}

@@ -22,6 +22,9 @@ export const en = {
     buildDescription:
       'Every merged PR of rossev.dev with its receipts: the test committed red first (all but the first PR), what was caught before merge, what Gleb decided, and links to the commits.',
     buildHeadline: 'How this site was built',
+    hireTitle: 'Work with Gleb Rosev — AI agent reliability audit, advisory, talks',
+    hireDescription:
+      'Bring in Gleb Rosev on AI agents in production: a reliability audit of your agents, advisory for engineering leaders, talks and workshops, or a full-time role. Every offer links its proof.',
     caseDescription: (company: string, period: string, summary: string) => `Architecture breakdown, ${company} (${period}): ${summary}`
   },
   nav: {
@@ -29,6 +32,7 @@ export const en = {
     experience: 'Experience',
     writing: 'Writing',
     contact: 'Contact',
+    hire: 'Work with me',
     theme: 'THEME',
     themeTitle: 'Toggle Light / Dark Mode',
     bookCall: 'BOOK A CALL ↗',
@@ -44,6 +48,7 @@ export const en = {
     copyEmail: 'COPY EMAIL',
     cv: 'CV (PDF) ↓',
     howBuilt: 'How this site was built',
+    hire: 'Work with me',
     education: 'Education',
     educationValue: 'Belarusian State University — Medicine (2015 — 2019)',
     languages: 'Languages',
@@ -252,6 +257,17 @@ export const en = {
     lead: 'A calendar invite from cal.com is on its way. Before we talk:',
     yagni: 'How I build AI agent teams at YAGNI →',
     reply: 'Reply to the invite with what you’re hiring for — I’ll come prepared.'
+  },
+  hire: {
+    home: '← Home',
+    kicker: 'Work with me',
+    title: 'AI agents that hold up in production',
+    lead: 'Four ways to work together. Each one links the proof already on this site. The first step is always a 30-minute call: no price list, because every team starts from a different place.',
+    forWho: 'Who it is for',
+    youGet: 'What you get',
+    proof: 'Proof',
+    cta: 'BOOK A 30-MIN CALL ↗',
+    ctaLead: 'Tell me the problem on a call. I reply within 24h.'
   },
   build: {
     home: '← Home',

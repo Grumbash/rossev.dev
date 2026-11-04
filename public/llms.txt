@@ -17,6 +17,13 @@ I build software systems where reliability matters, and I make AI agent teams de
 
 How I work: I build with AI agents every day — I plan, delegate to agents, review their output with a second "judge" agent, and keep the human decision where it matters.
 
+## Work with me (https://rossev.dev/hire/)
+- **AI agent reliability audit** (https://rossev.dev/hire/#audit): Your agents work in the demo and break in production: loops, failed tool calls, answers nobody can verify. A review of the harness: tool contracts, context, error recovery, guardrails. An eval set built from your real failures, so the next prompt, model or harness change shows whether agents got better or worse. A written plan: fixes in order of how much production risk each one removes.
+- **Advisory for engineering leaders** (https://rossev.dev/hire/#advisory): You lead a team that ships with AI agents and want a second opinion before the expensive decisions. Regular calls on agent architecture, evals and build vs buy. The team loop: who plans, what agents write, where a human approves. Design reviews and incident breakdowns as they come up.
+- **Talks and workshops** (https://rossev.dev/hire/#talks): Meetups, conferences and internal team sessions on AI agents in production. Topics: verification as the new bottleneck, red test first with agents, real-time voice AI. A hands-on workshop on your own repo, or a talk built on the receipts from this site. In English or Russian.
+- **Full-time roles** (https://rossev.dev/hire/#roles): You are hiring a founding, staff or lead engineer for AI agents or platform. 8+ years in production systems; led teams of 5–12 engineers. Agent teams at YAGNI, healthcare voice AI at Sully.ai. Remote from Tbilisi, UTC+4.
+- First step for any of them: a 30-minute call, https://cal.com/rossev
+
 ## Career Experience (Synchronized with src/data/profile.ts)
 
 ### YAGNI (yagni.app) (Nov 2026 — Present) — Founding Engineer, AI Agents
