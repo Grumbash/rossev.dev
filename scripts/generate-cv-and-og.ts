@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { deflateSync } from 'node:zlib';
-import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, BLOG_POSTS, postPath } from '../src/data/profile';
+import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, BLOG_POSTS, OFFERS, postPath } from '../src/data/profile';
 
 const ROOT_DIR = resolve(import.meta.dir, '..');
 const PUBLIC_DIR = resolve(ROOT_DIR, 'public');
@@ -49,6 +49,11 @@ function generateLlmsTxt(): void {
     PROFILE.bio.en,
     '',
     PROFILE.medToAiStory.en,
+    '',
+    // What he can be brought in for, same source as /hire. No prices: the first step is a call.
+    '## Work with me (https://rossev.dev/hire/)',
+    ...OFFERS.map((o) => `- **${o.name.en}** (https://rossev.dev/hire/#${o.id}): ${o.forWho.en} ${o.youGet.en.join(' ')}`),
+    `- First step for any of them: a 30-minute call, ${PROFILE.calendar}`,
     '',
     '## Career Experience (Synchronized with src/data/profile.ts)',
     ''

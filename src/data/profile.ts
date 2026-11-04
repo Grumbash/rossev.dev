@@ -203,6 +203,120 @@ export const PROFILE = {
   ]
 };
 
+// Ways to work together, rendered on /hire, in its JSON-LD (Person.makesOffer) and in /llms.txt.
+// No prices: the first step is a call. Every proof link is a page or file already on the site.
+export interface Offer {
+  // Anchor on /hire (/hire/#audit); never change a published one.
+  id: string;
+  name: { en: string; ru: string };
+  forWho: { en: string; ru: string };
+  youGet: { en: string[]; ru: string[] };
+  // href is locale-free (/cases/yagni/); the page prefixes it for /ru/.
+  proof: { href: string; label: { en: string; ru: string } }[];
+}
+
+export const OFFERS: Offer[] = [
+  {
+    id: 'audit',
+    name: { en: 'AI agent reliability audit', ru: 'Аудит надёжности AI-агентов' },
+    forWho: {
+      en: 'Your agents work in the demo and break in production: loops, failed tool calls, answers nobody can verify.',
+      ru: 'Агенты работают на демо и ломаются в продакшене: зацикливаются, роняют вызовы инструментов, дают ответы, которые никто не может проверить.'
+    },
+    youGet: {
+      en: [
+        'A review of the harness: tool contracts, context, error recovery, guardrails.',
+        'An eval set built from your real failures, so the next prompt, model or harness change shows whether agents got better or worse.',
+        'A written plan: fixes in order of how much production risk each one removes.'
+      ],
+      ru: [
+        'Разбор харнесса: контракты инструментов, контекст, обработка ошибок, гардрейлы.',
+        'Набор эвалов на ваших реальных падениях: следующее изменение промпта, модели или харнесса сразу покажет, стало агентам лучше или хуже.',
+        'Письменный план: фиксы по порядку, от тех, что снимают больше всего риска в проде.'
+      ]
+    },
+    proof: [
+      { href: '/cases/yagni/', label: { en: 'Agent benchmarks and self-healing syncs at YAGNI', ru: 'Бенчмарки агентов и самовосстанавливающиеся синки в YAGNI' } },
+      { href: '/writing/the-new-ai-bottleneck/', label: { en: 'The new AI bottleneck is verification', ru: 'Новое узкое место AI — проверка' } },
+      { href: '/writing/stop-using-llms-as-expensive-regex/', label: { en: 'Deterministic guardrails first, LLMs where it is ambiguous', ru: 'Сначала детерминированные гардрейлы, LLM — где есть неоднозначность' } }
+    ]
+  },
+  {
+    id: 'advisory',
+    name: { en: 'Advisory for engineering leaders', ru: 'Advisory для техлидов и CTO' },
+    forWho: {
+      en: 'You lead a team that ships with AI agents and want a second opinion before the expensive decisions.',
+      ru: 'Вы руководите командой, которая работает с AI-агентами, и хотите второе мнение до дорогих решений.'
+    },
+    youGet: {
+      en: [
+        'Regular calls on agent architecture, evals and build vs buy.',
+        'The team loop: who plans, what agents write, where a human approves.',
+        'Design reviews and incident breakdowns as they come up.'
+      ],
+      ru: [
+        'Регулярные созвоны: архитектура агентов, эвалы, build vs buy.',
+        'Цикл в команде: кто планирует, что пишут агенты, где решает человек.',
+        'Ревью дизайнов и разбор инцидентов по ходу работы.'
+      ]
+    },
+    proof: [
+      { href: '/how-its-built/', label: { en: 'The same loop on every PR of this site', ru: 'Тот же цикл на каждом PR этого сайта' } },
+      { href: '/cases/kingpin/', label: { en: 'Leading a team of up to 12 at Kingpin', ru: 'Команда до 12 человек в Kingpin' } },
+      { href: '/writing/engineering-management-systems-thinking/', label: { en: 'Engineering management as systems thinking', ru: 'Инженерный менеджмент как системное мышление' } }
+    ]
+  },
+  {
+    id: 'talks',
+    name: { en: 'Talks and workshops', ru: 'Доклады и воркшопы' },
+    forWho: {
+      en: 'Meetups, conferences and internal team sessions on AI agents in production.',
+      ru: 'Митапы, конференции и внутренние сессии для команд про AI-агентов в продакшене.'
+    },
+    youGet: {
+      en: [
+        'Topics: verification as the new bottleneck, red test first with agents, real-time voice AI.',
+        'A hands-on workshop on your own repo, or a talk built on the receipts from this site.',
+        'In English or Russian.'
+      ],
+      ru: [
+        'Темы: проверка как новое узкое место, сначала красный тест при работе с агентами, голосовой AI в реальном времени.',
+        'Практический воркшоп на вашем репозитории или доклад на доказательствах с этого сайта.',
+        'На русском или английском.'
+      ]
+    },
+    proof: [
+      { href: '/#experience', label: { en: '150+ lectures at TeachMeSkills', ru: '150+ лекций в TeachMeSkills' } },
+      { href: '/how-its-built/', label: { en: 'Receipts for every PR of this site', ru: 'Доказательства по каждому PR этого сайта' } }
+    ]
+  },
+  {
+    id: 'roles',
+    name: { en: 'Full-time roles', ru: 'Работа в штате' },
+    forWho: {
+      en: 'You are hiring a founding, staff or lead engineer for AI agents or platform.',
+      ru: 'Вы ищете founding-, staff- или lead-инженера на AI-агентов или платформу.'
+    },
+    youGet: {
+      en: [
+        '8+ years in production systems; led teams of 5–12 engineers.',
+        'Agent teams at YAGNI, healthcare voice AI at Sully.ai.',
+        'Remote from Tbilisi, UTC+4.'
+      ],
+      ru: [
+        '8+ лет в продакшене; руководил командами из 5–12 инженеров.',
+        'Команды агентов в YAGNI, голосовой AI для медицины в Sully.ai.',
+        'Удалённо из Тбилиси, UTC+4.'
+      ]
+    },
+    proof: [
+      { href: '/cases/sully/', label: { en: 'Dead air at pickup: 15 s → 0 at Sully.ai', ru: 'Тишина после ответа: 15 с → 0 в Sully.ai' } },
+      { href: '/cases/yagni/', label: { en: 'Founding Engineer at YAGNI', ru: 'Founding Engineer в YAGNI' } },
+      { href: '/gleb-rosev-cv.pdf', label: { en: 'CV (PDF)', ru: 'CV (PDF)' } }
+    ]
+  }
+];
+
 export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'yagni',

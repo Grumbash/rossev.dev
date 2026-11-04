@@ -1,0 +1,196 @@
+---
+// Ways to work together (src/data/profile.ts OFFERS), each with the proof already on this site and
+// one booking link. No prices: the first step is a call. The JSON-LD lists the offers on the Person
+// (makesOffer), so search and answer engines can say what he can be brought in for.
+import Base from '../../layouts/Base.astro';
+import { OFFERS } from '../../data/profile';
+import { calUrl } from '../../scripts/analytics';
+import { localeOf, localePath, localeStaticPaths, t } from '../../i18n';
+
+export const getStaticPaths = localeStaticPaths;
+const lang = localeOf(Astro.params.locale);
+const d = t(lang);
+const h = d.hire;
+
+const SITE = 'https://rossev.dev/';
+const PERSON_ID = `${SITE}#person`;
+const url = new URL(localePath(lang, '/hire/'), SITE).toString();
+// Site files (the CV) have one URL for every locale; pages are prefixed.
+const proofHref = (href: string) => (/\.[a-z]+$/.test(href) ? href : localePath(lang, href));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${url}#webpage`,
+      url,
+      name: d.meta.hireTitle,
+      description: d.meta.hireDescription,
+      inLanguage: lang,
+      isPartOf: { '@id': `${SITE}#website` },
+      about: { '@id': PERSON_ID }
+    },
+    // The full Person node lives on home; here it carries what he can be brought in for.
+    {
+      '@type': 'Person',
+      '@id': PERSON_ID,
+      name: 'Gleb Rosev',
+      url: SITE,
+      sameAs: ['https://www.linkedin.com/in/rossev/', 'https://github.com/Grumbash'],
+      makesOffer: OFFERS.map((o) => ({
+        '@type': 'Offer',
+        url: `${url}#${o.id}`,
+        itemOffered: {
+          '@type': 'Service',
+          name: o.name[lang],
+          description: o.forWho[lang],
+          provider: { '@id': PERSON_ID },
+          areaServed: 'Worldwide'
+        }
+      }))
+    }
+  ]
+};
+---
+
+<Base title={d.meta.hireTitle} description={d.meta.hireDescription} jsonLd={jsonLd} cta={false}>
+  <section class="section-block">
+    <div class="container hire-wrap">
+      <a class="text-link hire-back" href={localePath(lang, '/')}>{h.home}</a>
+
+      <span class="section-kicker">{h.kicker}</span>
+      <h1 class="section-title">{h.title}</h1>
+      <p class="hire-lead">{h.lead}</p>
+
+      <nav class="hire-jump" aria-label={h.kicker}>
+        {OFFERS.map((o) => <a class="text-link" href={`#${o.id}`}>{o.name[lang]}</a>)}
+      </nav>
+
+      <div class="hire-offers">
+        {OFFERS.map((o) => (
+          <article class="brutal-box hire-card" id={o.id}>
+            <h2 class="hire-card-title">{o.name[lang]}</h2>
+            <dl class="hire-rows">
+              <div>
+                <dt class="label">{h.forWho}</dt>
+                <dd>{o.forWho[lang]}</dd>
+              </div>
+              <div>
+                <dt class="label">{h.youGet}</dt>
+                <dd>
+                  <ul class="hire-list">
+                    {o.youGet[lang].map((item) => <li>{item}</li>)}
+                  </ul>
+                </dd>
+              </div>
+              <div>
+                <dt class="label">{h.proof}</dt>
+                <dd class="hire-proof">
+                  {o.proof.map((p) => <a class="text-link" href={proofHref(p.href)}>{p.label[lang]} →</a>)}
+                </dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+
+      <div class="hire-cta">
+        <p class="hire-lead">{h.ctaLead}</p>
+        <a
+          href={calUrl('hire', lang)}
+          data-track="cta_book"
+          data-track-placement="hire"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="brutal-btn brutal-btn-lime"
+        >
+          {h.cta}
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hire-wrap {
+    max-width: 860px;
+  }
+  .hire-back {
+    display: block;
+    width: fit-content;
+    margin-bottom: 18px;
+  }
+  .hire-lead {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    max-width: 62ch;
+    margin: 14px 0 8px;
+  }
+  .hire-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 18px 0 28px;
+  }
+  .hire-offers {
+    display: grid;
+    gap: 22px;
+  }
+  .hire-card {
+    padding: 18px 20px;
+    scroll-margin-top: 90px;
+  }
+  .hire-card-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+  }
+  .hire-rows {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+  .hire-rows > div {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 12px;
+    border-top: 1px solid var(--surface-alt);
+    padding-top: 10px;
+  }
+  .hire-rows dd {
+    margin: 0;
+    font-size: 0.94rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .hire-list {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+  }
+  .hire-proof {
+    display: grid;
+    gap: 6px;
+    justify-items: start;
+  }
+  .hire-cta {
+    margin-top: 40px;
+    border-top: 2px solid var(--border);
+    padding-top: 18px;
+  }
+
+  @media (max-width: 640px) {
+    .hire-rows > div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .hire-card {
+      padding: 14px;
+    }
+  }
+</style>
