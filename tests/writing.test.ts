@@ -291,7 +291,7 @@ describe('grid cards are crawlable links that still open the inline reader', () 
         // htmx cancels every click on an <a href hx-get>, so a plain click must reach htmx through
         // a custom trigger that modifier clicks never fire; otherwise cmd-click can't open a tab.
         expect(card!.attrs['hx-trigger']).toBe('open-brief');
-        expect(card!.attrs.onclick).toContain('openBrief');
+        expect(card!.attrs['data-action']).toBe('openBrief');
       }
       // No post opener is a bare button any more.
       expect(tags.filter((t) => t.tag === 'button' && t.attrs['data-track'] === 'post_open')).toEqual([]);
