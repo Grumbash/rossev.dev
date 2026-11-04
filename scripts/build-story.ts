@@ -426,7 +426,7 @@ export const STORYBOARDS: Record<number, Storyboard> = {
         node: 0,
         caption: {
           en: 'Merged, with the known limit written down',
-          ru: 'Влито в main, известное ограничение записано',
+          ru: 'Смержено в main, известное ограничение записано',
         },
       },
     ],
