@@ -97,7 +97,8 @@ const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
     <link rel="preload" href={syneLatin} as="font" type="font/woff2" crossorigin />
 
     <!-- Structured Data (JSON-LD) -->
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {/* \u003c keeps model-written text (post titles) from closing the script. */}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
 
     <!-- Synchronous anti-FOUC theme: the saved theme applies before first paint -->
     <script is:inline>
