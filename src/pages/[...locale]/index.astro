@@ -4,11 +4,14 @@ import Base from '../../layouts/Base.astro';
 import BlogGrid from '../../components/BlogGrid.astro';
 import { calUrl } from '../../scripts/analytics';
 import { LOCALES, localeOf, localePath, localeStaticPaths, t } from '../../i18n';
+import replay from '../../data/replay-pr11.json';
+import { clockTimes } from '../../scripts/replay/director';
 
 export const getStaticPaths = localeStaticPaths;
 const lang = localeOf(Astro.params.locale);
 const d = t(lang);
 const homePath = localePath(lang, '/');
+const replayTimes = clockTimes(replay.events);
 const ogImageUrl = new URL('/og-card.png', 'https://rossev.dev').toString();
 
 const SITE = 'https://rossev.dev/';
@@ -197,52 +200,20 @@ const jsonLd = {
               <span>
                 {d.topology.title}
               </span>
-              <span id="iso-trace-status">STEP 1/3</span>
+              <span class="replay-badge" data-replay-badge>{d.topology.replayBadge}</span>
+              <span id="iso-trace-status"></span>
             </div>
 
-            {/* Guided story: 3 steps that end on the YAGNI case. All captions share one grid cell,
-                 so the panel is as tall as the longest one and switching steps moves nothing.
-                 DRAFT copy, not approved yet. */}
+            {/* The card plays a replay of a real agent run on this site (src/scripts/replay/player.ts,
+                 loaded after first paint). Its captions are drawn on the canvas; screen readers hear
+                 them from the live region. The take-over controls work from the first click. */}
             <div class="iso-story">
-              {/* Screen readers hear the current caption from here; the stacked captions below only swap visibility */}
-              <p class="visually-hidden" aria-live="polite" data-story-live></p>
-              <div class="iso-story-captions">
-                <p class="iso-story-caption is-current" data-story-step="1">
-                  {d.topology.step1}
-                </p>
-                <p class="iso-story-caption" data-story-step="2">
-                  {d.topology.step2}
-                </p>
-                <p class="iso-story-caption" data-story-step="3">
-                  {d.topology.step3}
-                </p>
-                <a
-                  class="iso-story-caption iso-story-case"
-                  data-story-case
-                  href={`${homePath}?case=yagni#case-yagni`}
-                  data-track="topology_interact"
-                  data-track-action="case"
-                >
-                  {d.topology.caseLink}
-                </a>
-              </div>
+              <p class="visually-hidden" aria-live="polite" data-replay-live></p>
+              <a class="replay-label" data-replay-label href={replay.url} target="_blank" rel="noopener noreferrer">{replay.label[lang]}</a>
               <div class="iso-story-controls">
-                <button type="button" class="mode-btn" data-story-prev disabled>
-                  <span aria-hidden="true">‹</span><span class="visually-hidden">{d.topology.prev}</span>
-                </button>
-                <span class="iso-story-count" data-story-count>1/3</span>
-                <button type="button" class="mode-btn active" data-story-next>
-                  {d.topology.next}
-                </button>
-                <button
-                  type="button"
-                  class="mode-btn mode-btn-fault"
-                  data-story-break
-                  hidden
-                  data-track="topology_interact"
-                  data-track-action="heal"
-                >
-                  {d.topology.breakHeal}
+                <button type="button" class="mode-btn mode-btn-fault" data-sim-fault>{d.topology.injectFault}</button>
+                <button type="button" class="mode-btn" data-sim-judge aria-pressed="true">
+                  {d.topology.judge}: <span data-sim-judge-state>{d.topology.judgeOn}</span>
                 </button>
                 <button
                   type="button"
@@ -256,6 +227,15 @@ const jsonLd = {
                   {d.topology.explore}
                 </button>
               </div>
+              <a
+                class="iso-story-case"
+                data-story-case
+                href={`${homePath}?case=yagni#case-yagni`}
+                data-track="topology_interact"
+                data-track-action="case"
+              >
+                {d.topology.caseLink}
+              </a>
             </div>
 
             {/* Free play (behind Explore): Domain Switcher & 3D Engine Modes */}
@@ -346,6 +326,10 @@ const jsonLd = {
                 aria-label="Interactive 3D System Architecture Topology. Use Left and Right arrow keys to cycle nodes, Enter to explode node layers, F to simulate fault."
               ></canvas>
 
+              {/* Offered when the visitor has left the film alone for a while. Over the canvas, so it
+                   moves nothing when it appears. */}
+              <button type="button" class="mode-btn active iso-resume" data-replay-resume hidden>{d.topology.resume}</button>
+
               {/* Phones: the canvas is a still poster until this is pressed (no rAF loop before it) */}
               <button
                 type="button"
@@ -421,6 +405,31 @@ const jsonLd = {
                     {d.topology.nextNode}
                   </button>
                 </div>
+              </div>
+            </div>
+
+            {/* Pause (WCAG 2.2.2), then one stop per event of the run, labelled with its real time on Gleb's
+                 clock. Five events share a minute, so the stops are evenly spaced: the spacing is the film's,
+                 not the run's. A scrub pauses the film where it lands. */}
+            <div class="replay-bar">
+              <button type="button" class="replay-pause" data-replay-pause aria-pressed="false" aria-label={d.topology.pause}>
+                <span aria-hidden="true"></span>
+              </button>
+              <div
+                class="replay-timeline"
+                role="slider"
+                tabindex="0"
+                data-replay-timeline
+                aria-valuemin="0"
+                aria-valuemax={replay.events.length - 1}
+                aria-valuenow="0"
+                aria-label={d.topology.timeline}
+              >
+                {replayTimes.map((time, i) => (
+                  <span class="replay-stop" data-replay-stop aria-hidden="true">
+                    <i></i>{time === replayTimes[i - 1] ? <b class="is-same">{time}</b> : <b>{time}</b>}
+                  </span>
+                ))}
               </div>
             </div>
 
@@ -755,17 +764,15 @@ const jsonLd = {
       </div>
 
   <Fragment slot="scripts">
-    <!-- Bundled page code: 3D topology engine and its story, case loader, post reader, toolbox -->
+    <!-- Bundled page code: the topology's loader (engine and replay are lazy), case loader, post reader, toolbox -->
     <script>
-      import { initIsoArchitectureEngine } from '../../scripts/iso-engine';
-      import { initTopologyStory } from '../../scripts/topology-story-dom';
+      import { initTopologyReplay } from '../../scripts/topology-replay';
       import { initCaseLoader } from '../../scripts/case-loader';
       import { initHome } from '../../scripts/home';
       initHome();
       initCaseLoader();
       document.addEventListener('DOMContentLoaded', () => {
-        initIsoArchitectureEngine();
-        initTopologyStory();
+        initTopologyReplay();
       });
     </script>
     {/* GR monogram: a tiny loader; the model, worker and their CSS load near the block */}

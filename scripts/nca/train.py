@@ -21,6 +21,11 @@ Files:
                             score of the existing --out file (else of --init, else none).
                             To train a replacement from scratch, either beat the shipped
                             weights or point --out somewhere else.
+  scripts/nca/gr-round1.bin pre-fix weights from PR #11, round 1 (recovered from the agent run's
+                            working files; not in git before). Made with --to-bin from that
+                            run's JSON; they grow GR but regrow the G as a second R after a
+                            cut between the letters. Only the replay uses them
+                            (scripts/replay/record-gr.ts); the page never fetches them.
   scripts/nca/target.json   the training target, premultiplied RGBA, row-major. Read,
                             not regenerated, unless you pass --write-target.
 
