@@ -171,6 +171,10 @@ describe('post data', () => {
         '<p>- a not a list</p>',
       ].join('\n')
     );
+    // A fence keeps its blank lines and its text verbatim, escaped, with no inline formatting.
+    expect(bodyHtml('Before\n\n```ts\nconst a = 1 * 2 * 3;\n\nif (a < 2) **x**\n```\n\nAfter')).toBe(
+      '<p>Before</p>\n<pre><code>const a = 1 * 2 * 3;\n\nif (a &lt; 2) **x**</code></pre>\n<p>After</p>'
+    );
   });
 
   test('JSON-LD cannot close its <script>: model-written titles go through it', () => {

@@ -70,6 +70,7 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - **LEADERSHIP**: Teams of 5–12 Engineers, Customer Pilots & Demos, Technical Hiring, System Architecture, Mentoring (150+ Lectures), Product Strategy
 
 ## Writing (full posts on rossev.dev, each with a 30-second brief; most also on LinkedIn)
+- [I Skipped Three.js for My Hero Scene. A WebGL Dev Found the Bug in One Sentence.](https://rossev.dev/writing/no-threejs-topology/) (2026-11-04): Per-frame animation runs twice as fast at 120 Hz; easing needs 1 − (1 − rate)^frames, not rate × dt.
 - [My Logo Heals Itself. Then I Erased It Into a Stick.](https://rossev.dev/writing/self-healing-monogram/) (2026-11-04): A local model can’t recover information that isn’t there: give it a dumb global supervisor that knows when to restart.
 - [Engineering Management Is Applied Systems Thinking](https://rossev.dev/writing/engineering-management-systems-thinking/) (2026-10-13): Debug your team’s feedback loops, handoffs, and queue depth just like a distributed system.
 - [Every Engineering Estimate Is Actually Two Separate Things](https://rossev.dev/writing/every-engineering-estimate-is-two-things/) (2026-10-19): Separate probability sizing from deterministic business commitments.
