@@ -78,7 +78,6 @@ export type Entry = {
   title: string;
   url: string;
   mergedAt: string;
-  branch: string;
   additions: number;
   deletions: number;
   changedFiles: number;
@@ -202,10 +201,12 @@ export function isPlaceholder(status: string, content: string): boolean {
 export type MainCommit = { sha: string; authoredAt: string; subject: string };
 
 /**
- * Main's history was rewritten once (2026-11-04: docs/ and AI co-author trailers dropped), but GitHub
+ * Main's history was rewritten (2026-11-04: docs/ and AI co-author trailers dropped; 2026-11-05: branch-name
+ * prefixes and a local agent config dropped), but GitHub
  * keeps each PR's commit list as it was. A PR commit main does not contain is replaced by its
  * rewritten twin on main: same author time, and the subject gh shows (cut at ~70 chars with "…")
- * when several commits share that second. Commits main contains, or with no single twin, stay.
+ * when several commits share that second. The twin's subject replaces gh's too: GitHub still shows the
+ * merge subjects with the old branch names. Commits main contains, or with no single twin, stay.
  */
 export function onMain(commits: GhCommit[], main: MainCommit[]): GhCommit[] {
   const shas = new Set(main.map((c) => c.sha));
@@ -215,7 +216,7 @@ export function onMain(commits: GhCommit[], main: MainCommit[]): GhCommit[] {
     const head = c.messageHeadline.replace(/…$/, '');
     const same = main.filter((m) => Date.parse(m.authoredAt) === at);
     const twins = same.length > 1 ? same.filter((m) => m.subject.startsWith(head)) : same;
-    return twins.length === 1 ? { ...c, oid: twins[0].sha } : c;
+    return twins.length === 1 ? { ...c, oid: twins[0].sha, messageHeadline: twins[0].subject, messageBody: '' } : c;
   });
 }
 
@@ -225,7 +226,6 @@ export function toEntry(pr: GhPr, h: Highlight | undefined, repo = REPO): Entry 
     title: pr.title,
     url: `${gh(repo)}/pull/${pr.number}`,
     mergedAt: pr.mergedAt,
-    branch: pr.headRefName,
     additions: pr.additions,
     deletions: pr.deletions,
     changedFiles: pr.changedFiles,
