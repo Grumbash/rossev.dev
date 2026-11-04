@@ -306,7 +306,7 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
     const shown = (sel) => { const el = $(sel); if (!el) return null;
       const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden' && !el.hidden; };
     const snap = () => ({ badge: $('[data-replay-badge]')?.textContent.trim(), shot: card.getAttribute('data-replay-shot'),
-      outcome: card.getAttribute('data-outcome'), stamp: card.getAttribute('data-replay-stamp'),
+      outcome: card.getAttribute('data-outcome'), first: card.getAttribute('data-first-outcome'), stamp: card.getAttribute('data-replay-stamp'),
       live: $('[data-replay-live]')?.textContent.trim(), resume: shown('[data-replay-resume]'), play: shown('[data-story-play]'),
       rail: shown('.iso-stratum-rail'), dossier: shown('#iso-inspector-card'), slider: shown('[data-replay-timeline]'),
       judge: $('[data-sim-judge]')?.getAttribute('aria-pressed'), h: Math.round(card.getBoundingClientRect().height) });
@@ -328,8 +328,10 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
     } else if (mode === 'takeover') {
       out.a = snap();
       $('[data-sim-judge]').click(); await wait(200); out.judgeOff = snap();
-      $('[data-sim-fault]').click(); await wait(4000); out.shipped = snap();
-      $('[data-sim-judge]').click(); await wait(100); $('[data-sim-fault]').click(); await wait(4000); out.caught = snap();
+      // The fault button opens a menu; the bad deploy (the PR #11 kind of bug) is one pick in it.
+      const bad = async () => { $('[data-sim-fault]').click(); await wait(300); $('[data-sim-fault-kind="bad_deploy"]').click(); };
+      await bad(); await wait(6000); out.shipped = snap();
+      $('[data-sim-judge]').click(); await wait(100); await bad(); await wait(6000); out.caught = snap();
       await wait(${RESUME_PROMPT_MS} + 300); out.offer = snap();
       await wait(${AUTO_RESUME_MS - RESUME_PROMPT_MS} + 300); out.back = snap();
     } else if (mode === 'explore') {
@@ -415,7 +417,9 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
       const r = await probe(lang, 1440, 'takeover', 40000);
       expect(r.a.badge).toBe(dict[lang].topology.replayBadge);
       expect(r.judgeOff).toMatchObject({ badge: dict[lang].topology.yourRun, judge: 'false' });
-      expect(r.shipped.outcome).toBe('shipped');
+      // with the judge off it ships first; the policy may roll it back afterwards
+      expect(r.shipped.first).toBe('shipped');
+      expect(['shipped', 'recovered']).toContain(r.shipped.outcome);
       expect(r.caught.outcome).toBe('caught');
       expect(r.caught.judge).toBe('true');
       expect(r.offer.resume).toBe(true);

@@ -35,12 +35,17 @@ export const EVENTS = {
   // drag (horizontal drag on the canvas), case|play|explore (YAGNI case link, phone Play, Explore toggle),
   // and the PR #11 replay: replay|takeover|resume|scrub (the film first started, the visitor took over,
   // the film came back (Resume or by itself), a timeline stop used) and outcome, with
-  // outcome: caught|shipped|healed|unhealed (a fault the judge caught or that shipped with the judge off;
-  // the visitor's cut on the mini GR regrown by the real model, or not)
+  // outcome: caught|shipped|recovered|failed for a fault run of the learned policy on the toy service (caught
+  // before merge, shipped with the judge off, recovered, or it could not keep up), and of the whole set
+  // caught|shipped|healed|unhealed the last two are the visitor's cut on the mini GR regrown by the real model, or not
   topology_interact: ['action', 'outcome'],
   // nca_interact: GR monogram (neural cellular automaton) used, once per action per page view.
   // action: drag (pointer erase) | key (Enter/Space bite) | reset | case (bridge link to the YAGNI case)
   nca_interact: ['action'],
+  // Voice demo in the Sully case ("Say hello"), sent by src/scripts/vad/loader.ts on a state change.
+  // action: start (clicked, mic asked) | denied | detected | error (no mic, unsupported browser, failed load);
+  // ms: detected only, bucket of the onset latency <100|100-199|200-399|400-799|800+
+  vad_demo: ['action', 'ms'],
   // Language switch to a different language. to: en|ru
   lang_switch: ['to'],
   // Theme toggle. to: light|dark (read after the toggle)

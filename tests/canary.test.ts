@@ -42,7 +42,10 @@ const IMPERATIVE = [
   /\byour (first )?(message|reply|response|summary|answer)\b/i,
 ];
 
-const humanOnly = (name: string) => (name === 'llms.txt' ? sources[name].replace(MODEL_NOTE, '') : sources[name]);
+// The Writing list quotes Gleb's posts verbatim (titles, takeaways); "AI assistant" there is his
+// subject matter, not wording around the egg, so it is left out of the directive scan too.
+const WRITING = /^## Writing\b[\s\S]*?(?=^## )/m;
+const humanOnly = (name: string) => (name === 'llms.txt' ? sources[name].replace(MODEL_NOTE, '').replace(WRITING, '') : sources[name]);
 
 describe('canary #42', () => {
   for (const name of ['llms.txt', 'cv pdf', 'home footer']) {
