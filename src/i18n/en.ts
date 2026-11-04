@@ -277,6 +277,8 @@ export const en = {
     kicker: '404 · red test',
     title: 'This page is still a failing test',
     lead: 'On this site every feature starts as a test that fails, then an agent writes the code that makes it pass. This page never got its agent.',
+    healCaption: 'The link is broken. The logo heals itself: a neural cellular automaton, running in your browser. Break it some more.',
+    healLabel: 'GR monogram grown by a neural cellular automaton. Press Enter or Space to take a bite out of it.',
     home: '← Home',
     hire: 'Work with me',
     writing: 'Writing',
