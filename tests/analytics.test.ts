@@ -115,7 +115,7 @@ describe('runtime (initAnalytics)', () => {
     calls = [];
     docListeners = {};
     canvasListeners = {};
-    attrs = { 'data-lang': 'en', 'data-theme': 'light' };
+    attrs = { 'lang': 'en', 'data-theme': 'light' };
     observers = [];
     const canvasEl = { id: 'iso-arch-canvas', addEventListener: listen(canvasListeners) };
     const sections: Record<string, any> = { experience: { id: 'experience' }, writing: { id: 'writing' }, contact: { id: 'contact' } };
@@ -152,7 +152,7 @@ describe('runtime (initAnalytics)', () => {
 
   test('cta_book carries placement and the page language at click time', async () => {
     await boot();
-    attrs['data-lang'] = 'ru';
+    attrs['lang'] = 'ru';
     click(tagged({ track: 'cta_book', trackPlacement: 'footer' }));
     expect(calls).toEqual([['cta_book', { placement: 'footer', lang: 'ru' }]]);
   });
@@ -183,8 +183,8 @@ describe('runtime (initAnalytics)', () => {
 
   test('lang_switch is not sent when the language does not change', async () => {
     await boot();
-    click(tagged({ track: 'lang_switch', trackTo: 'en' }), () => (attrs['data-lang'] = 'en'));
-    click(tagged({ track: 'lang_switch', trackTo: 'ru' }), () => (attrs['data-lang'] = 'ru'));
+    click(tagged({ track: 'lang_switch', trackTo: 'en' }), () => (attrs['lang'] = 'en'));
+    click(tagged({ track: 'lang_switch', trackTo: 'ru' }), () => (attrs['lang'] = 'ru'));
     expect(calls).toEqual([['lang_switch', { to: 'ru' }]]);
   });
 
@@ -285,7 +285,8 @@ describe('built markup', () => {
       expect(t.attrs['data-track']).toBe('skill_click');
       expect(t.attrs['data-track-skill']).toBe(t.attrs['data-skill']);
     }
-    expect(values(tracked(page, 'lang_switch'), 'to')).toEqual(['en', 'ru']);
+    // EN home offers one switch, to RU (a link to /ru/); RU home has its counterpart (tests/i18n.test.ts).
+    expect(values(tracked(page, 'lang_switch'), 'to')).toEqual(['ru']);
     expect(tracked(page, 'theme_switch').length).toBe(1);
   });
 

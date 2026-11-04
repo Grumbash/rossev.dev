@@ -14,21 +14,25 @@ const CV_NAME = 'Gleb_Rosev_Founding_Engineer_CV.pdf';
 
 let html = '';
 let card = '';
+// EN at /, RU at /ru/: one hero card per locale.
+const cards = { en: '', ru: '' };
+const heroCard = (page: string) => {
+  const start = page.indexOf('class="brutal-box hero-card"');
+  return page.slice(start, page.indexOf('stage-iso-card', start));
+};
 
 beforeAll(() => {
   if (!existsSync('dist/index.html') || !process.env.SKIP_BUILD) execSync('bun run build', { stdio: 'ignore' });
   html = readFileSync('dist/index.html', 'utf8');
-  const start = html.indexOf('class="brutal-box hero-card"');
-  card = html.slice(start, html.indexOf('stage-iso-card', start));
+  card = cards.en = heroCard(html);
+  cards.ru = heroCard(readFileSync('dist/ru/index.html', 'utf8'));
 });
 
 const text = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-// Inner text of the first `.lang-xx` span inside the first element carrying `cls`.
+// Own text of the first element carrying `cls` in that locale's hero card, links inside it left out.
 function langText(cls: string, lang: 'en' | 'ru'): string {
-  const at = card.search(new RegExp(`class="[^"]*\\b${cls}\\b`));
-  if (at < 0) return '';
-  const m = card.slice(at).match(new RegExp(`<span class="lang-${lang}">([\\s\\S]*?)</span>`));
-  return m ? text(m[1]) : '';
+  const m = cards[lang].match(new RegExp(`<(\\w+)\\b[^>]*class="[^"]*\\b${cls}\\b[^"]*"[^>]*>([\\s\\S]*?)</\\1>`));
+  return m ? text(m[2].replace(/<a\b[\s\S]*?<\/a>/g, '')) : '';
 }
 const pos = (needle: string | RegExp) => card.search(needle);
 
@@ -115,7 +119,6 @@ describe('contacts are compact', () => {
 describe.skipIf(!existsSync(CHROME))('layout at 375×812', () => {
   const PROBE = `<script>(async()=>{
     await document.fonts.ready;
-    document.documentElement.setAttribute('data-lang', new URLSearchParams(location.search).get('lang') || 'en');
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     const card = document.querySelector('.hero-card');
     const bottom = (el) => (el ? Math.round(el.getBoundingClientRect().bottom) : -1);
@@ -131,7 +134,7 @@ describe.skipIf(!existsSync(CHROME))('layout at 375×812', () => {
     document.body.appendChild(out);
   })();</script>`;
   const FRAME = (lang: string) => `<!doctype html><body style="margin:0">
-    <iframe src="/?lang=${lang}" width="375" height="812" style="border:0;display:block"></iframe>
+    <iframe src="${lang === 'ru' ? '/ru/' : '/'}" width="375" height="812" style="border:0;display:block"></iframe>
     <script>const t=setInterval(()=>{const p=document.querySelector('iframe').contentDocument?.getElementById('__probe');
       if(p){clearInterval(t);const o=document.createElement('pre');o.id='__result';o.textContent=p.textContent;document.body.appendChild(o);}},100);</script>`;
   let server: ReturnType<typeof Bun.serve>;
@@ -143,7 +146,10 @@ describe.skipIf(!existsSync(CHROME))('layout at 375×812', () => {
         const url = new URL(req.url);
         const path = url.pathname;
         if (path === '/frame') return new Response(FRAME(url.searchParams.get('lang') ?? 'en'), { headers: { 'content-type': 'text/html' } });
-        if (path === '/') return new Response(html.replace('</body>', `${PROBE}</body>`), { headers: { 'content-type': 'text/html' } });
+        if (path === '/' || path === '/ru/') {
+          const page = path === '/' ? html : readFileSync('dist/ru/index.html', 'utf8');
+          return new Response(page.replace('</body>', `${PROBE}</body>`), { headers: { 'content-type': 'text/html' } });
+        }
         const file = Bun.file(join('dist', path));
         return (await file.exists()) ? new Response(file) : new Response('', { status: 404 });
       },

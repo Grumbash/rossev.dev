@@ -152,7 +152,7 @@ export function initIsoArchitectureEngine(): void {
       return;
     }
 
-    const lang = (document.documentElement.getAttribute('data-lang') || 'en') as 'en' | 'ru';
+    const lang = (document.documentElement.lang === 'ru' ? 'ru' : 'en') as 'en' | 'ru';
     const node = ISO_DOMAINS[currentDomain].nodes[lockedNode];
     if (!node) return;
 
@@ -195,7 +195,7 @@ export function initIsoArchitectureEngine(): void {
   }
 
   window.updateIsoHudText = function () {
-    const lang = (document.documentElement.getAttribute('data-lang') || 'en') as 'en' | 'ru';
+    const lang = (document.documentElement.lang === 'ru' ? 'ru' : 'en') as 'en' | 'ru';
     const activeIdx = hoveredNode >= 0 ? hoveredNode : lockedNode >= 0 ? lockedNode : selectedNode;
     const node = ISO_DOMAINS[currentDomain].nodes[activeIdx];
     if (!node) return;

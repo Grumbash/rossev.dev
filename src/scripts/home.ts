@@ -16,7 +16,9 @@ export function initHome() {
   // hx-* links (its "Next") by hand; never moves focus.
   const postParam = new URLSearchParams(window.location.search).get('post');
   if (postParam && /^post-\d+$/.test(postParam)) {
-    fetch(`/partials/post-${postParam}`)
+    // Fragments live next to the page's locale: /partials/... or /ru/partials/...
+    const prefix = document.documentElement.lang === 'en' ? '' : `/${document.documentElement.lang}`;
+    fetch(`${prefix}/partials/post-${postParam}`)
       .then((r) => (r.ok ? r.text() : ''))
       .then((html) => {
         const slot = document.getElementById('post-reader-slot');
@@ -58,7 +60,7 @@ export function initHome() {
   window.copyToolbox = () => {
     const lines = ['Gleb Rosev — toolbox (' + location.origin + ')'];
     document.querySelectorAll('[data-toolbox-row]').forEach((row) => {
-      const head = row.querySelector('.toolbox-head .lang-en')?.textContent?.trim();
+      const head = row.querySelector('.toolbox-head')?.textContent?.trim();
       const skills = [...row.querySelectorAll('.toolbox-skills > *')].map((el) => el.textContent?.trim());
       lines.push(head + ': ' + skills.join(', '));
     });
@@ -100,13 +102,15 @@ export function initHome() {
     });
     const result = document.getElementById('toolbox-result');
     if (!result) return;
-    result.innerHTML = '<strong></strong> <span class="lang-en">— used at</span><span class="lang-ru">— где применял:</span> ';
+    // The page's own words for "used at" and "clear" ride on the result box (data-used-at, data-clear).
+    result.innerHTML = '<strong></strong> <span></span> ';
     result.querySelector('strong')!.textContent = btn.getAttribute('data-skill');
+    result.querySelector('span')!.textContent = result.dataset.usedAt ?? '';
     links.forEach((a) => result.append(a, ' '));
     const clear = document.createElement('button');
     clear.type = 'button';
     clear.className = 'copy-btn';
-    clear.innerHTML = '<span class="lang-en">clear ×</span><span class="lang-ru">сбросить ×</span>';
+    clear.textContent = result.dataset.clear ?? '×';
     clear.onclick = window.clearSkill;
     result.append(clear);
     result.hidden = false;
