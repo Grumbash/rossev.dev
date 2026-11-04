@@ -24,7 +24,7 @@
       "sha": "7f6064e500dfd45c1268f82e4d13912fb4b5d087",
       "caption": {
         "en": "The builder writes the model: each cell senses its neighbours, then updates",
-        "ru": "Сборщик пишет модель: каждая клетка ощущает соседей и обновляется"
+        "ru": "Builder пишет модель: каждая клетка ощущает соседей и обновляется"
       },
       "lines": [
         "p[c * 3] = state[base + c];",
@@ -91,7 +91,7 @@
       "node": 0,
       "caption": {
         "en": "Merged, with the known limit written down",
-        "ru": "Смержено, известное ограничение записано"
+        "ru": "Влито в main, известное ограничение записано"
       }
     }
   ]
