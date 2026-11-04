@@ -10,6 +10,8 @@ import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { BLOG_POSTS, type BlogPost } from '../src/data/profile';
 import {
+  CATEGORY_LABELS,
+  systemPrompt,
   DEFAULT_MODEL,
   DEFAULT_SINCE,
   RUN_BUDGET_MS,
@@ -289,6 +291,29 @@ describe('the model draft is validated, never trusted', () => {
     const e = structuredClone(DRAFT_NEW);
     e.takeaway.en = e.takeaway.ru;
     expect(validateDraft(e, src).ok).toBe(false);
+  });
+
+  test('the Russian follows docs/ru-style.md: a banned stand-in or «ты» rejects the draft, IT anglicisms pass', () => {
+    const d = structuredClone(DRAFT_NEW);
+    d.bullets.ru[2] = 'Сократите очередь на ревью: пока ждёшь, PR уже влит в main.';
+    const r = validateDraft(d, src);
+    expect(r.ok).toBe(false);
+    expect(JSON.stringify(r)).toContain('ждёшь');
+    expect(JSON.stringify(r)).toContain('влит');
+    const ok = structuredClone(DRAFT_NEW);
+    ok.bullets.ru[2] = 'Сократите очередь на ревью: фидбек по PR важнее, чем быстрый мерж.';
+    expect(validateDraft(ok, src)).toMatchObject({ ok: true });
+  });
+});
+
+describe('the Russian adaptation prompt follows docs/ru-style.md', () => {
+  const p = systemPrompt();
+  test('keeps IT terms as engineers say them and names the stand-ins it must not use', () => {
+    for (const s of ['мерж', 'фидбек', 'гардрейл', 'влить', '«вы»', 'десятичная запятая']) expect(p).toContain(s);
+  });
+  test('a new category gets the site labels: ДЕЛИВЕРИ and ЛИДЕРСТВО', () => {
+    expect(CATEGORY_LABELS.delivery.ru).toBe('ДЕЛИВЕРИ');
+    expect(CATEGORY_LABELS.leadership.ru).toBe('ЛИДЕРСТВО');
   });
 });
 
