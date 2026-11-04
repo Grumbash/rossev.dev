@@ -298,7 +298,8 @@ describe('built markup', () => {
       expect(t.attrs['data-track']).toBe('post_open');
       expect(`/partials/${t.attrs['data-track-id']}`).toBe(t.attrs['hx-get'].replace('post-post-', 'post-'));
     }
-    expect(tracked(grid, 'post_linkedin').length).toBe(opens.length);
+    // Home cards lead to the post on the site; LinkedIn is linked from the brief and the post page.
+    expect(tracked(grid, 'post_linkedin').length).toBe(0);
     expect(values(tracked(reader, 'post_linkedin'), 'id')).toEqual(['post-3']);
   });
 
