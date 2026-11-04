@@ -2,6 +2,7 @@
 // The 30-second brief and the reader footer, one markup for the inline reader (HTMX partial)
 // and the post page. The footer is the next step: next post, share, follow, one soft CTA.
 import { BLOG_POSTS, PROFILE, fullPostLink, linkedinLabel, postPath, type BlogPost } from '../data/profile';
+import { bodyHtml } from '../data/post-body';
 import { calUrl } from '../scripts/analytics';
 import { SITE, localePath, t, type Locale } from '../i18n';
 
@@ -18,7 +19,6 @@ const next = BLOG_POSTS[(BLOG_POSTS.indexOf(post) + 1) % BLOG_POSTS.length];
 const pageUrl = new URL(localePath(lang, postPath(post)), SITE).toString();
 const linkedin = linkedinLabel(post);
 const fullPost = fullPostLink(post, inline);
-const paragraphs = (s: string) => s.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
 // Same contract as the grid cards: a real href for crawlers and new tabs, hx-get for the inline swap.
 // Either way moving on is a post_open.
@@ -44,9 +44,7 @@ const nextInline = inline
 </ul>
 
 {!inline && post.body && (
-  <div class="post-body" style="margin-bottom: 18px; line-height: 1.65;">
-    {paragraphs(post.body[lang]).map((p) => <p style="margin-bottom: 12px;">{p}</p>)}
-  </div>
+  <div class="post-body" set:html={bodyHtml(post.body[lang])} />
 )}
 
 {fullPost && (
@@ -61,17 +59,19 @@ const nextInline = inline
       <span class="brutal-tag" style="font-size: 0.72rem;">#{t}</span>
     ))}
   </div>
-  <a
-    href={post.url}
-    data-track="post_linkedin"
-    data-track-id={post.id}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="brutal-btn brutal-btn-lime"
-    style="padding: 8px 14px; font-size: 0.78rem;"
-  >
-    {linkedin[lang]}
-  </a>
+  {linkedin && (
+    <a
+      href={post.url}
+      data-track="post_linkedin"
+      data-track-id={post.id}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="brutal-btn brutal-btn-lime"
+      style="padding: 8px 14px; font-size: 0.78rem;"
+    >
+      {linkedin[lang]}
+    </a>
+  )}
 </div>
 
 <!-- Reader footer: where to go after the brief -->
