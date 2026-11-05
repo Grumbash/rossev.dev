@@ -48,7 +48,7 @@ export const ru: Dict = {
     howBuilt: 'Как собран этот сайт',
     hire: 'Сотрудничество',
     education: 'Образование',
-    educationValue: 'БГУ — медицинское дело, 4 года, ушёл в разработку (2015 — 2019)',
+    educationValue: 'БГУ — медицинское дело (2015 — 2019)',
     languages: 'Языки',
     based: 'Где',
     remote: 'удалённо',
