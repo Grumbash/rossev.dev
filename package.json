@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "lighthouse": "^13.6.0",
-    "qrcode-generator": "1.4.4"
+    "qrcode-generator": "1.4.4",
+    "typescript": "^5.9.3"
   }
 }
