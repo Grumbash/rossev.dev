@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-04T23:13:59.271Z",
-  "throughSha": "5191728758f95ebd7ff91f19485723eb52c12c19",
+  "generatedAt": "2026-11-05T02:18:21.771Z",
+  "throughSha": "9834a3ef1e448a8ed86ff61c29d4caecb3831ce2",
   "prs": [
     {
       "number": 1,
@@ -1989,6 +1989,176 @@
           "subject": "/hire and /ru/hire/ show four offers from OFFERS in profile.ts, each with who it is for, what you get and proof already on the site; the nav and footer link it, JSON-LD lists the offers as Person.makesOffer, llms.txt gets a Work with me section, cal.com links carry the hire placement, and the /booked CSP hashes follow the new placement list",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/dc7eb7e79a6fcc34e1045fb59525b7c969331665"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 48,
+      "title": "A /c card for the QR code on the phone case, the code on /hire, and the site's own 404",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/48",
+      "mergedAt": "2026-11-04T23:56:00Z",
+      "additions": 940,
+      "deletions": 21,
+      "changedFiles": 18,
+      "redTest": {
+        "sha": "4d9e8028f42161541da24856630a1dd5dbbef04d",
+        "subject": "Red test: /c, where the QR code on the phone case lands, is a few-kilobyte card in both languages with one booking link tagged case, a vCard, email, phone, LinkedIn and /hire, noindex, and capital /C from the code rewrites to it",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/4d9e8028f42161541da24856630a1dd5dbbef04d"
+      },
+      "commits": [
+        {
+          "sha": "4d9e8028f42161541da24856630a1dd5dbbef04d",
+          "subject": "Red test: /c, where the QR code on the phone case lands, is a few-kilobyte card in both languages with one booking link tagged case, a vCard, email, phone, LinkedIn and /hire, noindex, and capital /C from the code rewrites to it",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4d9e8028f42161541da24856630a1dd5dbbef04d"
+        },
+        {
+          "sha": "192ae6d75c5e44922bbdbfa5ac2f53a69056a4c8",
+          "subject": "/c and /ru/c/ are a 3 KB card for the QR code on the phone case: no web fonts or site JS, one cal.com link tagged case, a vCard built from the profile (served as text/vcard), email, phone, LinkedIn and /hire; noindex and out of the sitemap, capital /C from the code rewrites to it, and the /booked CSP hashes follow the new placement",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/192ae6d75c5e44922bbdbfa5ac2f53a69056a4c8"
+        },
+        {
+          "sha": "d3cf1cee6badf3758773b3fbf8223ddcc32f3576",
+          "subject": "Red test: the /c card shows the email, phone and LinkedIn themselves and says what Save contact does, so a laptop visitor is not left with buttons that do nothing; /hire shows the case's QR code beside the booking button on desktop only, drawn module by module from HTTPS://ROSSEV.DEV/C",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d3cf1cee6badf3758773b3fbf8223ddcc32f3576"
+        },
+        {
+          "sha": "ae7cfa2aad6b00d550a81fef4105034540f37077",
+          "subject": "The /c card lists the email, phone and LinkedIn themselves with what Save contact does, so a laptop visitor can read and copy them; /hire shows the case's QR code beside the booking button on desktop, encoded at build time (qrcode-generator) as round dots with lime finder gaps, hidden on phones",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ae7cfa2aad6b00d550a81fef4105034540f37077"
+        },
+        {
+          "sha": "2649acf37b49f9e25bbe1e688fb1c5b38b25631c",
+          "subject": "The /hire QR code fills its square frame: no rounded corners letting the dark page show through",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2649acf37b49f9e25bbe1e688fb1c5b38b25631c"
+        },
+        {
+          "sha": "754a2b43c7f5ce40a12ebade3a0f105ba0968f1f",
+          "subject": "The /hire QR code sits in a rounded frame with a rounded shadow, the one rounded box on the site: it is the object from the phone case",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/754a2b43c7f5ce40a12ebade3a0f105ba0968f1f"
+        },
+        {
+          "sha": "f6a10245ce9727963f22a464a7b1b49e21ddfe54",
+          "subject": "Red test: a missing page gets the site's own 404 in both languages (noindex, the way back to home, /hire, writing and how it is built), and a path typed in the Russian keyboard layout, like /с for /c, goes to the path the same keys spell in Latin",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f6a10245ce9727963f22a464a7b1b49e21ddfe54"
+        },
+        {
+          "sha": "62d1d463c5f74d0bc882110c5e08f669d72161d3",
+          "subject": "A missing page gets the site's own 404: a red test that never got its agent, the missed path in a fake test run, the way back to home, /hire, writing and how it is built, in the visitor's language from one /404.html; a path typed in the Russian keyboard layout (/с, /ршку/) goes to the one the same keys spell in Latin, and small page scripts stay files under /_astro/ instead of inline scripts that would need a CSP hash",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/62d1d463c5f74d0bc882110c5e08f669d72161d3"
+        },
+        {
+          "sha": "06f3a7306a755effbdfc6612ecac2584d9146268",
+          "subject": "Red test: the 404 suggests the closest real page to the missed path (a typo, a missing slash, capitals, in the path's language) from a /routes.json the build writes from the pages it emitted, and shows the self-healing GR monogram with a caption in both languages",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/06f3a7306a755effbdfc6612ecac2584d9146268"
+        },
+        {
+          "sha": "1019ffe47e17f68fc312a72efa9ed331a6b73062",
+          "subject": "The 404 suggests the closest real page to the missed path (one typo per three characters, in the path's language) from a /routes.json the build writes from the pages it emitted, types out its test run line by line, and shows the self-healing GR monogram, which takes a slash through both letters as soon as it has grown and heals while the visitor reads; the static GR moves into GrFallback for home and the 404, and the 404 imports the monogram itself so the home page's eager loader stays in its own script",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1019ffe47e17f68fc312a72efa9ed331a6b73062"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 51,
+      "title": "Tests run in about a minute instead of five",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/51",
+      "mergedAt": "2026-11-05T00:08:41Z",
+      "additions": 393,
+      "deletions": 278,
+      "changedFiles": 39,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "26cb83509dea4fcd28e9c087ba8162e84fa2985f",
+          "subject": "The suite runs in about a minute instead of five: bun run test builds the site once and runs every test file as its own process on all cores, slowest first; the files that read dist/ share one build instead of 21 that wiped dist/ under each other, the NCA regrow suite is split into five files so its three minutes of simulation spread over the cores, and CI runs the same command",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/26cb83509dea4fcd28e9c087ba8162e84fa2985f"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 50,
+      "title": "Capital /C from the QR code rewrites to /c/index.html",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/50",
+      "mergedAt": "2026-11-05T00:14:41Z",
+      "additions": 7,
+      "deletions": 4,
+      "changedFiles": 2,
+      "redTest": {
+        "sha": "10baa76ee636ab6a2ec49166cf624b753ec39663",
+        "subject": "Red test: capital /C from the QR code is rewritten to the file /c/index.html, which the build emits; on production the rewrite to the directory /c/ answered Vercel's NOT_FOUND for /C and /c/",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/10baa76ee636ab6a2ec49166cf624b753ec39663"
+      },
+      "commits": [
+        {
+          "sha": "10baa76ee636ab6a2ec49166cf624b753ec39663",
+          "subject": "Red test: capital /C from the QR code is rewritten to the file /c/index.html, which the build emits; on production the rewrite to the directory /c/ answered Vercel's NOT_FOUND for /C and /c/",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/10baa76ee636ab6a2ec49166cf624b753ec39663"
+        },
+        {
+          "sha": "222e5e8e01d59413b047a06bd94fc48b7d899334",
+          "subject": "Capital /C and /C/ from the QR code rewrite to the file /c/index.html instead of the directory /c/, which Vercel answered with NOT_FOUND (and, matching case-insensitively, broke /c/ too)",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/222e5e8e01d59413b047a06bd94fc48b7d899334"
+        },
+        {
+          "sha": "1bba0adfc7b0dec58778a4dd9b0ca4a1aa2a73c3",
+          "subject": "card.test.ts builds the site itself again: a shared build fixture from another branch's work in progress slipped into the red test, and this branch doesn't have it",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1bba0adfc7b0dec58778a4dd9b0ca4a1aa2a73c3"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 49,
+      "title": "Astro 7.4.5: close the eleven Dependabot alerts on astro 5.x",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/49",
+      "mergedAt": "2026-11-05T02:17:44Z",
+      "additions": 187,
+      "deletions": 350,
+      "changedFiles": 4,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "85f8391471ea2c4aad834c9702e791ec489d166b",
+          "subject": "Astro 7.4.5 closes the eleven Dependabot alerts on astro 5.x: compressHTML stays lossless (Astro 7's 'jsx' default drops the whitespace between inline elements), and /booked's two inline-script hashes follow bookingSource() as Vite 8 now prints it",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/85f8391471ea2c4aad834c9702e791ec489d166b"
+        },
+        {
+          "sha": "3cadc657c9aa974c2e9cfadc0a804e80ba130b51",
+          "subject": "Merge remote-tracking branch 'origin/main' into astro-7",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3cadc657c9aa974c2e9cfadc0a804e80ba130b51"
+        },
+        {
+          "sha": "52a90064753da56b19f036385c02b7c2f36f472c",
+          "subject": "typescript is a devDependency of its own: Astro 7 no longer brings it in, and the i18n tests run node_modules/.bin/tsc to prove the Dict type rejects a missing or unknown key",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/52a90064753da56b19f036385c02b7c2f36f472c"
         }
       ],
       "findings": [],
