@@ -236,6 +236,12 @@ export const en = {
     readBriefLink: 'Read brief →',
     allWriting: '← All writing'
   },
+  // The depth dial on a technical post: the same post in plain language or as written.
+  depth: {
+    label: 'WRITTEN FOR:',
+    plain: 'PEOPLE',
+    engineers: 'ENGINEERS'
+  },
   reader: {
     header: '// ENGINEERING NOTE BRIEF //',
     close: 'CLOSE ×',

@@ -2,6 +2,7 @@
 title: "I benchmarked 8 models on our own code reviews. The first bug was ours."
 category: ai
 distribute: []
+depth: true
 ---
 
 Claude Opus 5.5 failed the same review three runs out of three. Same pull request, same reviewer role, same result: the stage output "failed to parse", the review was marked errored, and Opus dropped to the bottom of my table.

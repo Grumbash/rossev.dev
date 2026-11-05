@@ -77,9 +77,37 @@ const jsonLd = {
       </article>
     </div>
   </section>
+  <Fragment slot="scripts">
+    <script>
+      import { initDepth } from '../../../scripts/depth';
+      initDepth();
+    </script>
+  </Fragment>
 </Base>
 
 <style>
+  /* The depth dial (PostBrief.astro, scripts/depth.ts): the pressed side reads like the current language. */
+  .post-reader-drawer :global(.depth-dial) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .post-reader-drawer :global(.depth-dial[hidden]) {
+    display: none;
+  }
+  .post-reader-drawer :global(.depth-dial-label) {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ink-muted);
+    margin-right: 4px;
+  }
+  .post-reader-drawer :global(.depth-dial [aria-pressed='true']) {
+    background: var(--ink);
+    color: var(--bg);
+  }
   /* The full text is HTML from bodyHtml (src/data/post-body.ts), so the rules reach into it. */
   .post-reader-drawer :global(.post-body) {
     margin-bottom: 18px;

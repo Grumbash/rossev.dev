@@ -128,6 +128,7 @@ To track a new control, declare the event and its props (max 2) in `EVENTS` in `
 | `nca_interact` | `action` (erase = drag or tap on the canvas, key, reset, case = bridge link to the YAGNI case) | GR monogram in Beyond the CV, once per action per view |
 | `vad_demo` | `action` (start = Say hello clicked and the mic asked, denied = mic permission refused, detected = speech heard, error = no mic, unsupported browser or failed load), `ms` (detected only: onset latency bucket <100, 100-199, 200-399, 400-799, 800+) | voice demo in the Sully case; Save-Data and a quiet 15 s send nothing |
 | `lang_switch` / `theme_switch` | `to` | EN/RU link to the same page in the other locale (`/` ↔ `/ru/`), THEME |
+| `depth_switch` | `to` | Depth dial on a technical post: `plain` (for people) or `engineers` |
 | `section_view` | `section` (experience, writing, contact) | section top past 60% of the viewport, once per view |
 | `booking_confirmed` | `source` (nav, hero, footer, reader, build-story, unknown) | `/booked` after a cal.com redirect carrying a booking `uid`, once per booking |
 

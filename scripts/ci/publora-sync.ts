@@ -247,7 +247,7 @@ export function validateDraft(raw: unknown, source: string): { ok: true; draft: 
 
 // --- the site entry --------------------------------------------------------------------------
 
-const ENTRY_KEYS = ['id', 'slug', 'published', 'category', 'categoryLabel', 'originalMinutes', 'url', 'title', 'takeaway', 'tags', 'brief', 'body', 'color', 'publora'];
+const ENTRY_KEYS = ['id', 'slug', 'published', 'category', 'categoryLabel', 'originalMinutes', 'url', 'title', 'takeaway', 'tags', 'brief', 'body', 'plain', 'color', 'publora'];
 const okPair = (v: any) => exactKeys(v, ['en', 'ru']) && str(v.en, 1, 10_000) && str(v.ru, 1, 50_000);
 
 /** Each page's <title> and meta description must be unique (the page tests check it). */
@@ -292,6 +292,10 @@ export function checkEntry(p: BlogPost): string[] {
         if (!Array.isArray(b[l]) || b[l].length !== 3 || !b[l].every((s: unknown) => str(s, 1, 400))) e.push(`brief.bullets.${l}: need 3 non-empty`);
   }
   if (a.body !== undefined && (!okPair(a.body) || !isRussian(a.body.ru))) e.push('body: needs en and a Russian ru');
+  if (a.plain !== undefined) {
+    if (a.body === undefined) e.push('plain: only with a body');
+    else if (!okPair(a.plain) || !isEnglish(a.plain.en) || !isRussian(a.plain.ru)) e.push('plain: needs English en and Russian ru');
+  }
   if (!/^var\(--[a-z-]+\)$/.test(a.color ?? '')) e.push('color: not a var(--palette) color');
   if (a.publora !== undefined && !/^[\w-]{1,100}$/.test(a.publora)) e.push('publora: not a Publora postGroupId');
   return e;
