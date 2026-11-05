@@ -30,7 +30,7 @@
       "bullets": {
         "en": [
           "The prompt for a colleague's epic covered the context, the checks, the limits and the small habits, and only one sentence described the task itself.",
-          "The agent never merges without a green CI and the review bot's approval, and it asks the author when either is missing.",
+          "The agent never merges without a green CI and the review bot's approval, and it asks me when either is missing.",
           "Writing down small conventions such as the repo prefix, the commit format and how tickets are referenced saves the agent from repeating the same mistakes."
         ],
         "ru": [
