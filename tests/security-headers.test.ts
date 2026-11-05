@@ -3,11 +3,11 @@
 // script the build emits is allowed by its sha256 hash, so a new or changed one fails here until
 // its hash is in vercel.json; markup carries no inline event handlers (data-action instead).
 import { beforeAll, describe, expect, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { ACTIONS, initActions } from '../src/scripts/actions';
+import { buildSite } from './fixtures/build';
 
 type Rule = { source: string; headers: { key: string; value: string }[] };
 const vercel = JSON.parse(readFileSync('vercel.json', 'utf8')) as { headers?: Rule[] };
@@ -83,7 +83,7 @@ describe('vercel.json sends the security headers on every path', () => {
 describe('the built site runs under that CSP', () => {
   let files: string[] = [];
   beforeAll(() => {
-    execSync('bun run build', { stdio: 'ignore', env: { ...process.env, PUBLIC_UMAMI_WEBSITE_ID: 'test-site-id' } });
+    buildSite();
     files = htmlFiles('dist');
   });
 

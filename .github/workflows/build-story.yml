@@ -1,5 +1,5 @@
 # The build story follows main by itself: on every push to main, `bun run build-story` regenerates
-# src/data/build-story.json from `gh pr view`. When the file changed it must pass `bun test` and
+# src/data/build-story.json from `gh pr view`. When the file changed it must pass `bun run test` and
 # `bun run build`, then lands as ONE PR from the fixed branch bot/build-story, recreated from main.
 # A newly merged PR without an entry in build-story-highlights.json shows up pending (facts only);
 # Gleb writes its copy in that PR or later. It never pushes to main: Gleb merges.
@@ -96,7 +96,7 @@ jobs:
           fi
 
       - if: steps.diff.outputs.changed == '1'
-        run: bun test
+        run: bun run test
 
       - if: steps.diff.outputs.changed == '1'
         run: bun run build

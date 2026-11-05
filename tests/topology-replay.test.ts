@@ -6,7 +6,6 @@
 // Replaces the 3-step story (tests/topology-story.test.ts). Unit part: film timing and the simulation rules;
 // markup part: the built pages; layout part: headless Chrome when it is installed.
 import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { EVENTS } from '../src/scripts/analytics';
@@ -26,6 +25,7 @@ import {
   tick,
   toggleJudge,
 } from '../src/scripts/replay/sim';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(180_000);
 
@@ -160,7 +160,7 @@ function textOf(src: string, attr: string): string {
 const tagWith = (src: string, attr: string) => src.match(new RegExp(`<(\\w+)\\b[^>]*\\b${attr}\\b[^>]*>`))?.[0] ?? '';
 
 beforeAll(() => {
-  if (!existsSync('dist/index.html') || !process.env.SKIP_BUILD) execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   pages.en = readFileSync('dist/index.html', 'utf8');
   pages.ru = readFileSync('dist/ru/index.html', 'utf8');
   cards.en = topologyCard(pages.en);

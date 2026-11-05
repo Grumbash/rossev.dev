@@ -4,9 +4,9 @@
 // preloaded, so the English first paint and the preloaded-font budget stay as they are.
 // Checks the built output, not the source.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { buildSite } from './fixtures/build';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -17,7 +17,7 @@ let html = '';
 let css = '';
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   html = readFileSync('dist/index.html', 'utf8');
   const astro = join('dist', '_astro');
   const files = readdirSync(astro).filter((f) => f.endsWith('.css'));

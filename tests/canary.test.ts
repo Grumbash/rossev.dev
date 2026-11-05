@@ -4,8 +4,8 @@
 // distrust or drop the whole source. One name everywhere: "canary #42".
 // Checks the built output, not the source.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { buildSite } from './fixtures/build';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -13,7 +13,7 @@ setDefaultTimeout(120_000);
 const sources: Record<string, string> = {};
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   sources['llms.txt'] = readFileSync('dist/llms.txt', 'utf8');
   // The PDF is written with uncompressed text streams, so its strings are readable as latin1.
   sources['cv pdf'] = readFileSync('dist/gleb-rosev-cv.pdf', 'latin1');

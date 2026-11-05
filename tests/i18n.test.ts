@@ -9,6 +9,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } fro
 import { join, relative, resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { PROFILE } from '../src/data/profile';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -68,7 +69,7 @@ let en = '';
 let ru = '';
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   pages = enPages();
   en = read('dist/index.html');
   ru = existsSync('dist/ru/index.html') ? read('dist/ru/index.html') : '';

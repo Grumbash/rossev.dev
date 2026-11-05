@@ -2,10 +2,10 @@
 // how do I book him. The hero card must say that before the fold, in EN and RU.
 // Checks the built output; the layout part drives headless Chrome when it is installed.
 import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CASE_STUDIES, PROFILE } from '../src/data/profile';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -22,7 +22,7 @@ const heroCard = (page: string) => {
 };
 
 beforeAll(() => {
-  if (!existsSync('dist/index.html') || !process.env.SKIP_BUILD) execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   html = readFileSync('dist/index.html', 'utf8');
   card = cards.en = heroCard(html);
   cards.ru = heroCard(readFileSync('dist/ru/index.html', 'utf8'));

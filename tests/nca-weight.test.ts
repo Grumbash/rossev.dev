@@ -2,11 +2,11 @@
 // visitor scrolls to it, cost little when they do, and nothing at all on a data-saving
 // or 2G connection. Checks the built page and the shipped weights.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { decodeWeights } from '../src/scripts/nca/weights';
 import { shouldLoadNca } from '../src/scripts/nca/loader';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -14,7 +14,7 @@ let html = '';
 const gz = (b: Buffer | string) => gzipSync(b).length;
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   html = readFileSync('dist/index.html', 'utf8');
 });
 

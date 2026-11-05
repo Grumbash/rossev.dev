@@ -4,10 +4,10 @@
 // page, and home's <details> loads the breakdown only when opened (?case= deep links included).
 // Checks the built output; the loader part runs src/scripts/case-loader.ts on a fake DOM.
 import { afterEach, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { BLOG_POSTS, CASE_STUDIES, EXPERIENCE } from '../src/data/profile';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -37,7 +37,7 @@ let home = '';
 let sitemap = '';
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   home = read('dist/index.html');
   sitemap = readdirSync('dist')
     .filter((f) => /^sitemap.*\.xml$/.test(f))

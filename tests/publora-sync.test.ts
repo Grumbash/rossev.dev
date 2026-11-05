@@ -587,7 +587,7 @@ describe('.github/workflows/publora-sync.yml', () => {
 
   test('sync, then tests and build, then ONE PR on a fixed branch, only when something was added', () => {
     const iSync = steps.findIndex((s) => String(s.run ?? '').includes('scripts/ci/publora-sync.ts'));
-    const iTest = runs.findIndex((r, i) => i > iSync && /\bbun test\b/.test(r));
+    const iTest = runs.findIndex((r, i) => i > iSync && /\bbun (run )?test\b/.test(r));
     const iPr = runs.findIndex((r) => /gh pr (create|edit)/.test(r));
     expect(iSync).toBeGreaterThanOrEqual(0);
     expect(iTest).toBeGreaterThan(iSync);

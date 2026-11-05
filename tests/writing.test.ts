@@ -3,12 +3,12 @@
 // hrefs; the brief, inline or on its page, offers a next step; HTMX fragments stay out of the
 // index. Checks the built output and the deploy config, not the source.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { BLOG_POSTS, PROFILE, blogPostingLd, cardReadTime, fullPostLink, linkedinLabel, readTimeLabel } from '../src/data/profile';
 import { bodyBlocks, bodyHtml } from '../src/data/post-body';
 import budgets from '../perf-budgets.json';
 import { evaluateBytes, type Check } from '../scripts/perf-check';
+import { buildSite } from './fixtures/build';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -112,7 +112,7 @@ let grid = '';
 const latest = [...BLOG_POSTS].sort((a, b) => b.published.localeCompare(a.published)).slice(0, 6);
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   home = read('dist/index.html');
   const srcs = [...home.matchAll(/<script\b[^>]*\ssrc="(\/_astro\/[^"]+\.js)"/g)].map((m) => m[1]);
   const chunks = existsSync('dist/_astro') ? readdirSync('dist/_astro').filter((f) => f.endsWith('.js')).map((f) => `/_astro/${f}`) : [];

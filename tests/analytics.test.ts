@@ -2,9 +2,9 @@
 // carries a stable event name, and every cal.com link says where it was clicked.
 // Unit part checks the helper; markup part checks the built output, not the source.
 import { afterEach, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { EVENTS, calUrl, eventFromDataset, track, trackOnce } from '../src/scripts/analytics';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -242,7 +242,7 @@ describe('built markup', () => {
   let reader: Tag[] = [];
 
   beforeAll(() => {
-    execSync('bun run build', { stdio: 'ignore', env: { ...process.env, PUBLIC_UMAMI_WEBSITE_ID: 'test-site-id' } });
+    buildSite();
     html = readFileSync('dist/index.html', 'utf8');
     page = controls(html);
     grid = controls(readFileSync('dist/partials/posts-all/index.html', 'utf8'));

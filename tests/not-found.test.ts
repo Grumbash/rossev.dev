@@ -4,17 +4,17 @@
 // The script also fixes the commonest miss: a path typed in the Russian keyboard layout (/с for /c,
 // /ршку/ for /hire/) is sent to the path those same keys spell in the Latin layout.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { latinLayoutPath, suggestPath } from '../src/scripts/not-found';
 import { t } from '../src/i18n';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
 let html = '';
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   html = existsSync('dist/404.html') ? readFileSync('dist/404.html', 'utf8') : '';
 });
 

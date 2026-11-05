@@ -17,6 +17,7 @@ import { handRules } from '../src/scripts/policy/rules';
 import { expert } from '../src/scripts/policy/expert';
 import { act, decodePolicy, paramCount, type Policy } from '../src/scripts/policy/net';
 import { evaluate, type Controller } from '../src/scripts/policy/eval';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(180_000);
 
@@ -273,7 +274,7 @@ describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
   let server: ReturnType<typeof Bun.serve>;
 
   beforeAll(() => {
-    if (!existsSync('dist/index.html') || !process.env.SKIP_BUILD) execSync('bun run build', { stdio: 'ignore' });
+    buildSite();
     pages.en = readFileSync('dist/index.html', 'utf8');
     pages.ru = readFileSync('dist/ru/index.html', 'utf8');
     server = Bun.serve({

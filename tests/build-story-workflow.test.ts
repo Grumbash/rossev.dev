@@ -39,7 +39,7 @@ describe(PATH, () => {
     expect(gen).toBeGreaterThanOrEqual(0);
     expect(String(steps[gen].env?.GH_TOKEN ?? '')).toMatch(/secrets\.(PUBLORA_SYNC_TOKEN|GITHUB_TOKEN)/);
     const after = steps.slice(gen + 1).map((s) => String(s.run ?? ''));
-    expect(after.some((r) => /\bbun test\b/.test(r))).toBe(true);
+    expect(after.some((r) => /\bbun (run )?test\b/.test(r))).toBe(true);
     expect(after.some((r) => /\bbun run build\b/.test(r))).toBe(true);
   });
 

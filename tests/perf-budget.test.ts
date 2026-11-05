@@ -2,7 +2,6 @@
 // byte budgets from one file, perf-budgets.json, and prove the checker behind the CI perf gate
 // really fails on a regression. The CI wiring itself is pinned in tests/ci.test.ts.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -16,6 +15,7 @@ import {
   statusLine,
   type Check,
 } from '../scripts/perf-check';
+import { buildSite } from './fixtures/build';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -23,7 +23,7 @@ setDefaultTimeout(120_000);
 let checks: Check[] = [];
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   checks = evaluateBytes('dist', budgets.bytes);
 });
 

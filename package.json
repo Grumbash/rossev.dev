@@ -10,7 +10,8 @@
     "build": "bun scripts/generate-cv-and-og.ts && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "perf": "bun scripts/perf-check.ts",
-    "build-story": "bun scripts/build-story.ts"
+    "build-story": "bun scripts/build-story.ts",
+    "test": "bun scripts/test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

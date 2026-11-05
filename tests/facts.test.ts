@@ -1,8 +1,8 @@
 // What Google, answer engines and a skeptical reader see about Gleb must agree
 // across the page, its JSON-LD and llms.txt. Checks the built output, not the source.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { buildSite } from './fixtures/build';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -12,7 +12,7 @@ let llms = '';
 let graph: any[] = [];
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   html = readFileSync('dist/index.html', 'utf8');
   llms = readFileSync('dist/llms.txt', 'utf8');
   const raw = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1] ?? '{}';
