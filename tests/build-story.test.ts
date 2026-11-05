@@ -8,6 +8,7 @@ import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import * as analytics from '../src/scripts/analytics';
+import { buildSite } from './fixtures/build';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -345,7 +346,7 @@ describe(`built ${PATH}`, () => {
   const card = (n: number) => html.match(new RegExp(`<[a-z]+[^>]*data-pr="${n}"[^>]*>[\\s\\S]*?<!-- /pr-${n} -->`))?.[0] ?? '';
 
   beforeAll(() => {
-    execSync('bun run build', { stdio: 'ignore' });
+    buildSite();
     html = existsSync(`dist${PATH}index.html`) ? read(`dist${PATH}index.html`) : '';
   });
 

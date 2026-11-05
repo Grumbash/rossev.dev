@@ -5,10 +5,10 @@
 // tracker (Umami, Vercel) reads the URL. Unit part checks the helper and the runtime event;
 // markup part runs the built page's head scripts against a fake browser.
 import { afterEach, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import * as analytics from '../src/scripts/analytics';
+import { buildSite } from './fixtures/build';
 
 const { EVENTS } = analytics;
 const bookingSource = (search: string): string | null => (analytics as any).bookingSource(search);
@@ -148,7 +148,7 @@ describe('built /booked', () => {
   }
 
   beforeAll(() => {
-    execSync('bun run build', { stdio: 'ignore', env: { ...process.env, PUBLIC_UMAMI_WEBSITE_ID: 'test-site-id' } });
+    buildSite();
     html = existsSync('dist/booked/index.html') ? read('dist/booked/index.html') : '';
   });
 

@@ -2,12 +2,12 @@
 // privacy line in both languages, zero demo bytes before the click (no model or worker URL in
 // any page or in the JavaScript a page loads up front), and that audio code never talks to the network.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { EVENTS } from '../src/scripts/analytics';
 import { t } from '../src/i18n';
 import { WEIGHTS_BYTES } from '../src/scripts/vad/model';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -41,7 +41,7 @@ const PAGES = {
 } as const;
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
 });
 
 describe('voice demo markup', () => {

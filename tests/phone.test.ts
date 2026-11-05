@@ -3,9 +3,9 @@
 // no tel: link, no JSON-LD telephone, no line in llms.txt.
 // Checks the built output, not the source.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { PROFILE } from '../src/data/profile';
+import { buildSite } from './fixtures/build';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -18,7 +18,7 @@ let llms = '';
 let pdf = '';
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   home = readFileSync('dist/index.html', 'utf8');
   llms = readFileSync('dist/llms.txt', 'utf8');
   // The PDF is written with uncompressed text streams, so its strings are readable as latin1.

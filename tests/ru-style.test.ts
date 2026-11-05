@@ -3,9 +3,9 @@
 // scene metaphors and «ты». Checks every built file, scripts included: canvas captions and the
 // topology live in JS, and only the RU copy has Cyrillic, so EN pages cannot trip it.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { buildSite } from './fixtures/build';
 
 import { RU_BANNED, ruBannedRe, ruStyleProblems } from '../src/i18n/ru-style';
 import { ru } from '../src/i18n/ru';
@@ -26,7 +26,7 @@ const walk = (dir: string) => {
 };
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   walk('dist');
 });
 

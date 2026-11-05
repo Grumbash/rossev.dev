@@ -220,7 +220,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
 
     const body = notRun
-      ? `${MARKER}\n### Perf gate: not run\n\n\`bun test\` failed, so the budgets were not measured this push. See the job log.\n`
+      ? `${MARKER}\n### Perf gate: not run\n\n\`bun run test\` failed, so the budgets were not measured this push. See the job log.\n`
       : commentBody({ ok, report, explanation, unavailable, model, costUsd });
     log(body);
 

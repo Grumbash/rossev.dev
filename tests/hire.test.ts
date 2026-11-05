@@ -2,10 +2,10 @@
 // to work with Gleb, each with the proof already on the site and one booking link. No prices: a call
 // comes first. The same offers reach JSON-LD (Person.makesOffer) and /llms.txt from one source.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { OFFERS } from '../src/data/profile';
 import { PLACEMENTS } from '../src/scripts/analytics';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -13,7 +13,7 @@ const PAGES = { en: 'dist/hire/index.html', ru: 'dist/ru/hire/index.html' } as c
 const html: Record<string, string> = {};
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   for (const [l, f] of Object.entries(PAGES)) html[l] = existsSync(f) ? readFileSync(f, 'utf8') : '';
 });
 

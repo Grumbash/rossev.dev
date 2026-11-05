@@ -376,7 +376,7 @@ describe('.github/workflows/perf.yml', () => {
 
   test('tests, then the gate; the watchdog always reports; a breach fails the job', () => {
     const runs = steps.map((s) => String(s.run ?? ''));
-    const iTest = runs.findIndex((r) => /\bbun test\b/.test(r));
+    const iTest = runs.findIndex((r) => /\bbun (run )?test\b/.test(r));
     const iPerf = steps.findIndex((s) => s.id === 'perf');
     expect(iTest).toBeGreaterThanOrEqual(0);
     expect(iPerf).toBeGreaterThan(iTest);

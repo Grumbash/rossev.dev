@@ -62,7 +62,7 @@ jobs:
           PR_BODY_PATH: .writing/pr-comment.md
 
       - if: steps.write.outputs.changed != '0'
-        run: bun test
+        run: bun run test
 
       - if: steps.write.outputs.changed != '0'
         run: bun run build

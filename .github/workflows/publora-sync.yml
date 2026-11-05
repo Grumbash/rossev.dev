@@ -1,5 +1,5 @@
 # The Publora sync: once a day, LinkedIn posts published through Publora become site entries in
-# src/data/posts.json (scripts/ci/publora-sync.ts), pass `bun test` and `bun run build`, and land
+# src/data/posts.json (scripts/ci/publora-sync.ts), pass `bun run test` and `bun run build`, and land
 # as ONE PR from the fixed branch bot/publora-sync, recreated from main on every run. Nothing new
 # means no commit and no PR. It never pushes to main: review and merge happen in the PR.
 #
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
-          fetch-depth: 0 # bun test reads history: the build story and replay tests show old commits
+          fetch-depth: 0 # the tests read history: the build story and replay tests show old commits
           persist-credentials: false
 
       # `publish` checks out exactly this commit, so the files it copies in match their base.
@@ -86,7 +86,7 @@ jobs:
           PR_BODY_PATH: .publora/pr-body.md
 
       - if: steps.sync.outputs.added != '' && steps.sync.outputs.added != '0'
-        run: bun test
+        run: bun run test
 
       - if: steps.sync.outputs.added != '' && steps.sync.outputs.added != '0'
         run: bun run build

@@ -4,13 +4,13 @@
 // The code spells the URL in capitals (HTTPS://ROSSEV.DEV/C fits the smallest QR version), so /C must
 // serve the card too, without a redirect round trip.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import qrcode from 'qrcode-generator';
 import { PROFILE } from '../src/data/profile';
 import { PLACEMENTS } from '../src/scripts/analytics';
 import { t } from '../src/i18n';
+import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
 
@@ -19,7 +19,7 @@ const VCF = 'dist/gleb-rosev.vcf';
 const html: Record<string, string> = {};
 
 beforeAll(() => {
-  execSync('bun run build', { stdio: 'ignore' });
+  buildSite();
   for (const [l, f] of Object.entries(PAGES)) html[l] = existsSync(f) ? readFileSync(f, 'utf8') : '';
 });
 
