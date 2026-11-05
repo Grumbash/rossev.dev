@@ -1,5 +1,53 @@
 [
   {
+    "id": "post-46",
+    "slug": "qa-bar-joke-edge-case-inputs",
+    "published": "2026-11-05",
+    "category": "delivery",
+    "categoryLabel": {
+      "en": "DELIVERY",
+      "ru": "ДЕЛИВЕРИ"
+    },
+    "originalMinutes": 1,
+    "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7524091416604471296/",
+    "title": {
+      "en": "A QA Engineer Walks Into a Bar and Burns It Down",
+      "ru": "QA-инженер заходит в бар и поджигает его"
+    },
+    "takeaway": {
+      "en": "Test zero, negative and nonsense inputs before release, because the first real user will send something the spec never imagined.",
+      "ru": "Проверяйте ноль, отрицательные значения и бессмысленный ввод до релиза, потому что первый реальный пользователь пришлёт то, что в спецификации не предусмотрели."
+    },
+    "tags": [
+      "QA",
+      "Edge Cases",
+      "Testing"
+    ],
+    "brief": {
+      "quote": {
+        "en": "The first real customer walks in and asks where the bathroom is.",
+        "ru": "Первый настоящий клиент заходит и спрашивает, где туалет."
+      },
+      "bullets": {
+        "en": [
+          "A QA engineer orders 2 beers, 0 beers, –1 beer, a lizard in a glass and qwertyuip beers, which covers the boundary and garbage inputs.",
+          "The first real customer asks a simple question that nobody tested, and the bar bursts into flames, killing everyone.",
+          "The author made this audio with ElevenLabs last week, just to play around."
+        ],
+        "ru": [
+          "QA-инженер заказывает 2 пива, 0 пив, –1 пиво, ящерицу в стакане и qwertyuip пива, то есть граничные значения и мусорный ввод.",
+          "Первый настоящий клиент задаёт простой вопрос, который никто не проверял, и бар вспыхивает, убивая всех.",
+          "Автор сделал это аудио в ElevenLabs на прошлой неделе, просто поиграв с инструментом."
+        ]
+      }
+    },
+    "body": {
+      "en": "Just played around last week with ElevenLabs and created this masterpiece.\n \n❗️❗️❗️Read first:\n\nA QA engineer walks into a bar and orders:\na beer,\n2 beers,\n0 beers,\n999999999 beers,\na lizard in a glass,\n–1 beer,\nqwertyuip beers.\nThe first real customer walks in and asks where the bathroom is. The bar bursts into flames, killing everyone.",
+      "ru": "Недавно поиграл с ElevenLabs и сделал вот этот шедевр.\n\nЧитайте первым.\n\nQA-инженер заходит в бар и заказывает: пиво, 2 пива, 0 пив, 999999999 пив, ящерицу в стакане, –1 пиво, qwertyuip пива.\n\nПервый настоящий клиент заходит и спрашивает, где туалет. Бар вспыхивает и сгорает, погибают все."
+    },
+    "color": "var(--orange)"
+  },
+  {
     "id": "post-45",
     "slug": "handoff-prompt-is-the-roadmap",
     "published": "2026-11-05",
@@ -1822,34 +1870,39 @@
     "originalMinutes": 4,
     "url": "https://www.linkedin.com/posts/rossev_the-new-ai-bottleneck-ugcPost-7517920896150536192-7TGN",
     "title": {
-      "en": "The New AI Bottleneck Isn’t Generation — It’s Verification",
-      "ru": "Новое узкое место AI — не генерация кода, а его верификация"
+      "en": "AI Moved the Bottleneck From Typing to Reviewing",
+      "ru": "AI перенёс узкое место с набора кода на ревью"
     },
     "takeaway": {
-      "en": "Harnesses, automated evals, and runtime observability separate AI toys from production.",
-      "ru": "Именно харнессы, эвалы и observability отличают прототип от боевого продакшена."
+      "en": "Before you celebrate faster code generation, measure the review queue, and close any PR the author cannot explain in two sentences without opening the diff.",
+      "ru": "Прежде чем радоваться быстрой генерации кода, посмотрите на очередь ревью и закрывайте любой PR, который автор не может объяснить в двух предложениях без открытия диффа."
     },
     "tags": [
-      "AI Harnesses",
-      "Verification"
+      "AI Code Generation",
+      "Code Review",
+      "Team Velocity"
     ],
     "brief": {
       "quote": {
-        "en": "Making AI agents dependable in production is an evaluation and systems-hardening problem.",
-        "ru": "Надёжность AI-агентов в продакшене — это задача верификации, песочниц и системной инженерии."
+        "en": "We didn't eliminate the bottleneck. We just moved it from typing to reviewing.",
+        "ru": "Мы не убрали узкое место. Мы просто перенесли его с набора кода на ревью."
       },
       "bullets": {
         "en": [
-          "Generating code with LLMs is cheap; proving that generated code is safe, isolated, and regression-free under production load is the real bottleneck.",
-          "Production AI requires deterministic harnesses: sandboxed code runners, realistic task benchmarks, and a second independent \"judge\" review pass.",
-          "Autonomy is earned through a measurable track record on real engineering benchmarks, never assumed from a single demo."
+          "Writing code was never the real bottleneck; understanding it was, and AI tools make it cheap to produce 1,000 lines that nobody on the team fully understands.",
+          "Reviewing code you didn't write is 5x harder than generating it, so the senior engineers who review AI-written PRs quietly become full-time human linters.",
+          "Our rule now is that if an author can't explain every architectural trade-off in their PR in two sentences without looking at the diff, the PR gets closed without review."
         ],
         "ru": [
-          "Генерация кода стала дешёвой; настоящее узкое место — доказать, что этот код безопасен, изолирован и не ломает прод.",
-          "Боевой AI требует жёсткого харнесса: изолированных песочниц, реалистичных бенчмарков и независимой проверки вторым агентом-судьёй.",
-          "Автономность агента зарабатывается статистикой успешных прогонов, а не эффектным демо."
+          "Узкое место никогда не было в наборе кода, оно было в понимании. Инструменты с AI делают дешёвым написание 1000 строк, которые никто в команде до конца не понимает.",
+          "Ревьюить чужой код в 5x сложнее, чем его сгенерировать, и сеньоры, которые проверяют PR с кодом от LLM, незаметно превращаются в ручных линтеров на полный день.",
+          "Наше правило: если автор не может в двух предложениях объяснить каждый архитектурный компромисс в своём PR без открытия диффа, PR закрывается без ревью."
         ]
       }
+    },
+    "body": {
+      "en": "Everyone brags about how their team writes code 3x faster with AI now.\n\nNobody mentions what happened to their PR queue.\n\nWriting code was never the real bottleneck. Understanding it was.\nBefore Cursor and Claude, if a developer wanted to ship a messy 800-line PR, it at least took them three days to type it out. You had natural friction.\n\nNow anyone on the team can generate 1,000 lines of plausible-looking code before lunch. It compiles, the happy-path test passes, and then it lands on a senior engineers desk. And that's where velocity goes to die. Reviewing code you didn't write is 5x harder than generating it. When half of that PR was written by an LLM that doesn't understand your domain invariants, code review turns into forensic archaeology.\n\nWe didn't eliminate the bottleneck. We just moved it from typing to reviewing — and silently turned our best engineers into full-time human linters. \n\nOur rule now is simple: if you can't explain every architectural trade-off in your PR in two sentences without looking at the diff, it gets closed without review.\n\nHow are you handling the PR flood in your teams right now? Stricter size limits, or changing how reviews work entirely?",
+      "ru": "Все хвастаются, что их команда теперь пишет код в 3x быстрее с AI. Никто не говорит, что стало с очередью PR.\n\nНаписание кода никогда не было настоящим узким местом. Узким местом было понимание.\n\nДо Cursor и Claude, если разработчик хотел выкатить грязный PR на 800 строк, на его набор уходило как минимум три дня. Было естественное трение.\n\nСейчас любой в команде может сгенерировать 1000 строк правдоподобного кода до обеда. Код компилируется, тест на happy path проходит, и потом он попадает к сеньору. Вот где скорость умирает. Ревьюить код, который вы не писали, в 5x сложнее, чем его сгенерировать. Когда половину PR написала LLM, которая не понимает доменных инвариантов вашей системы, ревью превращается в криминалистику.\n\nМы не убрали узкое место. Мы просто перенесли его с набора кода на ревью и незаметно превратили лучших инженеров в ручных линтеров на полный день.\n\nПравило у нас теперь простое: если вы не можете в двух предложениях объяснить каждый архитектурный компромисс в своём PR, не глядя в дифф, такой PR закрывается без ревью.\n\nКак вы справляетесь с потоком PR в своих командах прямо сейчас? Жёстче ограничиваете размер или меняете сам процесс ревью?"
     },
     "color": "var(--cyan)"
   },
