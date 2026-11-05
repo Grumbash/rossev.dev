@@ -22,6 +22,16 @@ describe('the posts directory', () => {
     expect(new Set(BLOG_POSTS.map((p) => p.slug)).size).toBe(BLOG_POSTS.length);
   });
 
+  // Backlinks: LinkedIn posts, the CV and other sites link to /writing/<slug>/. A post's slug is its
+  // address, so no post that was ever on the site may lose it. New posts only add to this list.
+  test('every post address ever published still exists, in both languages', () => {
+    const slugs = JSON.parse(readFileSync('tests/fixtures/post-slugs.json', 'utf8')) as string[];
+    const now = new Set(BLOG_POSTS.map((p) => p.slug));
+    expect(slugs.filter((s) => !now.has(s))).toEqual([]);
+    if (existsSync('dist/index.html'))
+      for (const s of slugs) for (const page of [`dist/writing/${s}/index.html`, `dist/ru/writing/${s}/index.html`]) expect(existsSync(page), page).toBe(true);
+  });
+
   test('the site reads them newest first, the later post first on the same day', () => {
     expect(BLOG_POSTS).toEqual(readPosts());
     const dates = BLOG_POSTS.map((p) => p.published);
