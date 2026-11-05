@@ -1,5 +1,53 @@
 [
   {
+    "id": "post-45",
+    "slug": "handoff-prompt-is-the-roadmap",
+    "published": "2026-11-05",
+    "category": "ai",
+    "categoryLabel": {
+      "en": "AI SYSTEMS",
+      "ru": "AI-СИСТЕМЫ"
+    },
+    "originalMinutes": 3,
+    "title": {
+      "en": "I Picked Up a Teammate's Epic With One Prompt. It Reads Like a Map of the Next Few Months.",
+      "ru": "Я передал эпик агенту одним промптом. Это карта следующих месяцев"
+    },
+    "takeaway": {
+      "en": "Write the environment around the agent (context, checks, boundaries, words for state) down as files, because that is what outlasts any model.",
+      "ru": "Записывайте окружение вокруг агента (контекст, проверки, границы полномочий, слова для состояний) в файлы: оно переживёт смену любой модели."
+    },
+    "tags": [
+      "AI Agents",
+      "Engineering Practice",
+      "Handoffs"
+    ],
+    "brief": {
+      "quote": {
+        "en": "Getting code is cheap now. Knowing it's right is the expensive part.",
+        "ru": "Код получить дёшево. Понять, что он правильный, — дорого."
+      },
+      "bullets": {
+        "en": [
+          "Whoever can pack context so that both a person and an agent can pick it up loses less on every handoff.",
+          "Checks around generated code now matter more than the generation itself.",
+          "An agent needs a clear map of what belongs to whom and where it must stop and wait for a person."
+        ],
+        "ru": [
+          "Тот, кто умеет упаковать контекст так, чтобы его подхватили и человек, и агент, теряет меньше на каждой передаче.",
+          "Проверки сгенерированного кода теперь важнее самой генерации.",
+          "Агенту нужна понятная карта того, что чьё и где он должен остановиться и ждать человека."
+        ]
+      }
+    },
+    "body": {
+      "en": "Yesterday I took over a teammate's epic overnight: they were out. This morning I wrote the prompt I'd hand to a coding agent to keep it going. Then I reread it and noticed it has almost no direct instructions. Most of it describes the environment the agent needs so it can work without me.\n\nI think that's a fairly honest map of what's going to matter in engineering over the next few months. Seven things stood out.\n\n## 1. Context moves as a document, not a call\n\nThe epic changed hands in a day. Not through a meeting: through the spec, my notes on it, a prototype, the design rules in AGENTS.md and a list of the 15 PRs merged the day before.\n\nWhoever can pack context so that both a person and an agent can pick it up loses less on every handoff. And handoffs are going to happen much more often.\n\n## 2. Checking costs more than writing\n\nMy workflow: a red test first, then a writer agent in its own worktree, an independent judge that tries to break it, a review bot, and branch protection that won't merge without the bot's approval of the last commit.\n\nGetting code is cheap now. Knowing it's right is the expensive part. More and more of an engineer's job is designing the guardrails around generation, not the generation itself.\n\n## 3. Boundaries of authority are written down\n\nHalf of my prompt is about who owns what. Whether to turn a flag on is my decision. In Slack the agent only writes drafts, and I send them. One ticket in the epic stays with its owner, and the agent leaves it alone. A merge happens only when CI is green and the bot approved the last commit; anything else comes back to me.\n\nAn agent doesn't just need permission to act. It needs a map of what belongs to whom and where it stops and waits for a person.\n\n## 4. The bottleneck moved to taste and staging\n\nToday's task wasn't writing code. It was making the design look great, and the agent had to show me options before building anything.\n\nWhen 15 PRs fit into one day, code stops being the scarce thing. Judgment and checking the real thing in a live environment are.\n\n## 5. The agent becomes a teammate, not a feature\n\nThe epic itself is about agents that join a team as members: their own machine, a status, a heartbeat while they work.\n\nThe most delicate part turned out to be the language of state. We had a bug where the agent said it was waiting on itself when it was actually waiting on a person. Trust in an agent rests on whether it says correctly who's waiting for whom. The next step on the roadmap is the same idea: a staged preview and undo, because people trust what they can take back.\n\n## 6. Privacy is part of the agent's toolbox\n\nOne line in the prompt: build demo videos from browser screenshots, not from a screen recording, because a screen recording catches personal stuff.\n\nAgents now collect evidence of their own work. What ends up in the frame is a process decision, not an afterthought.\n\n## 7. Tacit knowledge moves into files\n\nA CLI that only works with a specific prefix. No co-author trailers in commits. The exact format for mentioning a ticket. Small things that used to live in someone's head now have to be written down, or the agent trips over them every single time.\n\n## What this adds up to\n\nNone of the seven is about which model to pick or how long the prompt is. They're about the environment around the model: context, checks, boundaries, words for state, hygiene, written-down habits.\n\nThat's the part I'd invest in now. Models will keep changing every few months. A team that has its environment in order just swaps the model and keeps going.",
+      "ru": "Вчера я за ночь принял эпик у коллеги: он был в отпуске. Этим утром я написал промпт, который отдал бы кодинг-агенту, чтобы тот продолжал работу. Потом перечитал его и заметил, что в нём почти нет прямых указаний. Большая часть описывает среду, в которой агент должен работать без меня.\n\nДумаю, это довольно честная карта того, что будет важно в инженерии в ближайшие несколько месяцев. Выделились семь вещей.\n\n## 1. Контекст передаётся документом, а не созвоном\n\nЭпик сменил владельца за день. Не на встрече: через спеку, мои заметки к ней, прототип, правила дизайна в AGENTS.md и список из 15 PR, смерженных накануне.\n\nКто умеет упаковать контекст так, чтобы его подхватили и человек, и агент, теряет меньше на каждой передаче. А передач будет гораздо больше.\n\n## 2. Проверять дороже, чем писать\n\nМой процесс такой: сначала красный тест, потом агент-писатель в своём worktree, независимый судья, который пытается сломать результат, ревью-бот и branch protection, который не даёт смержить, пока бот не одобрит последний коммит.\n\nКод получить дёшево. Понять, что он правильный, — дорого. Всё больше работы инженера уходит не на генерацию, а на гардрейлы вокруг неё.\n\n## 3. Границы полномочий записаны явно\n\nПоловина моего промпта о том, кто чем владеет. Включать ли флаг, решаю я. В Slack агент пишет только черновики, отправляю их я. Один тикет в эпике остаётся за своим владельцем, и агент его не трогает. Мерж происходит только при зелёном CI и одобрении бота на последнем коммите; всё остальное возвращается ко мне.\n\nАгенту нужно не только разрешение действовать. Ему нужна карта того, что чьё, и понимание, где он останавливается и ждёт человека.\n\n## 4. Узкое место сместилось к вкусу и стейджингу\n\nСегодняшняя задача была не в написании кода. Нужно было сделать дизайн действительно хорошим, и агент должен был показать мне варианты до того, как что-то строить.\n\nКогда 15 PR помещаются в один день, код перестаёт быть дефицитом. Дефицитом становятся суждение и проверка на живом окружении.\n\n## 5. Агент становится членом команды, а не фичей\n\nСам эпик про агентов, которые входят в команду как участники: у них своя машина, статус и heartbeat, пока они работают.\n\nСамой тонкой частью оказался язык состояний. Был баг: агент писал, что ждёт самого себя, хотя на деле ждал человека. Доверие к агенту держится на том, правильно ли он говорит, кто кого ждёт. Следующий шаг в роадмапе из той же оперы: поэтапный превью и откат, потому что люди доверяют тому, что можно вернуть назад.\n\n## 6. Приватность — часть инструментов агента\n\nОдна строчка в промпте: делать демо-видео из скриншотов браузера, а не из записи экрана, потому что запись экрана захватывает личное.\n\nАгенты теперь сами собирают доказательства своей работы. Что попадает в кадр, — это решение о процессе, а не мысль на потом.\n\n## 7. Негласные знания переезжают в файлы\n\nCLI, который работает только с определённым префиксом. Никаких co-author трейлеров в коммитах. Точный формат упоминания тикета. Мелочи, которые раньше жили в чьей-то голове, теперь нужно записать, иначе агент спотыкается о них каждый раз.\n\n## Что из этого следует\n\nНи один из семи пунктов не про то, какую модель выбрать или насколько длинный промпт. Они про среду вокруг модели: контекст, проверки, границы, слова для состояний, гигиена и записанные привычки.\n\nВо что я буду вкладываться сейчас, так это в эту часть. Модели будут меняться каждые несколько месяцев. Команда, у которой среда в порядке, просто меняет модель и едет дальше."
+    },
+    "color": "var(--lime)",
+    "publora": "6aec51fb5e3286093e635f4c"
+  },
+  {
     "id": "post-44",
     "slug": "ai-agent-pr-token-cost-gap",
     "published": "2026-11-04",
