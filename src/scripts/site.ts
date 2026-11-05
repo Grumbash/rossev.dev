@@ -28,6 +28,32 @@ export function initSite() {
   // Right-click -> "Open in new tab" / "Copy link" reads the href too.
   document.addEventListener('contextmenu', carry, true);
 
+  // A plain click morphs this page into the other language in place (scripts/lang-morph.ts, loaded
+  // when the visitor first reaches for the switch); a modifier click still opens the link as is.
+  const morph = () => import('./lang-morph');
+  const reach = (e: Event) => {
+    const a = (e.target as Element | null)?.closest?.('a[data-lang-switch]') as HTMLAnchorElement | null;
+    if (a) void morph().then((m) => m.prefetch(a.href)).catch(() => {});
+  };
+  document.addEventListener('pointerover', reach);
+  document.addEventListener('focusin', reach);
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element | null)?.closest?.('a[data-lang-switch]') as HTMLAnchorElement | null;
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    morph()
+      .then((m) => m.morphTo(a.href))
+      .catch(() => window.location.assign(a.href));
+  });
+  // Back/Forward across a morph: the URL's language no longer matches the page, so morph again.
+  window.addEventListener('popstate', () => {
+    const lang = /^\/ru(\/|$)/.test(window.location.pathname) ? 'ru' : 'en';
+    if (lang === root.lang) return;
+    morph()
+      .then((m) => m.morphTo(window.location.href, false))
+      .catch(() => window.location.reload());
+  });
+
   window.toggleSiteTheme = () => {
     const next = (root.getAttribute('data-theme') || 'light') === 'light' ? 'dark' : 'light';
     root.setAttribute('data-theme', next);

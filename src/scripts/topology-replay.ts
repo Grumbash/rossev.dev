@@ -76,6 +76,12 @@ export function initTopologyReplay(): void {
     return loading;
   }
 
+  // The page morphed into the other language (scripts/lang-morph.ts): a running film follows it.
+  document.addEventListener('site:lang', (e) => {
+    const lang = (e as CustomEvent<{ lang: string }>).detail.lang;
+    if (ctl) loadPlayer(lang).then((m) => ctl?.setLang(lang === 'ru' ? 'ru' : 'en', m.strings));
+  });
+
   // A take-over control or the timeline used before the film loaded: load it and hand the input over.
   card.addEventListener(
     'click',
