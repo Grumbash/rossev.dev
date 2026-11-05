@@ -77,6 +77,7 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - **LEADERSHIP**: Teams of 5–12 Engineers, Customer Pilots & Demos, Technical Hiring, System Architecture, Mentoring (150+ Lectures), Product Strategy
 
 ## Writing (full posts on rossev.dev, each with a 30-second brief; most also on LinkedIn)
+- [My Prompt for Picking Up a Colleague's Epic Was Mostly About Everything Except the Task](https://rossev.dev/writing/handoff-prompt-is-the-roadmap/) (2026-11-05): Write down the rules around the task, such as who owns what, where the agent must stop and how work gets checked, because the agent can't guess them.
 - [One AI Agent PR Costs $82 on Opus and $13 on Open-Weight Models](https://rossev.dev/writing/ai-agent-pr-token-cost-gap/) (2026-11-04): Count the real token cost per PR, because on live features it can be 10 to 100 times the cost of small tickets.
 - [I Refused to Pay the Hacker Who Found Our Signup Hole](https://rossev.dev/writing/unpaid-extortion-exposed-signup-flaw/) (2026-11-03): Protect signup flows from mass abuse before a stranger's extortion email forces you to.
 - [Before Letting a Model Rewrite Your Harness, Read Your Logs](https://rossev.dev/writing/read-logs-before-rewriting-harness/) (2026-11-02): Fix the environment and code bugs your logs reveal before letting a model tune your prompts.
