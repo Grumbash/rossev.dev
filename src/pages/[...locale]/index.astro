@@ -104,7 +104,7 @@ const jsonLd = {
 
             <p class="hero-value">
               {PROFILE.valueLine[lang]}
-              <a class="text-link hero-value-link" href={localePath(lang, '/cases/sully/')}>{d.hero.caseLink}</a>
+              <a class="text-link hero-value-link" href={localePath(lang, '/cases/sully/')} data-track="case_click" data-track-id="sully" data-track-placement="hero">{d.hero.caseLink}</a>
             </p>
 
             <div class="hero-role">
@@ -473,8 +473,8 @@ const jsonLd = {
           </div>
 
           <div class="featured-cases">
-            <a class="brutal-btn" href={localePath(lang, '/cases/sully/')}>{d.toolbox.sullyCase} →</a>
-            <a class="brutal-btn" href={localePath(lang, '/cases/yagni/')}>{d.toolbox.yagniCase} →</a>
+            <a class="brutal-btn" href={localePath(lang, '/cases/sully/')} data-track="case_click" data-track-id="sully" data-track-placement="experience">{d.toolbox.sullyCase} →</a>
+            <a class="brutal-btn" href={localePath(lang, '/cases/yagni/')} data-track="case_click" data-track-id="yagni" data-track-placement="experience">{d.toolbox.yagniCase} →</a>
           </div>
 
           <details class="toolbox" id="toolbox">
