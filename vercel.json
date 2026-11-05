@@ -65,11 +65,11 @@
   "rewrites": [
     {
       "source": "/C",
-      "destination": "/c/"
+      "destination": "/c/index.html"
     },
     {
       "source": "/C/",
-      "destination": "/c/"
+      "destination": "/c/index.html"
     }
   ],
   "redirects": [

@@ -143,9 +143,12 @@ describe('QR code on /hire', () => {
 });
 
 describe('capital /C from the QR code', () => {
-  test('is rewritten to the card, not redirected', () => {
+  // The destination is the file itself: on production a rewrite to the directory /c/ answered
+  // Vercel's NOT_FOUND for /C and even /c/ (the source matched it too), while /c/index.html exists.
+  test('is rewritten to the card file, not redirected', () => {
     const rewrites = vercel.rewrites ?? [];
-    for (const src of ['/C', '/C/']) expect(rewrites).toContainEqual({ source: src, destination: '/c/' });
+    for (const src of ['/C', '/C/']) expect(rewrites).toContainEqual({ source: src, destination: '/c/index.html' });
+    for (const r of rewrites) expect(existsSync(`dist${r.destination}`), r.destination).toBe(true);
     for (const r of vercel.redirects) expect(r.source).not.toMatch(/^\/C\/?$/);
   });
 });
