@@ -326,6 +326,7 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
       key(s, 'Home'); await wait(3000); out.afterScrub = snap();
       out.pausePressed = $('[data-replay-pause]')?.getAttribute('aria-pressed');
     } else if (mode === 'takeover') {
+      $('.scenario-controls summary').click();
       out.a = snap();
       $('[data-sim-judge]').click(); await wait(200); out.judgeOff = snap();
       // The fault button opens a menu; the bad deploy (the PR #11 kind of bug) is one pick in it.
@@ -335,6 +336,7 @@ describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
       await wait(${RESUME_PROMPT_MS} + 300); out.offer = snap();
       await wait(${AUTO_RESUME_MS - RESUME_PROMPT_MS} + 300); out.back = snap();
     } else if (mode === 'explore') {
+      $('.scenario-controls summary').click();
       $('[data-sim-judge]').click(); await wait(200); out.a = snap();
       $('[data-story-explore]').click(); await wait(${AUTO_RESUME_MS} + 1500); out.exploring = snap();
     } else if (mode === 'rm') {

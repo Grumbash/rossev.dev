@@ -248,6 +248,7 @@ describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
       confidence: card.getAttribute('data-policy-confidence'), label: $('[data-policy-label]')?.textContent.trim() ?? null,
       h: Math.round(card.getBoundingClientRect().height) });
     const out = { before: fetched().length };
+    $('.scenario-controls summary').click();
     // The button only opens the menu (focus on its first item); nothing is injected until a pick.
     $('[data-sim-fault]').click(); await wait(1200);
     out.menuOnly = { action: card.getAttribute('data-policy-action'), expanded: $('[data-sim-fault]').getAttribute('aria-expanded'),

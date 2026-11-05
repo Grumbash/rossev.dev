@@ -20,6 +20,8 @@ export const EVENTS = {
   // including via the topology BLUEPRINT button (also sends topology_interact{blueprint}), the topology card's YAGNI case link
   // (also topology_interact{case}) and the GR monogram bridge link (also nca_interact{case}). id: case study id
   case_open: ['id'],
+  // Homepage link to a standalone case study. placement: hero|experience
+  case_click: ['id', 'placement'],
   // Toolbox skill clicked to highlight jobs. skill: the skill name
   skill_click: ['skill'],
   // Toolbox "copy as text"

@@ -104,9 +104,7 @@ const jsonLd = {
 
             <p class="hero-value">
               {PROFILE.valueLine[lang]}
-              {/* The YAGNI numbers can't be shown here; the same way of working can, on this site's own PRs.
-                  Worded so it doesn't read as proof of those numbers. */}
-              <a class="text-link hero-value-link" href={localePath(lang, '/how-its-built/')}>{d.hero.buildLoop}</a>
+              <a class="text-link hero-value-link" href={localePath(lang, '/cases/sully/')} data-track="case_click" data-track-id="sully" data-track-placement="hero">{d.hero.caseLink}</a>
             </p>
 
             <div class="hero-role">
@@ -199,7 +197,7 @@ const jsonLd = {
           <div class="brutal-box stage-iso-card">
             <div class="stage-header">
               <span>
-                {d.topology.title}
+                <a href={localePath(lang, '/how-its-built/')}>{d.topology.title}</a>
               </span>
               <span class="replay-badge" data-replay-badge>{d.topology.replayBadge}</span>
               <span id="iso-trace-status"></span>
@@ -211,32 +209,35 @@ const jsonLd = {
             <div class="iso-story">
               <p class="visually-hidden" aria-live="polite" data-replay-live></p>
               <a class="replay-label" data-replay-label href={replay.url} target="_blank" rel="noopener noreferrer">{replay.label[lang]}</a>
-              <div class="iso-story-controls">
-                <button type="button" class="mode-btn mode-btn-fault" data-sim-fault>{d.topology.injectFault}</button>
-                <button type="button" class="mode-btn" data-sim-judge aria-pressed="true">
-                  {d.topology.judge}: <span data-sim-judge-state>{d.topology.judgeOn}</span>
-                </button>
-                <button
-                  type="button"
-                  class="mode-btn iso-story-explore"
-                  data-story-explore
-                  aria-expanded="false"
-                  aria-controls="iso-explore"
+              <details class="scenario-controls">
+                <summary>{d.topology.scenario}</summary>
+                <div class="iso-story-controls">
+                  <button type="button" class="mode-btn mode-btn-fault" data-sim-fault>{d.topology.injectFault}</button>
+                  <button type="button" class="mode-btn" data-sim-judge aria-pressed="true">
+                    {d.topology.judge}: <span data-sim-judge-state>{d.topology.judgeOn}</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="mode-btn iso-story-explore"
+                    data-story-explore
+                    aria-expanded="false"
+                    aria-controls="iso-explore"
+                    data-track="topology_interact"
+                    data-track-action="explore"
+                  >
+                    {d.topology.explore}
+                  </button>
+                </div>
+                <a
+                  class="iso-story-case"
+                  data-story-case
+                  href={`${homePath}?case=yagni#case-yagni`}
                   data-track="topology_interact"
-                  data-track-action="explore"
+                  data-track-action="case"
                 >
-                  {d.topology.explore}
-                </button>
-              </div>
-              <a
-                class="iso-story-case"
-                data-story-case
-                href={`${homePath}?case=yagni#case-yagni`}
-                data-track="topology_interact"
-                data-track-action="case"
-              >
-                {d.topology.caseLink}
-              </a>
+                  {d.topology.caseLink}
+                </a>
+              </details>
             </div>
 
             {/* Free play (behind Explore): Domain Switcher & 3D Engine Modes */}
@@ -471,7 +472,13 @@ const jsonLd = {
             </div>
           </div>
 
-          <div class="toolbox" id="toolbox">
+          <div class="featured-cases">
+            <a class="brutal-btn" href={localePath(lang, '/cases/sully/')} data-track="case_click" data-track-id="sully" data-track-placement="experience">{d.toolbox.sullyCase} →</a>
+            <a class="brutal-btn" href={localePath(lang, '/cases/yagni/')} data-track="case_click" data-track-id="yagni" data-track-placement="experience">{d.toolbox.yagniCase} →</a>
+          </div>
+
+          <details class="toolbox" id="toolbox">
+            <summary>{d.toolbox.find}</summary>
             <div class="toolbox-intro">
               <div>
                 <span class="label">
@@ -517,7 +524,7 @@ const jsonLd = {
             ))}
 
             <div class="toolbox-result" id="toolbox-result" aria-live="polite" data-used-at={d.toolbox.usedAt} data-clear={d.toolbox.clear} hidden></div>
-          </div>
+          </details>
 
           <ol class="timeline" id="experience-timeline">
             {EXPERIENCE.map((exp, idx) => {

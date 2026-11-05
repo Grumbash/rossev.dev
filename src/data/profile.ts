@@ -162,8 +162,8 @@ export const PROFILE = {
   },
   // Value line under the name: what I solve + proof. Every number must already be a fact on the page.
   valueLine: {
-    en: 'AI agents that hold up in production, not just in the demo: dead air at pickup on healthcare calls cut from 15 s to 0; 28 PRs in week one: agents wrote 98% of the code, I did 97% of the planning.',
-    ru: 'AI-агенты, которые работают в продакшене, а не только на демо: тишина после ответа в звонках клиник — с 15 с до 0; 28 PR за первую неделю, 98% кода написали агенты, 97% планирования — моё.'
+    en: 'I build AI agent teams at YAGNI. At Sully.ai, I fixed a bug in clinic calls: the voice agent greeted people while the phone was still ringing, so they heard 15 seconds of silence when they picked up.',
+    ru: 'Я строю команды AI-агентов в YAGNI. В Sully.ai исправил сбой в звонках клиник: голосовой агент здоровался, пока шли гудки, а человек брал трубку и слышал 15 секунд тишины.'
   },
   // Short bio for the hero only (max 40 words EN). The long `bio` below feeds the CV PDF and llms.txt.
   bioShort: {

@@ -255,6 +255,21 @@ describe('built markup', () => {
     expect(tag).toContain('data-domains="rossev.dev"');
   });
 
+  test('case links report the case id and placement on both homepages', () => {
+    for (const prefix of ['', '/ru']) {
+      const home = controls(readFileSync(`dist${prefix}/index.html`, 'utf8'));
+      const clicks = tracked(home, 'case_click').map(({ attrs }) => ({
+        href: attrs.href,
+        event: eventFromDataset({ track: attrs['data-track'], trackId: attrs['data-track-id'], trackPlacement: attrs['data-track-placement'] }),
+      }));
+      const expected = [['sully', 'hero'], ['sully', 'experience'], ['yagni', 'experience']];
+      expect(clicks).toEqual(expected.map(([id, placement]) => ({
+        href: `${prefix}/cases/${id}/`,
+        event: { name: 'case_click', props: { id, placement } },
+      })));
+    }
+  });
+
   test('every cal.com link carries UTM and a matching cta_book placement', () => {
     const cal = page.filter((t) => t.attrs.href?.includes('cal.com'));
     expect(cal.length).toBe(3);
