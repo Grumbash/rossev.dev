@@ -1,0 +1,48 @@
+{
+  "id": "post-18",
+  "slug": "cursor-as-planning-hub-for-epics",
+  "published": "2025-09-16",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_cursor-projectmanagement-productivity-share-7373725917795233792-ZbYO",
+  "title": {
+    "en": "Cursor Works as a Planning Hub for Epics and Tasks",
+    "ru": "Cursor работает как хаб для планирования эпиков и задач"
+  },
+  "takeaway": {
+    "en": "Use an AI coding assistant to turn scattered business notes into a structured epic and task files before you move them into your tracker.",
+    "ru": "Используйте AI-ассистента, чтобы превратить разрозненные заметки бизнеса в структурированный эпик и файлы задач до переноса в трекер."
+  },
+  "tags": [
+    "Cursor",
+    "Planning",
+    "Epics"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Cursor isn’t just for coders. It’s a hub that links your ideas, notes, and tasks into a clear plan.",
+      "ru": "Cursor не только для программистов. Это хаб, который связывает идеи, заметки и задачи в понятный план."
+    },
+    "bullets": {
+      "en": [
+        "The author, a developer rather than a PM, used Cursor's chat to get a clear epic structure that shows business value in about a minute.",
+        "He turned notes from the business team into an epic, broke it into tasks, and saved the structured documentation before uploading it to a task management system.",
+        "The result was a folder layout with an epic file and a per-person folder of task files, and the author argues the same approach works for HR, PMs and sales."
+      ],
+      "ru": [
+        "Автор, разработчик, а не PM, попросил Cursor в чате набросать структуру эпика, понятную бизнесу и показывающую ценность, и получил шаблон за минуту.",
+        "Он превратил заметки бизнес-команды в эпик, разбил его на задачи и сохранил структурированную документацию перед загрузкой в систему управления задачами.",
+        "Итог — папка с файлом эпика и папками задач по исполнителям, а автор считает, что так же можно работать и HR, PM и сейлзам."
+      ]
+    }
+  },
+  "body": {
+    "en": "💡 Recently, I faced a challenge: create an epic with tasks. I’m a developer, not a PM, and honestly, it felt like wandering in the dark. How do you organize it all? Total brain freeze!\n\nHow I managed:\n\nUsed Cursor as a planning hub. I simply typed in the chat: “Give me an epic structure that’s clear for business and shows value.” Got a template in a minute.\n\nTook business team notes, turned them into an epic, and broke it down into tasks.\n\nFirst, I created structured documentation, then uploaded it to a task management system.\n\nResult:\n\ntextProject/  \n Epic-Name.md  \n Person-A/task-01-description.md  \n Person-B/task-01-description.md  \n ...\n\n⚡️ Key takeaway:\nCursor isn’t just for coders. It’s a hub that links your ideas, notes, and tasks into a clear plan. HR, PMs, sales — just ask a question in plain English, and your project is ready!\n\n❓ Have you used Cursor for task planning? Share your tips!",
+    "ru": "Недавно передо мной стояла задача: создать эпик с задачами. Я разработчик, а не PM, и честно говоря, это было как блуждание в темноте. Как всё организовать? Полный ступор!\n\nВот как я справился.\n\nИспользовал Cursor как хаб для планирования. Просто написал в чате: «Дай мне структуру эпика, которая будет понятна бизнесу и показывает ценность». Шаблон получил за минуту.\n\nВзял заметки бизнес-команды, превратил их в эпик и разбил на задачи.\n\nСначала создал структурированную документацию, а потом загрузил её в систему управления задачами.\n\nРезультат:\n\nProject/\nEpic-Name.md\nPerson-A/task-01-description.md\nPerson-B/task-01-description.md\n...\n\nКлючевой вывод: Cursor не только для программистов. Это хаб, который связывает идеи, заметки и задачи в понятный план. HR, PM, сейлз: просто задайте вопрос простым языком, и проект готов!\n\nВы использовали Cursor для планирования задач? Поделитесь советами!"
+  },
+  "color": "var(--orange)"
+}

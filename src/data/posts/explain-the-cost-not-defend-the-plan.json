@@ -1,0 +1,48 @@
+{
+  "id": "post-24",
+  "slug": "explain-the-cost-not-defend-the-plan",
+  "published": "2026-06-08",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_your-job-as-an-engineer-is-not-to-defend-share-7469793699913187329-N6Vd",
+  "title": {
+    "en": "Your Job as an Engineer Is Not to Defend the Plan",
+    "ru": "Ваша задача как инженера не защищать план"
+  },
+  "takeaway": {
+    "en": "When new work arrives, ask what it displaces and make that cost visible so the business can decide.",
+    "ru": "Когда приходит новая задача, спросите, что она вытеснит, и покажите эту цену, чтобы бизнес сам решил, платить ли её."
+  },
+  "tags": [
+    "Trade-offs",
+    "Communication",
+    "Planning"
+  ],
+  "brief": {
+    "quote": {
+      "en": "What drops off the plate because of this?",
+      "ru": "Что выпадет из плана из-за этого?"
+    },
+    "bullets": {
+      "en": [
+        "Absorbing every urgent request through extra hours and context switching hides the lack of planning instead of fixing it.",
+        "Asking what drops off the plate turns a new request into a visible trade-off rather than a personal problem.",
+        "Explaining the actual cost of added scope lets the business decide whether to pay it, which reduces conflict over priorities."
+      ],
+      "ru": [
+        "Когда вы вбираете каждый срочный запрос через переработки и переключение контекста, вы просто прячете отсутствие планирования.",
+        "Вопрос «что выпадет из плана?» превращает новую задачу в видимый компромисс, а не в ваш личный вопрос.",
+        "Если объяснить реальную цену добавленного объёма, бизнес сам решит, платить ли её, и споров о приоритетах станет меньше."
+      ]
+    }
+  },
+  "body": {
+    "en": "Your job as an engineer is not to defend the plan \n\nOne of the biggest shifts in my career happened when I stopped treating every new, sudden request as a personal problem I had to solve, and started treating it as a trade-off I needed to explain\n\nEarly on, whenever a PM dropped a new task or an \"urgent\" bug into the middle of a sprint, my default reaction was: “How do I squeeze this in?” I’d work later, skip breaks, switch contexts like crazy, and just push harder. The unspoken assumption was that if I were just a \"good enough\" engineer, I should be able to make it work\n\nBut reality doesn’t care about your motivation. If a new requirement drops on Wednesday, and you try to absorb it through sheer stress just to save the original Friday deadline, you aren't fixing the problem. You are just making the lack of planning invisible. And you'll still feel guilty when Friday gets missed anyway.\nNow, I look at it differently. I don't try to fit it in; I just ask: “What drops off the plate because of this?”\n\nIt’s not pushback, and it’s not drama. It’s just basic transparency. If we add scope, the timeline moves. If you drag me into three more alignment meetings, I have less time to actually write code. These aren't opinions, they're just consequences.\nA lot of devs think that setting boundaries means constantly shouting \"no\" at management. It's usually much simpler: you don't refuse the work, you just explain its actual cost. Once that cost is out in the open, let the business decide if they actually want to pay it\n\nIronically, this creates way less conflict. You’re no longer fighting over priorities. You are just showing people how resources work. Projects rarely fail because someone had bad intentions; they fail because everyone pretended constraints didn't exist until production broke\n\n(One more cat’s photo 😸)",
+    "ru": "Одна из самых больших перемен в моей карьере произошла, когда я перестал считать каждый новый внезапный запрос личной проблемой, которую надо решить, и начал видеть в нём компромисс, который надо объяснить.\n\nВ начале, когда PM подкидывал новую задачу или «срочный» баг посреди спринта, моя реакция была одна: «Как это впихнуть?» Я работал допоздна, пропускал перерывы, метался между контекстами и просто давил сильнее. Невысказанное предположение было в том, что если я достаточно хороший инженер, я должен справиться.\n\nНо реальности всё равно на вашу мотивацию. Если в среду приходит новое требование, а вы пытаетесь вместить его силой стресса, лишь бы сохранить исходный дедлайн в пятницу, вы ничего не чините. Вы просто делаете отсутствие планирования невидимым. И всё равно будете чувствовать вину, когда в пятницу срок всё-таки сорвётся.\n\nТеперь я смотрю на это иначе. Я не пытаюсь это впихнуть. Я спрашиваю: «Что выпадет из плана из-за этого?»\n\nЭто не сопротивление и не драма. Это просто базовая прозрачность. Если мы добавляем объём, сроки сдвигаются. Если вы затаскиваете меня на три дополнительные встречи по согласованию, у меня остаётся меньше времени на написание кода. Это не мнения, это последствия.\n\nМного разработчиков думают, что установить границы значит постоянно говорить менеджменту «нет». Обычно всё проще: вы не отказываетесь от работы, вы просто объясняете её реальную цену. Когда эта цена озвучена, пусть бизнес решит, готов ли он её платить.\n\nПарадоксально, но конфликтов от этого становится гораздо меньше. Вы больше не воюете за приоритеты. Вы просто показываете, как устроены ресурсы. Проекты редко проваливаются из-за плохих намерений. Они проваливаются, потому что все делали вид, что ограничений не существует, пока не упал прод."
+  },
+  "color": "var(--orange)"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "post-31",
+  "slug": "ai-last-mile-is-human-adoption",
+  "published": "2026-07-09",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_yesterday-i-listened-to-an-interview-with-share-7480875651881787392-b8zX",
+  "title": {
+    "en": "The Biggest AI Bottleneck Is the Last Mile, Not the Technology",
+    "ru": "Главное узкое место в AI — не технология, а последняя миля"
+  },
+  "takeaway": {
+    "en": "Treat adoption as a core engineering problem: earn trust and fit into existing workflows, not just improve the model.",
+    "ru": "Считайте внедрение главной инженерной задачей: сначала заслужите доверие и впишитесь в привычные процессы, а уже потом улучшайте модель."
+  },
+  "tags": [
+    "Adoption",
+    "Healthcare"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Adoption is ultimately a human problem.",
+      "ru": "Внедрение в конечном счёте — человеческая проблема."
+    },
+    "bullets": {
+      "en": [
+        "Andrey Doronichev argues the biggest AI bottleneck is now the last mile: convincing a 70-year-old dentist that AI belongs in their clinic.",
+        "Building the system is an interesting engineering challenge, but fitting it into a real clinic is often the harder problem.",
+        "Trust comes from integrating into existing workflows, handling edge cases gracefully, and behaving consistently enough for real patients to rely on it."
+      ],
+      "ru": [
+        "Андрей Дороничев считает, что главное узкое место AI теперь — последняя миля: убедить стоматолога, что AI нужен его клинике.",
+        "Построить систему — интересная инженерная задача, но вписать её в реальную клинику часто сложнее.",
+        "Доверие появляется, когда система встраивается в существующие процессы, аккуратно обрабатывает нестандартные случаи и ведёт себя стабильно."
+      ]
+    }
+  },
+  "body": {
+    "en": "Yesterday I listened to an interview with Andrey Doronichev . One idea from the conversation stayed with me. Andrey argued that the biggest bottleneck for AI is no longer the technology itself, but the last mile: convincing a 70-year-old dentist that AI belongs in their clinic and  can genuinely improve the way they work.\n\nThat resonated with me because it’s surprisingly close to what I do every day. At Sully.ai , I work on AI receptionists for healthcare providers, and while building the system is an interesting engineering challenge, getting it to fit naturally into a real clinic is often the harder problem.\n\nThe technical side is only one piece of the puzzle. The system has to earn trust, integrate into existing workflows, handle edge cases gracefully, and behave consistently enough that people are comfortable relying on it with real patients. That’s where a lot of the real work happens.\n\nListening to the interview made me realize that I don’t really think of my job as “building AI” anymore. I think of it as helping bring AI into industries where people have established ways of working and very little tolerance for mistakes. The technology is impressive, but adoption is ultimately a human problem.\n\nIt made me curious whether other people working on AI products have experienced the same shift. Has the biggest challenge in your work become the technology itself, or everything that comes after it?",
+    "ru": "Вчера я слушал интервью с Андреем Дороничевым. Одна мысль из разговора не отпускает. Андрей считает, что главное узкое место в AI — уже не сама технология, а последняя миля: убедить 70-летнего стоматолога, что AI нужен в его клинике и реально улучшает работу.\n\nДля меня это близко к тому, чем я занимаюсь каждый день. В Sully.ai я делаю AI-ресепшенов для медицинских организаций. Построить систему — интересная инженерная задача. Но вписать её в живую клинику часто сложнее.\n\nТехническая часть — лишь одна деталь пазла. Система должна заслужить доверие, встроиться в существующие процессы, аккуратно обрабатывать нестандартные случаи и вести себя достаточно стабильно, чтобы люди спокойно работали с ней с реальными пациентами. Вот где происходит большая часть работы.\n\nПосле интервью я понял, что уже не считаю свою работу «созданием AI». Я думаю о том, как привести AI в отрасли, где у людей сложились устоявшиеся способы работы и очень мало терпимости к ошибкам. Технология впечатляет, но внедрение в конечном счёте — человеческая проблема.\n\nМне интересно, замечают ли другие, кто делает AI-продукты, такой же сдвиг. Стала ли главной трудностью в вашей работе сама технология или всё, что идёт после неё?"
+  },
+  "color": "var(--lime)"
+}

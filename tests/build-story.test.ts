@@ -54,11 +54,11 @@ describe('generator (pure functions on real gh output)', () => {
     expect(isDataOnly(['src/data/build-story.json'])).toBe(true);
     expect(isDataOnly(paths(fixture(18)))).toBe(false);
     expect(isDataOnly(['src/data/build-story.json', 'src/pages/[...locale]/how-its-built.astro'])).toBe(false);
-    expect(isDataOnly(['src/data/posts.json'])).toBe(false);
+    expect(isDataOnly(['src/data/posts/the-new-ai-bottleneck.json'])).toBe(false);
     expect(isDataOnly([])).toBe(false);
   });
 
-  // Any bot's PR is bookkeeping too: publora-sync merges bot/publora-sync PRs that touch posts.json,
+  // Any bot's PR is bookkeeping too: publora-sync merges bot/publora-sync PRs that touch src/data/posts/,
   // and each would otherwise become a pending card and drag "red test first" down.
   // Main's history was rewritten once; GitHub's PR commit lists keep the old ids.
   test('a PR commit main does not contain becomes its rewritten twin on main: same author time, then subject', async () => {
@@ -96,7 +96,7 @@ describe('generator (pure functions on real gh output)', () => {
   test('a PR from a bot/ branch is not a story entry either', async () => {
     const { isBookkeeping } = await gen();
     const pr = (headRefName: string, paths: string[]) => ({ headRefName, files: paths.map((path) => ({ path })) });
-    expect(isBookkeeping(pr('bot/publora-sync', ['src/data/posts.json', 'public/llms.txt']))).toBe(true);
+    expect(isBookkeeping(pr('bot/publora-sync', ['src/data/posts/the-new-ai-bottleneck.json', 'public/llms.txt']))).toBe(true);
     expect(isBookkeeping(pr('bot/build-story', ['src/data/build-story.json']))).toBe(true);
     expect(isBookkeeping(fixture(15))).toBe(true);
     expect(isBookkeeping(fixture(18))).toBe(false);

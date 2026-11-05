@@ -1,7 +1,8 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { deflateSync } from 'node:zlib';
-import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, BLOG_POSTS, OFFERS, postPath } from '../src/data/profile';
+import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, OFFERS, postPath } from '../src/data/profile';
+import { BLOG_POSTS } from '../src/data/posts';
 
 const ROOT_DIR = resolve(import.meta.dir, '..');
 const PUBLIC_DIR = resolve(ROOT_DIR, 'public');

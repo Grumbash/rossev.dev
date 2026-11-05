@@ -1,0 +1,48 @@
+{
+  "id": "post-27",
+  "slug": "turn-problems-into-decisions",
+  "published": "2026-06-13",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_problems-vs-decisions-most-engineers-are-share-7471597853874741248-vn48",
+  "title": {
+    "en": "Problems Are Cheap. Decisions Are What Companies Pay For",
+    "ru": "Проблемы находить несложно. Платят за решения"
+  },
+  "takeaway": {
+    "en": "Turn every problem you raise into a concrete decision with options, so the room knows what to do next.",
+    "ru": "Превращайте каждую проблему, которую поднимаете, в конкретное решение с вариантами, чтобы команда понимала, что делать дальше."
+  },
+  "tags": [
+    "Decision Making",
+    "Communication",
+    "Ownership"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Companies don't pay the highest salaries for finding problems. They pay for reducing uncertainty.",
+      "ru": "Компании платят не за поиск проблем. Они платят за снижение неопределённости."
+    },
+    "bullets": {
+      "en": [
+        "Most engineers spot problems well, but far fewer trace root causes, and very few turn problems into decisions.",
+        "A useful progression runs from observation to diagnosis that shows impact, then to a decision with concrete options.",
+        "The most valuable people in a messy situation are the ones who answer the question \"What should we do next?\""
+      ],
+      "ru": [
+        "Большинство инженеров хорошо замечают проблемы, но причины находят реже, а превращают проблемы в решения очень немногие.",
+        "Полезная последовательность идёт от наблюдения к диагнозу с указанием влияния и затем к решению с конкретными вариантами.",
+        "Самые ценные люди в запутанной ситуации отвечают на вопрос «Что делаем дальше?»."
+      ]
+    }
+  },
+  "body": {
+    "en": "Problems vs Decisions\n\nMost engineers are brilliant at identifying problems. Fewer are good at tracking down root causes. But very few actually know how to turn those problems into decisions.\n\nThink about how it sounds in meetings:\n\nThe Problem: “We don’t have enough people.” (An observation)\n\nThe Diagnosis: “The release is at risk because we don’t have enough people.” (Better, shows impact)\n\nThe Decision: “We need either one additional engineer or a two-week deadline extension.” (Perfect)\n\nCompanies don’t pay the highest salaries for finding problems. They pay for reducing uncertainty.\n\nThe most valuable people in the room aren’t the ones who build the longest list of issues. They’re the ones who look at a messy situation and answer a simple question:\n\n“What should we do next?”",
+    "ru": "Проблемы и решения\n\nБольшинство инженеров отлично видят проблемы. Причины находят уже реже. А превращать проблемы в решения умеют очень немногие.\n\nПосмотрите, как это звучит на встречах.\n\nПроблема: «У нас не хватает людей.» (Это наблюдение.)\n\nДиагноз: «Релиз под угрозой, потому что у нас не хватает людей.» (Лучше, здесь видно влияние.)\n\nРешение: «Нам нужен либо ещё один инженер, либо перенос дедлайна на две недели.» (Вот это уже правильно.)\n\nКомпании не платят самые высокие зарплаты за поиск проблем. Они платят за снижение неопределённости.\n\nСамые ценные люди в комнате — не те, кто составляет самый длинный список проблем. Это те, кто смотрит на запутанную ситуацию и отвечает на простой вопрос:\n\n«Что делаем дальше?»"
+  },
+  "color": "var(--lime)"
+}

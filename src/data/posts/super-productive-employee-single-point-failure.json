@@ -1,0 +1,47 @@
+{
+  "id": "post-34",
+  "slug": "super-productive-employee-single-point-failure",
+  "published": "2026-09-10",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_a-super-productive-employee-is-a-curse-not-share-7503855313096245248-UFEx",
+  "title": {
+    "en": "A Super-Productive Employee Is a Single Point of Failure",
+    "ru": "Сверхпродуктивный сотрудник — это единая точка отказа"
+  },
+  "takeaway": {
+    "en": "Build a team that can survive losing any one person instead of betting the budget on a single rockstar.",
+    "ru": "Собирайте команду, которая переживёт уход любого человека, и не ставьте бюджет на одного рокстара."
+  },
+  "tags": [
+    "Team Structure",
+    "Risk"
+  ],
+  "brief": {
+    "quote": {
+      "en": "A super-productive employee is a curse, not a blessing.",
+      "ru": "Сверхпродуктивный сотрудник — это проклятие, а не благо."
+    },
+    "bullets": {
+      "en": [
+        "For the same $500k budget, one FDE Fullstack+DevOps empowered by AGI, token costs included, or five specialists forming a classic agile team.",
+        "Betting on one rockstar leads to quasi-slavery to that person in the best case and a single point of failure for the business in the worst.",
+        "A five-person team needs more management effort, but it is much harder to break when someone gets sick, burns out, or gets hit by a bus."
+      ],
+      "ru": [
+        "На бюджет в $500k можно нанять одного FDE Fullstack+DevOps, усиленного AGI, с учётом токенов, или пятерых специалистов в классической agile-команде.",
+        "Ставка на одного рокстара в лучшем случае делает вас почти заложником этого человека, а в худшем создаёт единую точку отказа для бизнеса.",
+        "Команда из пяти человек требует больше управления, но её гораздо сложнее сломать, когда кто-то заболел, выгорел или попал под автобус."
+      ]
+    }
+  },
+  "body": {
+    "en": "A super-productive employee is a curse, not a blessing.\n\nRight now startups and companies are at the peak of wanting to hire A-players, and preferably people who are also FDE Fullstack+DevOps, empowered by AGI. But I think this becomes a dead end when the whole system starts depending on that one person.\n\nLet’s imagine that we have a $500k budget. We can hire, for example, 1 person who will be that exact FDE Fullstack+DevOps empowered by AGI, including token costs in this budget. Or we can hire 5 people who are good at one specific thing, basically a good old agile team: 1 BE, 1 FE, 1 FullStack, 1 QA, 1 Team Lead.\n\nAnd here is the question, which system seems more resilient to you? To me, the second one. Steve Jobs famously believed that a small team of A-players could run circles around a giant team of B and C players. I think there is a problem with that idea. Your job as a company manager is to use the budget as efficiently as possible. And if you bet on one rockstar, then in the best case you end up in something close to quasi-slavery to that rockstar, and in the worst case you create a single point of failure for the business. While in the second system you will have to put effort into management, but at the same time the system will be harder to break.\n\nYou may object, “Hey, but I’m not going to hire just anyone! I’ll find a person I can trust!” And I would answer, “Yes, you can, but even then you will spend resources trying to find that exact rockstar, and I’ll remind you that by nature they are a very rare animal, and right now an even scarcer resource on the job market. And even if you find them, they can get sick, they can burn out, or they can simply get hit by a bus. What are you going to do then?”\n\nThat’s why I think it’s possible to find a solution that is good enough. Because not everyone needs a rockstar, everyone needs to multiply their investment, and that is hard to do if the foundation of your system is fragile.\n\nWelcome to the comments to discuss 🧐",
+    "ru": "Сверхпродуктивный сотрудник — это проклятие, а не благо.\n\nСейчас стартапы и компании на пике желания нанимать A-игроков, и желательно таких, кто ещё и FDE Fullstack+DevOps, усиленный AGI. Но я думаю, что это тупик, когда вся система начинает зависеть от одного человека.\n\nДавайте представим, что у нас есть бюджет $500k. Мы можем нанять, например, одного человека, который будет именно таким FDE Fullstack+DevOps, усиленным AGI, и токены включим в этот бюджет. Или же можем нанять пятерых, которые хорошо делают одну конкретную вещь, то есть классическую agile-команду: 1 BE, 1 FE, 1 FullStack, 1 QA, 1 Team Lead.\n\nИ вопрос: какая система, по-вашему, устойчивее? Мне кажется, вторая. Стив Джобс известно считал, что небольшая команда A-игроков может обойти огромную команду B- и C-игроков. Но в этой идее, по-моему, есть проблема. Ваша задача как менеджера компании — расходовать бюджет как можно эффективнее. А если вы ставите на одного рокстара, то в лучшем случае оказываетесь почти в кабале у этого рокстара, а в худшем создаёте единую точку отказа для бизнеса. Во второй системе придётся вкладываться в управление, зато сломать её будет сложнее.\n\nВы можете возразить: «Да я не буду нанимать первого встречного! Найду человека, которому доверяю!» Я бы ответил: «Можете, но даже тогда вы потратите ресурсы на поиск того самого рокстара. И напомню, что такие люди редкость, а сейчас на рынке труда они ещё и дефицитнее. А даже если найдёте, они могут заболеть, выгореть или просто попасть под автобус. Что вы будете делать тогда?»\n\nПоэтому я считаю, что можно найти решение, которое будет достаточно хорошим. Не всем нужен рокстар. Всем нужно умножать свои вложения, а это трудно, если фундамент системы хрупкий.\n\nДобро пожаловать в комментарии, обсудим 🧐"
+  },
+  "color": "var(--orange)"
+}

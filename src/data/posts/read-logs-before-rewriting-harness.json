@@ -1,0 +1,48 @@
+{
+  "id": "post-42",
+  "slug": "read-logs-before-rewriting-harness",
+  "published": "2026-11-02",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7522992144504995840/",
+  "title": {
+    "en": "Before Letting a Model Rewrite Your Harness, Read Your Logs",
+    "ru": "Прежде чем отдать харнесс модели, прочитайте логи"
+  },
+  "takeaway": {
+    "en": "Fix the environment and code bugs your logs reveal before letting a model tune your prompts.",
+    "ru": "Сначала читайте логи и чините баги окружения и кода, и только потом отдавайте промпты модели на подбор."
+  },
+  "tags": [
+    "Agent Harness",
+    "Claude Code",
+    "Debugging"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The harness was never the product. It's something you re-derive for every model.",
+      "ru": "Харнесс никогда не был продуктом. Его надо заново выводить для каждой модели."
+    },
+    "bullets": {
+      "en": [
+        "Every failure in the smoke runs was an environment or code bug found by reading logs, not a prompt edit a search would discover.",
+        "One full run costs $2–5 and about 30 minutes, so telling a real improvement from noise takes dozens of runs per variant.",
+        "Saving transcripts and replaying from the turn where things broke tests each edit in cents and minutes, at the exact decision it targets."
+      ],
+      "ru": [
+        "Каждый сбой в smoke-прогонах оказался багом окружения или кода, найденным по логам, а не правкой промпта, которую мог бы найти поиск.",
+        "Один полный прогон стоит $2–5 и около 30 минут, поэтому отличить реальное улучшение от шума можно только на десятках прогонов на каждый вариант.",
+        "Если сохранять транскрипты и переигрывать их с хода, где всё пошло не так, каждая правка проверяется за центы и минуты именно в том решении, которое она меняет."
+      ]
+    }
+  },
+  "body": {
+    "en": "The team behind Claude Code deletes most of Claude Code's prompt every time a new model ships. I think it's the most useful thing they've said this year.\n\nBoris Cherny, who leads Claude Code, said on stage that for Opus 5 they cut more than 80% of the system prompt. With each new model they run an ablation: delete the whole prompt, bring it back line by line, keep only what changes behaviour.\n\nThe harness was never the product. It's something you re-derive for every model.\n\nLast week I tried to automate that re-derivation at YAGNI, where agent teams take engineering tickets to a merged pull request. The plan: let a self-improving harness loop (Harness²) propose edits to our agent's skill and prompts, test them on real tickets, keep what wins.\n\nI froze it after the first smoke runs. Every failure we found (a model's chatty preamble becoming a commit message, 18 minutes spent looking for a browser the sandbox didn't have, a verification step overrunning its clock) was an environment or code bug, found by reading logs. None of them was a prompt edit a search would discover. And one full run costs $2–5 and ~30 minutes, so separating a real improvement from noise takes dozens of runs per variant.\n\nWhat we do instead: save every run's transcript, cut it at the turn where things went wrong, and replay from there with the current skill and with the proposed edit. Cents and minutes instead of dollars and half an hour, and each edit is tested at the exact decision it's meant to change.\n\nMy takeaway: before you let a model rewrite your harness, read your logs. Most of what looks like a prompt problem isn't one.\n\nAnd if your CLAUDE.md has been growing since last year, it's probably encoding fixes for a model you no longer use.",
+    "ru": "Команда, которая стоит за Claude Code, удаляет большую часть его системного промпта каждый раз, когда выходит новая модель. Считаю, это самое полезное, что они сказали в этом году.\n\nБорис Черни, который руководит Claude Code, рассказал на сцене, что для Opus 5 они сократили системный промпт больше чем на 80%. Для каждой новой модели они проводят аблейшн: удаляют весь промпт, затем возвращают его по одной строке и оставляют только то, что меняет поведение.\n\nХарнесс никогда не был продуктом. Его надо заново выводить для каждой модели.\n\nНа прошлой неделе я попробовал автоматизировать эту работу в YAGNI, где агентные команды берут инженерные тикеты и доводят их до смерженного пул-реквеста. План был такой: пусть самосовершенствующийся цикл (Harness²) предлагает правки в скилл и промпты нашего агента, мы гоняем их на реальных тикетах и оставляем то, что выигрывает.\n\nЯ остановил эксперимент после первых smoke-прогонов. Каждый найденный сбой (болтливая преамбула модели, которая стала сообщением коммита, 18 минут поиска браузера, которого не было в песочнице, проверка, не уложившаяся в своё время) оказался багом окружения или кода, и нашёл я его, читая логи. Ни один из них не был правкой промпта, которую мог бы найти поиск. А один полный прогон стоит $2–5 и около 30 минут, поэтому, чтобы отличить реальное улучшение от шума, нужны десятки прогонов на каждый вариант.\n\nТеперь делаю иначе. Сохраняю транскрипт каждого прогона, обрезаю его на ходе, где всё пошло не так, и переигрываю оттуда: с текущим скиллом и с предложенной правкой. Центы и минуты вместо долларов и получаса, и каждая правка проверяется именно в том решении, которое она должна менять.\n\nМой вывод: прежде чем отдавать модели переписывание харнесса, прочитайте логи. Большая часть того, что выглядит как проблема промпта, ею не является.\n\nИ если ваш CLAUDE.md разрастается с прошлого года, скорее всего, в нём зашиты фиксы для модели, которой вы уже не пользуетесь."
+  },
+  "color": "var(--orange)"
+}

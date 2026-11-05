@@ -1,7 +1,8 @@
 ---
 // One indexable, shareable page per post: the same brief as the inline reader, plus `body`
 // when a post has one (then this page, not LinkedIn, is the original: see blogPostingLd).
-import { BLOG_POSTS, blogPostingLd, postPath, readTimeLabel, type BlogPost } from '../../../data/profile';
+import { BLOG_POSTS } from '../../../data/posts';
+import { blogPostingLd, postPath, readTimeLabel, type BlogPost } from '../../../data/profile';
 import Base from '../../../layouts/Base.astro';
 import PostBrief from '../../../components/PostBrief.astro';
 import { localeOf, localeParams, localePath, t } from '../../../i18n';

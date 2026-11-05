@@ -1,0 +1,48 @@
+{
+  "id": "post-25",
+  "slug": "silence-is-agreement-speak-early",
+  "published": "2026-06-13",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_silence-is-agreement-one-of-the-most-expensive-share-7471583020253323264-oEtk",
+  "title": {
+    "en": "Silence Is Agreement: Speak Up About Constraints Early",
+    "ru": "Молчание означает согласие: говорите о ограничениях заранее"
+  },
+  "takeaway": {
+    "en": "Name your constraints (time, priorities, missing information) as soon as you see them, because silence will be read as a yes.",
+    "ru": "Называйте ограничения (время, приоритеты, нехватку информации), как только их увидите, потому что молчание воспримут как согласие."
+  },
+  "tags": [
+    "Communication",
+    "Ownership",
+    "Burnout"
+  ],
+  "brief": {
+    "quote": {
+      "en": "In most companies, silence is interpreted as agreement",
+      "ru": "В большинстве компаний молчание воспринимают как согласие."
+    },
+    "bullets": {
+      "en": [
+        "Leadership cannot see your constraints automatically, so a lack of time, shifting priorities or missing information stays invisible unless you state it.",
+        "Staying quiet about an unrealistic deadline or a conflicting priority means implicitly accepting the burnout that comes with it.",
+        "Raising a problem early leaves plenty of options to fix the course, while raising it late forces firefighting and missed expectations."
+      ],
+      "ru": [
+        "Руководство не видит ваши ограничения само по себе, поэтому нехватка времени, смена приоритетов или недостаток информации остаются невидимыми, пока вы о них не скажете.",
+        "Если промолчать о нереалистичном дедлайне или конфликтующем приоритете, вы неявно соглашаетесь на выгорание.",
+        "Если сообщить о проблеме заранее, вариантов исправить ситуацию много, а если поздно, остаётся только тушить пожары и срывать ожидания."
+      ]
+    }
+  },
+  "body": {
+    "en": "Silence Is Agreement\n\nOne of the most expensive mistakes engineers make is assuming management can automatically see their constraints\n\nThey can’t\n\nIf you don’t explicitly call out a lack of time, shifting priorities, or missing information, leadership will naturally assume you have enough of all three\n\nIn most companies, silence is interpreted as agreement\n\nNot because managers are evil or incompetent. Everyone is just operating with incomplete data. If you see an unrealistic deadline or a conflicting priority and choose to stay quiet, you’re implicitly signing up for the burnout\n\nThe math here is simple. Early warning means plenty of options to fix the course. Late warning means firefighting and missed expectations\n\nIf something is broken, speak up early. It’s not complaining; it’s giving your team a chance to pivot",
+    "ru": "Одна из самых дорогих ошибок, которую совершают инженеры: они думают, что менеджмент сам видит их ограничения.\n\nНе видит.\n\nЕсли вы прямо не говорите о нехватке времени, смене приоритетов или отсутствии информации, руководство по умолчанию решит, что всего этого у вас достаточно.\n\nВ большинстве компаний молчание воспринимают как согласие.\n\nДело не в том, что менеджеры плохие или некомпетентные. Просто все работают с неполными данными. Если вы видите нереалистичный дедлайн или конфликтующий приоритет и молчите, вы фактически подписываетесь на выгорание.\n\nЛогика здесь простая. Раннее предупреждение даёт много вариантов, как исправить курс. Позднее предупреждение означает тушение пожаров и сорванные ожидания.\n\nЕсли что-то сломано, говорите об этом сразу. Это не жалоба, а шанс для команды перестроиться."
+  },
+  "color": "var(--lime)"
+}

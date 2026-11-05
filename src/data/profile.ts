@@ -1,4 +1,3 @@
-import POSTS from './posts.json';
 
 export interface CaseStudy {
   id: string;
@@ -793,6 +792,4 @@ export const SKILL_USAGE: Record<string, string[]> = {
   'Product Strategy': ['exp-yagni', 'exp-kingpin']
 };
 
-// The posts live in posts.json so the Publora sync (scripts/ci/publora-sync.ts) can prepend new
-// ones with a small, machine-made diff. Array order is the home grid order; the sync prepends.
-export const BLOG_POSTS: BlogPost[] = POSTS as BlogPost[];
+// The posts themselves are files, one per post: BLOG_POSTS in ./posts.ts (server-side only).

@@ -1,0 +1,48 @@
+{
+  "id": "post-4",
+  "slug": "ai-agents-30-percent-more-code",
+  "published": "2026-10-23",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 3,
+  "url": "https://www.linkedin.com/posts/rossev_ai-agents-helped-developers-write-30-more-share-7519300584580087809-F6Qp",
+  "title": {
+    "en": "AI Agents Wrote More Code, But the Bottleneck Moved to Review",
+    "ru": "AI-агенты написали больше кода, но узким местом стало ревью"
+  },
+  "takeaway": {
+    "en": "Measure cycle time and review capacity after adopting AI coding tools, not just code volume.",
+    "ru": "После внедрения AI-инструментов для кода измеряйте cycle time и пропускную способность ревью, а не только объём кода."
+  },
+  "tags": [
+    "AI Agents",
+    "Code Review",
+    "Delivery"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The coding tool sped up one step; the rest of the process stayed the same.",
+      "ru": "Инструмент для кода ускорил один этап, а остальной процесс остался прежним."
+    },
+    "bullets": {
+      "en": [
+        "A Harvard study of about 700 firms and 700,000 engineers found that AI agents raised lines of code by 30%, commits by 20%, and pull requests by 23%.",
+        "Resolved Jira issues and epics barely changed, and employment did not move, so the extra output did not turn into more shipped work.",
+        "After agent adoption, PR review time rose 49%, PRs with requested changes nearly doubled, and comments per PR went up 35%."
+      ],
+      "ru": [
+        "Гарвардское исследование около 700 компаний и 700 000 инженеров показало, что AI-агенты подняли количество строк кода на 30%, коммиты на 20%, а PR на 23%.",
+        "Закрытые задачи в Jira и эпики почти не изменились, и штат тоже, так что лишний объём не превратился в больше выпущенной работы.",
+        "После внедрения агентов время ревью PR выросло на 49%, PR с запрошенными правками почти удвоились, а комментариев на PR стало на 35% больше."
+      ]
+    }
+  },
+  "body": {
+    "en": "AI agents helped developers write 30% more code. The companies in this study didn't ship more.\n\nA new Harvard paper by Chen and Stratton looks at 300 million work events across around 700 firms and 700,000 engineers, from 2021 to 2026. It uses GitHub, Jira, and calendar activity, not survey responses.\n\nWith AI assistants, commits rose 9% and pull requests 5%. With agents, the increases were bigger: 30% more lines of code, 20% more commits, and 23% more pull requests.\n\nBut resolved Jira issues and epics barely changed. Employment didn't move either.\n\nThe extra work seems to have landed in review. After agent adoption, PR review time rose 49%, PRs with requested changes nearly doubled, and comments per PR went up 35%. Another 14% of engineers got pulled into review work.\n\nThat makes sense when you remember engineers spend only 30-40% of their time writing code. Speeding up that part won't make reviews, verification, or deployment move any faster.\n\nI see teams adopt Copilot or Claude Code, get a burst of output, then wonder why cycle time hasn't changed. Sometimes the review queue is the reason. The coding tool sped up one step; the rest of the process stayed the same.\n\nBefore celebrating another jump in code volume, I'd look at review capacity. In your team, what became the bottleneck after AI coding tools arrived?",
+    "ru": "Исследование Chen и Stratton из Гарварда показывает неприятную картину. AI-агенты помогли разработчикам написать на 30% больше кода. Компании из выборки при этом выпускали не больше.\n\nАвторы посмотрели 300 миллионов рабочих событий примерно в 700 компаниях и у 700 000 инженеров, с 2021 по 2026 год. Данные взяли из GitHub, Jira и календарей, а не из опросов.\n\nС AI-ассистентами коммиты выросли на 9%, PR на 5%. С агентами рост стал больше: на 30% строк кода, на 20% коммитов и на 23% PR.\n\nНо закрытые задачи в Jira и эпики почти не изменились. Штат тоже не двигался.\n\nЛишняя работа, похоже, осела на ревью. После внедрения агентов время ревью PR выросло на 49%, PR с запрошенными правками почти удвоились, а комментариев на PR стало на 35% больше. Ещё 14% инженеров подключились к ревью.\n\nЭто логично, если вспомнить, что инженеры тратят на написание кода только 30–40% времени. Ускорить эту часть значит не ускорить ревью, проверку и деплой.\n\nЯ вижу, как команды ставят Copilot или Claude Code, получают всплеск выработки и потом недоумевают, почему cycle time не изменился. Иногда причина в очереди на ревью. Инструмент для кода ускорил один этап, а остальной процесс остался прежним.\n\nПрежде чем радоваться очередному скачку объёма кода, я бы посмотрел на пропускную способность ревью. А в вашей команде что стало узким местом после появления AI-инструментов для кода?"
+  },
+  "color": "var(--lime)"
+}

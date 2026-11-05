@@ -7,7 +7,8 @@ import { execSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
-import { BLOG_POSTS, HOME_POST_COUNT, type BlogPost } from '../src/data/profile';
+import { HOME_POST_COUNT, type BlogPost } from '../src/data/profile';
+import { BLOG_POSTS, postFile, postJson } from '../src/data/posts';
 
 setDefaultTimeout(240_000);
 
@@ -55,8 +56,7 @@ beforeAll(() => {
   mkdirSync('.home-flat', { recursive: true });
   dir = mkdtempSync(join('.home-flat', 'build-'));
   for (const p of ['src', 'public', 'scripts', 'astro.config.mjs', 'tsconfig.json', 'package.json']) cpSync(p, join(dir, p), { recursive: true });
-  const posts = [...Array.from({ length: LONG_POSTS }, (_, i) => longPost(i)), ...BLOG_POSTS];
-  writeFileSync(join(dir, 'src/data/posts.json'), JSON.stringify(posts, null, 2));
+  for (const p of Array.from({ length: LONG_POSTS }, (_, i) => longPost(i))) writeFileSync(join(dir, postFile(p)), postJson(p));
   execSync(`${resolve('node_modules/.bin/astro')} build`, { cwd: dir, stdio: 'pipe', env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' } });
   en = readFileSync(join(dir, 'dist/index.html'), 'utf8');
   ru = readFileSync(join(dir, 'dist/ru/index.html'), 'utf8');

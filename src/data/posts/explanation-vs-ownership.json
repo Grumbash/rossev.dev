@@ -1,0 +1,48 @@
+{
+  "id": "post-9",
+  "slug": "explanation-vs-ownership",
+  "published": "2026-06-13",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 3,
+  "url": "https://www.linkedin.com/posts/rossev_explanation-vs-ownership-theres-a-massive-share-7471699825135308800-MENb",
+  "title": {
+    "en": "Explanations Describe Failure, Ownership Changes the Plan",
+    "ru": "Объяснение описывает провал, ownership меняет план"
+  },
+  "takeaway": {
+    "en": "After a failure, pair every explanation with a concrete decision or revised plan.",
+    "ru": "После провала к каждому объяснению добавляйте конкретное решение или новый план."
+  },
+  "tags": [
+    "Ownership",
+    "Accountability",
+    "Leadership"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Explanations only describe reality. Ownership changes it.",
+      "ru": "Объяснения только описывают реальность. Оунершип её меняет."
+    },
+    "bullets": {
+      "en": [
+        "Explanations such as changed requirements or reassigned engineers describe what happened but leave the outcome unchanged.",
+        "Ownership means pairing the context with a decision, such as a revised timeline or a choice to drop a feature or add help.",
+        "The most valuable people turn uncertainty into a choice rather than explaining every problem."
+      ],
+      "ru": [
+        "Объяснения вроде «требования поменялись» или «инженера перевели» описывают, что произошло, но ничего не меняют.",
+        "Оунершип означает связать контекст с решением: новым сроком, отказом от фичи или запросом помощи.",
+        "Самые ценные люди превращают неопределённость в выбор, а не объясняют каждую проблему."
+      ]
+    }
+  },
+  "body": {
+    "en": "Explanation vs Ownership\n\nThere’s a massive gap between explaining a failure and taking ownership of it\n\nExplanations sound reasonable:\n\n“The requirements changed.”\n“The engineer was reassigned.”\n“We didn’t have enough resources.”\n\nBut explanations only describe reality. Ownership changes it. Taking ownership means you immediately pair the context with a decision:\n\n“The requirements changed, so the old estimate is no longer valid. Here is the revised timeline.”\n“We are short-staffed. To hit the date, we either need to drop Feature X or bring in help.”\n\nThe most valuable people I’ve worked with weren’t the ones who could explain every problem. They were the ones who could turn uncertainty into a choice",
+    "ru": "Объяснение и ownership: большая разница между тем, чтобы объяснить провал, и тем, чтобы взять за него ответственность.\n\nОбъяснения звучат разумно:\n\n«Требования поменялись».\n«Инженера перевели на другой проект».\n«Нам не хватило ресурсов».\n\nНо объяснения только описывают реальность. Ownership её меняет. Взять ownership значит сразу связать контекст с решением:\n\n«Требования поменялись, поэтому старая оценка больше не работает. Вот новый таймлайн».\n«У нас не хватает людей. Чтобы успеть к дате, нужно либо убрать фичу X, либо привлечь помощь».\n\nСамые ценные люди, с которыми я работал, были не теми, кто мог объяснить каждую проблему. Они умели превращать неопределённость в выбор."
+  },
+  "color": "var(--orange)"
+}

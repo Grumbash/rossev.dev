@@ -4,7 +4,8 @@
 // index. Checks the built output and the deploy config, not the source.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { BLOG_POSTS, PROFILE, blogPostingLd, cardReadTime, fullPostLink, linkedinLabel, readTimeLabel } from '../src/data/profile';
+import { BLOG_POSTS } from '../src/data/posts';
+import { PROFILE, blogPostingLd, cardReadTime, fullPostLink, linkedinLabel, readTimeLabel } from '../src/data/profile';
 import { bodyBlocks, bodyHtml } from '../src/data/post-body';
 import budgets from '../perf-budgets.json';
 import { evaluateBytes, type Check } from '../scripts/perf-check';

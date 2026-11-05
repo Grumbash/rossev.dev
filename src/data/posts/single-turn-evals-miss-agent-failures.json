@@ -1,0 +1,47 @@
+{
+  "id": "post-38",
+  "slug": "single-turn-evals-miss-agent-failures",
+  "published": "2026-10-27",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7520925644172681218/",
+  "title": {
+    "en": "Single-Turn Benchmarks Reward Guessing, Not Agent Work",
+    "ru": "Однократные бенчмарки поощряют угадывание, а не работу агента"
+  },
+  "takeaway": {
+    "en": "For agents, grade whether the task got done across the whole loop, not the first reply alone.",
+    "ru": "Для агентов оценивайте, доведена ли задача до конца за весь цикл, а не только по первому ответу."
+  },
+  "tags": [
+    "Evals",
+    "Agents"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Single-turn benchmarks reward the exact habit that makes an AI agent annoying to work with: guessing what you meant on the first try.",
+      "ru": "Однократные бенчмарки поощряют ровно ту привычку, из-за которой с AI-агентом трудно работать: угадывать, что вы имели в виду, с первой попытки."
+    },
+    "bullets": {
+      "en": [
+        "A model that scores well on a single-turn benchmark can still fail in a product, because agents work over several turns.",
+        "Contradictions, infinite loops and false task completion only show up after the first turn, so one-shot tests miss them.",
+        "Keep single-turn evals for narrow one-shot capabilities, and for agents grade whether the task actually got done at the end of the loop."
+      ],
+      "ru": [
+        "Модель с высоким результатом в однократном бенчмарке может провалиться в продукте, потому что агенты работают в несколько ходов.",
+        "Противоречия, бесконечные циклы и ложное завершение задачи проявляются только после первого хода, поэтому однократные тесты их пропускают.",
+        "Однократные эвалы оставьте для узких задач, а для агентов проверяйте, доведена ли задача до конца."
+      ]
+    }
+  },
+  "body": {
+    "en": "Single-turn benchmarks reward the exact habit that makes an AI agent annoying to work with: guessing what you meant on the first try.\n\nWe tend to assume a model that scores well on a benchmark will do well in our product. With agents, that link breaks.\n\nA one-shot test gives the model one prompt and grades the first answer. To score well, it has to fill in everything you left out and hand back a finished-looking reply immediately.\n\nThat’s the opposite of what I want from an agent. I don’t need a tool that speculates for me. I need it to run the loop: inspect actual state, ask when critical context is missing instead of guessing, and complete the task over several turns.\n\nThe multi-turn eval piece I read this week was a vendor’s own blog - and they sell the alternative, so discount it accordingly - but their list of failure modes still reads true to me: contradictions, infinite loops, false task completion. None of those surface on turn one.\n\nSingle-turn evals are still cheap, reproducible, and fine for narrow capabilities that genuinely are one-shot. Not every task needs an agent loop, and multi-turn evals take real effort to build and maintain.\n\nSo the shift I’d suggest is smaller than throwing away your eval suite: for anything that behaves like an agent, grade the end of the loop - whether the task actually got done - instead of grading turn one in isolation.\n\nIf the first reply looks complete, that may be exactly the problem.",
+    "ru": "Однократные бенчмарки поощряют ровно ту привычку, из-за которой с AI-агентом трудно работать: угадывать, что вы имели в виду, с первой попытки.\n\nМы обычно считаем, что модель, которая хорошо проходит бенчмарк, хорошо справится и в нашем продукте. С агентами эта связь ломается.\n\nОднократный тест даёт модели один промпт и оценивает первый ответ. Чтобы получить высокий балл, модель должна додумать всё, что вы не написали, и сразу выдать ответ, который выглядит законченным.\n\nЭто противоположность того, что мне нужно от агента. Мне не нужен инструмент, который гадает за меня. Мне нужно, чтобы он крутил цикл: смотрел на реальное состояние, спрашивал, когда не хватает важного контекста, и доводил задачу за несколько ходов.\n\nНа этой неделе я читал разбор многоходовых эвалов в блоге вендора. Вендор продаёт альтернативу, так что делайте скидку. Но список типовых сбоев там верный: противоречия, бесконечные циклы, ложное завершение задачи. Ни один из них не проявляется на первом ходу.\n\nОднократные эвалы по-прежнему дешёвые, воспроизводимые и годятся для узких задач, которые действительно решаются за один ход. Не каждой задаче нужен цикл агента, а многоходовые эвалы стоят серьёзных усилий на создание и поддержку.\n\nПоэтому сдвиг, который я предлагаю, меньше, чем выбросить весь набор эвалов. Для всего, что ведёт себя как агент, оценивайте конец цикла: действительно ли задача сделана. Не смотрите на первый ход в отрыве от остального.\n\nЕсли первый ответ выглядит законченным, возможно, это и есть проблема."
+  },
+  "color": "var(--orange)"
+}

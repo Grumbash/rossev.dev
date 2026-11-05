@@ -1,0 +1,48 @@
+{
+  "id": "post-20",
+  "slug": "pressure-does-not-speed-up-engineering",
+  "published": "2026-04-19",
+  "category": "delivery",
+  "categoryLabel": {
+    "en": "DELIVERY",
+    "ru": "ДЕЛИВЕРИ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_most-founders-do-not-want-engineering-they-share-7451635064104230912-DNkI",
+  "title": {
+    "en": "Pressure Does Not Make Engineering Faster",
+    "ru": "Давление не ускоряет разработку"
+  },
+  "takeaway": {
+    "en": "Real speed comes from understanding constraints and protecting quality, not from pushing the team harder.",
+    "ru": "Реальная скорость берётся из понимания ограничений и защиты качества, а не из давления на команду."
+  },
+  "tags": [
+    "Delivery",
+    "Founders",
+    "Quality"
+  ],
+  "brief": {
+    "quote": {
+      "en": "They do not get speed. They get distortion.",
+      "ru": "Скорости они не получают. Они получают искажение."
+    },
+    "bullets": {
+      "en": [
+        "Founders often treat engineering like a vending machine for features, ordering faster delivery by adding pressure.",
+        "Pressure on a system nobody fully understands brings worse quality, more chaos, more churn and less predictable delivery.",
+        "Real delivery speed comes from understanding constraints, sequencing work properly and protecting quality."
+      ],
+      "ru": [
+        "Фаундеры часто относятся к разработке как к автомату по выдаче фич: нажали сильнее и ждут, что всё поедет быстрее.",
+        "Давление на систему, которую никто до конца не понимает, даёт худшее качество, больше хаоса, больше оттока и менее предсказуемую поставку.",
+        "Настоящая скорость поставки появляется, когда вы понимаете ограничения, правильно выстраиваете порядок работ и защищаете качество."
+      ]
+    }
+  },
+  "body": {
+    "en": "Most founders do not want engineering.\n\nThey want a vending machine for features.\n\nPush harder.  \nScope faster.  \nShip now.  \nNegotiate the timeline.\n\nBut engineering does not work like that.\n\nThe more pressure you add to a system you do not understand, the more you get:\n- worse quality\n- more chaos\n- more churn\n- less predictable delivery\n\nSoftware is not a checklist.  \nAnd deadlines do not become real just because a founder says them out loud.\n\nIf you want to sell a square table, you need to build a square table.\n\nIf you keep cutting the corners to move faster, eventually you are selling something round.\n\nAnd that is not what the customer asked for.\n\nThat is what happens when companies treat engineering like a feature factory.\n\nThey do not get speed.  \nThey get distortion.\n\nReal delivery speed comes from understanding constraints, sequencing work properly, and protecting quality.\n\nNot from pushing harder.\n\nHave you seen this pattern in startups?",
+    "ru": "Большинство фаундеров не хотят заниматься разработкой.\n\nИм нужен автомат по выдаче фич. Жмёшь кнопку и получаешь результат.\n\nДавите сильнее. Режете скоуп быстрее. Выкатываем сейчас. Договоримся о сроках.\n\nНо разработка так не работает.\n\nЧем больше давления вы добавляете на систему, которую не понимаете, тем больше получаете:\n- худшее качество\n- больше хаоса\n- больше оттока\n- менее предсказуемую поставку\n\nПрограммное обеспечение — это не чеклист. А дедлайны не становятся реальными оттого, что фаундер произнёс их вслух.\n\nЕсли вы хотите продать квадратный стол, его нужно построить квадратным.\n\nЕсли постоянно срезать углы ради скорости, в конце концов вы будете продавать что-то круглое.\n\nА заказчик просил не об этом.\n\nТак получается, когда компании относятся к разработке как к конвейеру фич.\n\nСкорости они не получают. Они получают искажение.\n\nНастоящая скорость поставки берётся из понимания ограничений, правильного порядка работ и защиты качества.\n\nНе из того, что вы давите сильнее.\n\nВы замечали этот паттерн в стартапах?"
+  },
+  "color": "var(--orange)"
+}

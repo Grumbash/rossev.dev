@@ -4,11 +4,13 @@
 // already on the site (matched by the numeric LinkedIn activity id, since the site keeps vanity
 // URLs), asks a cheap OpenRouter model for the site entry (EN brief + RU adaptation of the full
 // text) under a strict JSON schema, rejects anything invalid or with numbers the post never
-// said, and writes the entries to src/data/posts.json. The workflow opens or updates ONE PR;
+// said, and writes each entry to its own file in src/data/posts/. The workflow opens or updates ONE PR;
 // nothing new means no commit and no PR. Publora and OpenRouter are mocked here.
 import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
-import { BLOG_POSTS, type BlogPost } from '../src/data/profile';
+import type { BlogPost } from '../src/data/profile';
+import { BLOG_POSTS, postFile, postJson } from '../src/data/posts';
+import { postsAfter } from './fixtures/posts';
 import {
   CATEGORY_LABELS,
   systemPrompt,
@@ -29,7 +31,6 @@ import {
 } from '../scripts/ci/publora-sync';
 import { callOpenRouter } from '../scripts/ci/openrouter';
 
-const POSTS_JSON = 'src/data/posts.json';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 
 // --- fixtures ----------------------------------------------------------------------------------
@@ -183,27 +184,14 @@ function harness(opts: { groups?: Group[]; publora?: 'ok' | '401' | '500'; draft
     writeFile: (p: string, s: string) => void (writes[p] = (writes[p] ?? '') + s),
     log: (s: string) => void logs.push(s),
   };
-  return { calls, logs, writes, env, deps };
+  return { calls, logs, writes, env, deps, base: opts.posts ?? SITE };
 }
-const written = (h: ReturnType<typeof harness>): BlogPost[] | undefined => (h.writes[POSTS_JSON] ? JSON.parse(h.writes[POSTS_JSON]) : undefined);
+const written = (h: ReturnType<typeof harness>) => postsAfter(h.base, h.writes);
 const toModel = (h: ReturnType<typeof harness>) => h.calls.filter((c) => c.url.startsWith('https://openrouter.ai/'));
 
 // --- the posts data ----------------------------------------------------------------------------
 
-describe('posts live in src/data/posts.json so a script can append safely', () => {
-  test('profile.ts exports exactly the posts in posts.json, typed, nothing lost in the move', () => {
-    expect(existsSync(POSTS_JSON)).toBe(true);
-    const json = readJson(POSTS_JSON);
-    expect(BLOG_POSTS).toEqual(json);
-    expect(BLOG_POSTS.slice(-9).map((p) => p.id).sort()).toEqual(['post-1', 'post-2', 'post-3', 'post-4', 'post-5', 'post-6', 'post-7', 'post-8', 'post-9'].sort());
-    expect(readFileSync('src/data/profile.ts', 'utf8')).not.toMatch(/export const BLOG_POSTS: BlogPost\[\] = \[\s*\{/);
-  });
-
-  test('posts.json is stable, pretty JSON with a trailing newline (machine edits make small diffs)', () => {
-    const raw = readFileSync(POSTS_JSON, 'utf8');
-    expect(raw).toBe(JSON.stringify(JSON.parse(raw), null, 2) + '\n');
-  });
-
+describe('the posts on the site (one file each: tests/posts-store.test.ts)', () => {
   test('every existing post passes the same entry check a generated one must pass', () => {
     for (const p of BLOG_POSTS) expect(checkEntry(p as BlogPost), p.id).toEqual([]);
   });
@@ -381,8 +369,9 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     for (const p of added) expect(checkEntry(p)).toEqual([]);
     expect(new Set(posts.map((p) => p.id)).size).toBe(posts.length);
     expect(new Set(posts.map((p) => p.slug)).size).toBe(posts.length);
-    // Pretty JSON, exactly what the file check above expects.
-    expect(h.writes[POSTS_JSON]).toBe(JSON.stringify(posts, null, 2) + '\n');
+    // Only the two new posts' files, pretty JSON, exactly what the file check expects.
+    expect(Object.keys(h.writes).filter((p) => p.startsWith('src/data/posts/')).sort()).toEqual(added.map(postFile).sort());
+    for (const p of added) expect(h.writes[postFile(p)]).toBe(postJson(p));
     expect(toModel(h).length).toBe(2);
   });
 
@@ -439,7 +428,7 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('none');
     expect(toModel(h).length).toBe(0);
-    expect(h.writes[POSTS_JSON]).toBeUndefined();
+    expect(written(h)).toBeUndefined();
     expect(h.writes['.publora/pr-body.md']).toBeUndefined();
     expect(h.writes['/tmp/gh-output']).toMatch(/^added=0$/m);
     expect(h.logs.join('\n')).toMatch(/0 new posts?/i);
@@ -458,7 +447,7 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
     const junk = harness({ drafts: { 'waiting problem': 'Sure! Here is the JSON: {', 'Ownership is not on-call': '{}' } });
     const none = await run(junk.env, junk.deps);
     expect(none.status).toBe('none');
-    expect(junk.writes[POSTS_JSON]).toBeUndefined();
+    expect(written(junk)).toBeUndefined();
     expect(junk.writes['/tmp/gh-output']).toMatch(/^added=0$/m);
   });
 
@@ -467,7 +456,7 @@ describe('a sync run end to end, with Publora and OpenRouter mocked', () => {
       const h = harness({ publora: mode });
       const out = await run(h.env, h.deps);
       expect(out.status).toBe('error');
-      expect(h.writes[POSTS_JSON]).toBeUndefined();
+      expect(written(h)).toBeUndefined();
       const log = h.logs.join('\n');
       expect(log).toContain(mode);
       expect(log).not.toContain('sk_publora_test_secret');
@@ -724,7 +713,7 @@ describe('nothing is half-written', () => {
     };
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('error');
-    expect(h.writes[POSTS_JSON]).toBeUndefined();
+    expect(written(h)).toBeUndefined();
   });
 });
 
@@ -795,7 +784,7 @@ describe('the stubs already on the site get their full text and a brief regenera
       const h = harness({ groups: [GROUPS[1]], posts: STUBS, drafts: { 'applied systems thinking': draft } });
       const out = await run(h.env, h.deps);
       expect(out.status, JSON.stringify(draft).slice(0, 60)).toBe('none');
-      expect(h.writes[POSTS_JSON]).toBeUndefined();
+      expect(written(h)).toBeUndefined();
       expect(h.logs.join('\n')).toMatch(/skip/i);
     }
   });

@@ -2,7 +2,7 @@
 // Gleb published through Publora, skips the ones already on the site (matched by the numeric
 // LinkedIn activity id: the site keeps vanity urls, Publora returns URNs) or older than
 // PUBLORA_SINCE, asks a cheap OpenRouter model (PUBLORA_SYNC_MODEL) for the site entry under a
-// strict JSON schema, validates it, and prepends the entries to src/data/posts.json. The workflow
+// strict JSON schema, validates it, and writes each entry to its own file, src/data/posts/<slug>.json. The workflow
 // then opens or updates ONE PR; review happens there, nothing is pushed to main.
 //
 // Threat model: the post text and the model's answer are untrusted. The model gets no tools and a
@@ -16,6 +16,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import type { BlogPost } from '../../src/data/profile';
+import { changedPostFiles, readPosts } from '../../src/data/posts';
 import { callOpenRouter, redact, type Msg } from './openrouter';
 import { sanitize } from './watchdog';
 import { ruStyleProblems } from '../../src/i18n/ru-style';
@@ -26,7 +27,6 @@ import { ruStyleProblems } from '../../src/i18n/ru-style';
 export const DEFAULT_MODEL = 'anthropic/claude-haiku-5.5,z-ai/glm-5.3-flash';
 // The oldest own post in the backfill (2025-08-19); older ones are job shares or have no LinkedIn id.
 export const DEFAULT_SINCE = '2025-08-01';
-export const POSTS_JSON = 'src/data/posts.json';
 // LinkedIn activity ids Gleb decided not to put on the site: closing the bot PR alone would bring them back daily.
 export const IGNORE_JSON = 'src/data/publora-ignore.json';
 // Posts published on LinkedIn without Publora (or before it): id, vanity url and the full text.
@@ -507,6 +507,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     }
 
     let posts = deps.readPosts();
+    const before = posts;
     const onSite = new Set(posts.map((p) => activityId(p.url)).filter(Boolean));
     const ignored = new Set((deps.readIgnored?.() ?? []).map(String));
     const fresh = new Map<string, Target>();
@@ -692,10 +693,10 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
       output(0);
       return { status: 'none' as const, added: 0, skipped };
     }
-    // The PR body first: if any write fails, posts.json is left as it was.
+    // The PR body first: if any write fails, the post files are left as they were.
     const newestFirst = [...added].reverse();
     if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ added: newestFirst, filled, linked, previousTitles, skipped, model, costUsd, waiting }));
-    deps.writeFile(POSTS_JSON, JSON.stringify(posts, null, 2) + '\n');
+    for (const f of changedPostFiles(before, posts)) deps.writeFile(f.path, f.json);
     const what = [
       added.length && `${added.length} LinkedIn post${added.length === 1 ? '' : 's'}`,
       filled.length && `full text for ${filled.length} post${filled.length === 1 ? '' : 's'}`,
@@ -712,7 +713,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
 if (import.meta.main) {
   const out = await run(process.env, {
     fetch,
-    readPosts: () => JSON.parse(readFileSync(POSTS_JSON, 'utf8')),
+    readPosts,
     readIgnored: () => (existsSync(IGNORE_JSON) ? JSON.parse(readFileSync(IGNORE_JSON, 'utf8')) : []),
     readBackfill: () => (existsSync(BACKFILL_JSON) ? JSON.parse(readFileSync(BACKFILL_JSON, 'utf8')) : []),
     writeFile: (p, s) => {

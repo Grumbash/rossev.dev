@@ -1,0 +1,47 @@
+{
+  "id": "post-23",
+  "slug": "estimates-are-hypotheses-not-promises",
+  "published": "2026-06-08",
+  "category": "delivery",
+  "categoryLabel": {
+    "en": "DELIVERY",
+    "ru": "ДЕЛИВЕРИ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_estimates-are-not-promises-one-of-the-most-share-7469786620259397632-BgUh",
+  "title": {
+    "en": "Estimates Are Hypotheses, Not Promises",
+    "ru": "Оценка — это гипотеза, а не обещание"
+  },
+  "takeaway": {
+    "en": "State the assumptions behind an estimate out loud so a changed assumption moves the date instead of breaking a promise.",
+    "ru": "Проговаривайте допущения, на которых держится оценка, чтобы изменение условий двигало дату, а не ломало обещание."
+  },
+  "tags": [
+    "Estimates",
+    "Uncertainty"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Estimates don’t exist to guarantee a perfect timeline. They exist so we can manage reality instead of just praying things work out",
+      "ru": "Оценки нужны не для того, чтобы гарантировать идеальный график. Они нужны, чтобы управлять реальностью, а не надеяться, что всё сложится."
+    },
+    "bullets": {
+      "en": [
+        "A software estimate is a hypothesis about unknown complexity, so treating it as a hard commitment creates a false promise.",
+        "The honest answer to an early question is often 'I have no idea', and the useful version of that answer names the assumptions the date depends on.",
+        "Scope growth, more meetings, and missing handover each push the date out, so the estimate should say that out loud."
+      ],
+      "ru": [
+        "Оценка в разработке — это гипотеза о неизвестной сложности, и если относиться к ней как к твёрдому обязательству, обещание становится ложным.",
+        "Честный ответ на ранний вопрос часто звучит как «понятия не имею», и полезная версия этого ответа называет допущения, от которых зависит дата.",
+        "Рост объёма, больше встреч и отсутствие передачи дел сдвигают дату, и оценка должна говорить об этом прямо."
+      ]
+    }
+  },
+  "body": {
+    "en": "Estimates are not promises\n\nOne of the most annoying misunderstandings I see in tech is treating a software estimate as a hard commitment\n\nWe’ve all been there: you get dropped into a legacy codebase that someone else hacked together over six months. At the same time, your calendar is a minefield of recurring meetings, you’re trying to shipping a minor release on another project, and people keep dropping by with \"just a quick question.\" Then someone asks: “When will this feature be ready?”\nThe honest answer is: “I have absolutely no idea.”Especially when you're dealing with third-party APIs, zero documentation, and a system where the entire context lives exclusively in one senior dev's head\n\nBut you can’t just say that. So instead of guessing a random date to make management happy, we need to treat estimates for what they actually are: hypotheses, not promises.\nA realistic answer sounds more like this: \"Let’s aim for Friday. That’s assuming the scope stays the same, I actually get the API keys today, and I don’t get pulled into emergency firefighting. If priorities shift, the date shifts.\"\n\nThis isn't pushback or being difficult. It’s just how reality works.\nUncertainty is always at its peak on day one, and you can't just \"think harder\" to make it disappear. As an engineer, you don't owe anyone a perfect psychic prediction. What you do owe the team is making that uncertainty visible\n\nThe math here is simple:\n - More scope = new date.\n - More meetings = less focus time.\n - No handover = discovery phase comes first\n\nEstimates don’t exist to guarantee a perfect timeline. They exist so we can manage reality instead of just praying things work out\n\n(picture of a cat for attention 🤓)",
+    "ru": "Оценка — это не обещание. Одно из самых раздражающих недоразумений в IT — считать программную оценку твёрдым обязательством.\n\nЗнакомо всем. Вас бросают в легаси-кодовую базу, которую кто-то собирал полгода. Календарь забит регулярными встречами, параллельно нужно выпустить минорный релиз по другому проекту, а люди постоянно заходят с «один быстрый вопрос». Потом кто-то спрашивает: «Когда фича будет готова?»\n\nЧестный ответ: «Понятия не имею». Особенно если работа идёт с внешними API, без документации, и весь контекст живёт в голове одного сеньора.\n\nНо так сказать нельзя. Поэтому вместо того, чтобы назвать случайную дату и порадовать менеджмент, относитесь к оценкам так, как они устроены: это гипотезы, а не обещания.\n\nРеалистичный ответ звучит примерно так: «Целимся на пятницу. Это при условии, что объём не меняется, ключи от API я получаю сегодня и меня не затягивает тушение пожаров. Если приоритеты сдвинутся, сдвинется и дата».\n\nЭто не упрямство и не капризы. Так просто устроена реальность.\n\nНеопределённость максимальна в первый день, и «подумать ещё немного» её не убирает. Инженер никому не должен идеальное предсказание. Но команде он должен сделать неопределённость видимой.\n\nМатематика простая:\n- больше объёма — новая дата;\n- больше встреч — меньше времени на фокус;\n- нет передачи дел — сначала нужна фаза исследования.\n\nОценки нужны не для гарантии идеального графика. Они нужны, чтобы управлять реальностью, а не надеяться, что всё само сложится."
+  },
+  "color": "var(--lime)"
+}

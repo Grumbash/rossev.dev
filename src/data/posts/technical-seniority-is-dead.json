@@ -1,0 +1,48 @@
+{
+  "id": "post-6",
+  "slug": "technical-seniority-is-dead",
+  "published": "2026-10-18",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 3,
+  "url": "https://www.linkedin.com/posts/rossev_technical-seniority-is-dead-ugcPost-7517626785531011072-jLGL",
+  "title": {
+    "en": "The Junior-Senior Gap Is Now Product Judgment, Not Syntax",
+    "ru": "Разница между джуном и сеньором теперь в продуктовом мышлении, а не в синтаксисе"
+  },
+  "takeaway": {
+    "en": "Evaluate seniors on whether they know what not to build, not on framework trivia.",
+    "ru": "Оценивайте сеньоров по тому, понимают ли они, что не нужно строить, а не по знанию мелочей фреймворка."
+  },
+  "tags": [
+    "Seniority",
+    "Product Judgment",
+    "Careers"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The real gap now is entirely product judgment.",
+      "ru": "Настоящая разница теперь полностью в продуктовом мышлении."
+    },
+    "bullets": {
+      "en": [
+        "Tools like Cursor now let juniors produce typed components, mocked endpoints and Docker setups faster than a reviewer can check the PR.",
+        "A junior builds whatever the ticket says and can ship working, tested code that solves the wrong problem.",
+        "A senior questions the ticket itself, and may delete half the requirements to protect the product."
+      ],
+      "ru": [
+        "Инструменты вроде Cursor позволяют джуну выпускать типизированные компоненты, моки и Docker-настройки быстрее, чем ревьюер успевает посмотреть PR.",
+        "Джун делает то, что написано в тикете, и может выпустить рабочий, протестированный код, который решает не ту проблему.",
+        "Сеньор ставит под сомнение сам тикет и может удалить половину требований, чтобы защитить продукт."
+      ]
+    }
+  },
+  "body": {
+    "en": "On Thursday, an internal debate completely derailed our sync:\n\nThe technical gap between a Junior and a Senior dev is basically gone.\n\nTwo years ago, I could spot seniority in 10 minutes. Seniors knew the weird edge cases in the framework, wrote clean boilerplate without googling, and didnt panic when an API failed.\n\nToday? A junior with Cursor cranks out typed React components, mocks endpoints, and sets up Docker faster than I can review the PR. The syntax part of the job has been completely commoditized.\n\nThe real gap now is entirely product judgment.\n\nA junior builds whatever was written in the ticket. It works, tests pass, but it’s completely unnecessary and solves the wrong problem.\n\nA senior looks at the same ticket and asks: «Why are we touching this endpoint at all if 80% of our churn comes from the onboarding flow?»One writes code because the sprint started.\n\nThe other deletes half the requirements to protect the product.\n\nIf youre still paying senior salaries just for raw technical execution, youre basically paying $150k for an interface to Claude.\n\nHow much of your evaluation of seniors right now is still about tech trivia vs actually understanding what not to build?",
+    "ru": "В четверг внутренний спор полностью сбил наш синк.\n\nТехническая разница между джуном и сеньором по сути исчезла.\n\nДва года назад я определял сеньорность за 10 минут. Сеньоры знали странные кейсы фреймворка, писали чистый бойлерплейт без гугла и не паниковали, когда падал API.\n\nСейчас? Джун с Cursor выпускает типизированные React-компоненты, мокает эндпоинты и поднимает Docker быстрее, чем я успеваю сделать ревью PR. Синтаксическая часть работы полностью обесценилась.\n\nНастоящая разница теперь в продуктовом мышлении.\n\nДжун делает то, что написано в тикете. Работает, тесты зелёные, но это совершенно не нужно и решает не ту проблему.\n\nСеньор смотрит на тот же тикет и спрашивает: «Зачем вообще трогать этот эндпоинт, если 80% оттока идут из онбординга?» Один пишет код, потому что начался спринт. Другой удаляет половину требований, чтобы защитить продукт.\n\nЕсли вы всё ещё платите сеньорскую зарплату только за сырое техническое исполнение, по сути вы платите $150k за интерфейс к Claude.\n\nКак сейчас выглядит ваша оценка сеньоров: сколько в ней про знание технических мелочей, а сколько про понимание того, что не нужно строить?"
+  },
+  "color": "var(--yellow)"
+}

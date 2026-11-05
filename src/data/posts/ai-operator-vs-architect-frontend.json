@@ -1,0 +1,48 @@
+{
+  "id": "post-12",
+  "slug": "ai-operator-vs-architect-frontend",
+  "published": "2025-08-25",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_ai-frontend-ux-share-7365804138103762945-t-CN",
+  "title": {
+    "en": "AI Operator or Architect: Which Side Will You Take?",
+    "ru": "AI-оператор или архитектор: на какой вы стороне?"
+  },
+  "takeaway": {
+    "en": "Use AI for small tasks but keep the system picture yourself, especially in frontend where UX judgment stays human.",
+    "ru": "Используйте AI для мелких задач, но картину системы держите в голове сами, особенно во фронтенде, где оценку UX делает человек."
+  },
+  "tags": [
+    "AI Tooling",
+    "Frontend",
+    "Career"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The future belongs to orchestrators – especially in frontend.",
+      "ru": "Будущее за оркестраторами, особенно во фронтенде."
+    },
+    "bullets": {
+      "en": [
+        "The AI Operator uses AI as a smart Stack Overflow, pasting prompts and stitching code together, which is useful but often messy.",
+        "The Architect thinks in systems of data, components and user flows, and uses AI only as a helper for small tasks.",
+        "Frontend is harder to orchestrate than backend because you carry both the data layer and the user experience, and AI cannot feel user irritation."
+      ],
+      "ru": [
+        "AI-оператор использует AI как умный Stack Overflow: вставляет промпты и склеивает код. Это полезно, но часто выходит грязно.",
+        "Архитектор думает системами из данных, компонентов и пользовательских сценариев и использует AI только для мелких задач.",
+        "Фронтенд оркестровать сложнее, чем бэкенд: вы отвечаете и за слой данных, и за UX, а AI не чувствует раздражения пользователя."
+      ]
+    }
+  },
+  "body": {
+    "en": "AI won’t replace developers. But it will split us into two camps, which side will you take? 🧠\n\nThe real question isn’t “will AI replace us?”, it’s “how do we use it?”\nAfter 7+ years in frontend dev, here’s what I see:\n\n🔹 The AI Operator\nTreats AI like a “smart Stack Overflow”: pastes prompts, fixes bugs for hours, stitches code together. Useful, but often messy.\nStack Overflow’s 2025 survey (https://lnkd.in/dD9kDVia ) says 84% of devs use AI, but nearly half don’t trust the results. No surprise.\n\n🔹 The Architect (Orchestrator)\nThinks in systems: data, components, user flows. Uses AI as a helper for small tasks, but keeps the bigger picture in mind.\n\n⚙️ Backends are easier to orchestrate – logic, inputs/outputs, automated tests.\n\n🎨 Frontends are tougher – because you carry a double load:\n\nData layer: APIs, state, integrations (AI can help).\nUser experience: smooth animations, frustration-free UX (AI can’t “feel” user irritation).\n\nHumans still check for emotions.\n\n🧩 My takeaway\nThe future belongs to orchestrators – especially in frontend.\nIt’s about engineering + empathy. That’s what keeps you valuable. 🚀\n\n💬 What do you think will matter more for engineers in the future – deep technical skills or system-level thinking with empathy?\nDrop your thoughts below and tag a colleague 👇\n\nP.S. Check out the image I attached – curious to hear what you think of this “Operator vs Architect” visual. 👀",
+    "ru": "AI не заменит разработчиков. Но он расколет нас на два лагеря. На какой стороне будете вы?\n\nНастоящий вопрос не «заменит ли нас AI?», а «как нам его использовать?»\n\nЯ во фронтенде больше семи лет. Вот что я вижу.\n\nAI-оператор относится к AI как к умному Stack Overflow: вставляет промпты, часами чинит баги и склеивает код из кусков. Полезно, но часто грязно. По опросу Stack Overflow за 2025 год, 84% разработчиков используют AI, но почти половина не доверяет результатам. Это не удивляет.\n\nАрхитектор (оркестратор) мыслит системами: данные, компоненты, пользовательские сценарии. Он использует AI как помощника для мелких задач, но большую картину держит в голове.\n\nБэкенд оркестрировать проще: логика, входы и выходы, автоматические тесты.\n\nФронтенд сложнее, потому что на вас двойная нагрузка.\n\nСлой данных: API, состояние, интеграции. Тут AI может помочь.\n\nUX: плавные анимации, интерфейс без раздражения. AI не может почувствовать, что пользователь раздражён.\n\nЭмоции по-прежнему проверяет человек.\n\nМой вывод: будущее за оркестраторами, особенно во фронтенде. Важны инженерия и эмпатия. Именно они делают вас ценным.\n\nЧто важнее для инженеров в будущем: глубокие технические навыки или системное мышление с эмпатией? Напишите в комментариях и отметьте коллегу.\n\nP.S. Посмотрите картинку «Оператор против архитектора», интересно ваше мнение."
+  },
+  "color": "var(--orange)"
+}

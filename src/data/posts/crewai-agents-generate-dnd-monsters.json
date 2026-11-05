@@ -1,0 +1,48 @@
+{
+  "id": "post-14",
+  "slug": "crewai-agents-generate-dnd-monsters",
+  "published": "2025-09-02",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_crewai-agenticai-dnd-ugcPost-7368714904045867008-YTor",
+  "title": {
+    "en": "Four CrewAI Agents Turn a One-Line Prompt Into a D&D Monster",
+    "ru": "Четыре агента CrewAI превращают одну фразу в монстра для D&D"
+  },
+  "takeaway": {
+    "en": "Split a complex generation task across specialized agents with clear roles instead of cramming everything into one prompt.",
+    "ru": "Разбивайте сложную генерацию на специализированных агентов с понятными ролями, а не пихайте всё в один промпт."
+  },
+  "tags": [
+    "CrewAI",
+    "Multi-Agent Systems",
+    "Side Project"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Instead of one big AI model — a team of specialized agents working together!",
+      "ru": "Не одна большая модель, а команда специализированных агентов, которые работают вместе."
+    },
+    "bullets": {
+      "en": [
+        "DungeonMancer uses four CrewAI agents: a setting researcher, a stat designer, a narrative writer and a balance validator.",
+        "Each agent has its own role, goal and background defined in a YAML configuration, so they work like a development team.",
+        "The author says specialization gives much higher quality than one prompt, and a full opponent comes out of a simple prompt in 30 seconds."
+      ],
+      "ru": [
+        "DungeonMancer использует четырёх агентов CrewAI: исследователь сеттинга, дизайнер характеристик, автор текста и валидатор баланса.",
+        "У каждого агента есть своя роль, цель и бэкграунд, которые заданы в YAML-конфигурации, поэтому они работают как команда разработки.",
+        "Автор считает, что специализация даёт заметно лучшее качество, чем один промпт, а из простого запроса за 30 секунд получается полноценный противник."
+      ]
+    }
+  },
+  "body": {
+    "en": "🚀 Studying CrewAI in Ed Donner’s course on Udemy — and created DungeonMancer for generating D&D monsters!\n\nI never thought that learning multi-agent AI systems would lead me to creating a tool for Dungeons & Dragons, but here we are! 🐉\n\n🤖 Discovering CrewAI Through Learning\n\nHow it all started: Ed Donner's \"Complete Agentic AI Engineering Course\" - https://lnkd.in/duSqq2DB opened my eyes to the possibilities of CrewAI. Instead of one big AI model — a team of specialized agents working together!\n\n🎯 The Project Idea: DungeonMancer\n\nThe concept is simple but powerful:\n- Input: \"cyber wolf in neon city\"\n- Output: Full D&D monster stat block with balanced characteristics\n- Magic: 4 AI agents working as a team\n\n🛠️ The Agent Team\n\nCrewAI helped create a team of specialists:\n- 🔍 Setting Researcher: Analyzes context and world\n- ⚖️ Stat Designer: Calculates characteristics and balance\n- 📖 Narrative Writer: Creates descriptions and lore\n- 🛡️ Balance Validator: Checks quality and logic\n\nThe coolest part? Each agent has its own role, goal, and \"background\" in YAML configuration. They really work like a development team!\n\n💡 Why This Matters\n\nBefore CrewAI, I would have tried to cram everything into one prompt. Now I understand the power of specialization — each agent does what it does best, and the result is much higher quality.\n\nExample result: Neon Stalker — CR 5 cyberwolf with digital camouflage, EMP howl, and the ability to hack neural interfaces. From a simple prompt to a full-fledged opponent in 30 seconds!\n\n🔥 Coming Next\n\nIn Part 2, I'll tell you how AI (Grok) helped me write the code for all this — from FastAPI backend to React frontend. Turns out, AI can be a great pair programmer!\n\nQuestion for the community:\nWho else is studying agentic AI? What projects are you creating with CrewAI? 🤔\n\nEd Donner, thanks for the course! Your approach to production AI systems really works 🙏",
+    "ru": "Я изучаю CrewAI на курсе Эда Доннера на Udemy и на этом курсе сделал DungeonMancer, инструмент для генерации монстров для D&D.\n\nНе думал, что изучение мультиагентных AI-систем приведёт меня к инструменту для Dungeons & Dragons, но вот, пожалуйста! 🐉\n\nКак всё началось: «Complete Agentic AI Engineering Course» Эда Доннера открыл мне глаза на возможности CrewAI. Вместо одной большой модели — команда специализированных агентов, которые работают вместе.\n\nИдея проекта: DungeonMancer. Вход: «cyber wolf in neon city». Выход: полный стат-блок монстра D&D с сбалансированными характеристиками. Внутри работают четыре AI-агента как команда.\n\nCrewAI помог собрать команду специалистов:\n- 🔍 Исследователь сеттинга: анализирует контекст и мир\n- ⚖️ Дизайнер характеристик: считает параметры и баланс\n- 📖 Автор нарратива: пишет описания и лор\n- 🛡️ Валидатор баланса: проверяет качество и логику\n\nСамое интересное: у каждого агента есть своя роль, цель и «бэкграунд» в YAML-конфигурации. Они реально работают как команда разработки.\n\nПочему это важно. Раньше я бы попытался впихнуть всё в один промпт. Теперь я понимаю силу специализации: каждый агент делает то, что умеет лучше всего, и результат заметно выше по качеству.\n\nПример результата: Neon Stalker, CR 5, киберволк с цифровой маскировкой, EMP-воем и способностью взламывать нейроинтерфейсы. От простого промпта до полноценного противника за 30 секунд!\n\nЧто дальше. В части 2 расскажу, как AI (Grok) помог написать код для всего этого: от бэкенда на FastAPI до фронтенда на React. Оказалось, AI отлично работает как парный программист.\n\nВопрос к сообществу: кто ещё изучает agentic AI? Какие проекты вы делаете на CrewAI? 🤔\n\nЭд Доннер, спасибо за курс! Ваш подход к production AI-системам действительно работает 🙏"
+  },
+  "color": "var(--orange)"
+}

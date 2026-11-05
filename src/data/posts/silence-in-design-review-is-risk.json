@@ -1,0 +1,47 @@
+{
+  "id": "post-36",
+  "slug": "silence-in-design-review-is-risk",
+  "published": "2026-10-19",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_the-most-expensive-phrase-in-an-engineering-share-7517919281213333504-wTN3",
+  "title": {
+    "en": "Silence in an Architecture Review Is a Warning Sign",
+    "ru": "Тишина на архитектурном ревью — это тревожный сигнал"
+  },
+  "takeaway": {
+    "en": "Treat a quiet design review as a risk signal and push for real debate before the build starts.",
+    "ru": "Считайте тихое ревью сигналом риска и добивайтесь настоящего спора до начала разработки."
+  },
+  "tags": [
+    "Architecture Review",
+    "Team Culture"
+  ],
+  "brief": {
+    "quote": {
+      "en": "What worries me is 45 minutes of polite silence followed by \"LGTM, let's ship it.\"",
+      "ru": "Меня тревожат 45 минут вежливого молчания, после которых звучит «LGTM, катим в прод»."
+    },
+    "bullets": {
+      "en": [
+        "A design review that ends in polite silence and a quick approval is more dangerous than an open disagreement.",
+        "Seniors who stop arguing in design docs have usually given up on pushing back, not reached alignment.",
+        "A heated debate in an hour now is cheaper than rewriting a polite compromise in production for three months."
+      ],
+      "ru": [
+        "Ревью, которое заканчивается вежливым молчанием и быстрым апрувом, опаснее открытого несогласия.",
+        "Если сеньоры перестают спорить в дизайн-доках, обычно это значит, что они махнули рукой, а не пришли к согласию.",
+        "Час горячего спора сейчас обходится дешевле, чем три месяца переписывания вежливого компромисса на проде."
+      ]
+    }
+  },
+  "body": {
+    "en": "The most expensive phrase in an engineering architecture review isn't just \"I disagree\"; it's not what worries me in an architecture review. What worries me is 45 minutes of polite silence followed by \"LGTM, let’s ship it.\"\n\n\nWhen seniors stop arguing in design docs, they haven't reached alignment — they've just checked out because pushing back feels pointless.\n\nI'd rather spend an hour refereeing a heated debate on Tuesday than spend three months rewriting a polite compromise in production.\n\nWhen was the last time someone on your team actually killed a bad feature in a design review?",
+    "ru": "Самое дорогое в архитектурном ревью — не «я не согласен». Меня тревожат 45 минут вежливого молчания, после которых звучит «LGTM, катим в прод».\n\nКогда сеньоры перестают спорить в дизайн-доках, это не согласие. Они просто не видят смысла возражать.\n\nЛучше потратить час на жаркий спор во вторник, чем три месяца переписывать вежливый компромисс на проде.\n\nКогда в последний раз кто-то в вашей команде реально завернул плохую фичу на дизайн-ревью?"
+  },
+  "color": "var(--orange)"
+}

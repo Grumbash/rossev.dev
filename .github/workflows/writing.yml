@@ -1,13 +1,13 @@
 # Posts written on the site: a PR that adds or edits src/content/writing/<slug>.md gets the other
 # language, the brief and a Publora draft from scripts/ci/writing.ts, as one bot commit to
-# src/data/posts.json on the PR's own branch, plus a comment with what was written. Nothing is
+# its file in src/data/posts/ on the PR's own branch, plus a comment with what was written. Nothing is
 # scheduled or published: that stays a human step in Publora. Merging the PR puts the post on the site.
 #
 # Same-repo PRs only: the script runs the PR's code with the API keys, so a fork never gets here.
 # Same split as publora-sync.yml: `write` runs package code with the keys and read tokens only;
 # `push` runs no package code and holds the PAT (secret PUBLORA_SYNC_TOKEN), which also makes the
 # bot commit trigger perf.yml, as a GITHUB_TOKEN push would not. Its commit changes only
-# posts.json, so the run it triggers finds every post up to date and stops.
+# post files, so the run it triggers finds every post up to date and stops.
 name: writing
 
 on:
@@ -73,7 +73,7 @@ jobs:
         with:
           name: writing
           path: |
-            src/data/posts.json
+            src/data/posts/
             .writing/pr-comment.md
           include-hidden-files: true
           retention-days: 1
@@ -97,7 +97,7 @@ jobs:
           name: writing
           path: ${{ runner.temp }}/writing
 
-      - name: Commit posts.json to the PR branch and comment
+      - name: Commit the post files to the PR branch and comment
         env:
           GH_TOKEN: ${{ secrets.PUBLORA_SYNC_TOKEN }}
           CHANGED: ${{ needs.write.outputs.changed }}
@@ -111,14 +111,15 @@ jobs:
           if [ -z "$GH_TOKEN" ]; then echo "::error::Secret PUBLORA_SYNC_TOKEN is not set; nothing pushed."; exit 1; fi
           comment="$IN/.writing/pr-comment.md"
           # A failed test or build pushes nothing; the comment still says what was drafted.
-          if [ "$OK" = "success" ] && [ "$CHANGED" != "0" ] && [ -f "$IN/src/data/posts.json" ]; then
+          if [ "$OK" = "success" ] && [ "$CHANGED" != "0" ] && [ -d "$IN/src/data/posts" ]; then
             # The PR moved on since `write` read it: that push starts a fresh run.
             if [ "$(git rev-parse HEAD)" != "$SHA" ]; then echo "The branch moved; the next run writes."; exit 0; fi
             auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
-            cp "$IN/src/data/posts.json" src/data/posts.json
+            # Only post files: anything else in the artifact is ignored.
+            cp "$IN"/src/data/posts/*.json src/data/posts/
             git config user.name 'github-actions[bot]'
             git config user.email '41898283+github-actions[bot]@users.noreply.github.com'
-            git add src/data/posts.json
+            git add src/data/posts
             git commit --quiet --message "Fill in the site entries for src/content/writing"
             git -c "http.https://github.com/.extraheader=$auth" push origin "HEAD:refs/heads/$BRANCH"
           elif [ "$CHANGED" != "0" ] && [ "$CHANGED" != "" ]; then

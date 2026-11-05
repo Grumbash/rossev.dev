@@ -1,0 +1,48 @@
+{
+  "id": "post-26",
+  "slug": "escalate-with-options-not-complaints",
+  "published": "2026-06-13",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_complaining-vs-escalating-complaining-and-share-7471596648864030720-0NMC",
+  "title": {
+    "en": "Complaining vs Escalating: Make the Trade-off Visible",
+    "ru": "Жалоба против эскалации: покажите компромисс"
+  },
+  "takeaway": {
+    "en": "When you escalate, name the concrete trade-off and the consequence of not acting, so the manager can choose.",
+    "ru": "Эскалируя, назовите конкретный компромисс и последствия бездействия, чтобы руководитель мог выбрать."
+  },
+  "tags": [
+    "Escalation",
+    "Trade-offs",
+    "Management"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The first approach just transfers your frustration. The second transfers actionable information",
+      "ru": "Первый вариант просто передаёт ваше раздражение. Второй передаёт информацию, на основе которой можно действовать."
+    },
+    "bullets": {
+      "en": [
+        "Complaints such as \"This deadline is unrealistic\" transfer frustration and usually earn sympathy without creating action.",
+        "A real escalation names the options, such as cutting scope or adding an engineer, and the consequence, such as missing the release.",
+        "Your goal is not to convince people that your job is hard but to make the trade-offs visible so they can make a choice."
+      ],
+      "ru": [
+        "Жалобы вроде «этот дедлайн нереальный» передают раздражение и обычно вызывают сочувствие, но не действие.",
+        "Настоящая эскалация называет варианты, например сокращение объёма или добавление инженера, и последствие, например срыв релиза.",
+        "Ваша задача не в том, чтобы убедить всех, что работа тяжёлая, а в том, чтобы показать компромиссы, чтобы можно было выбрать."
+      ]
+    }
+  },
+  "body": {
+    "en": "Complaining vs Escalating\n\nComplaining and escalating often sound similar, but they land completely differently in a manager’s ears\n\nComplaining sounds like: “This deadline is unrealistic” Or “We just don’t have enough people”\n\nEscalating sounds like: “This deadline is unrealistic. We either need to cut the scope by 30% or pull in another engineer, otherwise we’ll miss the release”\n\nThe first approach just transfers your frustration. The second transfers actionable information\n\nOne might get you some sympathy, but only the other creates action. Your goal shouldn’t be to convince everyone that your job is hard, it’s to make the necessary trade-offs visible so people can make a choice",
+    "ru": "Жалоба и эскалация звучат похоже, но руководитель воспринимает их совершенно по-разному.\n\nЖалоба звучит так: «Этот дедлайн нереальный» или «У нас просто не хватает людей».\n\nЭскалация звучит так: «Этот дедлайн нереальный. Нам нужно либо сократить объём на 30%, либо подключить ещё одного инженера, иначе мы не успеем к релизу».\n\nПервый подход просто передаёт ваше раздражение. Второй передаёт информацию, на основе которой можно действовать.\n\nПервое может принести вам сочувствие, но только второе запускает действие. Ваша цель не в том, чтобы убедить всех, что ваша работа тяжёлая. Ваша цель в том, чтобы сделать компромиссы видимыми, чтобы люди могли сделать выбор."
+  },
+  "color": "var(--orange)"
+}

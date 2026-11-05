@@ -1,0 +1,48 @@
+{
+  "id": "post-21",
+  "slug": "ai-replaces-routine-not-responsibility",
+  "published": "2026-06-01",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_im-not-sure-why-ppl-are-still-saying-that-share-7467176120535343104-NVH-",
+  "title": {
+    "en": "AI Will Replace Routine Work, Not Responsibility",
+    "ru": "ИИ заменит рутину, а не ответственность"
+  },
+  "takeaway": {
+    "en": "Use AI for routine tasks like CRUD and JSON transforms, and keep ownership of the result yourself.",
+    "ru": "Отдавайте ИИ рутину вроде CRUD и трансформаций JSON, а ответственность за результат оставляйте за собой."
+  },
+  "tags": [
+    "AI Tooling",
+    "Ownership",
+    "Career"
+  ],
+  "brief": {
+    "quote": {
+      "en": "If you focus on the result and leverage AI, it will not replace you.",
+      "ru": "Если вы фокусируетесь на результате и используете ИИ, он вас не заменит."
+    },
+    "bullets": {
+      "en": [
+        "AI will replace routine work such as creating CRUDs and transforming JSONs, but not the ability to take responsibility.",
+        "Engineers who blame AI or deny it put themselves in trouble, while those who focus on results and use AI stay relevant.",
+        "Gleb started as a full-stack developer 8 years ago, doing tasks like adding documentation or fixing endpoints, and now he says doing such work by hand is a mistake."
+      ],
+      "ru": [
+        "ИИ заменит рутину вроде CRUD и трансформаций JSON, но не умение брать ответственность на себя.",
+        "Те, кто винит ИИ или отрицает его, сами себя ставят в проблемную ситуацию, а те, кто фокусируется на результате и использует ИИ, остаются востребованными.",
+        "Гleb начинал full-stack разработчиком 8 лет назад с задач вроде «добавь документацию» или «почини эндпоинт», и сейчас, по его словам, делать такую работу руками — ошибка."
+      ]
+    }
+  },
+  "body": {
+    "en": "Im not sure why ppl are still saying that \"AI will replace X role\". It will if the X role is about routine like creating CRUDs and transforming JSONs, but it will not replace the ability to take responsibility on yourself. \nIf you focus on the result and leverage AI, it will not replace you. If you're just blaming it and denying it - so you can find yourself in troubles\n\nI started as a full-stack developer 8 years ago, and initially, my job was not about building systems. It was just \"add documentation\" or \"fix this endpoint\" type of tasks.\nNowadays, if you are still doing this by hand, you are definitely doing something wrong. \n\nOf course, there are exceptions and exclusions, but in general - just use AI for that",
+    "ru": "Не понимаю, почему люди до сих пор повторяют, что «ИИ заменит такую-то роль». Заменит, если роль состоит из рутины: писать CRUD и трансформировать JSON. Но он не заменит умение брать ответственность на себя.\n\nЕсли вы фокусируетесь на результате и используете ИИ, он вас не заменит. Если же вы только винite его и отрицаете, так вы сами себя ставите в трудное положение.\n\nЯ начинал full-stack разработчиком 8 лет назад. Сначала моя работа была не про построение систем. Это были задачи вроде «добавь документацию» или «почини этот эндпоинт».\n\nСейчас, если вы всё ещё делаете это руками, вы точно делаете что-то не так.\n\nКонечно, бывают исключения. Но в целом — просто используйте для этого ИИ."
+  },
+  "color": "var(--lime)"
+}

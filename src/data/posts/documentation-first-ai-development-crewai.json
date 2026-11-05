@@ -1,0 +1,48 @@
+{
+  "id": "post-15",
+  "slug": "documentation-first-ai-development-crewai",
+  "published": "2025-09-03",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_crewai-agenticai-cursorai-ugcPost-7369042686051377153-cZuL",
+  "title": {
+    "en": "Feed AI Assistants Documentation First, Not Clever Prompts",
+    "ru": "Сначала документация для AI-ассистента, а не хитрые промпты"
+  },
+  "takeaway": {
+    "en": "Write product, functional and architecture specs before asking an AI assistant to generate code, then version each release.",
+    "ru": "Сначала напишите продуктовую, функциональную и архитектурную спеки, и только потом просите AI-ассистента генерировать код, версионируя каждый релиз."
+  },
+  "tags": [
+    "CrewAI",
+    "Documentation",
+    "Cursor AI"
+  ],
+  "brief": {
+    "quote": {
+      "en": "the secret isn't better prompts - it's feeding your AI assistant 50KB+ of comprehensive documentation.",
+      "ru": "Секрет не в лучших промптах, а в том, чтобы скармливать AI-ассистенту 50KB+ подробной документации."
+    },
+    "bullets": {
+      "en": [
+        "Gleb wrote product, functional and architecture specs, plus a README for each of the 4 agents, and fed them into Cursor AI as context.",
+        "He used the loop Document → Context → Generate → Review → Iterate to get FastAPI routes, React components, tests and Docker orchestration from the specs.",
+        "Versioned releases (v1.0.0 to v1.2.0) with a CHANGELOG.md kept the AI-assisted work systematic and traceable."
+      ],
+      "ru": [
+        "Глеб написал продуктовую, функциональную и архитектурную спеки и README для каждого из 4 агентов, а затем передал их в Cursor AI как контекст.",
+        "Он работал по циклу «документ → контекст → генерация → ревью → итерация», получая из спеков FastAPI-маршруты, React-компоненты, тесты и Docker-оркестрацию.",
+        "Версии с v1.0.0 по v1.2.0 и CHANGELOG.md сделали работу с AI систематичной и прослеживаемой."
+      ]
+    }
+  },
+  "body": {
+    "en": "Stop prompting AI blindly. Here's how I built a production-ready CrewAI system with documentation-driven development 🚀\n\nBuilding DungeonMancer taught me: the secret isn't better prompts - it's feeding your AI assistant 50KB+ of comprehensive documentation. Cursor AI became my development partner! 📚🤖\n\n📚 THE DOCUMENTATION-FIRST METHOD\n\nWhat Ed Donner's course taught me:\nDocument the system first, then let AI build it systematically.\n\nMy approach:\n1. Created product-spec, functional-spec, architecture-spec\n2. Detailed README for each of 4 agents with implementation roadmap  \n3. Fed specs into Cursor AI for rich context\n4. Versioned development: v1.0 → v1.1 → v1.2\n\n🤖 CURSOR AI AS DEVELOPMENT PARTNER\n\nKey pattern: Document → Context → Generate → Review → Iterate\n\nWhat Cursor AI helped with:\n- Converting specs into working FastAPI routes\n- Generating React components from UI specifications\n- Creating comprehensive test suites from functional specs  \n- Implementing Docker orchestration from architecture docs\n\n🏗️ RESULTS\n\nVersion-based development delivered:\n- v1.0.0: Core CrewAI + FastAPI architecture\n- v1.1.0: NextJS frontend + Docker orchestration\n- v1.2.0: WebSocket + polling fallback, auto-refresh UI\n\nProfessional practices included:\n- CHANGELOG.md with detailed release notes\n- Comprehensive testing with proper fixtures\n- OpenAI API with cost management and billing\n- Documentation hub for consistent AI assistance\n\nResult: From documentation to production system with reliability patterns!\n\n💡 KEY INSIGHT\n\nDocumentation-First + Cursor AI + Systematic Versioning = Production-Ready AI Systems\n\nThis approach unlocked:\n- Rich Context: 50KB+ documentation feeding into AI assistant\n- Consistent Quality: Structured prompts ensure reliable code generation\n- Rapid Iteration: From specs to working features in hours, not days\n\n🔥 COMING IN PART 3\n\nFuture roadmap (v1.3.0 with enhanced agents!) and actionable tips for documentation-driven AI projects.\n\nQuestion for developers:\nHow do you structure your AI-assisted development? Documentation-first or straight into coding? 💬\n\nEd Donner, your systematic approach transformed how I think about development! 🚀\n\nCourse: https://lnkd.in/duSqq2DB",
+    "ru": "Хватит слепо промптить AI. Вот как я построил production-ready систему на CrewAI с разработкой, управляемой документацией.\n\nРабота над DungeonMancer научила меня одной вещи: секрет не в лучших промптах, а в том, чтобы скармливать AI-ассистенту 50KB+ подробной документации. Cursor AI стал моим партнёром по разработке.\n\nДокументация прежде всего\n\nЧему меня научил курс Эда Доннера: сначала опишите систему, а потом пусть AI строит её систематически.\n\nЧто я сделал:\n1. Написал product-spec, functional-spec и architecture-spec.\n2. Подробный README для каждого из 4 агентов с roadmap реализации.\n3. Передал спеки в Cursor AI как контекст.\n4. Версионировал разработку: v1.0 → v1.1 → v1.2.\n\nCursor AI как партнёр по разработке\n\nКлючевой паттерн: документ → контекст → генерация → ревью → итерация.\n\nCursor AI помог с:\n- превращением спеков в рабочие маршруты FastAPI;\n- генерацией React-компонентов по UI-спецификациям;\n- созданием полноценных тестов по функциональным спекам;\n- реализацией Docker-оркестрации по архитектурным документам.\n\nРезультаты\n\nРазработка по версиям дала:\n- v1.0.0: ядро CrewAI + архитектура на FastAPI;\n- v1.1.0: фронтенд на NextJS + Docker-оркестрация;\n- v1.2.0: WebSocket с фолбэком на polling, автообновление UI.\n\nКакие практики я использовал:\n- CHANGELOG.md с подробными release notes;\n- тесты с нормальными фикстурами;\n- OpenAI API с контролем расходов и биллингом;\n- хаб документации для стабильной работы AI-ассистента.\n\nИтог: от документации до production-системы с паттернами надёжности.\n\nКлючевой вывод\n\nДокументация первой + Cursor AI + систематическое версионирование = production-ready AI-системы.\n\nЧто это дало:\n- Богатый контекст: 50KB+ документации в AI-ассистенте.\n- Стабильное качество: структурированные промпты дают предсказуемый код.\n- Быстрые итерации: от спеков до работающих фич за часы, а не дни.\n\nЧто будет в части 3\n\nRoadmap версии v1.3.0 с улучшенными агентами и практические советы по AI-проектам, управляемым документацией.\n\nВопрос разработчикам: как вы организуете разработку с AI? Сначала документация или сразу код?\n\nЭд Доннер, ваш систематический подход изменил то, как я думаю о разработке!\n\nКурс: https://lnkd.in/duSqq2DB"
+  },
+  "color": "var(--lime)"
+}

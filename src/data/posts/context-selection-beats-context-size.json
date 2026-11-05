@@ -1,0 +1,47 @@
+{
+  "id": "post-40",
+  "slug": "context-selection-beats-context-size",
+  "published": "2026-10-29",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7521565265558462464/",
+  "title": {
+    "en": "Context Selection Matters More Than Context Size for Agents",
+    "ru": "Для агентов важнее отбор контекста, а не его объём"
+  },
+  "takeaway": {
+    "en": "Show the agent only what changes its next decision, instead of adding more context when it fails.",
+    "ru": "Показывайте агенту только то, что меняет его следующее решение, а не добавляйте контекст каждый раз, когда он ошибается."
+  },
+  "tags": [
+    "Context Engineering",
+    "Agents"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Having the information available and using it at the right moment are two very different things.",
+      "ru": "Наличие информации и её использование в нужный момент — это две очень разные вещи."
+    },
+    "bullets": {
+      "en": [
+        "Kuleshov showed that the same face gets different meaning depending on the scenes cut around it, and LLMs work similarly with the same token in different context.",
+        "When an agent fails, the usual fix is more context, but the agent often already had what it needed and the key parts were buried under everything else.",
+        "A bigger window like 2 million tokens does not solve this by itself, so the real work is choosing what the model sees at each step and removing what does not matter."
+      ],
+      "ru": [
+        "Кулешов показал, что одно и то же лицо получает разный смысл в зависимости от склеенных рядом кадров, и с LLM так же: один и тот же токен читается по-разному в разном контексте.",
+        "Когда агент падает, обычно добавляют ещё контекста, хотя нужная информация часто уже была в промпте, а важное терялось среди всего остального.",
+        "Окно в 2 миллиона токенов само проблему не решает, поэтому главная работа — выбрать, что модель видит на каждом шаге, и убрать лишнее."
+      ]
+    }
+  },
+  "body": {
+    "en": "In the 1920s, a Soviet filmmaker figured out something we’re still struggling with in AI.\n\nLev Kuleshov took the same shot of an actor with a blank expression and cut it together with three different scenes, a bowl of soup, a dead child and a woman lying on a sofa, and people saw hunger, grief and desire, even though the actor’s face never changed.\n\nThe meaning wasn’t in the face itself, it came from what people saw around it.\n\nSomething similar happens with LLMs, where the same token can be interpreted very differently depending on the surrounding context, and while self-attention is obviously more complicated than film editing, I think the comparison is useful when building agents.\n\nWhen an agent fails, the first thing we usually do is give it more context: more chat history, more logs, more tool definitions, more instructions, and if that doesn’t help, maybe a bigger context window will.\n\nBut I’ve seen agents fail with all the information they needed already in the prompt, and the problem wasn’t that something was missing, it was that the important parts were buried under everything else.\n\nA 2-million-token context window doesn’t solve this problem by itself, it just gives you more room to put things the model might not need, while the one constraint that actually matters for the next action gets lost somewhere in the middle.\n\nI think we still treat context engineering too much like a storage problem, when a lot of the work is really about deciding what the model should see at a particular step, what can be removed without losing anything important, and which pieces of information are actually going to change its decision.\n\nYou can give an agent access to almost everything and it can still make a stupid decision, because having the information available and using it at the right moment are two very different things.",
+    "ru": "В 1920-х годах советский кинематографист Лев Кулешов понял то, с чем мы до сих пор мучаемся в AI.\n\nОн взял один и тот же кадр актёра с пустым выражением лица и смонтировал его с тремя разными сценами: тарелка супа, мёртвый ребёнок и женщина, лежащая на диване. Зрители увидели голод, горе и желание, хотя лицо актёра не менялось.\n\nСмысл был не в самом лице. Он возникал из того, что люди видели рядом с ним.\n\nЧто-то похожее происходит с LLM: один и тот же токен можно понимать очень по-разному в зависимости от окружающего контекста. Self-attention, конечно, сложнее монтажа, но, на мой взгляд, это сравнение полезно при построении агентов.\n\nКогда агент падает, первое, что мы обычно делаем, — даём ему больше контекста: больше истории чата, больше логов, больше описаний инструментов, больше инструкций. Если не помогает, думаем, что поможет окно побольше.\n\nНо я видел, как агенты падали, когда вся нужная информация уже была в промпте. Проблема была не в том, что чего-то не хватало, а в том, что важное оказалось погребено под всем остальным.\n\nОкно в 2 миллиона токенов само по себе эту проблему не решает. Оно просто даёт больше места, куда можно положить то, что модели не нужно, а единственное ограничение, которое действительно важно для следующего действия, теряется где-то в середине.\n\nМне кажется, мы всё ещё слишком часто относимся к context engineering как к задаче хранения. А большая часть работы на самом деле в другом: решить, что модель должна видеть на конкретном шаге, что можно убрать без потерь и какие фрагменты информации действительно поменяют её решение.\n\nАгенту можно дать доступ почти ко всему, и он всё равно примет глупое решение. Потому что наличие информации и её использование в нужный момент — это две очень разные вещи."
+  },
+  "color": "var(--orange)"
+}
