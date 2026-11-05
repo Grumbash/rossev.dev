@@ -1,5 +1,5 @@
 ---
-title: I Took Over an Epic With One Prompt. It Reads Like a Map of the Next Few Months.
+title: I Picked Up a Teammate's Epic With One Prompt. It Reads Like a Map of the Next Few Months.
 category: ai
 distribute: [linkedin]
 ---
