@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-05T13:51:25.108Z",
-  "throughSha": "15452e55bbf62426b200976171b81a595d9ba00e",
+  "generatedAt": "2026-11-05T22:31:19.972Z",
+  "throughSha": "34fe7c3b2bfe835fd4cfb61b74c511170d9eb5bb",
   "prs": [
     {
       "number": 1,
@@ -2285,6 +2285,118 @@
           "subject": "The NCA simulations run in their own workflow, one runner per file, and the perf job skips them: on a shared 4-vCPU runner they timed out against each other (nca-regrow-sequence, 64.6 s against 60 s on a copy-only PR)",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/a0284ee7fcd42850bd469e4199281674df95d765"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 57,
+      "title": "Keep medicine only as the education line",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/57",
+      "mergedAt": "2026-11-05T18:12:56Z",
+      "additions": 14,
+      "deletions": 14,
+      "changedFiles": 7,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "c208c9ee3bcd32a4b3788c34bac620be62585481",
+          "subject": "Medicine stays only as the education line, Belarusian State University 2015 — 2019; the summaries, the CV and the banner no longer mention it or say why it ended",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c208c9ee3bcd32a4b3788c34bac620be62585481"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 62,
+      "title": "Lead the homepage with case studies and simplify replay controls",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/62",
+      "mergedAt": "2026-11-05T19:08:05Z",
+      "additions": 88,
+      "deletions": 38,
+      "changedFiles": 10,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "a9cc02566e51974a504b5f6ec7e2de770c6e50d1",
+          "subject": "Lead the homepage with case studies and simplify replay controls",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a9cc02566e51974a504b5f6ec7e2de770c6e50d1"
+        },
+        {
+          "sha": "7b5625d7c2d3b2ffd6984b8ae25699aa581648fc",
+          "subject": "Track homepage case links by case and placement",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7b5625d7c2d3b2ffd6984b8ae25699aa581648fc"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 63,
+      "title": "Publish the code review model benchmark",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/63",
+      "mergedAt": "2026-11-05T20:32:00Z",
+      "additions": 150,
+      "deletions": 0,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "9cd28ab505800d766ff7fec56901f7bfd2816890",
+          "subject": "Add the review model benchmark to Writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9cd28ab505800d766ff7fec56901f7bfd2816890"
+        },
+        {
+          "sha": "7d696cbab807a7168831ba6d8899b21a410e30cf",
+          "subject": "Add validated English and Russian benchmark pages",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7d696cbab807a7168831ba6d8899b21a410e30cf"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 64,
+      "title": "One file per post: src/data/posts/<slug>.json",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/64",
+      "mergedAt": "2026-11-05T22:30:36Z",
+      "additions": 2490,
+      "deletions": 2335,
+      "changedFiles": 73,
+      "redTest": {
+        "sha": "ae40d7f3dc0ada55806f192d649b15c7e2a507af",
+        "subject": "Red test: every post is its own file src/data/posts/<slug>.json, read newest first, and a run writes only the posts it changed",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/ae40d7f3dc0ada55806f192d649b15c7e2a507af"
+      },
+      "commits": [
+        {
+          "sha": "ae40d7f3dc0ada55806f192d649b15c7e2a507af",
+          "subject": "Red test: every post is its own file src/data/posts/<slug>.json, read newest first, and a run writes only the posts it changed",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ae40d7f3dc0ada55806f192d649b15c7e2a507af"
+        },
+        {
+          "sha": "581daf224d193477c40c2713df923c52c5d1a31d",
+          "subject": "Every post is its own file, src/data/posts/<slug>.json: the writing workflow and the Publora sync each write only the posts they touched, so their PRs no longer edit one shared posts.json; the site reads them newest first",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/581daf224d193477c40c2713df923c52c5d1a31d"
+        },
+        {
+          "sha": "92739c848491d1b29358de2295c0a3e09d301e6c",
+          "subject": "Backlinks are pinned: every post address ever published, /writing/<slug>/ and /ru/writing/<slug>/, must still exist; new posts only add to the list",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/92739c848491d1b29358de2295c0a3e09d301e6c"
         }
       ],
       "findings": [],
