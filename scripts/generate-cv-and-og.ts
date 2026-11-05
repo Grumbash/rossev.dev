@@ -82,7 +82,7 @@ function generateLlmsTxt(): void {
   lines.push('');
 
   lines.push('## Education & Languages');
-  lines.push('- **Education**: Belarusian State University — Medicine (2015 — 2019)');
+  lines.push('- **Education**: Belarusian State University — Medicine, 4 years, left for engineering (2015 — 2019)');
   lines.push('- **Languages**: English (C1 — Advanced Professional), Russian (Native)');
   lines.push('');
 
@@ -383,7 +383,7 @@ function generatePdfCv(): void {
   text('Belarusian State University', marginX, y, 'F2', 10, INK);
   textRight('2015 – 2019', marginX + contentW, y, 'F1', 9, MUTED);
   y += LEADING;
-  text('Medicine (medical degree)', marginX, y, 'F1', BODY, INK);
+  text('Medicine, 4 years (left for engineering)', marginX, y, 'F1', BODY, INK);
   y += LEADING + 4;
   const langW = text('Languages:', marginX, y, 'F2', BODY, INK);
   const langs = PROFILE.languages.map((l) => l.en.replace(/\s*·\s*(.+)$/, ' ($1)')).join(', ');
