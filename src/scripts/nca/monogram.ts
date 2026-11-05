@@ -13,10 +13,17 @@ const NOTICE_MS = 2500;
 
 type Point = { x: number; y: number };
 
+/** What a page can do to a running monogram besides the visitor's own erasing: the 404
+ * takes a bite as soon as the letters have grown, so the visitor watches them heal. */
+export type NcaMonogram = {
+  /** Erases a line of brush stamps between two points given as fractions of the side. */
+  cut(from: Point, to: Point): void;
+};
+
 /** `track` sends the nca_interact analytics event (once per action per view). The
  * loader passes it in, so this chunk has no static dependencies and its dynamic
  * import needs no preload helper in the eager loader. */
-export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void {
+export function initNcaMonogram(track: (action: 'erase' | 'key') => void): NcaMonogram | undefined {
   const section = document.querySelector<HTMLElement>('.nca-section');
   const canvas = document.getElementById('nca-canvas') as HTMLCanvasElement | null;
   const fallback = section?.querySelector('.nca-fallback');
@@ -228,4 +235,15 @@ export function initNcaMonogram(track: (action: 'erase' | 'key') => void): void 
     last = null;
     pending = null;
   }
+
+  return {
+    cut(from, to) {
+      const r = BRUSH * size;
+      const a = { x: from.x * size, y: from.y * size };
+      const b = { x: to.x * size, y: to.y * size };
+      const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / (r / 2)));
+      const points = Array.from({ length: n + 1 }, (_, i) => ({ x: a.x + ((b.x - a.x) * i) / n, y: a.y + ((b.y - a.y) * i) / n }));
+      send({ type: 'damage', points, r });
+    },
+  };
 }

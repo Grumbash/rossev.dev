@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-04T20:32:23.686Z",
-  "throughSha": "6cd93e7f1c3b6a42bf8a23968510530ff00cd282",
+  "generatedAt": "2026-11-04T23:13:59.271Z",
+  "throughSha": "5191728758f95ebd7ff91f19485723eb52c12c19",
   "prs": [
     {
       "number": 1,
@@ -1920,6 +1920,75 @@
           "subject": "The build story refreshes again: a placeholder stub needs only the \"Not implemented yet\" marker (#27), the round-1 NCA weights are a named test fixture (#32), and code in a red commit is a warning that drops that PR's red-test-first instead of failing the whole refresh (#31)",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/80c3da4808cc3664eef8dda362fe7bcc697cec34"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 41,
+      "title": "Publora sync: check out main with full history",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/41",
+      "mergedAt": "2026-11-04T20:53:20Z",
+      "additions": 28,
+      "deletions": 16,
+      "changedFiles": 3,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "64b44f175d75311dfac23c63c7f0471dc5f82cd2",
+          "subject": "The Publora sync checks out main with full history: bun test reads old commits (build story, replay), and a shallow clone failed the bot's run before it could open its PR",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/64b44f175d75311dfac23c63c7f0471dc5f82cd2"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 42,
+      "title": "Posts written on the site, distributed through Publora drafts",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/42",
+      "mergedAt": "2026-11-04T20:57:01Z",
+      "additions": 875,
+      "deletions": 16,
+      "changedFiles": 5,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "6558ae6611a34ca85c9b3ff51ca057754cbc2f38",
+          "subject": "Posts written on the site: src/content/writing/<slug>.md (title, category, distribute, text in English or Russian) gets the other language, the brief and a Publora draft from a bot commit on its PR, and the Publora sync links the LinkedIn copy by its draft id",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6558ae6611a34ca85c9b3ff51ca057754cbc2f38"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 46,
+      "title": "A /hire page: four ways to work with Gleb, with proof, in JSON-LD and llms.txt",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/46",
+      "mergedAt": "2026-11-04T23:03:20Z",
+      "additions": 474,
+      "deletions": 5,
+      "changedFiles": 10,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "2ca845b1a0df121578ac3947f3dc99ddb257afe8",
+          "subject": "A /hire page lists every way to work with Gleb (audit, advisory, talks, full-time roles) with proof links, one booking link, no prices, Person.makesOffer in JSON-LD and a Work with me section in llms.txt: red test",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2ca845b1a0df121578ac3947f3dc99ddb257afe8"
+        },
+        {
+          "sha": "dc7eb7e79a6fcc34e1045fb59525b7c969331665",
+          "subject": "/hire and /ru/hire/ show four offers from OFFERS in profile.ts, each with who it is for, what you get and proof already on the site; the nav and footer link it, JSON-LD lists the offers as Person.makesOffer, llms.txt gets a Work with me section, cal.com links carry the hire placement, and the /booked CSP hashes follow the new placement list",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/dc7eb7e79a6fcc34e1045fb59525b7c969331665"
         }
       ],
       "findings": [],

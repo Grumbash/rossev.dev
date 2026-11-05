@@ -1,0 +1,91 @@
+---
+// The card behind the QR code on the phone case (HTTPS://ROSSEV.DEV/C, rewritten in vercel.json).
+// Someone scans it in person, often on mobile data, so it skips Base: no web fonts, no site CSS or
+// JS, only inline styles and the deferred analytics tracker. Its booking link carries the `case`
+// placement, which /booked reads from utm_content. noindex: a landing for the code, not a page to find.
+import { PROFILE } from '../../data/profile';
+import { calUrl } from '../../scripts/analytics';
+import { DEFAULT_LOCALE, LOCALES, SITE, localeOf, localePath, localeStaticPaths, t } from '../../i18n';
+
+export const getStaticPaths = localeStaticPaths;
+const lang = localeOf(Astro.params.locale);
+const d = t(lang);
+const c = d.card;
+const other = LOCALES.find((l) => l !== lang) ?? DEFAULT_LOCALE;
+const urlIn = (l: typeof lang) => new URL(localePath(l, '/c/'), SITE).toString();
+const tel = `tel:${PROFILE.phone.replace(/\s/g, '')}`;
+// One colour per era, the same as on the case print: medicine, web teams, mobile, management, voice AI, agents.
+const ERAS = ['#FF3385', '#FFD600', '#00E5FF', '#B388FF', '#FF5500', '#C8FF00'];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{c.title}</title>
+    <meta name="description" content={c.role} />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#F4F0EA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0E0F12" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={urlIn(lang)} />
+    {LOCALES.map((l) => <link rel="alternate" hreflang={l} href={urlIn(l)} />)}
+    <link rel="alternate" hreflang="x-default" href={urlIn(DEFAULT_LOCALE)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style is:inline>
+      :root { --bg: #F4F0EA; --ink: #0A0A0A; --muted: #4a4a4a; --line: #0A0A0A; --lime: #C8FF00; color-scheme: light dark; }
+      @media (prefers-color-scheme: dark) { :root { --bg: #0E0F12; --ink: #F4F0EA; --muted: #B8B5AD; --line: #F4F0EA; } }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+      main { max-width: 420px; margin: 0 auto; padding: 28px 20px 40px; }
+      a { color: inherit; }
+      .top { display: flex; justify-content: space-between; font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .top a { text-decoration: none; }
+      h1 { font-size: 34px; line-height: 1.1; margin: 36px 0 10px; letter-spacing: -.02em; }
+      .role { margin: 0 0 4px; }
+      .where { margin: 0; color: var(--muted); font-size: 15px; }
+      .eras { display: flex; gap: 6px; margin: 22px 0 26px; }
+      .eras i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line); }
+      .btn { display: block; text-align: center; text-decoration: none; font-weight: 700; padding: 15px 16px; border: 2px solid var(--line); border-radius: 12px; margin-bottom: 12px; }
+      .primary { background: var(--lime); color: #0A0A0A; border-color: #0A0A0A; }
+      .save small { display: block; font-weight: 400; font-size: 13px; color: var(--muted); margin-top: 2px; }
+      .contacts { list-style: none; padding: 0; margin: 6px 0 26px; border-top: 1.5px solid var(--line); }
+      .contacts a { display: flex; justify-content: space-between; gap: 12px; padding: 13px 2px; border-bottom: 1.5px solid var(--line); text-decoration: none; font-size: 15px; overflow-wrap: anywhere; }
+      .contacts span { color: var(--muted); }
+      .more { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; margin: 0; }
+    </style>
+    {import.meta.env.PUBLIC_UMAMI_WEBSITE_ID && (
+      <script
+        is:inline
+        defer
+        src="https://cloud.umami.is/script.js"
+        data-website-id={import.meta.env.PUBLIC_UMAMI_WEBSITE_ID}
+        data-domains="rossev.dev"
+      ></script>
+    )}
+  </head>
+  <body>
+    <main>
+      <div class="top">
+        <a href={localePath(lang, '/')}>rossev.dev</a>
+        <a href={localePath(other, '/c/')} hreflang={other} lang={other} data-track="lang_switch" data-track-to={other}>{other.toUpperCase()}</a>
+      </div>
+      <h1>{PROFILE.name[lang]}</h1>
+      <p class="role">{c.role}</p>
+      <p class="where">{PROFILE.location[lang]} · {PROFILE.timezone}</p>
+      <div class="eras" aria-hidden="true">{ERAS.map((e) => <i style={`background:${e}`}></i>)}</div>
+      <a class="btn primary" href={calUrl('case', lang)}>{c.book}</a>
+      <a class="btn save" href="/gleb-rosev.vcf">{c.save}<small>{c.saveHint}</small></a>
+      {/* The values themselves, not just verbs: on a laptop mailto:/tel: may open nothing, the text can still be copied. */}
+      <ul class="contacts">
+        <li><a href={`mailto:${PROFILE.email}`}><span>{c.email}</span>{PROFILE.email}</a></li>
+        <li><a href={tel}><span>{c.phone}</span>{PROFILE.phone}</a></li>
+        <li><a href={PROFILE.linkedin}><span>LinkedIn</span>{PROFILE.linkedinHandle}</a></li>
+      </ul>
+      <p class="more">
+        <a href={localePath(lang, '/hire/')}>{c.hire}</a>
+        <a href={localePath(lang, '/')}>{c.site}</a>
+      </p>
+    </main>
+  </body>
+</html>

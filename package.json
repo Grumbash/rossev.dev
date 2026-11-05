@@ -23,6 +23,7 @@
     "htmx.org": "^2.0.4"
   },
   "devDependencies": {
-    "lighthouse": "^13.6.0"
+    "lighthouse": "^13.6.0",
+    "qrcode-generator": "1.4.4"
   }
 }
