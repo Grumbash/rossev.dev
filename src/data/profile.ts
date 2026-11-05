@@ -157,8 +157,8 @@ export const PROFILE = {
   timezone: 'UTC+4',
   // One third-person sentence: who he is, both spellings. Same text opens /llms.txt.
   summaryThirdPerson: {
-    en: 'Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in Tbilisi, building production AI agent teams; previously Staff Harness Engineer at Sully.ai; 8+ years in engineering; studied medicine before switching to code.',
-    ru: 'Глеб Росев (латиницей также Rossev) — Founding Engineer в YAGNI (yagni.app), Тбилиси: строит команды AI-агентов для продакшена; ранее — Staff Harness Engineer в Sully.ai; 8+ лет в разработке; до этого учился на медицинском.'
+    en: 'Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in Tbilisi, building production AI agent teams; previously Staff Harness Engineer at Sully.ai; 8+ years in engineering.',
+    ru: 'Глеб Росев (латиницей также Rossev) — Founding Engineer в YAGNI (yagni.app), Тбилиси: строит команды AI-агентов для продакшена; ранее — Staff Harness Engineer в Sully.ai; 8+ лет в разработке.'
   },
   // Value line under the name: what I solve + proof. Every number must already be a fact on the page.
   valueLine: {
@@ -167,13 +167,13 @@ export const PROFILE = {
   },
   // Short bio for the hero only (max 40 words EN). The long `bio` below feeds the CV PDF and llms.txt.
   bioShort: {
-    en: 'Now: Founding Engineer at YAGNI, building AI agent teams (PM, Builder, Reviewer) that take work from proposal to merged PR under human-approved plans. Before: healthcare voice AI at Sully.ai. 8+ years, plus four years of medical school.',
-    ru: 'Сейчас: Founding Engineer в YAGNI — команды AI-агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR по утверждённому человеком плану. До этого: голосовой AI для медицины в Sully.ai. 8+ лет в разработке, а до этого четыре года медицинского.'
+    en: 'Now: Founding Engineer at YAGNI, building AI agent teams (PM, Builder, Reviewer) that take work from proposal to merged PR under human-approved plans. Before: healthcare voice AI at Sully.ai. 8+ years in engineering.',
+    ru: 'Сейчас: Founding Engineer в YAGNI — команды AI-агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR по утверждённому человеком плану. До этого: голосовой AI для медицины в Sully.ai. 8+ лет в разработке.'
   },
   // Version B (50-70 words, first person, concrete, no hype):
   bio: {
-    en: 'I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus four years of medical school before I switched to engineering.',
-    ru: 'Я строю системы, где важна надёжность, и добиваюсь, чтобы команды AI-агентов работали в продакшене, а не только на демо. Сейчас: Founding Engineer в YAGNI (yagni.app), вместе с фаундерами строю команды агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR в GitHub по утверждённому человеком плану. До этого: Staff Harness Engineer в Sully.ai, голосовой AI для медицины. 8+ лет: full-stack, мобильная разработка, облака и управление командами, а до этого четыре года на медицинском.'
+    en: 'I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management.',
+    ru: 'Я строю системы, где важна надёжность, и добиваюсь, чтобы команды AI-агентов работали в продакшене, а не только на демо. Сейчас: Founding Engineer в YAGNI (yagni.app), вместе с фаундерами строю команды агентов (PM, Builder, Reviewer), которые доводят задачу от предложения до смерженного PR в GitHub по утверждённому человеком плану. До этого: Staff Harness Engineer в Sully.ai, голосовой AI для медицины. 8+ лет: full-stack, мобильная разработка, облака и управление командами.'
   },
   medToAiStory: {
     en: 'How I work: I build with AI agents every day — I plan, delegate to agents, review their output with a second "judge" agent, and keep the human decision where it matters.',
