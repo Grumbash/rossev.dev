@@ -33,6 +33,9 @@ export default defineConfig({
     format: 'directory',
     inlineStylesheets: 'always'
   },
+  // Astro 7's default ('jsx') drops the whitespace between elements, which glues inline links and
+  // spans together; true is the lossless compression Astro 5 shipped with.
+  compressHTML: true,
   // HTMX fragments are not pages: they stay out of the sitemap (and carry noindex, see vercel.json).
   // Neither is /booked (or /ru/booked), cal.com's after-booking redirect (noindex in its <head>),
   // nor /c, the card behind the QR code on the phone case (noindex too).
