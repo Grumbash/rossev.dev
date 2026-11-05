@@ -1,0 +1,11 @@
+[
+  "tests/nca-regrow.test.ts",
+  "tests/nca.test.ts",
+  "tests/nca-regrow-hopeless.test.ts",
+  "tests/nca-regrow-grown.test.ts",
+  "tests/nca-regrow-crooked.test.ts",
+  "tests/nca-regrow-sequence.test.ts",
+  "tests/replay-data.test.ts",
+  "tests/nca-baseline.test.ts",
+  "tests/replay-heal.test.ts"
+]

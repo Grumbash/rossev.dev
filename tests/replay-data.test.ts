@@ -13,7 +13,8 @@ import { decodeWeights } from '../src/scripts/nca/weights';
 import type { Replay, ReplayEvent } from '../scripts/build-story';
 import { PALETTE, cut, decodeFrame, encodeFrame, mulberry32, quantize } from '../src/scripts/replay/frames';
 
-setDefaultTimeout(120_000);
+// A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
+setDefaultTimeout(300_000);
 
 const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 << 20 });
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));

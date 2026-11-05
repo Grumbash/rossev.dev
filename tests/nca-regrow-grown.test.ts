@@ -6,7 +6,8 @@ import { decodeWeights } from '../src/scripts/nca/weights';
 import { createHealer } from '../src/scripts/nca/healer';
 import { eraseBelow, grown, mse, mulberry32, runUntilSettled } from './fixtures/nca-regrow';
 
-setDefaultTimeout(60_000);
+// A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
+setDefaultTimeout(300_000);
 
 // A second judge found the guard measured "grown" against one grown frame. On ~4% of page views that
 // frame is itself off (bad bbox, or MSE ~0.009), so clean heals were judged wrong and thrown away,

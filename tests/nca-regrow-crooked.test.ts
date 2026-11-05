@@ -2,7 +2,8 @@
 import { describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { eraseBelow, grown, mse, mulberry32, runUntilSettled } from './fixtures/nca-regrow';
 
-setDefaultTimeout(60_000);
+// A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
+setDefaultTimeout(300_000);
 
 // The final judge: ~6% of silent first grows come out crooked, which is what forced a fragile
 // "heal back to the crooked start" exception. The first grow is invisible (the static SVG is up),

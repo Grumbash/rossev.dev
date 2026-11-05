@@ -6,7 +6,8 @@ import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from '
 import { readFileSync } from 'node:fs';
 import { createHealer } from '../src/scripts/replay/heal';
 
-setDefaultTimeout(60_000);
+// A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
+setDefaultTimeout(300_000);
 
 const realFetch = globalThis.fetch;
 beforeAll(() => {
