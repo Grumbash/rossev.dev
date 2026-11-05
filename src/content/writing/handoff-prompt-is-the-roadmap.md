@@ -3,7 +3,7 @@ title: I Took Over an Epic With One Prompt. It Reads Like a Map of the Next Few 
 category: ai
 distribute: [linkedin]
 ---
-Yesterday I took over a teammate's epic overnight: they were out. This morning I wrote the prompt I'd hand to a coding agent to keep it going. Then I reread it and noticed it barely says "do X". Most of it describes the environment the agent needs so it can work without me.
+Yesterday I took over a teammate's epic overnight: they were out. This morning I wrote the prompt I'd hand to a coding agent to keep it going. Then I reread it and noticed it has almost no direct instructions. Most of it describes the environment the agent needs so it can work without me.
 
 I think that's a fairly honest map of what's going to matter in engineering over the next few months. Seven things stood out.
 
@@ -21,13 +21,13 @@ Getting code is cheap now. Knowing it's right is the expensive part. More and mo
 
 ## 3. Boundaries of authority are written down
 
-"I decide whether to turn this flag on." "Slack: drafts only, I send them myself." "That ticket stays with its owner, don't touch it." "Merge when CI is green and the bot approved, otherwise ask me."
+Half of my prompt is about who owns what. Whether to turn a flag on is my decision. In Slack the agent only writes drafts, and I send them. One ticket in the epic stays with its owner, and the agent leaves it alone. A merge happens only when CI is green and the bot approved the last commit; anything else comes back to me.
 
 An agent doesn't just need permission to act. It needs a map of what belongs to whom and where it stops and waits for a person.
 
 ## 4. The bottleneck moved to taste and staging
 
-The task for today wasn't "write the code". It was "make it look great", with a condition: propose options first, then build.
+Today's task wasn't writing code. It was making the design look great, and the agent had to show me options before building anything.
 
 When 15 PRs fit into one day, code stops being the scarce thing. Judgment and checking the real thing in a live environment are.
 
@@ -35,7 +35,7 @@ When 15 PRs fit into one day, code stops being the scarce thing. Judgment and ch
 
 The epic itself is about agents that join a team as members: their own machine, a status, a heartbeat while they work.
 
-The most delicate part turned out to be the language of state. We had a bug where the agent said "waiting on me" when it meant "waiting on you". Trust in an agent rests on whether it says correctly who's waiting for whom. The next step on the roadmap is the same idea: a staged preview and undo, because people trust what they can take back.
+The most delicate part turned out to be the language of state. We had a bug where the agent said it was waiting on itself when it was actually waiting on a person. Trust in an agent rests on whether it says correctly who's waiting for whom. The next step on the roadmap is the same idea: a staged preview and undo, because people trust what they can take back.
 
 ## 6. Privacy is part of the agent's toolbox
 
