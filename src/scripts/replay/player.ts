@@ -69,11 +69,13 @@ const MONITOR = 7;
 const SVC_NODE = [BUILDER, SANDBOX, JUDGE, PLAN];
 
 export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: Strings; track: (p: Record<string, string>) => void }) {
-  const { api, card, track, strings } = o;
-  const copy = strings.replayCanvas;
-  const pc = strings.policyCanvas;
+  const { api, card, track } = o;
+  // Reassigned by setLang when the page morphs into the other language (scripts/lang-morph.ts).
+  let strings = o.strings;
+  let copy = strings.replayCanvas;
+  let pc = strings.policyCanvas;
   const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const lang: Lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
+  let lang: Lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
   const events = replay.events as Ev[];
   const F = film(replay);
   const N = events.length;
@@ -94,6 +96,8 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   menu.className = 'sim-fault-menu';
   menu.id = 'iso-fault-menu';
   menu.setAttribute('role', 'group');
+  // Made here, not by the server: the language morph leaves it out of its page-to-page match.
+  menu.setAttribute('data-morph-ignore', '');
   menu.setAttribute('aria-label', strings.faultMenu);
   menu.hidden = true;
   const kinds = (['latency', 'node_down', 'bad_deploy', 'surge'] as const).map((k) => {
@@ -107,6 +111,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
   const policyLabel = document.createElement('p');
   policyLabel.className = 'policy-label';
   policyLabel.setAttribute('data-policy-label', '');
+  policyLabel.setAttribute('data-morph-ignore', '');
   policyLabel.hidden = true;
   if (faultBtn) faultBtn.after(menu);
   else canvasWrap?.append(menu);
@@ -131,6 +136,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
 
   // The recorded frames (G→R on the pre-fix weights), fetched with the film, decoded once.
   let rec: { size: number; frames: Uint8Array[]; steps: number[]; source: string } | null = null;
+  let sources: Record<Lang, string> | null = null;
   fetch(FRAMES_URL)
     .then((r) => (r.ok ? r.json() : null))
     .then((j) => {
@@ -141,6 +147,7 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
         steps: j.frames.map((f: { step: number }) => f.step),
         source: j.source[lang],
       };
+      sources = j.source;
       // Under reduced motion every frame is a deliberate redraw: only when the GR is on screen.
       if (!rm || s.mode === 'live' || /test|catch|fix/.test(events[shotAt(F, s.t).index].kind)) api.redraw();
     })
@@ -1026,5 +1033,18 @@ export function startPlayer(o: { api: IsoApi; card: HTMLElement; strings: String
     },
     /** A timeline key pressed before this chunk had loaded. */
     key,
+    /** The page morphed into the other language: the canvas, the menu and the labels follow. */
+    setLang(next: Lang, nextStrings: Strings) {
+      lang = next;
+      strings = nextStrings;
+      copy = strings.replayCanvas;
+      pc = strings.policyCanvas;
+      menu.setAttribute('aria-label', strings.faultMenu);
+      kinds.forEach((b) => (b.textContent = strings.faultKinds[b.dataset.simFaultKind as keyof Strings['faultKinds']]));
+      if (rec && sources) rec.source = sources[lang];
+      painted = '';
+      paint();
+      api.redraw();
+    },
   };
 }

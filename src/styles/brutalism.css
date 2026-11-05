@@ -1806,3 +1806,6 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
     break-inside: avoid;
   }
 }
+
+/* The language morph (scripts/lang-morph.ts) melts its blocks itself; the group still moves them. */
+::view-transition-old(*.lang-morph),::view-transition-new(*.lang-morph){animation:none;mix-blend-mode:normal}

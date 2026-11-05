@@ -117,7 +117,8 @@ describe.skipIf(!existsSync(CHROME))('in the browser', () => {
     if ('${mode}' === 'post') {
       const ps = [...document.querySelectorAll('.post-body > *')];
       anchor = ps[Math.floor(ps.length / 2)];
-      anchor.scrollIntoView({ block: 'start' }); scrollBy(0, -120); await wait(300);
+      // On the reading line the morph keeps still: a quarter down the screen.
+      anchor.scrollIntoView({ block: 'start', behavior: 'instant' }); scrollBy({ top: -(innerHeight * 0.25 - 8), behavior: 'instant' }); await wait(300);
       out.anchorBefore = anchor.getBoundingClientRect().top;
       out.anchorFraction = ps.indexOf(anchor) / ps.length;
     }
