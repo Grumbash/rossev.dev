@@ -50,7 +50,7 @@ export const en = {
     howBuilt: 'How this site was built',
     hire: 'Work with me',
     education: 'Education',
-    educationValue: 'Belarusian State University — Medicine (2015 — 2019)',
+    educationValue: 'Belarusian State University — Medicine, 4 years, left for engineering (2015 — 2019)',
     languages: 'Languages',
     based: 'Based',
     remote: 'Remote',

@@ -1,6 +1,6 @@
 # Gleb Rosev — Founding Engineer, AI Agents @ YAGNI (yagni.app)
 
-Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in Tbilisi, building production AI agent teams; previously Staff Harness Engineer at Sully.ai; 8+ years in engineering; medical degree.
+Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in Tbilisi, building production AI agent teams; previously Staff Harness Engineer at Sully.ai; 8+ years in engineering; studied medicine before switching to code.
 
 > Making AI agents dependable in production, not just impressive in a demo.
 
@@ -13,7 +13,7 @@ Gleb Rosev (also spelled Rossev) is a Founding Engineer at YAGNI (yagni.app) in 
 - **Programmatic CV (PDF)**: /gleb-rosev-cv.pdf
 
 ## Executive Summary
-I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus a medical degree.
+I build software systems where reliability matters, and I make AI agent teams dependable in production, not just impressive in a demo. Now: Founding Engineer at YAGNI (yagni.app), working with the founders on AI agent teams (PM, Builder, Reviewer) that take work from a proposal to a merged GitHub PR under human-approved plans. Before that: Staff Harness Engineer on healthcare voice AI at Sully.ai. 8+ years across full-stack, mobile, cloud and engineering management, plus four years of medical school before I switched to engineering.
 
 How I work: I build with AI agents every day — I plan, delegate to agents, review their output with a second "judge" agent, and keep the human decision where it matters.
 
@@ -124,7 +124,7 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - [Explanations Describe Failure, Ownership Changes the Plan](https://rossev.dev/writing/explanation-vs-ownership/) (2026-06-13): After a failure, pair every explanation with a concrete decision or revised plan.
 
 ## Education & Languages
-- **Education**: Belarusian State University — Medicine (2015 — 2019)
+- **Education**: Belarusian State University — Medicine, 4 years, left for engineering (2015 — 2019)
 - **Languages**: English (C1 — Advanced Professional), Russian (Native)
 
 ## Canary #42

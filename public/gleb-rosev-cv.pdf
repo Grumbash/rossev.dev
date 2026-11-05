@@ -22,7 +22,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R /Annots [9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R] >>
 endobj
 8 0 obj
-<< /Length 8057 >>
+<< /Length 8162 >>
 stream
 0.973 0.965 0.945 rg
 0.00 0.00 595.28 841.89 re f
@@ -135,323 +135,329 @@ BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 46.00 626.29 Td
-(engineering management, plus a medical degree. How I work: I build with AI agents every day — I plan, delegate to) Tj
+(engineering management, plus four years of medical school before I switched to engineering. How I work: I build with AI) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 46.00 612.89 Td
-(agents, review their output with a second "judge" agent, and keep the human decision where it matters.) Tj
+(agents every day — I plan, delegate to agents, review their output with a second "judge" agent, and keep the human) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+46.00 599.49 Td
+(decision where it matters.) Tj
 ET
 0.784 1.000 0.000 rg
-46.00 588.49 7.00 7.00 re f
+46.00 575.09 7.00 7.00 re f
 BT
 /F2 10.50 Tf
 0.070 0.070 0.080 rg
-59.00 587.49 Td
+59.00 574.09 Td
 (EXPERIENCE) Tj
 ET
 0.80 w
 0.070 0.070 0.080 RG
-46.00 582.49 m 549.28 582.49 l S
+46.00 569.09 m 549.28 569.09 l S
 BT
 /F2 10.50 Tf
 0.070 0.070 0.080 rg
-46.00 567.49 Td
+46.00 554.09 Td
 (Founding Engineer, AI Agents) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-469.74 567.49 Td
+469.74 554.09 Td
 (Nov 2026 – Present) Tj
 ET
 BT
 /F2 9.50 Tf
 0.070 0.070 0.080 rg
-46.00 553.49 Td
+46.00 540.09 Td
 (YAGNI \(yagni.app\)) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-137.40 553.49 Td
+137.40 540.09 Td
 (Tbilisi, Georgia · Remote) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-46.00 540.49 Td
+46.00 527.09 Td
 (Early-stage US startup building named AI agent teams that take engineering work from proposal to merged GitHub pull) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-46.00 528.49 Td
+46.00 515.09 Td
 (request under human-approved plans.) Tj
 ET
 BT
 /F2 8.50 Tf
 0.360 0.360 0.380 rg
-46.00 516.49 Td
+46.00 503.09 Td
 (Founding Team · Agent Benchmarks · Multi-Tenant Isolation · Self-Healing Syncs) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 500.49 Td
+48.00 487.09 Td
 (•) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 500.49 Td
+58.00 487.09 Td
 (Tenant isolation: tenant-scoped query guards and sandboxed code execution.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 485.59 Td
+48.00 472.19 Td
 (•) Tj
-ET
-BT
-/F1 9.50 Tf
-0.070 0.070 0.080 rg
-58.00 485.59 Td
-(Connector backfills made self-healing: stuck-cursor recovery, progress tracking and hard caps for long syncs of large) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 58.00 472.19 Td
+(Connector backfills made self-healing: stuck-cursor recovery, progress tracking and hard caps for long syncs of large) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 458.79 Td
 (workspaces.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 457.29 Td
+48.00 443.89 Td
 (•) Tj
-ET
-BT
-/F1 9.50 Tf
-0.070 0.070 0.080 rg
-58.00 457.29 Td
-(Code-review agent reliability: fixed ticket-key collisions between YAGNI and external trackers that sent the reviewer) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 58.00 443.89 Td
+(Code-review agent reliability: fixed ticket-key collisions between YAGNI and external trackers that sent the reviewer) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 430.49 Td
 (to the wrong issue.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 428.99 Td
+48.00 415.59 Td
 (•) Tj
-ET
-BT
-/F1 9.50 Tf
-0.070 0.070 0.080 rg
-58.00 428.99 Td
-(Agent benchmarks: realistic engineering task suites that show whether a prompt, model or harness change makes) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 58.00 415.59 Td
+(Agent benchmarks: realistic engineering task suites that show whether a prompt, model or harness change makes) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 402.19 Td
 (agents better or worse.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 400.69 Td
+48.00 387.29 Td
 (•) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 400.69 Td
+58.00 387.29 Td
 (Risk radar: flags stalled customer runs before the customer reports them.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 385.79 Td
+48.00 372.39 Td
 (•) Tj
-ET
-BT
-/F1 9.50 Tf
-0.070 0.070 0.080 rg
-58.00 385.79 Td
-(Self-improving loop \(experimental\): a meta-agent reads failed runs, isolates the cause and drafts a fix for the team to) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 58.00 372.39 Td
+(Self-improving loop \(experimental\): a meta-agent reads failed runs, isolates the cause and drafts a fix for the team to) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 358.99 Td
 (review.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 357.49 Td
+48.00 344.09 Td
 (•) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 357.49 Td
+58.00 344.09 Td
 (Monorepo build chain reduced to one command for fresh checkouts, worktrees and CI.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 342.59 Td
+48.00 329.19 Td
 (•) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 342.59 Td
+58.00 329.19 Td
 (Technical point of contact for pilot customers: demos, debugging live runs, turning feedback into engineering work.) Tj
 ET
 BT
 /F2 10.50 Tf
 0.070 0.070 0.080 rg
-46.00 318.69 Td
+46.00 305.29 Td
 (Staff Harness Engineer, AI Voice Systems) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-464.22 318.69 Td
+464.22 305.29 Td
 (Sep 2025 – Oct 2026) Tj
 ET
 BT
 /F2 9.50 Tf
 0.070 0.070 0.080 rg
-46.00 304.69 Td
+46.00 291.29 Td
 (Sully.ai) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-87.27 304.69 Td
+87.27 291.29 Td
 (Dubai, UAE) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-46.00 291.69 Td
+46.00 278.29 Td
 (AI receptionist platform for healthcare: voice and text agents for scheduling, care coordination and clinic operations. Sully.ai) Tj
 ET
 BT
 /F1 9.00 Tf
 0.360 0.360 0.380 rg
-46.00 279.69 Td
+46.00 266.29 Td
 (serves 400+ healthcare organizations.) Tj
 ET
 BT
 /F2 8.50 Tf
 0.360 0.360 0.380 rg
-46.00 267.69 Td
+46.00 254.29 Td
 (15s to 0s Dead Air at Pickup · MENA Launch · Real-Time Voice AI) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 251.69 Td
+48.00 238.29 Td
 (•) Tj
-ET
-BT
-/F1 9.50 Tf
-0.070 0.070 0.080 rg
-58.00 251.69 Td
-(Led core engineering for the MENA launch: UAE infrastructure, Azure Blob Storage support, regional configuration) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 58.00 238.29 Td
+(Led core engineering for the MENA launch: UAE infrastructure, Azure Blob Storage support, regional configuration) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 224.89 Td
 (and production readiness.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 223.39 Td
+48.00 209.99 Td
 (•) Tj
-ET
-BT
-/F1 9.50 Tf
-0.070 0.070 0.080 rg
-58.00 223.39 Td
-(Removed ~15 s of dead air at pickup on outbound calls: the agent was greeting the caller while the line was still) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 58.00 209.99 Td
+(Removed ~15 s of dead air at pickup on outbound calls: the agent was greeting the caller while the line was still) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 196.59 Td
 (ringing.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 195.09 Td
+48.00 181.69 Td
 (•) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 195.09 Td
+58.00 181.69 Td
 (Made agent dispatch reliable on LiveKit: retry-and-verify, no more duplicate agents in one call, no more silent calls.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 180.19 Td
+48.00 166.79 Td
 (•) Tj
-ET
-BT
-/F1 9.50 Tf
-0.070 0.070 0.080 rg
-58.00 180.19 Td
-(Designed UAE audio-residency guardrails so TTS and STT fallbacks stay within approved regional providers instead) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 58.00 166.79 Td
+(Designed UAE audio-residency guardrails so TTS and STT fallbacks stay within approved regional providers instead) Tj
+ET
+BT
+/F1 9.50 Tf
+0.070 0.070 0.080 rg
+58.00 153.39 Td
 (of silently routing elsewhere.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 151.89 Td
+48.00 138.49 Td
 (•) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 151.89 Td
+58.00 138.49 Td
 (Built patient-data validation for outbound campaigns: local phone formats, customer-specific schemas, clinic rules.) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-48.00 136.99 Td
+48.00 123.59 Td
 (•) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 136.99 Td
+58.00 123.59 Td
 (Built high-volume stress testing with headless LiveKit participants, Loki and Mimir validation, and runtime health) Tj
 ET
 BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
-58.00 123.59 Td
+58.00 110.19 Td
 (checks; found and fixed the memory cascade behind burst failures.) Tj
 ET
 0.050 0.050 0.070 rg
@@ -485,16 +491,16 @@ endobj
 << /Type /Annot /Subtype /Link /Rect [442.25 738.76 483.35 747.69] /Border [0 0 0] /A << /S /URI /URI (https://rossev.dev) >> >>
 endobj
 13 0 obj
-<< /Type /Annot /Subtype /Link /Rect [46.00 551.11 129.40 561.09] /Border [0 0 0] /A << /S /URI /URI (https://yagni.app) >> >>
+<< /Type /Annot /Subtype /Link /Rect [46.00 537.71 129.40 547.69] /Border [0 0 0] /A << /S /URI /URI (https://yagni.app) >> >>
 endobj
 14 0 obj
-<< /Type /Annot /Subtype /Link /Rect [46.00 302.32 79.27 312.29] /Border [0 0 0] /A << /S /URI /URI (https://www.sully.ai) >> >>
+<< /Type /Annot /Subtype /Link /Rect [46.00 288.92 79.27 298.89] /Border [0 0 0] /A << /S /URI /URI (https://www.sully.ai) >> >>
 endobj
 15 0 obj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 16 0 R /Annots [17 0 R 18 0 R 19 0 R] >>
 endobj
 16 0 obj
-<< /Length 7074 >>
+<< /Length 7089 >>
 stream
 0.973 0.965 0.945 rg
 0.00 0.00 595.28 841.89 re f
@@ -875,7 +881,7 @@ BT
 /F1 9.50 Tf
 0.070 0.070 0.080 rg
 46.00 192.19 Td
-(Medicine \(medical degree\)) Tj
+(Medicine, 4 years \(left for engineering\)) Tj
 ET
 BT
 /F2 9.50 Tf
@@ -927,19 +933,19 @@ xref
 0000000427 00000 n 
 0000000966 00000 n 
 0000001169 00000 n 
-0000009278 00000 n 
-0000009430 00000 n 
-0000009591 00000 n 
-0000009745 00000 n 
-0000009890 00000 n 
-0000010033 00000 n 
-0000010178 00000 n 
-0000010363 00000 n 
-0000017490 00000 n 
-0000017633 00000 n 
-0000017779 00000 n 
+0000009383 00000 n 
+0000009535 00000 n 
+0000009696 00000 n 
+0000009850 00000 n 
+0000009995 00000 n 
+0000010138 00000 n 
+0000010283 00000 n 
+0000010468 00000 n 
+0000017610 00000 n 
+0000017753 00000 n 
+0000017899 00000 n 
 trailer
 << /Size 20 /Root 1 0 R /Info 6 0 R >>
 startxref
-17925
+18045
 %%EOF
