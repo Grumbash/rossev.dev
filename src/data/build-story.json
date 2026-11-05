@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-05T02:18:21.771Z",
-  "throughSha": "9834a3ef1e448a8ed86ff61c29d4caecb3831ce2",
+  "generatedAt": "2026-11-05T13:51:25.108Z",
+  "throughSha": "15452e55bbf62426b200976171b81a595d9ba00e",
   "prs": [
     {
       "number": 1,
@@ -2159,6 +2159,132 @@
           "subject": "typescript is a devDependency of its own: Astro 7 no longer brings it in, and the i18n tests run node_modules/.bin/tsc to prove the Dict type rejects a missing or unknown key",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/52a90064753da56b19f036385c02b7c2f36f472c"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 53,
+      "title": "A post written on the site: the handoff prompt as a map of the next few months",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/53",
+      "mergedAt": "2026-11-05T10:39:58Z",
+      "additions": 74,
+      "deletions": 0,
+      "changedFiles": 4,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "74b38370c4e3eae9df2933d6e29f9e075dfd8ca7",
+          "subject": "A post written on the site: \"I Took Over an Epic With One Prompt. It Reads Like a Map of the Next Few Months.\" (EN, AI systems, a LinkedIn draft); the writing workflow adds the Russian text and the brief",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/74b38370c4e3eae9df2933d6e29f9e075dfd8ca7"
+        },
+        {
+          "sha": "598fd79419b48f5ae03c926e6864c71acdc1aa5b",
+          "subject": "The post's source names no imperatives and no \"you\" in quotes, so the Russian text keeps to «вы»",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/598fd79419b48f5ae03c926e6864c71acdc1aa5b"
+        },
+        {
+          "sha": "a4e4e24b6b55040fa0dc0ac489a2931e43df6ed8",
+          "subject": "The writing workflow checks out the full history, so the build story and replay tests find their old commits instead of failing every site post; the title says the epic was picked up, not handed over",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a4e4e24b6b55040fa0dc0ac489a2931e43df6ed8"
+        },
+        {
+          "sha": "254083ced2f62ffad0e6573575996df8876c6040",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/254083ced2f62ffad0e6573575996df8876c6040"
+        },
+        {
+          "sha": "5d9812e007b754c4e54e8b8ff0c700592cc948ae",
+          "subject": "The Russian copy of the handoff post: the title says the epic was picked up, the colleague isn't invented to be on vacation, and the staged preview reads in proper Russian",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5d9812e007b754c4e54e8b8ff0c700592cc948ae"
+        },
+        {
+          "sha": "e06b9507be6ac18fc8421b048f851b9bafea79c7",
+          "subject": "The handoff post in plainer words: what the prompt actually held, without the slogans",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e06b9507be6ac18fc8421b048f851b9bafea79c7"
+        },
+        {
+          "sha": "16410a138f30335ddccaf6331d4a45266f37b786",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/16410a138f30335ddccaf6331d4a45266f37b786"
+        },
+        {
+          "sha": "6ca719ed90f45365494cdea8260ad3966f105029",
+          "subject": "The Russian copy of the handoff post in plainer words: no invented vacation, fewer dashes and set phrases",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6ca719ed90f45365494cdea8260ad3966f105029"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 54,
+      "title": "The handoff post's brief says the agent asks me, not the author",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/54",
+      "mergedAt": "2026-11-05T10:49:41Z",
+      "additions": 1,
+      "deletions": 1,
+      "changedFiles": 1,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "5672498abc07a2c863ab619359cba4dd8bcf821e",
+          "subject": "The handoff post's brief says the agent asks me, not the author",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5672498abc07a2c863ab619359cba4dd8bcf821e"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 55,
+      "title": "Say four years of medical school, not a medical degree",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/55",
+      "mergedAt": "2026-11-05T12:33:59Z",
+      "additions": 14,
+      "deletions": 14,
+      "changedFiles": 7,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "cc36b9479e63d0b412adaa10bc31704a4413617e",
+          "subject": "The site, llms.txt, the CV and the LinkedIn banner said \"medical degree\"; they now say four years of medical school, left for engineering, which is what happened",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/cc36b9479e63d0b412adaa10bc31704a4413617e"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 58,
+      "title": "Run the NCA simulations in their own workflow, one runner per file",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/58",
+      "mergedAt": "2026-11-05T13:50:43Z",
+      "additions": 222,
+      "deletions": 24,
+      "changedFiles": 15,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "a0284ee7fcd42850bd469e4199281674df95d765",
+          "subject": "The NCA simulations run in their own workflow, one runner per file, and the perf job skips them: on a shared 4-vCPU runner they timed out against each other (nca-regrow-sequence, 64.6 s against 60 s on a copy-only PR)",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a0284ee7fcd42850bd469e4199281674df95d765"
         }
       ],
       "findings": [],
