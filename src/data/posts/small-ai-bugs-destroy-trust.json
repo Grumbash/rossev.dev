@@ -1,0 +1,48 @@
+{
+  "id": "post-28",
+  "slug": "small-ai-bugs-destroy-trust",
+  "published": "2026-07-02",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_a-few-weeks-ago-we-spent-several-hours-discussing-share-7478440559682936832-ykx0",
+  "title": {
+    "en": "A Tiny AI Voice Bug Can Cost More Trust Than a Major Outage",
+    "ru": "Мелкий баг голосового ИИ-агента может стоить доверия сильнее крупного сбоя"
+  },
+  "takeaway": {
+    "en": "Treat small, user-visible details as real quality defects, because users judge trust by what they notice, not by your internal metrics.",
+    "ru": "Считайте мелкие детали, которые видит пользователь, настоящими дефектами качества: доверие строится на том, что замечают люди, а не на внутренних метриках."
+  },
+  "tags": [
+    "AI Agents",
+    "Product Quality",
+    "Trust"
+  ],
+  "brief": {
+    "quote": {
+      "en": "They simply notice that something feels wrong, and once trust is gone, they stop caring how technically impressive the system is.",
+      "ru": "Они просто замечают, что что-то не так, а когда доверие потеряно, им уже неважно, насколько технически сложна система."
+    },
+    "bullets": {
+      "en": [
+        "An AI voice agent that addressed a female patient with masculine forms looked like a minor bug, even though latency and coherence were fine.",
+        "Users judge software by what they notice, not by prompt quality, model architecture or response latency.",
+        "Engineering quality and product quality are not always the same, so the details users see deserve as much attention as the metrics you optimize."
+      ],
+      "ru": [
+        "Голосовой ИИ-агент обращался к пациентке в мужском роде. Баг выглядит мелким, хотя задержка и связность ответов были в норме.",
+        "Пользователи оценивают продукт по тому, что замечают: качество промптов, архитектура модели и время ответа их не интересуют.",
+        "Инженерное качество и продуктовое качество не всегда совпадают, поэтому детали, которые видит пользователь, заслуживают такого же внимания, как метрики, которые вы оптимизируете."
+      ]
+    }
+  },
+  "body": {
+    "en": "A few weeks ago we spent several hours discussing what looked like a tiny issue in one of our AI voice agents. It wasn’t hallucinating, the latency was fine, conversations were coherent, but every now and then it would address a female patient using masculine forms.\n\nFrom an engineering perspective, that’s an almost boring bug. It’s easy to look at it and think, “We’ll fix it eventually.” But that’s not how users experience software. They don’t evaluate prompt quality, model architecture or response latency. They simply notice that something feels wrong, and once trust is gone, they stop caring how technically impressive the system is.\n\nIt reminded me that engineering quality and product quality aren’t always the same thing. We spend a lot of time optimizing metrics that users never see, while the details they notice are often the ones that determine whether they trust the product at all.",
+    "ru": "Несколько недель назад мы несколько часов обсуждали, что выглядело как мелкая проблема в одном из наших голосовых ИИ-агентов. Он не галлюцинировал, задержка была в норме, разговоры были связными, но время от времени он обращался к пациентке в мужском роде.\n\nС инженерной точки зрения это почти скучный баг. Посмотришь на него и думаешь: «Потом поправим». Но пользователь воспринимает софт не так. Он не оценивает качество промптов, архитектуру модели или время ответа. Он просто замечает, что что-то не так, а когда доверие потеряно, ему уже неважно, насколько впечатляюще система устроена технически.\n\nЭто напомнило мне, что инженерное качество и продуктовое качество не всегда одно и то же. Мы много времени тратим на оптимизацию метрик, которые пользователи никогда не видят, а детали, которые они замечают, часто и решают, будут ли они вообще доверять продукту."
+  },
+  "color": "var(--orange)"
+}

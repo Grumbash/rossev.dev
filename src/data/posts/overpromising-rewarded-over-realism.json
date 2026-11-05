@@ -1,0 +1,48 @@
+{
+  "id": "post-35",
+  "slug": "overpromising-rewarded-over-realism",
+  "published": "2026-10-15",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_overpromising-might-be-one-of-the-most-underrated-share-7516584787743227905-tpsq",
+  "title": {
+    "en": "Overpromising Might Be an Underrated Management Skill",
+    "ru": "Завышенные обещания могут быть недооценённым навыком менеджера"
+  },
+  "takeaway": {
+    "en": "Judge managers by what they delivered against what they promised, not by how exciting their next plan sounds.",
+    "ru": "Оценивайте менеджеров по тому, что они сдали относительно обещанного, а не по тому, как звучит их следующий план."
+  },
+  "tags": [
+    "Management",
+    "Accountability",
+    "Careers"
+  ],
+  "brief": {
+    "quote": {
+      "en": "It's how easily we let people replace accountability for yesterday's promises with excitement about tomorrow's.",
+      "ru": "Насколько легко мы позволяем подменять ответственность за вчерашние обещания воодушевлением от завтрашних."
+    },
+    "bullets": {
+      "en": [
+        "Two managers deliver the same 20% gain, but the one who promised 10x often gets the credit, because the original promise quietly disappears from the conversation.",
+        "The manager who predicted 20–30% honestly and then delivered it gets less recognition than the one who overpromised.",
+        "The author asks whether companies promote people who deliver results or people who manage the perception of results."
+      ],
+      "ru": [
+        "Два менеджера дают один и тот же прирост в 20%, но тот, кто обещал 10x, часто получает признание, потому что исходное обещание незаметно пропадает из разговора.",
+        "Менеджер, который честно прогнозировал 20–30% и выполнил прогноз, получает меньше признания, чем тот, кто завысил обещания.",
+        "Автор спрашивает, продвигают ли компании тех, кто сдаёт результат, или тех, кто умеет управлять восприятием результата."
+      ]
+    }
+  },
+  "body": {
+    "en": "Overpromising might be one of the most underrated career skills in management\n\nI’m starting to suspect that being realistic about what your team can deliver is sometimes a competitive disadvantage\n\nThink about it\n\nOne manager promises a 10x productivity improvement. Another says 20–30% is achievable, explains the trade-offs, and builds a plan around it\n\nA year later, both deliver 20%\n\nWho gets more recognition?\n\nYou’d expect the second manager. They understood the problem, made a reasonable prediction, and delivered what they promised.\n\nBut I’ve seen enough to question that assumption\n\nThe first manager can still celebrate a 20% improvement, blame the remaining gap on execution, and introduce an even more ambitious plan for next quarter\n\nAnd somehow, the original 10x promise disappears from the conversation\n\nI’ve been on the engineering side of this. Turning ambitious ideas into estimates, dependencies, and executable plans, only to repeat the exercise a week later when another brilliant priority appeared\n\nWhat bothers me isn’t ambition or even unrealistic predictions. Both are inevitable when building something new\n\nIt’s how easily we let people replace accountability for yesterday’s promises with excitement about tomorrow’s\n\nAt some point, I have to wonder: Are we promoting people who are good at delivering results, or people who are good at managing the perception of results?",
+    "ru": "Завышенные обещания, похоже, одна из самых недооценённых карьерных навыков в менеджменте.\n\nВсё чаще я думаю, что реалистичная оценка того, что может сделать команда, иногда становится конкурентным минусом.\n\nПодумайте сами.\n\nОдин менеджер обещает улучшение продуктивности в 10 раз. Другой говорит, что реально 20–30%, объясняет компромиссы и строит план вокруг этой цифры.\n\nЧерез год оба дают по 20%.\n\nКого больше отметят?\n\nВы ожидаете второго менеджера. Он понял проблему, сделал разумный прогноз и выполнил то, что обещал.\n\nНо я видел достаточно, чтобы усомниться в этом предположении.\n\nПервый менеджер может спокойно отпраздновать 20%, списать оставшийся разрыв на исполнение и предложить ещё более амбициозный план на следующий квартал.\n\nИ каким-то образом исходное обещание про 10x исчезает из разговора.\n\nЯ сам был на стороне инженеров в такой ситуации. Превращаешь амбициозные идеи в оценки, зависимости и рабочие планы, а через неделю всё повторяется, потому что появился очередной блестящий приоритет.\n\nМеня беспокоит не амбиция и даже не нереалистичные прогнозы. И то и другое неизбежно, когда создаёшь что-то новое.\n\nНо беспокоит другое: how easily мы позволяем подменять ответственность за вчерашние обещания воодушевлением от завтрашних.\n\nВ какой-то момент я задаюсь вопросом: продвигаем ли мы тех, кто хорошо сдаёт результаты, или тех, кто хорошо управляет восприятием результатов?"
+  },
+  "color": "var(--lime)"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "post-43",
+  "slug": "unpaid-extortion-exposed-signup-flaw",
+  "published": "2026-11-03",
+  "category": "systems",
+  "categoryLabel": {
+    "en": "RELIABILITY",
+    "ru": "СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7523364618107432960/",
+  "title": {
+    "en": "I Refused to Pay the Hacker Who Found Our Signup Hole",
+    "ru": "Я не стал платить хакеру, который нашёл дыру в регистрации"
+  },
+  "takeaway": {
+    "en": "Protect signup flows from mass abuse before a stranger's extortion email forces you to.",
+    "ru": "Защищайте регистрацию от массовой накрутки заранее, а не после письма с ультиматумом."
+  },
+  "tags": [
+    "Security",
+    "Incident Response",
+    "Signup Abuse"
+  ],
+  "brief": {
+    "quote": {
+      "en": "I refused to pay. It didn't seem valuable enough for a bounty.",
+      "ru": "Я отказался платить. Это не казалось достаточно ценным, чтобы платить баунти."
+    },
+    "bullets": {
+      "en": [
+        "An anonymous email claimed the author had found a vulnerability on the company's website and was ready to use it.",
+        "The real hole was an endless signup flow that one person with an old laptop and a script could abuse.",
+        "The attacker scaled up to about 20,000 new users within a week, so the team banned his IP to stop it."
+      ],
+      "ru": [
+        "В письме анонима говорилось, что он нашёл уязвимость на сайте компании и готов ею воспользоваться.",
+        "Настоящей дырой оказалась бесконечная регистрация, которой мог злоупотреблять один человек со старым ноутбуком и скриптом.",
+        "За неделю злоумышленник нагнал около 20 000 новых пользователей, и команда остановила его, забанив IP."
+      ]
+    }
+  },
+  "body": {
+    "en": "I got \"hacked.\"\n\nThis was back when I was running engineering, before AI started breaking the internet at scale. Probably a textbook case.\n\nAn email arrived: \"Dear Gleb, I have found a vulnerability on your website and I am ready to use it.\"\n\nA few emails later it turned out there really was a hole, just not the one I expected. A guy from Pakistan had found a way to sign up on our site endlessly. No bot farm. An old laptop and some script.\n\nI refused to pay. It didn't seem valuable enough for a bounty.\n\nSo he scaled up. Within a week we had about 20,000 new users, and our customer support specialist's phone was blowing up, because it pinged him for every new signup.\n\nIn the end we banned his IP, and that was it.\n\nWould you have paid him?",
+    "ru": "Меня «взломали». Это было, когда я руководил инженерией, ещё до того, как ИИ начал ломать интернет в масштабе. Наверное, учебный случай.\n\nПришло письмо: «Дорогой Глеб, я нашёл уязвимость на вашем сайте и готов ею воспользоваться».\n\nЧерез несколько писем выяснилось, что дыра действительно была, только не та, которую я ждал. Парень из Пакистана нашёл способ бесконечно регистрироваться на нашем сайте. Никакой фермы ботов. Старый ноутбук и какой-то скрипт.\n\nЯ отказался платить. Это не казалось достаточно ценным, чтобы платить баунти.\n\nТогда он масштабировался. За неделю у нас появилось около 20 000 новых пользователей, а телефон нашего специалиста поддержки разрывался, потому что на каждую регистрацию приходило уведомление.\n\nВ итоге мы забанили его IP, и на этом всё.\n\nВы бы заплатили ему?"
+  },
+  "color": "var(--lime)"
+}

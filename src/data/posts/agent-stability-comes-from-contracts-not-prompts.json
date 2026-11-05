@@ -1,0 +1,48 @@
+{
+  "id": "post-39",
+  "slug": "agent-stability-comes-from-contracts-not-prompts",
+  "published": "2026-10-28",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7521194148885073920/",
+  "title": {
+    "en": "Unstable AI Agents Need Contracts, Not Longer Prompts",
+    "ru": "Нестабильным AI-агентам нужны контракты, а не длинные промпты"
+  },
+  "takeaway": {
+    "en": "Enforce agent behavior at the interface with typed tool specs, isolated context, and structured errors instead of adding prompt text.",
+    "ru": "Задавайте поведение агента на уровне интерфейса: типизированные спеки тулов, изолированный контекст и структурированные ошибки вместо новых абзацев в промпте."
+  },
+  "tags": [
+    "AI Agents",
+    "Interfaces",
+    "Reliability"
+  ],
+  "brief": {
+    "quote": {
+      "en": "If the boundaries are broken, no amount of clever prompting will save them.",
+      "ru": "Если границы сломаны, никакой умный промпт их не спасёт."
+    },
+    "bullets": {
+      "en": [
+        "Most hallucinations, infinite loops, and failed tool calls come from missing contracts, not from insufficient instructions.",
+        "Tool specs should be minimal and strongly typed, because every optional field the model has to invent makes the run less deterministic.",
+        "The agent should see only the exact state needed for the current step, and a clear, actionable error state beats a blind retry."
+      ],
+      "ru": [
+        "Большинство галлюцинаций, бесконечных циклов и упавших вызовов тулов возникают из-за отсутствующих контрактов, а не из-за нехватки инструкций.",
+        "Спеки тулов должны быть минимальными и строго типизированными: каждое необязательное поле, которое модель вынуждена придумывать, делает запуск менее предсказуемым.",
+        "Агент должен видеть только состояние, нужное для текущего шага, а понятная ошибка с подсказкой лучше слепого повтора."
+      ]
+    }
+  },
+  "body": {
+    "en": "Trying to fix an unstable AI agent with a 200-line system prompt is like debugging a broken interface by writing longer comments\n\nMost teams still treat prompt engineering as the main lever. In practice, the majority of hallucinations, infinite loops, and failed tool calls do not come from insufficient instructions. They come from missing contracts\n\nWhen an agent gets an unpredictable payload, a bloated schema, or a polluted context, failure rates compound fast. We end up writing paragraphs of natural language to paper over what should have been enforced at the interface\n\nThree rules that actually keep production agents stable:\n1/ Strict contracts instead of verbose descriptions.\nTool specs (MCP or custom) should be minimal and strongly typed. The fewer optional fields the model has to invent, the more deterministic the run becomes.\n2/ Context isolation.\nDumping full conversation history or raw database rows into one window is an anti-pattern. The agent should see only the exact state required for the current step. Everything else is noise.\n3/ Structured error recovery.\nA model should never have to guess why a tool call failed. Clear, actionable error states bring it back on track far better than blind retries.\n\nDesigning interfaces for LLMs follows the same principles as designing distributed systems.\nIf the boundaries are broken, no amount of clever prompting will save them.",
+    "ru": "Пытаться починить нестабильного AI-агента 200-строчным системным промптом — всё равно что чинить сломанный интерфейс, дописывая комментарии подлиннее.\n\nБольшинство команд по-прежнему считают промпт-инжиниринг главным рычагом. На практике большинство галлюцинаций, бесконечных циклов и упавших вызовов тулов возникают не из-за недостатка инструкций. Они возникают из-за отсутствующих контрактов.\n\nКогда агент получает непредсказуемый payload, раздутую схему или загрязнённый контекст, частота сбоев быстро растёт. Мы начинаем писать абзацы естественного языка, чтобы замазать то, что должно было быть зафиксировано на уровне интерфейса.\n\nТри правила, которые реально держат прод-агентов стабильными:\n1/ Строгие контракты вместо многословных описаний.\nСпеки тулов (MCP или свои) должны быть минимальными и строго типизированными. Чем меньше необязательных полей модель вынуждена придумывать, тем предсказуемее запуск.\n2/ Изоляция контекста.\nСвалить всю историю диалога или сырые строки из базы в одно окно — антипаттерн. Агент должен видеть только то состояние, которое нужно для текущего шага. Всё остальное — шум.\n3/ Структурированное восстановление после ошибок.\nМодель никогда не должна гадать, почему вызов тула упал. Понятные, действенные состояния ошибок вернут её на правильный путь гораздо лучше, чем слепые повторы.\n\nПроектировать интерфейсы для LLM — то же самое, что проектировать распределённые системы.\nЕсли границы сломаны, никакой умный промпт их не спасёт."
+  },
+  "color": "var(--lime)"
+}

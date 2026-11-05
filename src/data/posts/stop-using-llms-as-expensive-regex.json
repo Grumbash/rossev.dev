@@ -1,0 +1,48 @@
+{
+  "id": "post-8",
+  "slug": "stop-using-llms-as-expensive-regex",
+  "published": "2026-10-16",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 3,
+  "url": "https://www.linkedin.com/posts/rossev_stop-using-llms-as-the-worlds-most-expensive-share-7516812934384152576-B7GT",
+  "title": {
+    "en": "Stop Using LLMs as the World's Most Expensive If-Statements",
+    "ru": "Хватит использовать LLM как самые дорогие if-выражения"
+  },
+  "takeaway": {
+    "en": "Use specialized non-generative models for routing, classification, signal cleaning and tracking, and keep the LLM for tasks that need text.",
+    "ru": "Для маршрутизации, классификации, очистки сигнала и трекинга берите специализированные негенеративные модели, а LLM оставляйте для задач, где нужен текст."
+  },
+  "tags": [
+    "LLM",
+    "Architecture",
+    "Cost"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Stop using LLMs as the world's most expensive if-statements",
+      "ru": "Хватит использовать LLM как самые дорогие if-выражения"
+    },
+    "bullets": {
+      "en": [
+        "Teams default to LLMs for routing, classification, anomaly detection and forecasting, and then get slow, non-deterministic systems with huge token bills.",
+        "Specialized models such as Jev, SAM 2, CLIP, TimesFM, DeepFilterNet and DINOv2 return probabilities, boxes, embeddings or cleaned signals without generating text.",
+        "Good AI architecture is measured by how many LLM calls you can replace with a specialized model or remove entirely."
+      ],
+      "ru": [
+        "Команды по умолчанию зовут LLM для роутинга, классификации, поиска аномалий и прогноза, а в итоге получают медленные недетерминированные системы и огромные счета за токены.",
+        "Специализированные модели вроде Jev, SAM 2, CLIP, TimesFM, DeepFilterNet и DINOv2 возвращают вероятности, рамки, эмбеддинги или очищенный сигнал и не генерируют текст.",
+        "Хорошая AI-архитектура измеряется тем, сколько вызовов LLM вы заменили специализированной моделью или убрали совсем."
+      ]
+    }
+  },
+  "body": {
+    "en": "Stop using LLMs as the world’s most expensive if-statements\n\nWe’ve become so obsessed with text generation that we’ve started treating every engineering problem as a prompt engineering problem:\nNeed to route an agent workflow? Call an LLM.\nAny sort of classification? Call an LLM.\nFilter noise or detect anomaly? Call an LLM\n\nNeed to predict tomorrow's demand? You guessed it. It’s 🪄LLM \n\nAnd then we act surprised when our systems end up slow, non-deterministic, and burning thousands of dollars on token billing.\n\nThe hype around TypeSafe’s Jev is a healthy reminder: AI is much bigger than autoregressive text generation\n\nHere are 6 specialized models that belong in a modern AI engineering toolbox:\n1. Jev (TypeSafe) -  Discrete decisions, not tokens\nInstead of generating conversational text just to branch logic, it outputs calibrated, structured predictions.\nBest for: Agent routing, intent classification, and next-best-action selection.\n2. SAM 2 (Meta) is zero-shot spatial & temporal tracking\nPrompt it with a point or box, and it segments/tracks that object across video frames with sub-pixel precision.\nBest for: Visual automation, video editing pipelines, and robotics.\n3. CLIP (OpenAI) - joint vision-language embeddings\nMaps images and natural language into the same latent space without generating a single word.\nBest for: Semantic multimodal search, zero-shot tagging, and catalog deduplication.\n4. TimesFM (Google) - zero-shot time-series forecasting\nA foundation model built specifically for sequential numerical data, not dialogue.\nBest for: Infrastructure load forecasting, supply chain predictions, and capacity planning.\n5. DeepFilterNet - acoustic signal processing\nA lightweight deep neural network designed to suppress background noise in speech streams in real time.\nBest for: Voice agent pre-processing, clean ASR input, and edge telecommunications.\n6. DINOv2 (Meta) - self-supervised visual features\nExtracts powerful, task-agnostic visual representations directly from raw pixels.\nBest for: Visual similarity search, defect detection, and clustering without fine-tuning.\n\nNote that I’m not saying that LLMs are bad.\nThe point is that text generation is a terrible tool for binary logic, signal cleaning, spatial tracking, and deterministic routing.\nSometimes you need to draft an email,or you just need a probability vector, a bounding box, or an embedding, and sometimes you just need a standard XGBoost model\n\nGood AI architecture always was about how many of them you can replace with the right specialized model or eliminate entirely\n\nWhat non-generative model is currently saving your team the most latency or money?\n\nLinks to all 6 models are in the first comment 👇",
+    "ru": "Мы так увлеклись генерацией текста, что начали считать любую инженерную задачу задачей промпт-инжиниринга.\n\nНужно разложить запрос по агентному воркфлоу? Вызываем LLM.\n\nКлассификация? Вызываем LLM.\n\nФильтрация шума или поиск аномалии? Вызываем LLM.\n\nПрогноз спроса на завтра? Угадали: тоже LLM.\n\nА потом удивляемся, что системы работают медленно, ведут себя недетерминированно и сжигают тысячи долларов на токенах.\n\nШум вокруг Jev от TypeSafe — полезное напоминание: AI намного шире авторегрессионной генерации текста.\n\nВот 6 специализированных моделей, которые стоит держать в инструментарии современного AI-инженера.\n\n1. Jev (TypeSafe) — дискретные решения, а не токены. Вместо разговорного текста для ветвления логики модель выдаёт калиброванные структурированные предсказания.\nЛучше всего подходит для: маршрутизации агентов, классификации интентов и выбора следующего действия.\n\n2. SAM 2 (Meta) — трекинг объектов в пространстве и времени без дообучения. Вы задаёте точку или рамку, а модель сегментирует объект и ведёт его по кадрам видео с субпиксельной точностью.\nЛучше всего подходит для: визуальной автоматизации, видеопайплайнов и робототехники.\n\n3. CLIP (OpenAI) — совместные эмбеддинги изображений и текста. Картинки и естественный язык попадают в одно латентное пространство, и при этом модель не генерирует ни одного слова.\nЛучше всего подходит для: семантического мультимодального поиска, тегирования без обучения и дедупликации каталога.\n\n4. TimesFM (Google) — прогноз временных рядов без дообучения. Это фундаментальная модель, созданная именно для последовательных числовых данных, а не для диалога.\nЛучше всего подходит для: прогноза нагрузки инфраструктуры, прогнозов в цепочках поставок и планирования мощностей.\n\n5. DeepFilterNet — обработка акустического сигнала. Лёгкая нейросеть, которая в реальном времени подавляет фоновый шум в речевом потоке.\nЛучше всего подходит для: предобработки для голосовых агентов, чистого входа для ASR и телекома на краю сети.\n\n6. DINOv2 (Meta) — самообучаемые визуальные признаки. Модель извлекает универсальные визуальные представления прямо из пикселей.\nЛучше всего подходит для: поиска визуального сходства, поиска дефектов и кластеризации без дообучения.\n\nВажно: я не говорю, что LLM плохи. Проблема в том, что генерация текста — плохой инструмент для бинарной логики, очистки сигнала, пространственного трекинга и детерминированного роутинга.\n\nИногда нужно написать письмо. А иногда нужна вероятностная оценка, рамка, эмбеддинг, а иногда просто классическая XGBoost-модель.\n\nХорошая AI-архитектура всегда была о том, сколько таких задач можно заменить правильной специализированной моделью или убрать совсем.\n\nКакая негенеративная модель сейчас экономит вашей команде больше всего задержки или денег?"
+  },
+  "color": "var(--pink)"
+}

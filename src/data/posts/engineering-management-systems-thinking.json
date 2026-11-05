@@ -1,0 +1,48 @@
+{
+  "id": "post-1",
+  "slug": "engineering-management-systems-thinking",
+  "published": "2026-10-13",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 3,
+  "url": "https://www.linkedin.com/posts/rossev_engineeringmanagement-systemsthinking-leadership-share-7515722598857650176-H9N0",
+  "title": {
+    "en": "RimWorld Is a Better Engineering Management Simulator Than You Think",
+    "ru": "RimWorld лучше учит управлению инженерами, чем кажется"
+  },
+  "takeaway": {
+    "en": "Design a system where people make good decisions without you, instead of overriding their queues every 30 seconds.",
+    "ru": "Проектируйте систему, в которой люди принимают верные решения без вас, а не переназначайте их задачи каждые 30 секунд."
+  },
+  "tags": [
+    "Management",
+    "Ownership",
+    "Systems Thinking"
+  ],
+  "brief": {
+    "quote": {
+      "en": "You haven't built a functioning team. You've built a single point of failure around yourself.",
+      "ru": "Значит, вы построили не команду, а единую точку отказа вокруг себя."
+    },
+    "bullets": {
+      "en": [
+        "Managers who micromanage with forced jobs and overridden queues put out fires for 30 seconds but solve nothing long-term.",
+        "The goal is an environment where people have enough context, autonomy, and shared understanding to decide well without constant intervention.",
+        "A good engineering leader designs a system where people consistently deliver valuable outcomes under real-world constraints, rather than maximizing how many tasks they complete."
+      ],
+      "ru": [
+        "Микроменеджмент с принудительными задачами и ручной перестановкой очереди гасит пожар на 30 секунд и ничего не решает надолго.",
+        "Цель в том, чтобы у людей было достаточно контекста, самостоятельности и общего понимания, чтобы решать правильно без постоянного вмешательства.",
+        "Хороший инженерный лидер проектирует систему, в которой люди стабильно дают ценный результат в реальных ограничениях, а не считает количество закрытых задач."
+      ]
+    }
+  },
+  "body": {
+    "en": "RimWorld is the best engineering management simulator on the market.\n\nLook at the screenshot below. If you've played the game, you know this screen all too well. If you haven't: this is how you manage a colony.\nYou don't directly control individual pawns. You design an operating model: toggle manual priorities (1 to 4), configure work types, set resource boundaries, and establish constraints.\n\nAnd then you watch your system fail.\n - Your best builder spends half the day hauling a single piece of wood across the map instead of finishing critical defenses before a raid.\n - Your top doctor is on the verge of a Mental Break from exhaustion because they're assigned to everything.\n - Production grinds to a halt because a single dependency is stuck in an unorganized stockpile.\n - Everyone is technically busy 100% of the time, yet nothing of actual value gets delivered.\nSound familiar?\n\nWhen this happens, the knee-jerk reaction is micromanagement: right-click the pawn, force the job, override the queue. It puts out the fire for 30 seconds, but it solves nothing long-term.\nOf course, real engineers aren’t RimWorld pawns. They have judgment, motivation, and the ability to challenge bad decisions.\nAnd that’s precisely where engineering management becomes far more interesting than the game.\n\nThe goal isn’t to program people to follow a priority matrix blindly. It’s to build an environment where they have enough context, autonomy, and shared understanding to make the right decisions without constant intervention.\n\nA good engineering leader doesn’t optimize how many tasks people complete. They design a system where people can consistently deliver valuable outcomes under real-world constraints.\nAnd perhaps the most important lesson from RimWorld. \n\nSo, if your organization only survives because you manually draft people and override their queues every 30 seconds, then you haven’t built a functioning team. You’ve built a single point of failure around yourself.",
+    "ru": "RimWorld — лучший симулятор инженерного менеджмента, который я знаю.\n\nПосмотрите на скриншот ниже. Если вы играли, вы знаете этот экран слишком хорошо. Если не играли: так выглядит управление колонией.\n\nВы не управляете отдельными пешками напрямую. Вы проектируете операционную модель: включаете ручные приоритеты (от 1 до 4), настраиваете типы работ, задаёте границы ресурсов и ограничения.\n\nА потом смотрите, как система падает.\n\n— Ваш лучший строитель полдня таскает одно бревно через всю карту вместо того, чтобы закончить критичную оборону перед рейдом.\n— Ваш главный врач на грани Mental Break от усталости, потому что его назначили на всё.\n— Производство встаёт, потому что одна зависимость застряла на несортированном складе.\n— Все технически заняты на 100%, но ценного результата нет.\n\nЗнакомо?\n\nВ такой момент первая реакция — микроменеджмент: кликнуть по пешке, принудительно назначить задачу, переписать очередь. Это тушит пожар на 30 секунд, но ничего не решает надолго.\n\nКонечно, настоящие инженеры — не пешки. У них есть суждение, мотивация и умение оспорить плохое решение.\n\nИ вот здесь управление инженерами становится намного интереснее, чем игра.\n\nЦель не в том, чтобы запрограммировать людей на слепое следование матрице приоритетов. Цель — создать среду, в которой у них есть достаточно контекста, самостоятельности и общего понимания, чтобы принимать верные решения без постоянного вмешательства.\n\nХороший инженерный лидер оптимизирует не количество выполненных задач. Он проектирует систему, в которой люди стабильно дают ценный результат в реальных ограничениях.\n\nИ, пожалуй, самый важный урок от RimWorld.\n\nЕсли ваша организация держится только на том, что вы вручную назначаете людей и переписываете их очереди каждые 30 секунд, то вы не построили работающую команду. Вы построили единую точку отказа вокруг себя."
+  },
+  "color": "var(--lime)"
+}

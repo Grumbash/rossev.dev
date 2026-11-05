@@ -1,0 +1,48 @@
+{
+  "id": "post-29",
+  "slug": "engineering-center-of-gravity-shifted",
+  "published": "2026-07-03",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_ive-been-thinking-about-how-my-job-has-changed-share-7478741988356485120--Fzp",
+  "title": {
+    "en": "Engineering Has Shifted From Choosing Tools to Asking the Right Questions",
+    "ru": "Инженерия сместилась от выбора инструментов к правильным вопросам"
+  },
+  "takeaway": {
+    "en": "When AI takes over routine technical choices, put your effort into users, evaluation, and whether you are solving the right problem.",
+    "ru": "Когда AI берёт на себя рутинные технические решения, тратьте силы на пользователей, эвалы и на то, решаете ли вы правильную задачу."
+  },
+  "tags": [
+    "AI Tooling",
+    "Product Thinking",
+    "Engineering Career"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Less effort goes into choosing the right tools, and much more goes into asking the right questions.",
+      "ru": "Меньше сил уходит на выбор правильных инструментов и гораздо больше на то, чтобы задавать правильные вопросы."
+    },
+    "bullets": {
+      "en": [
+        "Early in my career, around 80% of my work went into technical choices and about 20% into the product itself.",
+        "AI has cut the cognitive load of many routine technical decisions, so most of my time now goes to users, safety, evaluation, and edge cases.",
+        "Deep technical work still matters for greenfield projects, new infrastructure, and foundational architecture, but these are now exceptions rather than the default."
+      ],
+      "ru": [
+        "В начале карьеры около 80% моей работы уходило на технические решения, а примерно 20% на сам продукт.",
+        "AI снизил когнитивную нагрузку на многие рутинные технические решения, поэтому большую часть времени теперь занимают пользователи, безопасность, эвалы и крайние случаи.",
+        "Глубокая техническая работа по-прежнему важна для greenfield-проектов, новой инфраструктуры и фундаментальной архитектуры, но сейчас это исключения, а не норма."
+      ]
+    }
+  },
+  "body": {
+    "en": "I’ve been thinking about how my job has changed over the years.\n\nEarlier in my career, most of my mental energy went into technical decisions. Choosing frameworks, comparing libraries, researching tools, evaluating trade-offs between technologies, figuring out which approach would still make sense two years later. I’d say around 80% of my work was technical and maybe 20% was focused on the product itself.\n\nToday it feels almost reversed.\n\nMost of my time is spent thinking about users, product behavior, safety, evaluation, edge cases, and whether we’re solving the right problem in the first place. The implementation still matters, but AI has significantly reduced the cognitive load of many day-to-day technical decisions. Instead of spending hours comparing libraries or writing boilerplate, I’m reviewing solutions, setting direction, and validating whether the result actually solves the problem.\n\nThere are still moments when deep technical work becomes essential. Greenfield projects, new infrastructure, foundational architectural decisions—those still require careful engineering. But they’re exceptions rather than the default.\n\nLooking back, I don’t think engineering has become less technical. I think the center of gravity has shifted. Less effort goes into choosing the right tools, and much more goes into asking the right questions.",
+    "ru": "Я думаю о том, как с годами изменилась моя работа.\n\nРаньше большую часть умственных сил занимали технические решения. Выбор фреймворков, сравнение библиотек, изучение инструментов, оценка компромиссов между технологиями, попытки понять, какой подход будет актуален через два года. Примерно 80% моей работы было техникой и около 20% — продуктом.\n\nСейчас картина почти обратная.\n\nБольшую часть времени я думаю о пользователях, поведении продукта, безопасности, эвалах, крайних случаях и о том, решаем ли мы вообще правильную задачу. Реализация по-прежнему важна. Но AI заметно снизил когнитивную нагрузку на многие повседневные технические решения. Вместо того чтобы часами сравнивать библиотеки или писать бойлерплейт, я ревьюю решения, задаю направление и проверяю, решает ли результат задачу.\n\nГлубокая техническая работа по-прежнему нужна в отдельных случаях. Greenfield-проекты, новая инфраструктура, фундаментальные архитектурные решения — всё это требует вдумчивой инженерии. Но сейчас это исключения, а не норма.\n\nОглядываясь назад, я не думаю, что инженерия стала менее технической. Центр тяжести сместился. Меньше сил уходит на выбор правильных инструментов и гораздо больше — на то, чтобы задавать правильные вопросы."
+  },
+  "color": "var(--lime)"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "post-30",
+  "slug": "wrong-date-led-to-good-evening",
+  "published": "2026-07-07",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_last-saturday-i-accidentally-showed-up-to-share-7480327099816439808-T6mW",
+  "title": {
+    "en": "I Showed Up to the Wrong Event a Week Early and Met Great People",
+    "ru": "Я пришёл на встречу за неделю до даты и познакомился с классными людьми"
+  },
+  "takeaway": {
+    "en": "When a plan breaks, pick the next good option instead of going home, and you may gain more than you lost.",
+    "ru": "Когда план рушится, выбирайте следующий хороший вариант вместо того, чтобы идти домой, и можете получить больше, чем потеряли."
+  },
+  "tags": [
+    "Community",
+    "Careers"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Well, I'm already outside.",
+      "ru": "Ну, я же уже на улице."
+    },
+    "bullets": {
+      "en": [
+        "The author registered for July 4th but convinced himself the event was on June 27th, and arrived a week early.",
+        "Instead of going home, he found another local tech event nearby and decided to attend.",
+        "The evening led to good conversations and an invitation for coffee to keep talking about engineering."
+      ],
+      "ru": [
+        "Автор записался на 4 июля, но убедил себя, что мероприятие 27 июня, и пришёл за неделю до даты.",
+        "Вместо того чтобы поехать домой, он нашёл другой технический ивент поблизости и решил пойти.",
+        "Вечер принёс хорошие разговоры и приглашение на кофе, чтобы продолжить обсуждать инженерию."
+      ]
+    }
+  },
+  "body": {
+    "en": "Last Saturday, I accidentally showed up to an event… a week early.\n\nI walked in expecting a tech meetup, but instead found myself in the middle of a fashion history class in German.\n\nAt first, I thought I had simply arrived late or that the organizers had changed the room. It took me a few minutes (and another look at the event page) to realize that nothing had changed.\n\nI had registered for July 4th, but somehow convinced myself the event was happening on June 27th.\n\nFor a moment, I considered going back home. But then I thought, “Well, I’m already outside.”\n\nI grabbed a coffee and started looking for another tech event nearby. After digging through a few local communities, I found one and decided to give it a try.\n\nIt turned out to be a great evening. I met some interesting people, had a few great conversations, and one of them invited me for coffee this week to continue talking about engineering.\n\nDefinitely not how I expected my Saturday to go.\n\nWhat’s the best thing that happened to you because of a mistake?",
+    "ru": "В прошлую субботу я по ошибке пришёл на мероприятие… за неделю до даты.\n\nЯ шёл на технический митап, а попал на занятие по истории моды на немецком языке.\n\nСначала я решил, что просто опоздал или организаторы сменили комнату. Мне понадобилось несколько минут и ещё один взгляд на страницу события, чтобы понять: ничего не менялось.\n\nЯ записался на 4 июля, но почему-то убедил себя, что встреча 27 июня.\n\nНа секунду я подумал поехать домой. Но потом подумал: «Ну, я же уже на улице».\n\nЯ взял кофе и начал искать другой техно-ивент рядом. Покопался в нескольких местных сообществах, нашёл подходящий и решил попробовать.\n\nВечер оказался отличным. Я познакомился с интересными людьми, поговорил с несколькими классными собеседниками, и один из них пригласил меня на кофе на этой неделе, чтобы продолжить разговор об инженерии.\n\nСубббота вышла совсем не такой, как я ожидал.\n\nКакое самое лучшее, что с вами случилось благодаря ошибке?"
+  },
+  "color": "var(--orange)"
+}

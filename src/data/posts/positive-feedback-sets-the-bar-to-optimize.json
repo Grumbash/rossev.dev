@@ -1,0 +1,48 @@
+{
+  "id": "post-33",
+  "slug": "positive-feedback-sets-the-bar-to-optimize",
+  "published": "2026-07-17",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_i-noticed-a-slightly-weird-thing-about-how-share-7483935294614994944-vPLB",
+  "title": {
+    "en": "Positive Feedback Is Information: It Tells You the Bar",
+    "ru": "Похвала — это информация: она показывает планку"
+  },
+  "takeaway": {
+    "en": "Give specific examples of valuable work instead of vague principles, so people know the bar and can repeat it efficiently.",
+    "ru": "Называйте конкретный ценный результат вместо общих принципов, чтобы человек понял планку и смог повторить её эффективно."
+  },
+  "tags": [
+    "Feedback",
+    "Efficiency",
+    "Ownership"
+  ],
+  "brief": {
+    "quote": {
+      "en": "And for me that is not really praise. It is information.",
+      "ru": "Для меня это не столько похвала, сколько информация."
+    },
+    "bullets": {
+      "en": [
+        "Positive feedback tells an engineer that the current result is enough, so they can stop checking whether it is good enough.",
+        "Once the bar is known, the engineer starts reaching the same result with less effort and can simplify, automate, or delegate the pattern.",
+        "Vague feedback like \"be more proactive\" forces people to guess what you meant, which costs more time than a concrete example would."
+      ],
+      "ru": [
+        "Похвала говорит инженеру, что текущий результат достаточен, и он перестаёт перепроверять, хорош ли он.",
+        "Зная планку, инженер делает тот же результат быстрее: упрощает, автоматизирует или отдаёт часть работы агентам.",
+        "Размытый фидбек вроде «будь проактивнее» заставляет угадывать, что имелось в виду, и это отнимает больше времени, чем один конкретный пример."
+      ]
+    }
+  },
+  "body": {
+    "en": "I noticed a slightly weird thing about how I react to positive feedback.\n\nWhen someone tells me I did a good job, I rarely think: great, now I should do even more of this.\n\nUsually I think: okay, so this is enough.\n\nNow I know the bar.\n\nAnd once I know the bar, I start thinking about how to reach the same result with less effort.\n\nIf it took me eight hours, next time I will try to do it in six. Then maybe in four.\n\nNot because I want to do worse or cut corners. I just no longer need to spend time figuring out whether the result is good enough.\n\nBefore that, I can easily overdo things. Add extra checks, polish details nobody asked for, think through edge cases that probably do not matter.\n\nThen someone says: this is good.\n\nAnd for me that is not really praise. It is information.\n\nIt means I now have a pattern that works.\n\nAnd if a pattern works, I can simplify it, automate part of it, give some of it to agents, or at least stop solving the same problem from zero every time.\n\nThis is probably why vague feedback is so annoying.\n\n“Be more proactive.”\n\n“Show more ownership.”\n\nOkay, but what exactly worked? What result are we trying to repeat?\n\nGive me one concrete example of work that was valuable, and I can optimize around it.\n\nGive me a vague principle, and I will probably spend twice as much time guessing what you meant.",
+    "ru": "Заметил странную вещь в том, как я реагирую на положительный фидбек.\n\nКогда мне говорят, что я хорошо поработал, я редко думаю: отлично, теперь надо делать ещё больше такого.\n\nОбычно я думаю: окей, значит, этого достаточно.\n\nТеперь я знаю планку.\n\nА когда знаю планку, начинаю думать, как получить тот же результат с меньшими усилиями.\n\nЕсли на задачу ушло восемь часов, в следующий раз попробую уложиться в шесть. Потом, может, в четыре.\n\nДело не в том, что я хочу работать хуже или срезать углы. Просто мне больше не нужно тратить время на то, чтобы понять, достаточно ли хорош результат.\n\nДо этого я легко перебарщиваю. Добавляю лишние проверки, полирую детали, которые никто не просил, продумываю edge cases, которые, скорее всего, не важны.\n\nПотом кто-то говорит: это хорошо.\n\nДля меня это не столько похвала, сколько информация.\n\nЗначит, у меня есть паттерн, который работает.\n\nА если паттерн работает, его можно упростить, частично автоматизировать, отдать часть агентам или хотя бы перестать решать одну и ту же задачу с нуля каждый раз.\n\nПоэтому расплывчатый фидбек так раздражает.\n\n«Будь проактивнее».\n\n«Проявляй больше оунершипа».\n\nОк, но что именно сработало? Какой результат мы пытаемся повторить?\n\nДайте мне один конкретный пример ценной работы, и я смогу оптимизировать вокруг него.\n\nДайте расплывчатый принцип, и я, скорее всего, потрачу вдвое больше времени на догадки о том, что вы имели в виду."
+  },
+  "color": "var(--lime)"
+}

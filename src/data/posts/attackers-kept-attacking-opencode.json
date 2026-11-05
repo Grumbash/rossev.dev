@@ -1,0 +1,47 @@
+{
+  "id": "post-5",
+  "slug": "attackers-kept-attacking-opencode",
+  "published": "2026-10-23",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 4,
+  "url": "https://www.linkedin.com/posts/rossev_the-attackers-kept-attacking-opencodes-share-7519304575242207233-RIlc",
+  "title": {
+    "en": "AI Security Tools Need to Work When the Incident Is Messy",
+    "ru": "Инструменты AI-безопасности должны работать в хаосе инцидента"
+  },
+  "takeaway": {
+    "en": "Test AI security tools in messy incident conditions, not only in demos.",
+    "ru": "Проверяйте AI-инструменты безопасности в условиях реального инцидента, а не только на демо."
+  },
+  "tags": [
+    "AI Security",
+    "Incident Response"
+  ],
+  "brief": {
+    "quote": {
+      "en": "they need to be useful when the situation is messy, not just impressive in a demo.",
+      "ru": "им нужно быть полезными, когда ситуация запутанная, а не только впечатлять на демо."
+    },
+    "bullets": {
+      "en": [
+        "During the attack on OpenCode, its AI models kept refusing to help the human defenders investigate.",
+        "Co-founder Dax Raad said the attacks had been going on for 48 hours, so defenders need agents running around the clock too.",
+        "Access to Daybreak Blue helped get past the refusals, which makes this a real stress test for AI security tools."
+      ],
+      "ru": [
+        "Во время атаки на OpenCode модели ИИ продолжали отказываться помогать людям-защитникам с расследованием.",
+        "Сооснователь Dax Raad сказал, что атаки длятся уже 48 часов, поэтому защитникам тоже нужны агенты, которые работают круглосуточно.",
+        "Доступ к Daybreak Blue помог обойти отказы, и это хороший стресс-тест для инструментов AI-безопасности."
+      ]
+    }
+  },
+  "body": {
+    "en": "The attackers kept attacking. OpenCode’s AI models apparently kept refusing to help investigate.\n\nSo the defenders got a very modern kind of teamwork: the humans were investigating, the attackers were attacking, and the AI assistants were apparently holding a committee meeting about whether they were allowed to participate.\n\nMeanwhile, co-founder Dax Raad said the attacks had been going on for 48 hours. His point: defenders need agents running around the clock too, because apparently the robots are already on the other team’s shift schedule.\n\nThen access to Daybreak Blue helped with the refusals. Great: the incident response had an incident response.\n\nJokes aside, it’s a pretty good stress test for AI security tools: they need to be useful when the situation is messy, not just impressive in a demo.",
+    "ru": "Атакующие продолжали атаковать. Модели ИИ от OpenCode, судя по всему, продолжали отказываться помогать с расследованием.\n\nТак защитники получили очень современную командную работу: люди расследовали, атакующие атаковали, а ИИ-ассистенты, похоже, устроили совещание о том, имеют ли они право участвовать.\n\nТем временем сооснователь Dax Raad сказал, что атаки длятся уже 48 часов. Его мысль: защитникам тоже нужны агенты, которые работают круглосуточно. Похоже, роботы уже работают по графику смен другой команды.\n\nПотом доступ к Daybreak Blue помог с отказами. Отлично: у реагирования на инцидент появился свой инцидент.\n\nЕсли без шуток, это хороший стресс-тест для инструментов AI-безопасности. Им нужно быть полезными, когда ситуация запутанная, а не только впечатлять на демо."
+  },
+  "color": "var(--orange)"
+}

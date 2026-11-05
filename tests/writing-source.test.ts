@@ -1,15 +1,16 @@
 // Posts written on the site: Gleb writes src/content/writing/<slug>.md with a title, a category,
 // the platforms to send it to and the text, in English or Russian. scripts/ci/writing.ts, run on his
 // PR by .github/workflows/writing.yml, has a cheap model write the other language and the brief,
-// checks the answer, writes the entry to src/data/posts.json and creates a Publora draft per
+// checks the answer, writes the entry to its file in src/data/posts/ and creates a Publora draft per
 // platform; scheduling stays his. OpenRouter and Publora are mocked here.
 import { describe, expect, test } from 'bun:test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import type { BlogPost } from '../src/data/profile';
 import { WRITING_DIR, buildMessages, parseSource, run, upToDate, validateDraft, type Source } from '../scripts/ci/writing';
 import { siteCopyOf } from '../scripts/ci/publora-sync';
+import { readPosts } from '../src/data/posts';
+import { postsAfter } from './fixtures/posts';
 
-const POSTS_JSON = 'src/data/posts.json';
 const SITE = JSON.parse(readFileSync('tests/fixtures/publora/site-posts.json', 'utf8')) as BlogPost[];
 
 const TEXT_EN = [
@@ -99,9 +100,9 @@ function harness(o: { files?: { file: string; raw: string }[]; posts?: BlogPost[
     writeFile: (p: string, s: string) => void (writes[p] = (writes[p] ?? '') + s),
     log: (s: string) => void logs.push(s),
   };
-  return { calls, logs, writes, env, deps };
+  return { calls, logs, writes, env, deps, base: o.posts ?? SITE };
 }
-const posts = (h: ReturnType<typeof harness>): BlogPost[] => JSON.parse(h.writes[POSTS_JSON]);
+const posts = (h: ReturnType<typeof harness>): BlogPost[] => postsAfter(h.base, h.writes)!;
 const publoraCalls = (h: ReturnType<typeof harness>) => h.calls.filter((c) => c.url.startsWith('https://api.publora.com/')).map((c) => `${c.method} ${new URL(c.url).pathname.replace('/api/v1', '')}`);
 
 describe('the source file', () => {
@@ -202,7 +203,7 @@ describe('the run', () => {
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('none');
     expect(h.calls).toEqual([]);
-    expect(h.writes[POSTS_JSON]).toBeUndefined();
+    expect(postsAfter(h.base, h.writes)).toBeUndefined();
     expect(h.writes['/tmp/out']).toBe('changed=0\n');
   });
 
@@ -237,7 +238,7 @@ describe('the run', () => {
     const out = await run(h.env, h.deps);
     expect(out.status).toBe('none');
     expect(out.problems.map((p) => p.slug)).toEqual(['Bad Name.md', 'waiting-problem']);
-    expect(h.writes[POSTS_JSON]).toBeUndefined();
+    expect(postsAfter(h.base, h.writes)).toBeUndefined();
     expect(publoraCalls(h)).toEqual([]);
   });
 
@@ -259,14 +260,14 @@ describe('the LinkedIn copy', () => {
 
 describe('the repo', () => {
   test('every file in src/content/writing is on the site, up to date: merge only after the bot commit', () => {
-    const site = JSON.parse(readFileSync(POSTS_JSON, 'utf8')) as BlogPost[];
+    const site = readPosts();
     const files = existsSync(WRITING_DIR) ? readdirSync(WRITING_DIR).filter((f) => f.endsWith('.md')) : [];
     for (const f of files) {
       const r = parseSource(f, readFileSync(`${WRITING_DIR}/${f}`, 'utf8'));
       expect(r.ok ? [] : r.errors).toEqual([]);
       if (!r.ok) continue;
       const e = site.find((p) => p.slug === r.source.slug);
-      expect(e && upToDate(e, r.source), `${f}: not in posts.json or changed since; the writing workflow fills it in`).toBe(true);
+      expect(e && upToDate(e, r.source), `${f}: not in src/data/posts/ or changed since; the writing workflow fills it in`).toBe(true);
     }
   });
 });

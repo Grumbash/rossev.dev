@@ -1,0 +1,48 @@
+{
+  "id": "post-2",
+  "slug": "every-engineering-estimate-is-two-things",
+  "published": "2026-10-19",
+  "category": "delivery",
+  "categoryLabel": {
+    "en": "DELIVERY",
+    "ru": "ДЕЛИВЕРИ"
+  },
+  "originalMinutes": 3,
+  "url": "https://www.linkedin.com/posts/rossev_every-engineering-estimate-is-actually-two-share-7517918772553461760-fDtV",
+  "title": {
+    "en": "Every Engineering Estimate Hides Two Different Numbers",
+    "ru": "Любая инженерная оценка скрывает два разных числа"
+  },
+  "takeaway": {
+    "en": "Ask for the one unknown that could blow up the estimate and test it early, instead of arguing about a single date.",
+    "ru": "Спрашивайте про одну неизвестную, которая может сорвать оценку, и проверяйте её сразу, а не спорите о одной дате."
+  },
+  "tags": [
+    "Estimates",
+    "Unknowns",
+    "Planning"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Stop asking «when will it be done?» on day one.",
+      "ru": "Перестаньте спрашивать «когда будет готово?» в первый день."
+    },
+    "bullets": {
+      "en": [
+        "Every estimate mixes two numbers: how long the work takes if nothing unexpected happens, and how much we still don't know about the legacy code we are about to touch.",
+        "Founders put the first number on the investor slide, while engineers pad the second number by 2x just to survive the sprint.",
+        "Instead of asking when it will be done, ask which single unknown could push the work from 3 days to 3 weeks and how to test it before noon tomorrow."
+      ],
+      "ru": [
+        "Любая оценка смешивает два числа: сколько займёт работа, если ничего неожиданного не случится, и сколько мы ещё не знаем о легаси-коде, который собираемся трогать.",
+        "Основатели переносят первое число на слайд для инвесторов, а инженеры закладывают второе с двукратным запасом, чтобы просто пережить спринт.",
+        "Вместо вопроса «когда будет готово?» спрашивайте, какая одна неизвестная может растянуть работу с 3 дней до 3 недель, и как её проверить до полудня завтра."
+      ]
+    }
+  },
+  "body": {
+    "en": "Every engineering estimate is actually two numbers disguised as one:\n1) How long it takes to build if nothing unexpected happens.\n2) How much we still dont know about the legacy code were about to touch.\n\nFounders always hear the first number and put it on the investor slide.\nEngineers always mean the second number and pad it by 2x just to survive the sprint.\nStop asking «when will it be done?» on day one. Ask «whats the one unknown that could blow this up from 3 days to 3 weeks, and how do we test it before noon tomorrow?»",
+    "ru": "Любая инженерная оценка на самом деле состоит из двух чисел, которые выдают себя за одно.\n\n1) Сколько займёт сборка, если ничего неожиданного не случится.\n2) Сколько мы ещё не знаем о легаси-коде, которого собираемся коснуться.\n\nОснователи всегда слышат первое число и ставят его на слайд для инвесторов.\n\nИнженеры всегда имеют в виду второе число и закладывают в два раза больше, чтобы просто пережить спринт.\n\nПерестаньте спрашивать «когда будет готово?» в первый день. Спрашивайте: «какая одна неизвестная может растянуть это с 3 дней до 3 недель, и как мы проверим её до полудня завтра?»"
+  },
+  "color": "var(--yellow)"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "post-19",
+  "slug": "approval-process-costs-more-than-tool",
+  "published": "2026-04-13",
+  "category": "delivery",
+  "categoryLabel": {
+    "en": "DELIVERY",
+    "ru": "ДЕЛИВЕРИ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_companies-will-fight-hard-to-save-50-and-share-7449488763254231040-EXNc",
+  "title": {
+    "en": "Approval Process Can Cost More Than the Tool It Protects",
+    "ru": "Согласование может стоить дороже инструмента, который оно защищает"
+  },
+  "takeaway": {
+    "en": "Compare the cost of the approval process with the cost of the thing being approved, and simplify purchases that cost less to buy than to review.",
+    "ru": "Сравнивайте стоимость согласования со стоимостью самой покупки и упрощайте закупки, которые дешевле купить, чем проверить."
+  },
+  "tags": [
+    "Lean",
+    "Process"
+  ],
+  "brief": {
+    "quote": {
+      "en": "If your control process costs more than the asset itself, you aren't saving money, you're subsidizing inefficiency",
+      "ru": "Если контроль стоит дороже самого актива, вы не экономите, а субсидируете неэффективность."
+    },
+    "bullets": {
+      "en": [
+        "Companies spend heavily to save $50 on a tool while approval hoops, explanations and waiting waste far more, such as $5,000 in total.",
+        "Cutting costs by adding a $200 approval process for a $50 tool is waste in Lean terms, not frugality.",
+        "The hidden costs are lost momentum, context switching for engineers, expensive alignment meetings and delayed output."
+      ],
+      "ru": [
+        "Компании тратят много сил, чтобы сэкономить 50 $ на инструменте, а на согласования, объяснения и ожидание уходит гораздо больше, например 5 000 $.",
+        "Процесс за 200 $ на инструмент за 50 $ с точки зрения Lean это не экономия, а потери.",
+        "Скрытые издержки: потерянный темп, переключение инженеров на финансовые формы, дорогие встречи ради согласования и задержка результата."
+      ]
+    }
+  },
+  "body": {
+    "en": "Companies will fight hard to save $50 and not notice they are wasting $5,000 doing it\n\nA cheap tool gets treated like a major budget decision. The request turns into approval hoops, explanations, follow-ups, and waiting\n\nSome might call this \"Lean\" or \"being frugal.\" But it's actually the opposite.\nTrue Lean thinking is about optimizing the flow of value and eliminating waste. When a company creates a $200 process to approve a $50 tool, they aren't being Lean -- they are generating Lean waste.\n\nIn a pursuit of \"cost-cutting\" they create massive overhead in waiting and overprocessing. The real cost shows up in:\n- Lost momentum (the team stops moving while waiting for a SaaS login)\n- Context switching (engineers filling out finance forms instead of coding)\n- Manager touchpoints (expensive hours spent in \"alignment\" meetings)\n- Delayed output\n\nMost companies think that they overspending. But in reality they are overpaying for buying friction\n\nIf your control process costs more than the asset itself, you aren't saving money, you’re subsidizing inefficiency\n\nHave you personally faced such behavior from a company in your career?",
+    "ru": "Компании готовы драться за 50 $ и не замечают, что сжигают 5 000 $.\n\nДешёвый инструмент начинают воспринимать как крупное бюджетное решение. Запрос превращается в цепочку согласований, объяснений, напоминаний и ожидания.\n\nЭто могут назвать «Лин» или «бережливостью». На деле всё наоборот.\n\nНастоящий Lean — это оптимизация потока ценности и устранение потерь. Когда компания заводит процесс за 200 $ ради покупки за 50 $, она не экономит, а производит Lean-потери.\n\nВ погоне за «сокращением расходов» создаются огромные накладные расходы на ожидание и избыточную обработку. Настоящая цена проявляется так:\n- теряется темп: команда стоит и ждёт логин в SaaS;\n- переключение контекста: инженеры заполняют финансовые формы вместо кода;\n- время менеджеров: дорогие часы уходят на встречи «для выравнивания»;\n- задержка результата.\n\nБольшинство компаний думают, что они переплачивают за инструменты. На самом деле они переплачивают за трение.\n\nЕсли контроль стоит дороже самого актива, вы не экономите, а субсидируете неэффективность.\n\nСталкивались ли вы лично с таким поведением компании за свою карьеру?"
+  },
+  "color": "var(--lime)"
+}

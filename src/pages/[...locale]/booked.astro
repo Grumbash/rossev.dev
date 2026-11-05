@@ -2,7 +2,8 @@
 // cal.com's "Redirect on booking" target. The redirect forwards our utm_content plus the booking itself
 // (uid, email, name, phone...). The head script keeps only the placement on <html data-booking-source>
 // (initAnalytics sends booking_confirmed) and strips the query before Umami and Vercel read the URL.
-import { BLOG_POSTS, PROFILE, postPath } from '../../data/profile';
+import { PROFILE, postPath } from '../../data/profile';
+import { BLOG_POSTS } from '../../data/posts';
 import Base from '../../layouts/Base.astro';
 import { PLACEMENTS, bookingSource } from '../../scripts/analytics';
 import { DEFAULT_LOCALE, LOCALES, localeOf, localePath, localeStaticPaths, t } from '../../i18n';

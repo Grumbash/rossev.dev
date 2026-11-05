@@ -6,7 +6,8 @@
 import { afterEach, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
-import { BLOG_POSTS, CASE_STUDIES, EXPERIENCE } from '../src/data/profile';
+import { CASE_STUDIES, EXPERIENCE } from '../src/data/profile';
+import { BLOG_POSTS } from '../src/data/posts';
 import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);

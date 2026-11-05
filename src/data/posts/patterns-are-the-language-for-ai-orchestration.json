@@ -1,0 +1,48 @@
+{
+  "id": "post-22",
+  "slug": "patterns-are-the-language-for-ai-orchestration",
+  "published": "2026-06-03",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_not-fresh-news-but-thats-noticeable-that-share-7467990115559071745-8x9M",
+  "title": {
+    "en": "Design Patterns Are the Language You Use to Direct AI",
+    "ru": "Паттерны — язык, на котором вы управляете AI"
+  },
+  "takeaway": {
+    "en": "Name the patterns you want (SOLID, DDD) instead of describing vague goals, so you and the AI can talk about concrete, well-known things.",
+    "ru": "Называйте конкретные паттерны (SOLID, DDD) вместо расплывчатых целей, и тогда вы с AI будете говорить о понятных вещах."
+  },
+  "tags": [
+    "AI Orchestration",
+    "Design Patterns",
+    "Architecture"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Instead of daily saying to AI \"maximize reusability\", you say \"use SOLID and DDD for module X\".",
+      "ru": "Вместо того чтобы каждый день говорить AI «максимизируй переиспользование», вы говорите «используй SOLID и DDD для модуля X»."
+    },
+    "bullets": {
+      "en": [
+        "When AI writes code and proposes architecture, you need industry experience, domain knowledge and pattern knowledge to tell good from bad.",
+        "Pattern names let you and the AI talk about particular, well-known structures instead of plain-language wishes.",
+        "Treat this level of abstraction as an advantage rather than a handicap."
+      ],
+      "ru": [
+        "Когда AI пишет код и предлагает архитектуру, чтобы отличить хорошее от плохого, нужны опыт в индустрии, знание домена и знание паттернов.",
+        "Названия паттернов позволяют вам и AI говорить о конкретных, известных структурах, а не о расплывчатых пожеланиях.",
+        "Воспринимайте этот уровень абстракции как преимущество, а не как ограничение."
+      ]
+    }
+  },
+  "body": {
+    "en": "Not fresh news but that’s noticeable that when AI writes code and proposes architecture, you as an “AI orchestration operator” need to sort out what is good and what is not, and to do that you need to have:\n\n* experience in the industry to understand what is working in real life with humans across the product\n* domain experience to know what problem you are trying to solve and for whom\n* pattern knowledge from good old books\n\nAnd the last thing is becoming more and more important each day. Since you can relatively easily understand what is working well and who your target audience is, but the language that really speeds up things and helps you communicate- is patterns.\n\nSo instead of daily saying to AI “maximize reusability and make sure that we can easily make changes in the future for feature X” - you say “use SOLID and DDD for module X” and this level of abstraction will allow you both (AI and yourself) to talk about very particular, concrete and well known things instead of speaking as a plain human - use that as advantage not as handicap\n\nPS cat photo for attention 😁",
+    "ru": "Это не свежая новость, но заметно, что когда AI пишет код и предлагает архитектуру, вы как «оператор оркестрации AI» должны отличать хорошее от плохого. Для этого нужны три вещи:\n\n— опыт в индустрии, чтобы понимать, что работает в реальной жизни с людьми по всему продукту;\n— доменный опыт, чтобы знать, какую проблему вы решаете и для кого;\n— знание паттернов из старых добрых книг.\n\nПоследняя вещь с каждым днём важнее. Понять, что работает и кто ваша аудитория, можно относительно легко. А язык, который реально ускоряет работу и помогает общаться, — это паттерны.\n\nВместо того чтобы каждый день говорить AI «максимизируй переиспользование и убедись, что в будущем легко вносить изменения для фичи X», вы говорите «используй SOLID и DDD для модуля X». Такой уровень абстракции позволяет и вам, и AI говорить о конкретных, известных вещах, а не изъясняться простыми человеческими словами. Используйте это как преимущество, а не как ограничение."
+  },
+  "color": "var(--orange)"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "post-41",
+  "slug": "model-output-is-a-claim",
+  "published": "2026-10-30",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7521917578601029632/",
+  "title": {
+    "en": "A Model's Output Is a Claim, Not Trusted Input",
+    "ru": "Ответ модели это заявление, а не доверенный ввод"
+  },
+  "takeaway": {
+    "en": "Treat model output and agent memory as claims that a deterministic check or a person must approve before they enter your system.",
+    "ru": "Считайте ответ модели и её память заявлениями, которые перед попаданием в систему должны проверить детерминированный механизм или человек."
+  },
+  "tags": [
+    "AI Agents",
+    "Supply Chain",
+    "Trust Boundaries"
+  ],
+  "brief": {
+    "quote": {
+      "en": "A model's output is a claim. Something deterministic, or a person, decides whether it gets in.",
+      "ru": "Ответ модели это заявление. Решает что-то детерминированное или человек, пропустить ли его дальше."
+    },
+    "bullets": {
+      "en": [
+        "Models invent package names that attackers then register on npm and PyPI, so a lockfile plus human review of every new dependency closes most of the risk.",
+        "Content an agent reads from an email or a web page can land in long-term memory and come back later as a fact, so memory needs provenance.",
+        "A review agent can misread its task and grade the wrong thing, and a second model grading the first would not necessarily catch that."
+      ],
+      "ru": [
+        "Модели придумывают названия пакетов, которые не существуют, а атакующие регистрируют их в npm и PyPI. Лок-файл и ручной ревью каждой новой зависимости закрывают большую часть риска.",
+        "Всё, что агент прочитал в письме или на веб-странице, может попасть в долгосрочную память и через неделю вернуться как факт. Памяти нужна проверка источника.",
+        "Ревью-агент может неверно понять задачу и проверить не то. Вторая модель, которая оценивает первую, не обязательно это заметит."
+      ]
+    }
+  },
+  "body": {
+    "en": "Three stories from this week's AI engineering news look unrelated. I think they're the same mistake: treating what a model produced, or remembered, as trusted input.\n\n1. Slopsquatting. Models invent package names that don't exist, and attackers register those names on npm and PyPI. The problem is real, but I don't think it needs a new tool. A lockfile plus a human look at every new dependency in review closes most of it. The gap is teams that let an agent add dependencies with nobody looking.\n\n2. Memory poisoning. An agent reads an email or a web page, part of it lands in long-term memory, and next session it comes back as a fact. I still want agents with memory. What I want from that memory is provenance: \"the user told me\" and \"I read it in an inbound email\" should never carry the same weight.\n\n3. LLM reviewers you can't rely on. We hit a version of this recently. Our review agent misread its task and ended up comparing long-lived subagents instead of checking what it was asked to check. A second model grading the first wouldn't have caught that.\n\nSo I'm building a harness around our agents and wiring in Harness² from Google Research. It runs variations of a harness on the same task and refines it from the differences between executions, with no ground-truth answer needed. The hope is that it catches a misread task before it turns into a verdict, and that the agent swarm improves step by step instead of through me rewriting prompts. It's too early to say whether it works.\n\nThe common thread: a model's output is a claim. Something deterministic, or a person, decides whether it gets in.\n\nWhich of these have you actually run into in production?",
+    "ru": "На этой неделе в новостях про AI-инжиниринг было три истории, которые на первый взгляд не связаны. Я думаю, что это одна и та же ошибка: мы считаем то, что выдала модель или что она запомнила, доверенным вводом.\n\n1. Slopsquatting. Модели придумывают имена пакетов, которых не существует, а атакующие регистрируют эти имена в npm и PyPI. Проблема настоящая, но, по-моему, для неё не нужен новый инструмент. Лок-файл и внимательный человек на ревью каждой новой зависимости закрывают большую часть риска. Дыра в командах, которые позволяют агенту добавлять зависимости, и никто на них не смотрит.\n\n2. Отравление памяти. Агент читает письмо или веб-страницу, часть текста попадает в долгосрочную память, а в следующей сессии возвращается как факт. Агенты с памятью мне нужны. Но от памяти я хочу проверяемого происхождения. Фраза «пользователь мне сказал» и фраза «я прочитал это во входящем письме» не должны весить одинаково.\n\n3. LLM-ревьюеры, которым нельзя доверять. Недавно у нас случилось что-то похожее. Наш ревью-агент неправильно понял задачу и стал сравнивать долгоживущих сабагентов вместо того, что должен был проверить. Вторая модель, которая оценивала бы первую, этого бы не поймала.\n\nПоэтому я строю харнесс вокруг наших агентов и подключаю Harness² от Google Research. Он запускает разные варианты харнесса на одной задаче и улучшает его по различиям между запусками, и не нужен эталонный ответ. Я надеюсь, что он поймает неверно понятую задачу до того, как она превратится в вердикт, а рой агентов будет становиться лучше шаг за шагом, а не благодаря тому, что я переписываю промпты вручную. Рано говорить, работает ли это.\n\nОбщая мысль такая: ответ модели это заявление. Решает что-то детерминированное или человек, пропустить ли его дальше.\n\nС чем из этого вы сталкивались на проде?"
+  },
+  "color": "var(--lime)"
+}

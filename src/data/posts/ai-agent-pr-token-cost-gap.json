@@ -1,0 +1,48 @@
+{
+  "id": "post-44",
+  "slug": "ai-agent-pr-token-cost-gap",
+  "published": "2026-11-04",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7523729522651983874/",
+  "title": {
+    "en": "One AI Agent PR Costs $82 on Opus and $13 on Open-Weight Models",
+    "ru": "Один PR от AI-агента стоит $82 на Opus и $13 на open-weight моделях"
+  },
+  "takeaway": {
+    "en": "Count the real token cost per PR, because on live features it can be 10 to 100 times the cost of small tickets.",
+    "ru": "Считайте реальную стоимость токенов на один PR: на живых фичах она может в 10–100 раз превышать стоимость мелких тикетов."
+  },
+  "tags": [
+    "AI Agents",
+    "Costs",
+    "Open-Weight Models"
+  ],
+  "brief": {
+    "quote": {
+      "en": "And there's one cost that doesn't show up in this math at all: where your code goes while you're paying for those tokens.",
+      "ru": "Есть ещё одна статья расходов, которой в этой арифметике нет совсем: куда уходит ваш код, пока вы платите за эти токены."
+    },
+    "bullets": {
+      "en": [
+        "On small tickets, a PR averaged about 1.25M tokens and cost $3.35 on Opus versus $0.63 on open-weight models.",
+        "On live features coming straight from Jira, a PR took 10 to 100 times more tokens, which means about $82 on Opus and about $13 on open-weight.",
+        "For a team of 30 engineers shipping 20 PRs a month, the yearly bill is $590k on Opus versus $90k on open-weight for the same work."
+      ],
+      "ru": [
+        "На мелких тикетах PR в среднем занимал около 1,25 млн токенов и стоил $3,35 на Opus против $0,63 на open-weight моделях.",
+        "На живых фичах из Jira PR съедал в 10–100 раз больше токенов: примерно $82 на Opus и примерно $13 на open-weight.",
+        "Для команды из 30 инженеров с 20 PR в месяц годовой счёт составит $590k на Opus против $90k на open-weight за ту же работу."
+      ]
+    }
+  },
+  "body": {
+    "en": "One PR from an AI agent on a real ticket costs about $82 in Opus tokens. The same run on open-weight models costs about $13.\n\nI pulled our agent logs to see how many tokens it actually takes to get from a ticket to a PR. The token counts are real, the prices are just the providers' public list prices.\n\nOn small tickets, things like fixing an endpoint or adding a validation, we had 931 PRs across 8 repos on different stacks. The average was around 1.25M tokens per PR: 240k input, 67k output, and the rest cache reads. That comes to $3.35 per PR on Opus, $2.01 on Sonnet and $0.63 on open-weight models like GLM, DeepSeek or Kimi.\n\nReal tickets are a different story. On a live project with features coming straight from Jira, planning included, a PR took 10 to 100 times more tokens. That's where you get ~$82 on Opus, ~$49 on Sonnet and ~$13 on open-weight.\n\nNow imagine a team of 30 engineers, each shipping 20 of these PRs a month. That's around $49k a month on Opus, $29k on Sonnet and $7.6k on open-weight. Over a year it's $590k vs $350k vs $90k for exactly the same work.\n\nTo be fair, I priced Opus and Sonnet on the same token counts the open-weight models used, and frontier models sometimes get there with fewer tokens. But even if Opus needed half as many, it would still be 2.5–3x more expensive.\n\nAnd there's one cost that doesn't show up in this math at all: where your code goes while you're paying for those tokens.\n\nAt YAGNI we run these numbers every day, and that's why we build on open-weight models. Have you actually calculated what your team spends per PR?",
+    "ru": "Один PR от AI-агента на реальном тикете обходится примерно в $82 по токенам Opus. Тот же прогон на open-weight моделях стоит примерно $13.\n\nЯ выгрузил логи нашего агента, чтобы посчитать, сколько токенов нужно, чтобы пройти путь от тикета до PR. Количество токенов настоящее, а цены — публичные прайс-листы провайдеров.\n\nНа мелких тикетах, например поправить эндпоинт или добавить валидацию, у нас было 931 PR в 8 репозиториях на разных стеках. В среднем на PR уходило около 1,25 млн токенов: 240 тыс. входных, 67 тыс. выходных и остальное — чтения из кэша. Это $3,35 на Opus, $2,01 на Sonnet и $0,63 на open-weight моделях вроде GLM, DeepSeek или Kimi.\n\nНа настоящих тикетах картина другая. На живом проекте, где фичи приходят прямо из Jira, вместе с планированием, один PR съедал в 10–100 раз больше токенов. Отсюда примерно $82 на Opus, примерно $49 на Sonnet и примерно $13 на open-weight.\n\nПредставьте команду из 30 инженеров, каждый из которых выкатывает по 20 таких PR в месяц. Это около $49k в месяц на Opus, $29k на Sonnet и $7,6k на open-weight. За год выходит $590k против $350k против $90k за одну и ту же работу.\n\nСправедливости ради: я считал Opus и Sonnet на тех же объёмах токенов, что и open-weight модели. Фронтирные модели иногда справляются с меньшим количеством токенов. Но даже если Opus понадобится вдвое меньше, он всё равно будет дороже в 2,5–3 раза.\n\nЕсть ещё одна статья расходов, которой в этой арифметике нет совсем: куда уходит ваш код, пока вы платите за эти токены.\n\nВ YAGNI мы считаем такие цифры каждый день, поэтому и строим на open-weight моделях. А вы считали, сколько ваша команда тратит на один PR?"
+  },
+  "color": "var(--orange)"
+}

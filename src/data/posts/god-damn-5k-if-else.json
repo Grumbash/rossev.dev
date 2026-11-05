@@ -1,0 +1,48 @@
+{
+  "id": "post-7",
+  "slug": "god-damn-5k-if-else",
+  "published": "2026-10-19",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 3,
+  "url": "https://www.linkedin.com/posts/rossev_god-damn-5k-if-else-ugcPost-7517921822798016512-hRGL",
+  "title": {
+    "en": "Don't Use an LLM Where an If/Else Will Do",
+    "ru": "Не используйте LLM там, где справится if/else"
+  },
+  "takeaway": {
+    "en": "Write deterministic code first and bring in an agent only for the part of the problem that rules and state machines cannot handle.",
+    "ru": "Сначала пишите детерминированный код, а агента подключайте только к той части задачи, которую нельзя описать правилами и состояниями."
+  },
+  "tags": [
+    "LLM",
+    "Architecture",
+    "Simplicity"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Exhaust regular deterministic code first. Only bring in an agent for the messy 10% of the problem that you literally cannot write a regex or state machine for.",
+      "ru": "Сначала исчерпайте обычный детерминированный код. Агента подключайте только для тех 10% задачи, для которых нельзя написать регулярное выражение или конечный автомат."
+    },
+    "bullets": {
+      "en": [
+        "A team spent two weeks on a multi-agent ticket router with three prompts, a vector store, retry logic, and a $400 monthly token bill, and it still hallucinated on edge cases.",
+        "A replacement of 25 lines of TypeScript with three if/else statements cut latency from 12 seconds to 0ms, reached 100% accuracy, and needed no maintenance.",
+        "Using an LLM for deterministic routing is like paying OpenAI to roll dice in production, so the rule is to exhaust plain code before adding an agent."
+      ],
+      "ru": [
+        "Команда две недели собирала мультиагентный роутер тикетов с тремя промптами, векторным хранилищем, ретраями и счётом за токены в $400 в месяц, но он всё равно галлюцинировал на граничных случаях.",
+        "Замена на 25 строк TypeScript и три if/else сократила задержку с 12 с до 0 мс, дала точность 100% и не требует поддержки.",
+        "Использовать LLM для детерминированной маршрутизации значит платить OpenAI за бросание кубика в проде, поэтому сначала исчерпывайте обычный код и только потом добавляйте агента."
+      ]
+    }
+  },
+  "body": {
+    "en": "Last month I watched a team spend two weeks wiring up a multi-agent workflow to route incoming customer tickets.\n\nThree prompts, a vector store, retry logic, and a $400 monthly token bill.\n\nIt had a 12-second latency and still hallucinated on edge cases every Friday afternoon.\nYesterday someone replaced the whole thing with 25 lines of TypeScript and three if/else statements. Latency dropped to 0ms. Accuracy hit 100%. Maintenance cost: zero.\n\nRight now, half the industry is using LLMs for deterministic routing just so they can put «agentic architecture» on the roadmap slide. But using an LLM where a regular if/else or SQL query works it is just paying OpenAI to roll dice in production, not solve the real problem.\nMy rule for any AI feature now: exhaust regular deterministic code first. Only bring in an agent for the messy 10% of the problem that you literally cannot write a regex or state machine for.\n\nWhat’s the most over-engineered AI feature you’ve seen replaced by a simple script recently?",
+    "ru": "В прошлом месяце я наблюдал, как команда две недели подключала мультиагентный воркфлоу для маршрутизации входящих тикетов клиентов.\n\nТри промпта, векторное хранилище, логика ретраев и счёт за токены в $400 в месяц.\n\nЗадержка составляла 12 с, и на граничных случаях система всё равно галлюцинировала каждую пятницу после обеда.\n\nВчера кто-то заменил всё это на 25 строк TypeScript и три if/else. Задержка упала до 0 мс. Точность — 100%. Стоимость поддержки — ноль.\n\nСейчас половина индустрии использует LLM для детерминированной маршрутизации, чтобы написать «агентную архитектуру» на слайде с роадмапом. Но если там, где справятся if/else или SQL-запрос, вы ставите LLM, вы просто платите OpenAI за бросание кубика в проде. Проблему это не решает.\n\nМое правило для любой AI-фичи теперь такое: сначала исчерпайте обычный детерминированный код. Агента подключайте только для тех неаккуратных 10% задачи, для которых нельзя написать регулярное выражение или конечный автомат.\n\nКакую самую перегруженную AI-фичу, которую недавно заменил простой скрипт, видели вы?"
+  },
+  "color": "var(--cyan)"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "post-37",
+  "slug": "bargaining-estimates-shrinks-buffer",
+  "published": "2026-10-26",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7520469595787304962/",
+  "title": {
+    "en": "Bargaining Over Estimates Shrinks the Buffer, Not the Work",
+    "ru": "Торг над оценками сжимает запас, а не объём работы"
+  },
+  "takeaway": {
+    "en": "When a number needs to come down, cut scope instead of negotiating the estimate.",
+    "ru": "Если оценку нужно снизить, режьте объём работ, а не торгуйтесь над цифрой."
+  },
+  "tags": [
+    "Estimates",
+    "Negotiation",
+    "Trust"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Three hours spent arguing a figure is not that question.",
+      "ru": "Три часа споров о цифре — это не тот вопрос."
+    },
+    "bullets": {
+      "en": [
+        "Three hours of bargaining over engineers' estimates shrank the buffer for being wrong, while the actual work stayed the same size.",
+        "When a team sees its estimates get bargained down, it learns to pad them, so the numbers negotiated next are worse.",
+        "Pushing back is fair when an estimate looks padded or rests on unquestioned scope, but when a number must fall, cut scope and let the estimate follow."
+      ],
+      "ru": [
+        "Три часа торга над оценками инженеров сжали запас на ошибку, а объём самой работы остался прежним.",
+        "Если команда видит, что её оценки сбивают, она начинает закладывать больше запаса, и следующие цифры становятся хуже.",
+        "Возражать правильно, когда оценка раздута или опирается на непроверенный объём, но если цифру надо снизить, режьте объём работ, и оценка снизится сама."
+      ]
+    }
+  },
+  "body": {
+    "en": "Three hours of a recent call went into bargaining over estimates. The work behind those numbers stayed the same size.\n\nI sat through one of these. A startup CEO joined a technical call and started bargaining over the engineers' estimates, one by one.\n\nThree hours later, we had covered about 40% of the estimates. Working afterwards was hard; the feeling in the room was that we'd been had, the hours skimmed off us.\n\nThe CEO, as far as I could tell, was pleased with how far he had moved the numbers.\n\nWhat shrank in that room was the buffer for being wrong — the one part of an estimate you actually miss when reality shows up.\n\nAnd there's a second cost I think founders underweight. A team that watches its estimates get bargained learns, fairly quickly, that estimates here are opening positions. \n\nSo the next ones come in padded, and now the numbers you're negotiating are worse numbers.\n\nThe fair version of the other side: pushing back is sometimes right. Estimates can be padded, or built on scope nobody has questioned yet. If a number surprises you, asking why is your job.\n\nBut that's a question about the work. Three hours spent arguing a figure is not that question.\n\nWhen a number genuinely needs to come down, I think the honest move is to cut scope. Remove work, and the estimate follows it down on its own. That's a real reduction.",
+    "ru": "Три часа одного созвона ушли на торг над оценками. Объём работы при этом не изменился.\n\nЯ сидел на одном из таких созвонов. Основатель стартапа подключился к техническому созвону и начал по одной сбивать оценки инженеров.\n\nЧерез три часа мы разобрали около 40% оценок. Работать после этого было тяжело. В комнате было ощущение, что нас обыграли и с нас сняли часы работы.\n\nКак я понял, CEO остался доволен тем, насколько он смог сбить цифры.\n\nСжалось в той комнате то, что нужно для ошибки: запас на случай, когда реальность покажет себя. Именно эту часть оценки вы потом и теряете.\n\nЕсть и вторая цена, которую, по-моему, основатели недооценивают. Команда, которая видит, как её оценки торгуют, быстро понимает: здесь оценки — это стартовые позиции.\n\nПоэтому следующие оценки приходят с запасом, и цифры, над которыми вы торгуетесь, становятся хуже.\n\nЧестная позиция второй стороны такая: возражать иногда правильно. Оценки могут быть раздуты или построены на объёме, который никто ещё не проверил. Если цифра вас удивила, спросить, почему, — ваша работа.\n\nНо это вопрос о работе. Три часа споров о цифре — это не тот вопрос.\n\nЕсли цифру действительно нужно снизить, честный ход, по-моему, — урезать объём. Уберите работу, и оценка пойдёт вниз сама. Это настоящее снижение."
+  },
+  "color": "var(--lime)"
+}

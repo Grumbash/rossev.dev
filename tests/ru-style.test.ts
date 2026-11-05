@@ -9,7 +9,7 @@ import { buildSite } from './fixtures/build';
 
 import { RU_BANNED, ruBannedRe, ruStyleProblems } from '../src/i18n/ru-style';
 import { ru } from '../src/i18n/ru';
-import type { BlogPost } from '../src/data/profile';
+import { BLOG_POSTS } from '../src/data/posts';
 import { CATEGORY_LABELS } from '../scripts/ci/publora-sync';
 
 setDefaultTimeout(180_000);
@@ -59,7 +59,7 @@ describe('RU copy follows src/i18n/ru-style.ts', () => {
   });
 
   test('blog categories carry the guide labels, and the filters match them', () => {
-    const labels = Object.fromEntries((JSON.parse(readFileSync('src/data/posts.json', 'utf8')) as BlogPost[]).map((p) => [p.category, p.categoryLabel.ru]));
+    const labels = Object.fromEntries(BLOG_POSTS.map((p) => [p.category, p.categoryLabel.ru]));
     const want = { ai: 'AI-СИСТЕМЫ', leadership: 'ЛИДЕРСТВО', systems: 'СИСТЕМЫ', delivery: 'ДЕЛИВЕРИ' } as Record<string, string>;
     for (const [c, l] of Object.entries(labels)) expect(l).toBe(want[c]);
     expect(Object.values(CATEGORY_LABELS).map((l) => l.ru)).toEqual(Object.values(want));

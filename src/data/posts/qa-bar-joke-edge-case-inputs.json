@@ -1,0 +1,48 @@
+{
+  "id": "post-46",
+  "slug": "qa-bar-joke-edge-case-inputs",
+  "published": "2026-11-05",
+  "category": "delivery",
+  "categoryLabel": {
+    "en": "DELIVERY",
+    "ru": "ДЕЛИВЕРИ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7524091416604471296/",
+  "title": {
+    "en": "A QA Engineer Walks Into a Bar and Burns It Down",
+    "ru": "QA-инженер заходит в бар и поджигает его"
+  },
+  "takeaway": {
+    "en": "Test zero, negative and nonsense inputs before release, because the first real user will send something the spec never imagined.",
+    "ru": "Проверяйте ноль, отрицательные значения и бессмысленный ввод до релиза, потому что первый реальный пользователь пришлёт то, что в спецификации не предусмотрели."
+  },
+  "tags": [
+    "QA",
+    "Edge Cases",
+    "Testing"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The first real customer walks in and asks where the bathroom is.",
+      "ru": "Первый настоящий клиент заходит и спрашивает, где туалет."
+    },
+    "bullets": {
+      "en": [
+        "A QA engineer orders 2 beers, 0 beers, –1 beer, a lizard in a glass and qwertyuip beers, which covers the boundary and garbage inputs.",
+        "The first real customer asks a simple question that nobody tested, and the bar bursts into flames, killing everyone.",
+        "The author made this audio with ElevenLabs last week, just to play around."
+      ],
+      "ru": [
+        "QA-инженер заказывает 2 пива, 0 пив, –1 пиво, ящерицу в стакане и qwertyuip пива, то есть граничные значения и мусорный ввод.",
+        "Первый настоящий клиент задаёт простой вопрос, который никто не проверял, и бар вспыхивает, убивая всех.",
+        "Автор сделал это аудио в ElevenLabs на прошлой неделе, просто поиграв с инструментом."
+      ]
+    }
+  },
+  "body": {
+    "en": "Just played around last week with ElevenLabs and created this masterpiece.\n \n❗️❗️❗️Read first:\n\nA QA engineer walks into a bar and orders:\na beer,\n2 beers,\n0 beers,\n999999999 beers,\na lizard in a glass,\n–1 beer,\nqwertyuip beers.\nThe first real customer walks in and asks where the bathroom is. The bar bursts into flames, killing everyone.",
+    "ru": "Недавно поиграл с ElevenLabs и сделал вот этот шедевр.\n\nЧитайте первым.\n\nQA-инженер заходит в бар и заказывает: пиво, 2 пива, 0 пив, 999999999 пив, ящерицу в стакане, –1 пиво, qwertyuip пива.\n\nПервый настоящий клиент заходит и спрашивает, где туалет. Бар вспыхивает и сгорает, погибают все."
+  },
+  "color": "var(--orange)"
+}

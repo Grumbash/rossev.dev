@@ -1,0 +1,48 @@
+{
+  "id": "post-3",
+  "slug": "the-new-ai-bottleneck",
+  "published": "2026-10-19",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 4,
+  "url": "https://www.linkedin.com/posts/rossev_the-new-ai-bottleneck-ugcPost-7517920896150536192-7TGN",
+  "title": {
+    "en": "AI Moved the Bottleneck From Typing to Reviewing",
+    "ru": "AI перенёс узкое место с набора кода на ревью"
+  },
+  "takeaway": {
+    "en": "Before you celebrate faster code generation, measure the review queue, and close any PR the author cannot explain in two sentences without opening the diff.",
+    "ru": "Прежде чем радоваться быстрой генерации кода, посмотрите на очередь ревью и закрывайте любой PR, который автор не может объяснить в двух предложениях без открытия диффа."
+  },
+  "tags": [
+    "AI Code Generation",
+    "Code Review",
+    "Team Velocity"
+  ],
+  "brief": {
+    "quote": {
+      "en": "We didn't eliminate the bottleneck. We just moved it from typing to reviewing.",
+      "ru": "Мы не убрали узкое место. Мы просто перенесли его с набора кода на ревью."
+    },
+    "bullets": {
+      "en": [
+        "Writing code was never the real bottleneck; understanding it was, and AI tools make it cheap to produce 1,000 lines that nobody on the team fully understands.",
+        "Reviewing code you didn't write is 5x harder than generating it, so the senior engineers who review AI-written PRs quietly become full-time human linters.",
+        "Our rule now is that if an author can't explain every architectural trade-off in their PR in two sentences without looking at the diff, the PR gets closed without review."
+      ],
+      "ru": [
+        "Узкое место никогда не было в наборе кода, оно было в понимании. Инструменты с AI делают дешёвым написание 1000 строк, которые никто в команде до конца не понимает.",
+        "Ревьюить чужой код в 5x сложнее, чем его сгенерировать, и сеньоры, которые проверяют PR с кодом от LLM, незаметно превращаются в ручных линтеров на полный день.",
+        "Наше правило: если автор не может в двух предложениях объяснить каждый архитектурный компромисс в своём PR без открытия диффа, PR закрывается без ревью."
+      ]
+    }
+  },
+  "body": {
+    "en": "Everyone brags about how their team writes code 3x faster with AI now.\n\nNobody mentions what happened to their PR queue.\n\nWriting code was never the real bottleneck. Understanding it was.\nBefore Cursor and Claude, if a developer wanted to ship a messy 800-line PR, it at least took them three days to type it out. You had natural friction.\n\nNow anyone on the team can generate 1,000 lines of plausible-looking code before lunch. It compiles, the happy-path test passes, and then it lands on a senior engineers desk. And that's where velocity goes to die. Reviewing code you didn't write is 5x harder than generating it. When half of that PR was written by an LLM that doesn't understand your domain invariants, code review turns into forensic archaeology.\n\nWe didn't eliminate the bottleneck. We just moved it from typing to reviewing — and silently turned our best engineers into full-time human linters. \n\nOur rule now is simple: if you can't explain every architectural trade-off in your PR in two sentences without looking at the diff, it gets closed without review.\n\nHow are you handling the PR flood in your teams right now? Stricter size limits, or changing how reviews work entirely?",
+    "ru": "Все хвастаются, что их команда теперь пишет код в 3x быстрее с AI. Никто не говорит, что стало с очередью PR.\n\nНаписание кода никогда не было настоящим узким местом. Узким местом было понимание.\n\nДо Cursor и Claude, если разработчик хотел выкатить грязный PR на 800 строк, на его набор уходило как минимум три дня. Было естественное трение.\n\nСейчас любой в команде может сгенерировать 1000 строк правдоподобного кода до обеда. Код компилируется, тест на happy path проходит, и потом он попадает к сеньору. Вот где скорость умирает. Ревьюить код, который вы не писали, в 5x сложнее, чем его сгенерировать. Когда половину PR написала LLM, которая не понимает доменных инвариантов вашей системы, ревью превращается в криминалистику.\n\nМы не убрали узкое место. Мы просто перенесли его с набора кода на ревью и незаметно превратили лучших инженеров в ручных линтеров на полный день.\n\nПравило у нас теперь простое: если вы не можете в двух предложениях объяснить каждый архитектурный компромисс в своём PR, не глядя в дифф, такой PR закрывается без ревью.\n\nКак вы справляетесь с потоком PR в своих командах прямо сейчас? Жёстче ограничиваете размер или меняете сам процесс ревью?"
+  },
+  "color": "var(--cyan)"
+}

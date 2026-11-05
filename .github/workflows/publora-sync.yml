@@ -1,5 +1,5 @@
 # The Publora sync: once a day, LinkedIn posts published through Publora become site entries in
-# src/data/posts.json (scripts/ci/publora-sync.ts), pass `bun run test` and `bun run build`, and land
+# src/data/posts/<slug>.json (scripts/ci/publora-sync.ts), pass `bun run test` and `bun run build`, and land
 # as ONE PR from the fixed branch bot/publora-sync, recreated from main on every run. Nothing new
 # means no commit and no PR. It never pushes to main: review and merge happen in the PR.
 #
@@ -96,7 +96,7 @@ jobs:
         with:
           name: publora-sync
           path: |
-            src/data/posts.json
+            src/data/posts/
             public/llms.txt
             .publora/pr-body.md
           include-hidden-files: true
@@ -139,8 +139,8 @@ jobs:
           git fetch --quiet origin main
           if ! git merge-base --is-ancestor "$SHA" origin/main; then echo "::error::$SHA is not on main; nothing pushed."; exit 1; fi
 
-          # Only these two files ever change; anything else in the artifact is ignored.
-          cp "$IN/src/data/posts.json" src/data/posts.json
+          # Only the post files and llms.txt ever change; anything else in the artifact is ignored.
+          cp "$IN"/src/data/posts/*.json src/data/posts/
           cp "$IN/public/llms.txt" public/llms.txt
           body="$IN/.publora/pr-body.md"
 
@@ -159,7 +159,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898283+github-actions[bot]@users.noreply.github.com'
           git switch --create "$BRANCH"
-          git add src/data/posts.json public/llms.txt
+          git add src/data/posts public/llms.txt
           git commit --quiet --message "$TITLE"
           # The lease is the sha seen above (empty: the branch must not exist yet).
           git_auth push --force-with-lease="refs/heads/$BRANCH:$expect" origin "HEAD:refs/heads/$BRANCH"

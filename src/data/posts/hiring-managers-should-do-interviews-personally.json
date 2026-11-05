@@ -1,0 +1,47 @@
+{
+  "id": "post-16",
+  "slug": "hiring-managers-should-do-interviews-personally",
+  "published": "2025-09-08",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_hands-on-hiring-ditch-the-delegation-or-share-7370707497680191488-ISQo",
+  "title": {
+    "en": "Hands-On Hiring: Why Delegating Interviews Costs You Good Engineers",
+    "ru": "Найм лично: почему делегирование интервью стоит вам сильных инженеров"
+  },
+  "takeaway": {
+    "en": "As a hiring manager, run the key hiring stages yourself instead of delegating them to others.",
+    "ru": "Как руководитель, ведите ключевые этапы найма сами, а не передавайте их другим."
+  },
+  "tags": [
+    "Hiring",
+    "Ownership"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Stop outsourcing your judgment. Own it, or own the failures.",
+      "ru": "Не отдавайте своё суждение на аутсорс. Либо берите ответственность, либо отвечайте за провалы."
+    },
+    "bullets": {
+      "en": [
+        "The author handles every hiring step personally, from resume screening to deep-dive interviews and final offers.",
+        "Delegating hiring stages to several people is, in the author's view, lazy bureaucracy that filters out strong candidates.",
+        "Hiring this way takes significant time and energy, but the author argues it is the only way to find top talent."
+      ],
+      "ru": [
+        "Автор лично ведёт каждый этап найма: от разбора резюме до углублённых интервью и финального оффера.",
+        "По мнению автора, передача этапов нескольким людям — это ленивая бюрократия, которая отсеивает сильных кандидатов.",
+        "Такой подход отнимает много времени и сил, но, по мнению автора, это единственный способ найти сильных людей."
+      ]
+    }
+  },
+  "body": {
+    "en": "Hands-On Hiring: Ditch the Delegation or Settle for Mediocrity\n\nWant top-tier talent? Then roll up your sleeves and dive in personally - anything less is a recipe for regret. As a hiring manager in tech, I’ve learned the hard way: Delegating stages to three different people? That’s lazy bureaucracy, filtering out gems while letting average Joes slip through.\n\nMy method? Total immersion. I handle every step myself - from screening resumes to deep-dive interviews and final offers. It sucks up time and energy, sure, but it’s the only way to spot real diamonds: The passionate innovators, the problem-solvers who think outside the box, the ones who’ll crush KPIs without hand-holding.\n\nResult? Every hire I’ve made this way has been a superstar - driving projects forward, boosting team morale, and delivering results that blow expectations away. HR pros and recruiters might whine about scalability, but if you’re serious about building a killer team, stop outsourcing your judgment. Own it, or own the failures.\n\nWhat’s your hiring horror story? Delegation disaster or immersion triumph? Spill in the comments!",
+    "ru": "Найм лично: или не делегируйте, или мирьтесь с посредственностью.\n\nХотите сильную команду? Тогда закатайте рукава и займитесь наймом сами. Всё остальное ведёт к сожалениям. Как руководитель в tech, я на собственном опыте понял: передавать этапы трём разным людям — это ленивая бюрократия. Такой подход отсеивает сильных кандидатов и пропускает середнячков.\n\nМой метод — полное погружение. Я сам веду каждый этап: от разбора резюме до углублённых интервью и финального оффера. Да, это отнимает время и силы, но только так можно найти настоящие алмазы: увлечённых инноваторов, решателей задач, которые мыслят нестандартно, и людей, которые выполнят KPI без постоянного контроля.\n\nРезультат? Каждый человек, которого я нанял таким образом, оказался суперзвездой. Они двигают проекты, поднимают боевой дух команды и дают результаты, которые превосходят ожидания. HR и рекрутеры могут ворчать про масштабируемость, но если вы всерьёз хотите собрать сильную команду, перестаньте отдавать своё суждение на аутсорс. Либо берите ответственность, либо отвечайте за провалы.\n\nКакая у вас история про найм? Провал из-за делегирования или триумф от личного участия? Расскажите в комментариях."
+  },
+  "color": "var(--orange)"
+}

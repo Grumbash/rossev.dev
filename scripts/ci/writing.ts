@@ -3,9 +3,9 @@
 // .github/workflows/writing.yml on his PR, does the rest. A cheap OpenRouter model writes the other
 // language and the 30-second brief under a strict JSON schema, the answer is checked like the
 // Publora sync's (exact schema, Russian where Russian belongs, no number the post never said), and
-// the entry lands in src/data/posts.json. For each platform in `distribute` the English text becomes
-// a Publora draft; scheduling it stays a human step. The site never reads the .md files: posts.json
-// is what it renders, and tests/writing-source.test.ts keeps the two in step.
+// the entry lands in its own file, src/data/posts/<slug>.json. For each platform in `distribute` the English text becomes
+// a Publora draft; scheduling it stays a human step. The site never reads the .md files: the post files
+// are what it renders, and tests/writing-source.test.ts keeps the two in step.
 //
 // An entry is matched to its file by slug. It is redrafted only when the title, category or text
 // changed, keeping its id, date, color, url and draft. A draft still in `draft` status gets the new
@@ -15,6 +15,7 @@
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import type { BlogPost } from '../../src/data/profile';
+import { changedPostFiles, readPosts } from '../../src/data/posts';
 import { ruStyleProblems } from '../../src/i18n/ru-style';
 import { callOpenRouter, redact } from './openrouter';
 import {
@@ -23,7 +24,6 @@ import {
   DEFAULT_MODEL,
   FACTS,
   FALLBACK_PALETTE,
-  POSTS_JSON,
   PUBLORA,
   RUSSIAN,
   WORDS_PER_MINUTE,
@@ -255,7 +255,7 @@ export function buildEntry(o: { source: Source; draft: Draft; existing: BlogPost
 export type Note = { slug: string; text: string };
 
 export function prBody(o: { written: BlogPost[]; drafts: Note[]; problems: Note[]; model: string; costUsd: number }) {
-  const lines = ['Posts from `src/content/writing`, filled in by `scripts/ci/writing.ts`. Read the other language and the brief before merging; edit the .md file, not posts.json, and the next run redrafts it.', ''];
+  const lines = ['Posts from `src/content/writing`, filled in by `scripts/ci/writing.ts`. Read the other language and the brief before merging; edit the .md file, not src/data/posts/, and the next run redrafts it.', ''];
   for (const p of o.written) {
     lines.push(`### [${p.title.en}](https://rossev.dev/writing/${p.slug}/) · ${p.title.ru}`, '', `> ${p.takeaway.en}`, `>`, `> ${p.takeaway.ru}`, '');
     for (const l of ['en', 'ru'] as const) for (const b of p.brief.bullets[l]) lines.push(`- ${b}`);
@@ -303,6 +303,7 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
       else problem(file, r.errors.join('; '));
     }
     let posts = deps.readPosts();
+    const before = posts;
     const stale = sources.filter((s) => {
       const e = posts.find((p) => p.slug === s.slug);
       return !e || !upToDate(e, s);
@@ -413,9 +414,9 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
     const changed = written.length;
     log(`${model}, ${changed} post(s) written, ${drafts.length} Publora draft(s), ${problems.length} problem(s), cost ${usd(costUsd)}`);
     if (changed) {
-      // The PR summary first: if a write fails, posts.json is left as it was.
+      // The PR summary first: if a write fails, the post files are left as they were.
       if (env.PR_BODY_PATH) deps.writeFile(env.PR_BODY_PATH, prBody({ written, drafts, problems, model, costUsd }));
-      deps.writeFile(POSTS_JSON, JSON.stringify(posts, null, 2) + '\n');
+      for (const f of changedPostFiles(before, posts)) deps.writeFile(f.path, f.json);
     } else if (env.PR_BODY_PATH && problems.length) deps.writeFile(env.PR_BODY_PATH, prBody({ written, drafts, problems, model, costUsd }));
     output(changed);
     return { status: changed ? ('written' as const) : ('none' as const), written: written.map((p) => p.slug), drafts, problems, costUsd };
@@ -436,7 +437,7 @@ if (import.meta.main) {
             .sort()
             .map((file) => ({ file, raw: readFileSync(`${WRITING_DIR}/${file}`, 'utf8') }))
         : [],
-    readPosts: () => JSON.parse(readFileSync(POSTS_JSON, 'utf8')),
+    readPosts,
     writeFile: (p, s) => {
       mkdirSync(dirname(p), { recursive: true });
       if (p === process.env.GITHUB_OUTPUT) appendFileSync(p, s);

@@ -1,0 +1,48 @@
+{
+  "id": "post-17",
+  "slug": "docops-ai-workflows-over-tools",
+  "published": "2025-09-12",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_ai-workflow-productivity-share-7372287901755265024-9Wbg",
+  "title": {
+    "en": "Fix the System Before Buying More AI Tools",
+    "ru": "Сначала система, потом инструменты ИИ"
+  },
+  "takeaway": {
+    "en": "Build repeatable documentation-driven workflows so AI handles routine steps and people handle decisions.",
+    "ru": "Стройте повторяемые процессы через документацию, чтобы ИИ делал рутину, а люди принимали решения."
+  },
+  "tags": [
+    "DocOps",
+    "Workflows",
+    "Automation"
+  ],
+  "brief": {
+    "quote": {
+      "en": "It’s about building repeatable workflows where AI does the routine, and you focus on decisions.",
+      "ru": "Речь о повторяемых процессах, где ИИ берёт рутину, а вы занимаетесь решениями."
+    },
+    "bullets": {
+      "en": [
+        "The real problem is not a lack of AI tools but a lack of a system tying together feedback, meeting notes, follow-ups and reports across HR, PM, CS and Sales.",
+        "The author calls this approach DocOps, documentation-driven operations, and uses it to turn transcripts into structured notes, notes into tasks, and support actions into tracked records.",
+        "The result he describes is less overhead, nothing falling through the cracks, and teams moving faster with fewer meetings."
+      ],
+      "ru": [
+        "Проблема не в нехватке инструментов ИИ, а в отсутствии системы, которая связывает фидбек клиентов, заметки со встреч, фоллоу-апы и отчёты между HR, PM, CS и Sales.",
+        "Автор называет этот подход DocOps, документо-ориентированными операциями: транскрипт превращается в структурированные заметки, заметки в задачи с понятными следующими шагами, а действия поддержки фиксируются автоматически.",
+        "По его словам, результат такой: меньше накладных расходов, ничего не теряется, а команды быстрее работают при меньшем количестве встреч."
+      ]
+    }
+  },
+  "body": {
+    "en": "The real problem isn’t lack of AI tools. It’s the lack of a system.\n\nMost teams — HR, PM, CS, Sales — face the same problem:\nCustomer feedback, meeting notes, follow-ups, reports… all scattered across tools.\n\nI call my solution DocOps — documentation-driven operations.\n\nHere’s how it helps me (and can help you):\n> Meeting transcript → instantly becomes structured notes.\n> Notes → auto-create tasks with clear next steps.\n> Support actions → tracked automatically.\n> Reports → generated in minutes, not hours.\n\nThe result:\n✅ Less overhead\n✅ Nothing falls through the cracks\n✅ Teams move faster with fewer meetings\n\nThis isn’t about “AI magic.”\nIt’s about building repeatable workflows where AI does the routine, and you focus on decisions.\n\n💬 What’s the most repetitive task in your work you’d love to automate?",
+    "ru": "Проблема не в нехватке инструментов ИИ. Проблема в отсутствии системы.\n\nБольшинство команд, будь то HR, PM, CS или Sales, сталкиваются с одним и тем же: отзывы клиентов, заметки со встреч, фоллоу-апы и отчёты разбросаны по разным инструментам.\n\nСвой подход я называю DocOps, то есть документо-ориентированные операции.\n\nВот как это помогает мне и может помочь вам:\n\n— Транскрипт встречи сразу превращается в структурированные заметки.\n\n— Заметки автоматически создают задачи с понятными следующими шагами.\n\n— Действия поддержки отслеживаются автоматически.\n\n— Отчёты готовы за минуты, а не за часы.\n\nРезультат:\n\n— меньше накладных расходов;\n\n— ничего не теряется;\n\n— команды быстрее работают при меньшем количестве встреч.\n\nЭто не про «магию ИИ». Это про повторяемые процессы, где ИИ делает рутину, а вы занимаетесь решениями.\n\nКакая самая повторяющаяся задача в вашей работе, которую вы бы хотели автоматизировать?"
+  },
+  "color": "var(--lime)"
+}

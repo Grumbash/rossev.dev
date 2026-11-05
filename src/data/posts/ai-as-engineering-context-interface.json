@@ -1,0 +1,48 @@
+{
+  "id": "post-32",
+  "slug": "ai-as-engineering-context-interface",
+  "published": "2026-07-14",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/posts/rossev_if-you-are-still-using-ai-only-to-write-code-ugcPost-7482871289498533889-2I0s",
+  "title": {
+    "en": "Stop Using AI Only to Write Code: Connect It to Your Whole Environment",
+    "ru": "Не только код: подключите ИИ ко всему инженерному контексту"
+  },
+  "takeaway": {
+    "en": "Connect your AI agent to the tools where context lives, so it can work on real tasks instead of isolated code snippets.",
+    "ru": "Подключите агента к инструментам, где живёт контекст, и давайте ему настоящие задачи, а не куски кода."
+  },
+  "tags": [
+    "AI Agents",
+    "Tooling",
+    "Workflow"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The gap between this and simply asking ChatGPT to write code is enormous",
+      "ru": "Разница между этим и просто просьбой написать код ChatGPT огромная."
+    },
+    "bullets": {
+      "en": [
+        "Most engineering work is gathering context across Slack, Notion, tickets, logs and pull requests, not writing code.",
+        "An agent with access to the codebase, GitHub, Linear, Slack, Notion, Grafana and logs can combine that context and prepare a fix with tests and a pull request.",
+        "Splitting work across several agents and building reusable skills for incidents, reviews and releases turns this into an environment shaped around how you work."
+      ],
+      "ru": [
+        "Большая часть инженерной работы — это сбор контекста из Slack, Notion, тикетов, логов и пулл-реквестов, а не написание кода.",
+        "Агент с доступом к кодовой базе, GitHub, Linear, Slack, Notion, Grafana и логам может объединить этот контекст и подготовить фикс с тестами и PR.",
+        "Распределите работу между несколькими агентами и соберите переиспользуемые скиллы для инцидентов, ревью и релизов — и среда начнёт работать под ваш стиль."
+      ]
+    }
+  },
+  "body": {
+    "en": "If you are still using AI only to write code, you are probably working somewhere around 2022 or 2023\n\nI don’t mean that Cursor or ChatGPT are useless. They are obviously useful. But opening a chat, pasting a task, generating a function and then reviewing it is a very small part of what an engineer actually does\n\nMost of the work is not writing code\n\nIt is understanding what the client actually asked for, finding what was discussed in Slack, checking whether the ticket still reflects the current requirements, reading old decisions in Notion or Google Docs, looking at logs, finding the relevant code, checking existing pull requests, understanding who owns the next step and making sure the result can actually be shipped\n\nIf your AI only has access to the repository, it knows almost none of this\n\nMy setup is closer to having one entry point into the whole engineering environment\n\nIt has access to the codebase, GitHub, Linear, Slack, Notion, Google Docs, Grafana and logs. The permissions are separated where they need to be separated, but the important part is that the agent can combine information from all of these systems\n\nSo instead of asking it to write some isolated piece of code, I can give it a real task\n\nA client mentioned a problem during a meeting. The agent can find the notes, compare them with the current Linear ticket, look through the relevant Slack discussions, check the logs, trace the problem in the codebase and prepare a fix with tests and a pull request\n\nYou can also split the work between multiple agents. One investigates the logs, another checks product context, another reviews the code, another looks for previous decisions. They do not even have to use the same model\n\nYou can build your own skills and workflows around this as well. For example, how incidents should be investigated, how tickets should be reviewed, what checks are required before release or how documentation should be prepared\n\nAfter some time, this becomes an environment built specifically around the way you work\n\nAnd honestly, none of this requires some huge internal AI platform. In many cases it is just integrations, permissions, a few reusable skills and the willingness to automate things that you currently do manually across fifteen different tabs\n\nThe gap between this and simply asking ChatGPT to write code is enormous\n\nIt is roughly the difference between using AI as autocomplete and using it as an interface to the company’s actual engineering context",
+    "ru": "Если вы всё ещё используете ИИ только для написания кода, вы, скорее всего, работаете где-то в 2022 или 2023 году.\n\nЯ не имею в виду, что Cursor или ChatGPT бесполезны. Они явно полезны. Но открыть чат, вставить задачу, сгенерировать функцию и потом её проверить — это очень маленькая часть того, что инженер делает на самом деле.\n\nБольшая часть работы — это не написание кода.\n\nЭто понять, что клиент действительно просил, найти, что обсуждали в Slack, проверить, отражает ли тикет текущие требования, прочитать старые решения в Notion или Google Docs, посмотреть логи, найти нужный код, проверить существующие PR, понять, кто владеет следующим шагом, и убедиться, что результат вообще можно выкатить.\n\nЕсли ваш ИИ видит только репозиторий, он знает почти ничего из этого.\n\nМоя схема ближе к тому, чтобы иметь одну точку входа во всё инженерное окружение.\n\nУ агента есть доступ к кодовой базе, GitHub, Linear, Slack, Notion, Google Docs, Grafana и логам. Права разделены там, где их нужно разделить, но главное — агент может объединять информацию из всех этих систем.\n\nПоэтому вместо того, чтобы просить написать отдельный кусок кода, я могу дать ему настоящую задачу.\n\nКлиент упомянул проблему на встрече. Агент находит заметки, сравнивает их с текущим тикетом в Linear, просматривает нужные обсуждения в Slack, проверяет логи, отслеживает проблему в кодовой базе и готовит фикс с тестами и PR.\n\nРаботу также можно разделить между несколькими агентами. Один изучает логи, другой проверяет продуктовый контекст, третий смотрит код, четвёртый ищет прошлые решения. Им даже не обязательно использовать одну и ту же модель.\n\nВокруг этого можно строить и свои скиллы и воркфлоу. Например, как расследовать инциденты, как проводить ревью тикетов, какие проверки нужны перед релизом или как готовить документацию.\n\nСо временем это превращается в среду, построенную именно под ваш стиль работы.\n\nИ честно говоря, для этого не нужна огромная внутренняя ИИ-платформа. Во многих случаях достаточно интеграций, прав доступа, нескольких переиспользуемых скиллов и готовности автоматизировать то, что вы сейчас делаете вручную, переключаясь между пятнадцатью вкладками.\n\nРазница между этим и простой просьбой к ChatGPT написать код огромная.\n\nПримерно такая же, как между использованием ИИ как автодополнения и использованием его как интерфейса к реальному инженерному контексту компании."
+  },
+  "color": "var(--orange)"
+}
