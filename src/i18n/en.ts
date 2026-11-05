@@ -68,10 +68,11 @@ export const en = {
     ctaNote: 'Hiring for AI agents or platform? Tell me the problem — I reply within 24h.',
     copy: 'copy',
     remote: 'Remote',
-    buildLoop: 'Same loop on this site’s own PRs →'
+    caseLink: 'How we eliminated 15 seconds of silence →'
   },
   topology: {
-    title: '3D SYSTEM ARCHITECTURE TOPOLOGY',
+    title: 'How agents built this site',
+    scenario: 'Try your own scenario',
     replayBadge: 'REPLAY · PR #11',
     yourRun: 'YOUR RUN',
     simulated: 'simulated',
@@ -142,7 +143,7 @@ export const en = {
         'Spots stuck or failing runs before a customer does.'
       ]
     },
-    caseLink: 'This is what I built at YAGNI. See the breakdown →',
+    caseLink: 'YAGNI case study →',
     explore: 'Explore',
     domainYagni: 'AGENT TEAMS (YAGNI)',
     domainVoice: 'VOICE AI (SULLY)',
@@ -170,6 +171,9 @@ export const en = {
     openBreakdown: (company: string) => `Open the ${company} breakdown →`
   },
   toolbox: {
+    find: 'Find experience by technology',
+    sullyCase: 'Sully.ai — why patients heard silence when they picked up',
+    yagniCase: 'YAGNI — why a review agent picked up the wrong ticket',
     label: 'Toolbox · for skimmers and screeners',
     lead: 'Every keyword in one place, for recruiters who skim and the ATS and LLMs that parse. Click a skill to see where I used it. The same list lives in',
     copy: 'COPY AS TEXT',

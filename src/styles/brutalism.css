@@ -898,6 +898,7 @@ a {
 .stage-iso-card:not(.is-exploring) .iso-stratum-rail,
 .stage-iso-card:not(.is-exploring) .iso-inspector-card,
 .stage-iso-card:not(.is-exploring) #iso-trace-status,
+.is-live .replay-label,
 .is-exploring .replay-badge,
 .is-exploring [data-sim-fault],
 .is-exploring [data-sim-judge],
@@ -1286,6 +1287,19 @@ a {
   content: '↑';
 }
 
+.featured-cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.scenario-controls > summary, .toolbox > summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.scenario-controls > summary {
+  color: var(--lime);
+}
 .toolbox {
   margin-bottom: 28px;
   padding: 20px 24px;
