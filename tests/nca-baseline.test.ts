@@ -46,7 +46,7 @@ describe('the shipped GR baseline', () => {
       expect(steps).toBeLessThan(400);
     }
     expect(clean).toBeGreaterThan(4);
-  }, 60_000);
+  }, 300_000); // a hang guard, not a speed check (CI: nca.yml)
 
   test('a healer refuses a baseline with no live cells instead of looping on it', () => {
     const bin = readFileSync('public/nca/gr.bin');

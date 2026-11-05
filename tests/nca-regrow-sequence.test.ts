@@ -2,7 +2,8 @@
 import { describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { grown, mse, mulberry32, runUntilSettled } from './fixtures/nca-regrow';
 
-setDefaultTimeout(60_000);
+// A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
+setDefaultTimeout(300_000);
 
 // A third judge: the "heal looks like the pre-damage frame" escape hatch ratchets. A heal accepted
 // only because it resembles the previous rest frame becomes the new rest frame, so a clean GR walks

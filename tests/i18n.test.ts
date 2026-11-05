@@ -9,6 +9,8 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } fro
 import { join, relative, resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { PROFILE } from '../src/data/profile';
+import { en as enDict } from '../src/i18n/en';
+import { ru as ruDict } from '../src/i18n/ru';
 import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
@@ -223,5 +225,16 @@ describe('UI dictionaries', () => {
     const r = tsc(`import type { Dict } from '../index';\nimport { en } from '../en';\nexport const bad: Dict = { ...en, bogusKey: 'x' };\n`);
     expect(r.status).not.toBe(0);
     expect(r.stdout).toMatch(/bogusKey/);
+  });
+});
+
+// Moved from nca-regrow.test.ts, which now runs only when the automaton changes: the caption a
+// visitor sees when the GR monogram regrows is copy, and copy changes on its own.
+describe('the visitor is told what happened when GR regrows', () => {
+  test('both locales say the monogram is regrowing from a single cell', () => {
+    expect(enDict.nca.regrowing).toMatch(/regrow/i);
+    expect(enDict.nca.regrowing).toMatch(/single cell|one cell/i);
+    expect(ruDict.nca.regrowing.length).toBeGreaterThan(10);
+    expect(ruDict.nca.regrowing).toMatch(/[а-яё]/i);
   });
 });

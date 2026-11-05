@@ -3,7 +3,10 @@
 // runs each test file as its own `bun test` process, the slowest files first. Durations from the
 // last run are kept in node_modules/.cache/test-times.json for that ordering.
 //
-// Usage: bun scripts/test.ts [files...]  (default: every tests/**/*.test.ts).
+// Usage: bun scripts/test.ts [--skip-simulations] [files...]  (default: every tests/**/*.test.ts).
+// --skip-simulations leaves out the NCA simulations listed in scripts/ci/simulations.json: each is
+// 30–45 s of one core, and on a shared runner they time out against each other. CI runs them in
+// .github/workflows/nca.yml instead, one runner per file.
 // Env: TEST_JOBS=n caps the parallel processes (default: the core count); SKIP_BUILD=1 reuses dist/.
 import { execSync, spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -12,7 +15,13 @@ import { dirname } from 'node:path';
 
 const TIMES = 'node_modules/.cache/test-times.json';
 
-const files = process.argv.length > 2 ? process.argv.slice(2) : [...new Bun.Glob('tests/**/*.test.ts').scanSync('.')];
+const args = process.argv.slice(2);
+const skipSimulations = args.includes('--skip-simulations');
+const named = args.filter((a) => a !== '--skip-simulations');
+const simulations: string[] = JSON.parse(readFileSync('scripts/ci/simulations.json', 'utf8'));
+const files = (named.length ? named : [...new Bun.Glob('tests/**/*.test.ts').scanSync('.')]).filter(
+  (f) => !(skipSimulations && simulations.includes(f)),
+);
 const jobs = Math.max(1, Number(process.env.TEST_JOBS) || availableParallelism());
 const known: Record<string, number> = existsSync(TIMES) ? JSON.parse(readFileSync(TIMES, 'utf8')) : {};
 // Unknown files go by size: a long file is usually a slow one.

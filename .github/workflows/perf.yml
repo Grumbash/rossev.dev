@@ -49,7 +49,8 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - run: bun run test
+      # The NCA simulations run in nca.yml, one runner per file; here they timed out on a shared CPU.
+      - run: bun run test --skip-simulations
 
       # Ubuntu 24.04's AppArmor blocks the unprivileged user namespaces Chrome's sandbox needs,
       # and Chrome then never opens its debugging port. Lift that on this throwaway VM instead of

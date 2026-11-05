@@ -2,7 +2,8 @@
 import { describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { eraseBelow, grown, mse } from './fixtures/nca-regrow';
 
-setDefaultTimeout(60_000);
+// A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
+setDefaultTimeout(300_000);
 
 // The same judge: losses leaving 42-63% alive never heal (lost by step ~200: distance 0.32,
 // MSE 0.056), yet the guard waited out the whole 1000-step deadline before regrowing.

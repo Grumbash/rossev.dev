@@ -81,14 +81,14 @@ describe('NeuralCA on the GR weights', () => {
         ca.step(600);
         expect(mse(ca)).toBeLessThan(0.01);
       }
-    }, 30_000);
+    }, 300_000); // a hang guard, not a speed check (CI: nca.yml)
   }
 
   test('stays stable long after it has grown', () => {
     const ca = grown(3);
     ca.step(1000);
     expect(mse(ca)).toBeLessThan(0.015);
-  }, 20_000);
+  }, 300_000); // a hang guard, not a speed check (CI: nca.yml)
 
   test('100 steps run in under two seconds on one CPU core', () => {
     const ca = new NeuralCA(weights, mulberry32(4));

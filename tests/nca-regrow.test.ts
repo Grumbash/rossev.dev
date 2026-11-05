@@ -8,11 +8,10 @@
 // wrong, means an honest regrow from a single cell instead of a broken monogram. These tests drive
 // the same healer the worker uses, on the shipped weights.
 import { describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { en } from '../src/i18n/en';
-import { ru } from '../src/i18n/ru';
 import { eraseBelow, grown, mse, runUntilSettled } from './fixtures/nca-regrow';
 
-setDefaultTimeout(60_000);
+// A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
+setDefaultTimeout(300_000);
 
 describe('a small bite heals in place, as before', () => {
   test('no regrow, back to GR', () => {
@@ -77,13 +76,4 @@ describe('a large but recoverable loss', () => {
       }
     });
   }
-});
-
-describe('the visitor is told what happened', () => {
-  test('both locales say the monogram is regrowing from a single cell', () => {
-    expect(en.nca.regrowing).toMatch(/regrow/i);
-    expect(en.nca.regrowing).toMatch(/single cell|one cell/i);
-    expect(ru.nca.regrowing.length).toBeGreaterThan(10);
-    expect(ru.nca.regrowing).toMatch(/[а-яё]/i);
-  });
 });
