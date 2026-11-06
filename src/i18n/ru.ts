@@ -32,8 +32,10 @@ export const ru: Dict = {
     writing: 'Блог',
     contact: 'Контакты',
     hire: 'Сотрудничество',
-    theme: 'ТЕМА',
-    themeTitle: 'Светлая / тёмная тема',
+    themeAuto: 'ТЕМА: АВТО',
+    themeLight: 'ТЕМА: СВЕТЛАЯ',
+    themeDark: 'ТЕМА: ТЁМНАЯ',
+    themeTitle: 'Тема: авто (как в системе), светлая или тёмная',
     bookCall: 'СОЗВОН ↗',
     readIn: 'Читать на русском',
     current: 'Текущий язык: русский'

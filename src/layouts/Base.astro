@@ -117,13 +117,8 @@ const SPECULATION_RULES = JSON.stringify({
     {/* \u003c keeps model-written text (post titles) from closing the script. */}
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
 
-    <!-- Synchronous anti-FOUC theme: the saved theme applies before first paint -->
-    <script is:inline>
-      try {
-        var savedTheme = localStorage.getItem('rosev_theme');
-        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-      } catch (e) {}
-    </script>
+    <!-- Synchronous anti-FOUC theme before first paint: a saved pick, else the system's (scripts/theme.ts) -->
+    <script is:inline>var r=document.documentElement,m=null;try{m=localStorage.getItem('rosev_theme')}catch(e){}if(m!='light'&&m!='dark')m='system';r.setAttribute('data-theme-mode',m);r.setAttribute('data-theme',m=='dark'||m=='system'&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')</script>
 
     {htmx && <script src="/htmx.min.js" defer></script>}
 
@@ -181,10 +176,13 @@ const SPECULATION_RULES = JSON.stringify({
             class="ctrl-btn"
             id="btn-theme-toggle"
             data-action="toggleSiteTheme"
+            data-label-system={d.nav.themeAuto}
+            data-label-light={d.nav.themeLight}
+            data-label-dark={d.nav.themeDark}
             data-track="theme_switch"
             title={d.nav.themeTitle}
           >
-            {d.nav.theme}
+            {d.nav.themeAuto}
           </button>
           {cta && (
             <a

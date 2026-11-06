@@ -8,7 +8,7 @@ const STRATA = ['all', '1', '0', '-1'] as const;
 const DOMAINS = ['yagni', 'voice', 'saas'] as const;
 
 export const ACTIONS: Record<string, Action> = {
-  toggleSiteTheme: () => window.toggleSiteTheme(),
+  toggleSiteTheme: (_el, e) => window.toggleSiteTheme(e),
   // data-copy is the text; the email links and the reader's "copy link" button use it.
   copy: (el) => el.dataset.copy && window.copyToClipboard?.(el.dataset.copy),
   openBrief: (el, e) => window.openBrief?.(el as HTMLAnchorElement, e),

@@ -13,6 +13,7 @@ import { nextMode } from '../src/scripts/theme';
 import { en } from '../src/i18n/en';
 import { ru } from '../src/i18n/ru';
 import { buildSite } from './fixtures/build';
+import { withChrome } from './fixtures/cdp';
 import { hasChrome, probeServer } from './fixtures/probe';
 
 setDefaultTimeout(120_000);
@@ -125,20 +126,48 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.one).toMatchObject({ theme: 'light', mode: 'light', label: en.nav.themeLight, stored: 'light' });
     expect(r.two).toMatchObject({ theme: 'dark', mode: 'dark', label: en.nav.themeDark, stored: 'dark' });
     expect(r.three).toMatchObject({ theme: 'dark', mode: 'system', label: en.nav.themeAuto, stored: null });
-    // A light switch: a circle from the press point, from nothing to past the far corner.
-    const [x, y] = r.one.at;
-    expect(r.one.circle[0]).toBe(`circle(0px at ${x}px ${y}px)`);
-    expect(r.one.circle.at(-1)).toMatch(new RegExp(`^circle\\(\\d+(\\.\\d+)?px at ${x}px ${y}px\\)$`));
-    // Back to AUTO on a dark system shows the same dark: nothing to spread.
-    expect(r.three.circle).toBeNull();
     expect(r.one2).toMatchObject({ theme: 'light', mode: 'light' });
     expect(r.ru).toMatchObject({ theme: 'light', mode: 'light', label: ru.nav.themeLight });
   });
 
-  test('on a light system AUTO is light; under reduced motion the theme changes with no circle', async () => {
-    const r = await srv.run('/writing/', 'theme', ['--force-prefers-reduced-motion']);
+  test('on a light system AUTO is light, and the first press goes dark', async () => {
+    const r = await srv.run('/writing/', 'theme');
     expect(r.error).toBeUndefined();
     expect(r.load).toMatchObject({ theme: 'light', mode: 'system' });
-    expect(r.one).toMatchObject({ theme: 'dark', mode: 'dark', circle: null });
+    expect(r.one).toMatchObject({ theme: 'dark', mode: 'dark' });
   });
+
+  // The circle needs rendered frames, which --dump-dom's virtual time never draws: real Chrome here,
+  // with the system theme and reduced motion emulated, and a real mouse press.
+  const press = (media: { name: string; value: string }[]) =>
+    withChrome(async ({ origin, send, evaluate }) => {
+      await send('Page.enable');
+      await send('Emulation.setEmulatedMedia', { features: media });
+      await send('Page.addScriptToEvaluateOnNewDocument', {
+        source: `window.__seen = []; const a = Element.prototype.animate; Element.prototype.animate = function (f, o) { if (o?.pseudoElement) window.__seen.push({ on: o.pseudoElement, clip: f.clipPath ?? null }); return a.call(this, f, o); };`,
+      });
+      await send('Page.navigate', { url: `${origin}/writing/` });
+      await Bun.sleep(1500);
+      const at = await evaluate(`(() => { const r = document.getElementById('btn-theme-toggle').getBoundingClientRect(); return { x: Math.round(r.left + 6), y: Math.round(r.top + 6) }; })()`);
+      for (const type of ['mousePressed', 'mouseReleased']) await send('Input.dispatchMouseEvent', { type, x: at.x, y: at.y, button: 'left', clickCount: 1 });
+      await Bun.sleep(1200);
+      return { at, ...(await evaluate(`({ theme: document.documentElement.dataset.theme, seen: window.__seen, sheets: document.adoptedStyleSheets.length })`)) };
+    });
+
+  test('a press is a light switch: the new theme spreads in a circle from the press, past the far corner', async () => {
+    const r = await press([{ name: 'prefers-color-scheme', value: 'dark' }]);
+    expect(r.theme).toBe('light');
+    const circle = r.seen.find((s: { on: string }) => s.on === '::view-transition-new(root)')?.clip;
+    expect(circle?.[0]).toBe(`circle(0px at ${r.at.x}px ${r.at.y}px)`);
+    const radius = Number(circle?.at(-1).match(/^circle\((\d+)px at /)?.[1]);
+    expect(radius).toBeGreaterThanOrEqual(Math.hypot(1280 - r.at.x, 900 - r.at.y) - 40);
+    // The switch's stylesheet is gone once it is over: page transitions keep their crossfade.
+    expect(r.sheets).toBe(0);
+  }, 60_000);
+
+  test('under reduced motion the theme changes at once, with no circle', async () => {
+    const r = await press([{ name: 'prefers-color-scheme', value: 'dark' }, { name: 'prefers-reduced-motion', value: 'reduce' }]);
+    expect(r.theme).toBe('light');
+    expect(r.seen).toEqual([]);
+  }, 60_000);
 });
