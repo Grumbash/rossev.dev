@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { build as esbuild } from 'esbuild';
+import ts from 'typescript';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -28,7 +28,7 @@ const routesJson = {
   }
 };
 
-// /sw.js: the service worker (src/sw/sw.ts), bundled once the pages exist. PRECACHE is the shell a
+// /sw.js: the service worker (src/sw/sw.ts with src/sw/policy.ts), built once the pages exist. PRECACHE is the shell a
 // first visit keeps: home, /writing/ and the offline page in both languages, plus every script and
 // preloaded font those pages load. VERSION hashes the list and the bundle, so a new build installs.
 const SHELL = ['/', '/ru/', '/writing/', '/ru/writing/', '/offline/', '/ru/offline/'];
@@ -43,8 +43,12 @@ const serviceWorker = {
         for (const m of html.matchAll(/(?:src|href)="(\/(?!_vercel\/)[^"?#]+\.(?:js|woff2))"/g)) refs.add(m[1]);
       }
       const precache = [...SHELL, ...[...refs].sort()];
-      const out = await esbuild({ entryPoints: ['src/sw/sw.ts'], bundle: true, format: 'iife', target: 'es2020', minify: true, write: false });
-      const code = out.outputFiles[0].text;
+      // Types stripped by TypeScript (a devDependency; no bundler to rely on): the policy's exports and
+      // the worker's import of them become one classic script in one function scope.
+      const strip = (file) => ts.transpileModule(readFileSync(file, 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext } }).outputText;
+      const policy = strip('src/sw/policy.ts').replace(/^export /gm, '');
+      const worker = strip('src/sw/sw.ts').replace(/^import .*$/gm, '');
+      const code = `(() => {\n${policy}\n${worker}\n})();\n`;
       const version = createHash('sha256').update(JSON.stringify(precache)).update(code).digest('hex').slice(0, 12);
       writeFileSync(join(root, 'sw.js'), `const PRECACHE = ${JSON.stringify(precache)};\nconst VERSION = "${version}";\n${code}`);
     }
