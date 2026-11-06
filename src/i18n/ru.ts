@@ -235,6 +235,17 @@ export const ru: Dict = {
     readBriefLink: 'Читать конспект →',
     allWriting: '← Все заметки'
   },
+  changes: {
+    title: 'ПОКА ВАС НЕ БЫЛО',
+    postOne: '{n} новый пост',
+    postFew: '{n} новых поста',
+    postMany: '{n} новых постов',
+    postOther: '{n} новых поста',
+    more: 'и ещё {n}',
+    updated: 'Обновлено:',
+    tag: 'НОВОЕ',
+    close: 'Закрыть'
+  },
   offline: {
     kicker: 'Офлайн',
     title: 'Сейчас нет сети',

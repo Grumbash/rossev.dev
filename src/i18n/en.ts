@@ -240,6 +240,18 @@ export const en = {
     allWriting: '← All writing'
   },
   // The depth dial on a technical post: the same post in plain language or as written.
+  // What changed since the last visit (scripts/changes.ts): the card and the tag on new cards.
+  changes: {
+    title: 'WHILE YOU WERE AWAY',
+    postOne: '{n} new post',
+    postFew: '{n} new posts',
+    postMany: '{n} new posts',
+    postOther: '{n} new posts',
+    more: '+{n} more',
+    updated: 'Updated:',
+    tag: 'NEW',
+    close: 'Close'
+  },
   // Offline (src/sw/sw.ts, scripts/offline.ts): the page for a page not stored yet, and the toast.
   offline: {
     kicker: 'Offline',

@@ -88,7 +88,8 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const out = JSON.parse(sessionStorage.getItem('out') || '{}');
     const reload = (next) => { sessionStorage.setItem('phase', next); sessionStorage.setItem('out', JSON.stringify(out)); location.reload(); };
     const card = () => document.querySelector('[data-changes-card]');
-    const tags = () => [...document.querySelectorAll('[data-changes-tag]')].map((t) => t.closest('article').dataset.slug);
+    const tags = () => [...document.querySelectorAll('[data-changes-new]')].map((t) => t.closest('article').dataset.slug);
+    const tagWords = () => [...new Set([...document.querySelectorAll('[data-changes-new]')].map((t) => t.textContent.trim()))];
     if (phase === 'seed') {
       const m = await (await fetch('/changes.json')).json();
       const pages = Object.fromEntries(Object.entries(m.pages).map(([p, v]) => [p, p === '/hire/' ? 'stale000' : v.h]));
@@ -100,6 +101,8 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       await until(() => card());
       out.card = card() ? { text: card().textContent.replace(/\\s+/g, ' ').trim(), links: [...card().querySelectorAll('a')].map((a) => a.getAttribute('href')) } : null;
       out.tags = tags();
+      out.tagWords = tagWords();
+      out.toast = !!document.getElementById('brutal-toast');
       return reload('same');
     }
     if (phase === 'same') {
@@ -125,6 +128,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.card.text).toContain(en.changes.updated);
     expect(r.card.links).toEqual([...r.newest.map((s: string) => `/writing/${s}/`), '/hire/']);
     expect(r.tags.sort()).toEqual([...r.newest].sort());
+    expect(r.tagWords).toEqual([en.changes.tag]);
+    // Tagging must leave the toast (which carries the words) in place.
+    expect(r.toast).toBe(true);
     // Same visit, next page: no card again, the tags stay; the visit is now what the browser has seen.
     expect(r.sameCard).toBe(false);
     expect(r.sameTags.sort()).toEqual([...r.newest].sort());
@@ -140,7 +146,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       await wait(1500);
       sessionStorage.clear();
       const pre = document.createElement('pre'); pre.id = '__probe';
-      pre.textContent = JSON.stringify({ card: !!document.querySelector('[data-changes-card]'), tags: document.querySelectorAll('[data-changes-tag]').length, seen: !!localStorage.getItem('rosev_seen') });
+      pre.textContent = JSON.stringify({ card: !!document.querySelector('[data-changes-card]'), tags: document.querySelectorAll('[data-changes-new]').length, seen: !!localStorage.getItem('rosev_seen') });
       document.body.appendChild(pre);
     })();</script>`;
     const first = probeServer(FIRST);
