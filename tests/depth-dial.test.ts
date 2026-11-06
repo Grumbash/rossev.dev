@@ -121,8 +121,11 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       shown: !document.querySelector('[data-depth-dial]').hidden,
       pressed: document.querySelector('[data-depth-to][aria-pressed="true"]')?.dataset.depthTo,
     });
+    // A melt is over when no block carries a view-transition name any more (scripts/lang-morph.ts).
+    const settled = () => !document.querySelector('[style*="view-transition"]');
     const report = (o) => { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(o); document.body.appendChild(pre); };
-    await wait(800);
+    // Waits on what the page shows, never on a fixed time: a slow chunk load cannot race the check.
+    await until(() => !document.querySelector('[data-depth-dial]').hidden);
     // A visitor who picked "for people" before: stored, then a fresh load of a post page.
     if ('${mode}' === 'remembered') {
       if (!sessionStorage.getItem('reloaded')) { sessionStorage.setItem('reloaded', '1'); localStorage.setItem('rosev_depth', 'plain'); return location.reload(); }
@@ -136,17 +139,19 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const anchor = ps[Math.floor(ps.length / 2)];
     anchor.scrollIntoView({ block: 'start', behavior: 'instant' }); scrollBy({ top: -(innerHeight * 0.25 - 8), behavior: 'instant' }); await wait(300);
     const before = anchor.getBoundingClientRect().top, fraction = ps.indexOf(anchor) / ps.length;
+    const asWritten = snap().body;
     document.querySelector('[data-depth-to="plain"]').click();
-    await wait(1500);
+    await until(() => snap().body !== asWritten && settled());
     out.plain = snap();
     const now = [...document.querySelectorAll('.post-body > *')];
     out.drift = now[Math.min(now.length - 1, Math.round(fraction * now.length))].getBoundingClientRect().top - before;
     out.stored = localStorage.getItem('rosev_depth');
     document.querySelector('a[data-lang-switch]').click();
-    await until(() => document.documentElement.lang === 'ru'); await wait(1500);
+    await until(() => document.documentElement.lang === 'ru' && settled());
     out.ru = snap();
+    const plainRu = snap().body;
     document.querySelector('[data-depth-to="engineers"]').click();
-    await wait(1500);
+    await until(() => snap().body !== plainRu && settled());
     out.back = snap();
     report(out);
   })();</script>`;

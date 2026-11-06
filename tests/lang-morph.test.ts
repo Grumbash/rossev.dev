@@ -97,6 +97,8 @@ describe.skipIf(!hasChrome())('in the browser', () => {
   const PROBE = (mode: string) => `<script>(async () => {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     const until = async (f, ms = 8000) => { for (let t = 0; t < ms && !f(); t += 50) await wait(50); return f(); };
+    // A melt is over when no block carries a view-transition name any more (scripts/lang-morph.ts).
+    const settled = () => !document.querySelector('[style*="view-transition"]');
     const report = (o) => { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(o); document.body.appendChild(pre); };
     const snap = () => ({
       path: location.pathname, lang: document.documentElement.lang, title: document.title,
@@ -109,7 +111,8 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     if (sessionStorage.getItem('probe')) { sessionStorage.removeItem('probe'); return report({ navigated: true, after: snap() }); }
     sessionStorage.setItem('probe', '1');
     window.__marker = 1;
-    await wait(800);
+    // Waits on what the page shows, never on a fixed time: a slow chunk load cannot race the check.
+    await until(() => document.readyState === 'complete');
     const out = { before: snap() };
     if ('${mode}' === 'fallback') document.querySelector('main, body').prepend(document.createElement('section'));
     let anchor = null;
@@ -122,8 +125,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       out.anchorFraction = ps.indexOf(anchor) / ps.length;
     }
     document.querySelector('a[data-lang-switch]').click();
-    await until(() => document.documentElement.lang === 'ru');
-    await wait(1500);
+    await until(() => document.documentElement.lang === 'ru' && settled());
     sessionStorage.removeItem('probe');
     out.after = snap();
     if ('${mode}' === 'post') {
@@ -132,8 +134,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       out.anchorAfter = twin.getBoundingClientRect().top;
     }
     history.back();
-    await until(() => document.documentElement.lang === 'en');
-    await wait(1500);
+    await until(() => document.documentElement.lang === 'en' && settled());
     out.back = snap();
     report(out);
   })();</script>`;
