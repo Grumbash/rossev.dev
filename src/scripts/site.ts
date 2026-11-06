@@ -1,3 +1,4 @@
+import { initOffline } from './offline';
 import { initTheme } from './theme';
 
 // Global helpers every page's markup calls through data-action (scripts/actions.ts): theme (scripts/theme.ts), URL params, clipboard; and the
@@ -69,6 +70,7 @@ export function initSite() {
   });
 
   initTheme();
+  initOffline();
 
 
   // Deep links for cases and posts: rewrite the query without a history entry.
