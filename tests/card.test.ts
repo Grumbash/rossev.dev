@@ -66,7 +66,8 @@ describe('/c card', () => {
       expect(links).toContain(`mailto:${PROFILE.email}`);
       expect(links).toContain(tel);
       expect(links).toContain(PROFILE.linkedin);
-      expect(links).toContain(l === 'en' ? '/hire/' : '/ru/hire/');
+      // ?from=case: the page it opens says we just met (tests/arrival.test.ts).
+      expect(links).toContain(l === 'en' ? '/hire/?from=case' : '/ru/hire/?from=case');
     }
   });
 

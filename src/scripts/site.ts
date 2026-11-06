@@ -75,6 +75,8 @@ export function initSite() {
   // The wilting favicon loads on the first hide: nothing up front for a tab that is never left.
   document.addEventListener('visibilitychange', () => void import('./tab').then((m) => m.initTab()), { once: true });
   void initChanges();
+  // How the visitor came (scripts/arrival.ts): loaded only when there is a hint to read.
+  if (document.referrer || /[?&]from=/.test(location.search)) void import('./arrival').then((m) => m.initArrival()).catch(() => {});
 
 
   // Deep links for cases and posts: rewrite the query without a history entry.

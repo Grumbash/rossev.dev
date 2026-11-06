@@ -243,6 +243,13 @@ export const en = {
   tab: {
     wait: 'I’ll wait…'
   },
+  // How the visitor came (scripts/arrival.ts): the case QR, LinkedIn, or /hire to the home page.
+  arrival: {
+    case: 'Looks like we just met. Here is the longer version.',
+    linkedin: 'Hello from LinkedIn: here is what does not fit in a profile.',
+    linkedinPost: 'From LinkedIn? Here is the full text.',
+    hire: 'Start with the cases below: they show how I work.'
+  },
   // What changed since the last visit (scripts/changes.ts): the card and the tag on new cards.
   changes: {
     title: 'WHILE YOU WERE AWAY',

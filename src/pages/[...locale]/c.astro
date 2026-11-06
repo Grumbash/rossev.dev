@@ -3,6 +3,7 @@
 // Someone scans it in person, often on mobile data, so it skips Base: no web fonts, no site CSS or
 // JS, only inline styles and the deferred analytics tracker. Its booking link carries the `case`
 // placement, which /booked reads from utm_content. noindex: a landing for the code, not a page to find.
+// Its links into the site carry ?from=case, so the page they open says we just met (scripts/arrival.ts).
 import { PROFILE } from '../../data/profile';
 import { calUrl } from '../../scripts/analytics';
 import { DEFAULT_LOCALE, LOCALES, SITE, localeOf, localePath, localeStaticPaths, t } from '../../i18n';
@@ -67,7 +68,7 @@ const ERAS = ['#FF3385', '#FFD600', '#00E5FF', '#B388FF', '#FF5500', '#C8FF00'];
   <body>
     <main>
       <div class="top">
-        <a href={localePath(lang, '/')}>rossev.dev</a>
+        <a href={`${localePath(lang, '/')}?from=case`}>rossev.dev</a>
         <a href={localePath(other, '/c/')} hreflang={other} lang={other} data-track="lang_switch" data-track-to={other}>{other.toUpperCase()}</a>
       </div>
       <h1>{PROFILE.name[lang]}</h1>
@@ -83,8 +84,8 @@ const ERAS = ['#FF3385', '#FFD600', '#00E5FF', '#B388FF', '#FF5500', '#C8FF00'];
         <li><a href={PROFILE.linkedin}><span>LinkedIn</span>{PROFILE.linkedinHandle}</a></li>
       </ul>
       <p class="more">
-        <a href={localePath(lang, '/hire/')}>{c.hire}</a>
-        <a href={localePath(lang, '/')}>{c.site}</a>
+        <a href={`${localePath(lang, '/hire/')}?from=case`}>{c.hire}</a>
+        <a href={`${localePath(lang, '/')}?from=case`}>{c.site}</a>
       </p>
     </main>
   </body>
