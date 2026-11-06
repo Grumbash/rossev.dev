@@ -278,6 +278,8 @@ const commit = lastCommit();
                 <code>profile.ts</code> (<code>canary #42</code>)
                 · © {new Date().getFullYear()} {d.meta.name}
               </p>
+              {/* How fast this page opened for this visitor, filled in by scripts/speed.ts; empty without JS. */}
+              <p class="footer-fineprint" data-speed hidden {...Object.fromEntries(Object.entries(d.speed).map(([k, v]) => [`data-speed-${k}`, v]))}></p>
             </div>
           </div>
         </div>
