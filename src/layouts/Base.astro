@@ -12,6 +12,7 @@ import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-
 import groteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
 import syneLatin from '@fontsource-variable/syne/files/syne-latin-wght-normal.woff2?url';
 import { PROFILE } from '../data/profile';
+import { commitUrl, lastCommit } from '../data/now';
 import { calUrl } from '../scripts/analytics';
 import { DEFAULT_LOCALE, LOCALES, SITE, localePath, splitLocale, t } from '../i18n';
 
@@ -72,6 +73,8 @@ const SPECULATION_RULES = JSON.stringify({
     },
   ],
 });
+// "Gleb now" in the footer: the site's last commit, from git at build (scripts/now.ts fills in the rest).
+const commit = lastCommit();
 ---
 
 <!DOCTYPE html>
@@ -259,6 +262,13 @@ const SPECULATION_RULES = JSON.stringify({
               <div class="contact-row">
                 <dt class="label">{d.footer.based}</dt>
                 <dd>{PROFILE.location[lang]} · {d.footer.remote} · {PROFILE.timezone}</dd>
+              </div>
+              <div class="contact-row" data-now data-now-time={d.now.time} data-now-night={d.now.night} data-now-just-now={d.now.justNow}>
+                <dt class="label">{d.now.label}</dt>
+                <dd>
+                  {d.now.commit.split('{ago}')[0]}<time datetime={commit.date}>{new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(commit.date))}</time>{d.now.commit.split('{ago}')[1]}
+                  <a class="text-link" href={commitUrl(commit.sha)} target="_blank" rel="noopener noreferrer">{commit.subject}</a>
+                </dd>
               </div>
               </dl>
               <p class="footer-fineprint">

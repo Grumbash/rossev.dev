@@ -48,7 +48,7 @@ describe('the build', () => {
       const row = html.match(/<div[^>]*data-now[\s\S]*?<\/div>/)![0];
       expect(row).toContain(d.now.label);
       expect(row).toContain(`https://github.com/Grumbash/rossev.dev/commit/${head[0]}`);
-      expect(row).toContain(head[1].replace(/&/g, '&amp;').replace(/</g, '&lt;'));
+      expect(row).toContain(head[1].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/'/g, '&#39;'));
       expect(row).toMatch(/<time datetime="\d{4}-\d\d-\d\dT[^"]+"/);
     }
   });
@@ -60,17 +60,18 @@ describe('the build', () => {
 });
 
 describe.skipIf(!hasChrome())('in the browser', () => {
-  // GitHub answers with a commit five minutes old; the line takes it.
+  // GitHub answers with a commit made just now, newer than the build's; the line takes it.
   const PROBE = () => `<script>(async () => { try {
-    const at = new Date(Date.now() - 5 * 60_000).toISOString();
+    const at = new Date().toISOString();
     const calls = [];
     window.fetch = async (url) => { calls.push(String(url)); return new Response(JSON.stringify({ sha: 'abc1234', html_url: 'https://github.com/Grumbash/rossev.dev/commit/abc1234', commit: { message: 'A newer commit\\n\\nbody', committer: { date: at } } }), { headers: { 'content-type': 'application/json' } }); };
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-    await wait(800);
+    // In view before the module loads: under virtual time the observer only reports where the row is
+    // when it starts watching, not a later scroll (no frames are rendered).
     const row = document.querySelector('[data-now]');
-    const before = row.textContent.replace(/\\s+/g, ' ').trim();
-    row.scrollIntoView();
+    row.scrollIntoView({ behavior: 'instant' });
     await wait(1500);
+    const before = row.textContent.replace(/\\s+/g, ' ').trim();
     const pre = document.createElement('pre'); pre.id = '__probe';
     pre.textContent = JSON.stringify({ before, after: row.textContent.replace(/\\s+/g, ' ').trim(), href: row.querySelector('a').href, calls: calls.filter((c) => c.includes('github')) });
     document.body.appendChild(pre);
@@ -87,7 +88,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.calls).toEqual(['https://api.github.com/repos/Grumbash/rossev.dev/commits/main']);
     expect(r.after).toContain('A newer commit');
     expect(r.after).not.toContain('body');
-    expect(r.after).toContain('5 минут назад');
+    expect(r.after).toContain(ru.now.justNow);
     expect(r.href).toBe('https://github.com/Grumbash/rossev.dev/commit/abc1234');
   });
 });

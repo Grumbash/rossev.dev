@@ -421,7 +421,9 @@ describe(`built ${PATH}`, () => {
       known.add(p.url);
       for (const c of p.commits) known.add(c.url);
     }
-    const gh = hrefs(html).filter((h) => h.startsWith(`${GH}/pull/`) || h.startsWith(`${GH}/commit/`));
+    // The footer's "Gleb now" links the site's latest commit, which is newer than the story (tests/now.test.ts).
+    const story_ = html.replace(/<div[^>]*data-now[\s\S]*?<\/div>/, '');
+    const gh = hrefs(story_).filter((h) => h.startsWith(`${GH}/pull/`) || h.startsWith(`${GH}/commit/`));
     expect(gh.length).toBeGreaterThan(0);
     for (const h of gh) expect(known.has(h), h).toBe(true);
   });
