@@ -19,8 +19,9 @@ beforeAll(() => buildSite());
 
 const read = (p: string) => readFileSync(`dist/${p}index.html`, 'utf8');
 const meta = (html: string) => html.match(/<meta name="source" content="([^"]+)"/)?.[1];
-const withBody = BLOG_POSTS.find((p) => p.body)!;
-const plainPost = BLOG_POSTS.find((p) => !p.body)!;
+// A post written as Markdown in src/content/writing, and one kept as JSON in src/data/posts.
+const withBody = BLOG_POSTS.find((p) => existsSync(`src/content/writing/${p.slug}.md`))!;
+const plainPost = BLOG_POSTS.find((p) => !existsSync(`src/content/writing/${p.slug}.md`))!;
 
 describe('sources', () => {
   test('a repo path becomes its file on GitHub, brackets and all', () => {

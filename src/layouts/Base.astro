@@ -11,6 +11,7 @@ import '../styles/brutalism.css';
 import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import groteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
 import syneLatin from '@fontsource-variable/syne/files/syne-latin-wght-normal.woff2?url';
+import { existsSync } from 'node:fs';
 import { PROFILE } from '../data/profile';
 import { commitUrl, lastCommit } from '../data/now';
 import { calUrl } from '../scripts/analytics';
@@ -75,6 +76,8 @@ const SPECULATION_RULES = JSON.stringify({
 });
 // "Gleb now" in the footer: the site's last commit, from git at build (scripts/now.ts fills in the rest).
 const commit = lastCommit();
+// This page's own source, for Alt+click (scripts/insiders.ts): /[...locale]/hire is hire.astro, /[...locale] is its index.astro.
+const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routePattern}/index.astro`].find((f) => existsSync(f));
 ---
 
 <!DOCTYPE html>
@@ -139,6 +142,7 @@ const commit = lastCommit();
         data-domains="rossev.dev"
       ></script>
     )}
+    {source && <meta name="source" content={source} />}
     <slot name="head" />
   </head>
   <body>
@@ -290,6 +294,7 @@ const commit = lastCommit();
     <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite" data-copied={d.toast.copied}
       data-offline={d.offline.toast}
       data-tab-wait={d.tab.wait}
+      {...Object.fromEntries(Object.entries(d.keys).map(([k, v]) => [`data-keys-${k}`, v]))}
       data-arrival-case={d.arrival.case}
       data-arrival-linkedin={d.arrival.linkedin}
       data-arrival-linkedin-post={d.arrival.linkedinPost}
