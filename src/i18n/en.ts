@@ -243,6 +243,17 @@ export const en = {
   tab: {
     wait: 'I’ll wait…'
   },
+  // The insiders' layer (scripts/insiders.ts): the console greeting and the ? shortcuts.
+  keys: {
+    hello: 'Hi, fellow engineer.',
+    built: 'How this site is built:',
+    hint: 'Press ? on the page for shortcuts.',
+    title: 'Shortcuts',
+    posts: 'next / previous post',
+    source: 'this block’s source on GitHub',
+    help: 'this list',
+    close: 'close'
+  },
   // The footer line that says how fast this page opened for this visitor (scripts/speed.ts).
   speed: {
     opened: 'This page opened for you in {s}',
