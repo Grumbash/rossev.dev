@@ -239,10 +239,16 @@ export const en = {
     readBriefLink: 'Read brief →',
     allWriting: '← All writing'
   },
-  // The depth dial on a technical post: the same post in plain language or as written.
   // The tab title while the page is hidden; the favicon wilts meanwhile (scripts/tab.ts).
   tab: {
     wait: 'I’ll wait…'
+  },
+  // How the visitor came (scripts/arrival.ts): the case QR, LinkedIn, or /hire to the home page.
+  arrival: {
+    case: 'Looks like we just met. Here is the longer version.',
+    linkedin: 'Hello from LinkedIn: here is what does not fit in a profile.',
+    linkedinPost: 'From LinkedIn? Here is the full text.',
+    hire: 'Start with the cases below: they show how I work.'
   },
   // What changed since the last visit (scripts/changes.ts): the card and the tag on new cards.
   changes: {
@@ -280,6 +286,7 @@ export const en = {
     link: 'LINK TO HERE',
     copied: 'LINK TO THIS PASSAGE COPIED'
   },
+  // The depth dial on a technical post: the same post in plain language or as written.
   depth: {
     label: 'WRITTEN FOR:',
     plain: 'PEOPLE',
