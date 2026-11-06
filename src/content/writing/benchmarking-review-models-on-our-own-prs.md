@@ -94,7 +94,7 @@ Across both rounds (six runs per model):
 - **K3.1 Pro is at least as good as K3** and costs about a third less per review on these PRs.
 - **DeepSeek V4.1 Flash is close to the pack at about a fifth of K3.1 Pro's price** and is the fastest. It's a candidate for the high-volume specialist roles.
 - **Sonnet 5.5 was top three both times**, with the best F1 among the high-recall models and the fastest reviews of the strong group.
-- **Opus 5.5 is the most expensive.** Its low precision (0.15) turned out to be mostly correct minor findings, not noise (see the update below). I haven't tuned its effort setting for this eval, so I'd treat its row as untested rather than as a verdict on Opus.
+- **Opus 5.5 is the most expensive.** Its low precision (0.15) looks like extra correct comments rather than noise: 47 of its 55 unmatched findings were correct but minor (see the update below). I haven't tuned its effort setting for this eval, so I'd treat its row as untested rather than as a verdict on Opus.
 - **Everything between 49 and 55 is a tie** on five PRs.
 
 The whole exercise cost about $51 in model spend, debugging runs included.
@@ -109,7 +109,7 @@ A reader asked how many of the unmatched findings were real bugs that my gold li
 
 Across the panel round there were 447 findings the judges didn't match to gold. A model checked each one against the code of its PR, with a strict rubric. None of them was a real defect missing from the gold list. About three quarters (338) were correct but minor: naming, comments that don't match the code, edge cases the PR doesn't reach. 54 were wrong, 52 were noise (too vague, speculative, or just restating the diff), and 3 repeated another finding. The closest call was in the retry code: if a request is aborted during the 250 ms sleep before a retry, the retry still starts and fails at once. That's correct but narrow, so it was counted as minor, like the other near misses.
 
-So precision here mostly measures how much a model comments beyond a short gold list (8 findings on 5 PRs), not how often it's wrong. If correct minor findings count as hits, precision moves from 0.11–0.28 to 0.73–0.92, with Sonnet (0.92) and Opus (0.91) at the top. I've only checked a few of its verdicts by hand, and I didn't re-audit the 69 findings that did match, so I'd read this as a strong hint rather than a final number.
+So precision here mostly measures how much a model comments beyond a short gold list (8 findings on 5 PRs), not how often it's wrong. If correct minor findings count as hits, precision moves from 0.11–0.28 to 0.73–0.92, with Sonnet (0.92) and Opus (0.91) at the top. Precision is 30% of the composite, and in a rough recompute with these numbers Kimi K3 is still last, so the result I'm acting on holds. I've only checked a few of its verdicts by hand, and I didn't re-audit the 69 findings that did match, so I'd read this as a strong hint rather than a final number.
 
 The check also found two more problems on our side. One PR has an empty gold list, so a model that approves it without comments gets full precision. Kimi K3 did that in two runs of three and Sonnet in one, which lifts both. And 13 findings said the PR shipped no tests because the fixture only included the source file, while the merged PR had a test file.
 
