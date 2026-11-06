@@ -144,9 +144,9 @@ describe('runtime (initAnalytics)', () => {
     for (const k of ['window', 'document', 'location', 'IntersectionObserver']) delete g[k];
   });
 
-  test('theme_switch reports the theme after the toggle', async () => {
+  test('theme_switch reports the mode after the press', async () => {
     await boot();
-    click(tagged({ track: 'theme_switch' }), () => (attrs['data-theme'] = 'dark'));
+    click(tagged({ track: 'theme_switch' }), () => (attrs['data-theme-mode'] = 'dark'));
     expect(calls).toEqual([['theme_switch', { to: 'dark' }]]);
   });
 

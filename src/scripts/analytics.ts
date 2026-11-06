@@ -55,7 +55,7 @@ export const EVENTS = {
   depth_switch: ['to'],
   // A quote shared from a post page. kind: card (image) | link (to the passage)
   quote_share: ['kind'],
-  // Theme toggle. to: light|dark (read after the toggle)
+  // Theme button. to: system|light|dark, the mode it switched to (read after the press)
   theme_switch: ['to'],
   // Home section scrolled into view, once per page view. section: experience|writing|contact
   // (every page renders the #contact footer; only home reports, see data-page in Base.astro)
@@ -154,7 +154,7 @@ export function initAnalytics(): void {
     // EN while already on EN is not a switch.
     if (ev.name === 'lang_switch' && ev.props?.to === langBefore) return;
     if (ev.name === 'cta_book') track(ev.name, { ...ev.props, lang: root.getAttribute('lang') || 'en' });
-    else if (ev.name === 'theme_switch') track(ev.name, { to: root.getAttribute('data-theme') || 'light' });
+    else if (ev.name === 'theme_switch') track(ev.name, { to: root.getAttribute('data-theme-mode') || 'system' });
     else if (ev.name === 'topology_interact' || ev.name === 'nca_interact') trackOnce(ev.name, ev.props);
     else track(ev.name, ev.props);
   };

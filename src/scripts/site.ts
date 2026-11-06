@@ -1,9 +1,11 @@
-// Global helpers every page's markup calls through data-action (scripts/actions.ts): theme, URL params, clipboard; and the
+import { initTheme } from './theme';
+
+// Global helpers every page's markup calls through data-action (scripts/actions.ts): theme (scripts/theme.ts), URL params, clipboard; and the
 // language links, which carry the current ?query and #anchor over to the other locale's page.
 // The no-flash theme bootstrap stays inline in Base.astro's <head>; this runs as a module.
 declare global {
   interface Window {
-    toggleSiteTheme: () => void;
+    toggleSiteTheme: (e?: MouseEvent) => void;
     setUrlParam: (key: string, val: string | null | undefined) => void;
     copyToClipboard: (text: string, label?: string) => void;
   }
@@ -66,13 +68,8 @@ export function initSite() {
       .catch(() => window.location.reload());
   });
 
-  window.toggleSiteTheme = () => {
-    const next = (root.getAttribute('data-theme') || 'light') === 'light' ? 'dark' : 'light';
-    root.setAttribute('data-theme', next);
-    try {
-      localStorage.setItem('rosev_theme', next);
-    } catch {}
-  };
+  initTheme();
+
 
   // Deep links for cases and posts: rewrite the query without a history entry.
   window.setUrlParam = (key, val) => {

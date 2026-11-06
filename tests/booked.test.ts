@@ -138,6 +138,8 @@ describe('built /booked', () => {
       history,
       document: { documentElement },
       localStorage: { getItem: () => null, setItem() {} },
+      // The theme bootstrap asks for the system theme.
+      matchMedia: () => ({ matches: false }),
       umami: { track: (...a: unknown[]) => sent.push(a) },
       URL,
       URLSearchParams,

@@ -33,8 +33,11 @@ export const en = {
     writing: 'Writing',
     contact: 'Contact',
     hire: 'Work with me',
-    theme: 'THEME',
-    themeTitle: 'Toggle Light / Dark Mode',
+    // The theme button names the mode it is in; AUTO follows the system (scripts/theme.ts).
+    themeAuto: 'THEME: AUTO',
+    themeLight: 'THEME: LIGHT',
+    themeDark: 'THEME: DARK',
+    themeTitle: 'Theme: auto (as your system), light or dark',
     bookCall: 'BOOK A CALL ↗',
     // Label of a link to this language, in this language (the switch on every other locale's pages).
     readIn: 'Read in English',
