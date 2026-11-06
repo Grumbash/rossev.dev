@@ -53,6 +53,8 @@ export const EVENTS = {
   lang_switch: ['to'],
   // Depth dial on a technical post. to: plain|engineers
   depth_switch: ['to'],
+  // A quote shared from a post page. kind: card (image) | link (to the passage)
+  quote_share: ['kind'],
   // Theme toggle. to: light|dark (read after the toggle)
   theme_switch: ['to'],
   // Home section scrolled into view, once per page view. section: experience|writing|contact

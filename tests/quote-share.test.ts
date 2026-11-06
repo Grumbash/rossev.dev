@@ -32,6 +32,12 @@ describe('the link to a passage', () => {
     expect(textFragment('  two\n\n  lines  ')).toBe('#:~:text=two%20lines');
   });
 
+  test('a passage of the plain version links to that version: ?depth=plain before the fragment', () => {
+    expect(quoteLink('https://rossev.dev/writing/x/', 'two words here')).toBe('https://rossev.dev/writing/x/#:~:text=two%20words%20here');
+    expect(quoteLink('https://rossev.dev/writing/x/', 'two words here', true)).toBe('https://rossev.dev/writing/x/?depth=plain#:~:text=two%20words%20here');
+    expect(attribution('two words here', 'T', 'https://rossev.dev/writing/x/', true).text).toContain('?depth=plain#:~:text=');
+  });
+
   test('Russian is percent-encoded; the link replaces any fragment the page url had', () => {
     expect(quoteLink('https://rossev.dev/ru/writing/x/#top', 'логотип заживает')).toBe(
       `https://rossev.dev/ru/writing/x/#:~:text=${encodeURIComponent('логотип заживает')}`,
@@ -102,7 +108,7 @@ describe('the page', () => {
 describe.skipIf(!hasChrome())('in the browser', () => {
   const POST = 'self-healing-monogram';
 
-  const PROBE = () => `<script>(async () => {
+  const PROBE = () => `<script>(async () => { try {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     const until = async (f, ms = 8000) => { for (let t = 0; t < ms && !f(); t += 50) await wait(50); return f(); };
     const report = (o) => { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(o); document.body.appendChild(pre); };
@@ -137,7 +143,12 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     bar().querySelector('[data-quote-do="card"]').click();
     await until(() => saved);
     out.card = { name: saved?.name };
-    if (saved) { const img = await createImageBitmap(await (await fetch(saved.href)).blob()); out.card.w = img.width; out.card.h = img.height; }
+    // The size from an <img>, raced against a timer: a decode that never settles must not hang the probe.
+    if (saved) {
+      const img = new Image();
+      await Promise.race([new Promise((r) => { img.onload = img.onerror = r; img.src = saved.href; }), wait(3000)]);
+      out.card.w = img.naturalWidth; out.card.h = img.naturalHeight;
+    }
     // After the language morph the bar speaks Russian: its words come from the article's attributes.
     getSelection().removeAllRanges();
     document.querySelector('a[data-lang-switch]').click();
@@ -145,6 +156,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     select(); await until(() => bar() && !bar().hidden);
     out.ru = [...bar().querySelectorAll('button')].map((b) => b.textContent.trim());
     report(out);
+    } catch (e) {
+      const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify({ error: String(e && e.stack || e) }); document.body.appendChild(pre);
+    }
   })();</script>`;
 
   let srv: ReturnType<typeof probeServer>;

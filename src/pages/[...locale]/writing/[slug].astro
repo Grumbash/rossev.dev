@@ -58,7 +58,16 @@ const jsonLd = {
         {d.writing.allWriting}
       </a>
 
-      <article class="brutal-box post-reader-drawer">
+      {/* data-quote-*: what the quote bar (scripts/quote.ts) says and shares, in this page's language. */}
+      <article
+        class="brutal-box post-reader-drawer"
+        data-quote-title={post.title[lang]}
+        data-quote-url={url}
+        data-quote-slug={post.slug}
+        data-quote-card={d.quote.card}
+        data-quote-link={d.quote.link}
+        data-quote-copied={d.quote.copied}
+      >
         <div class="blueprint-header">
           <span>{d.reader.header} {post.categoryLabel[lang]} · {readTime[lang]}</span>
           <time datetime={post.published}>{post.published}</time>
@@ -80,12 +89,33 @@ const jsonLd = {
   <Fragment slot="scripts">
     <script>
       import { initDepth } from '../../../scripts/depth';
+      import { initQuote } from '../../../scripts/quote';
       initDepth();
+      initQuote();
     </script>
   </Fragment>
 </Base>
 
 <style>
+  /* The quote bar over a selected passage, made by scripts/quote.ts at the end of <body>. */
+  :global(.quote-bar) {
+    position: absolute;
+    z-index: 60;
+    display: flex;
+    background: var(--surface);
+    border: var(--border-w) solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  :global(.quote-bar[hidden]) {
+    display: none;
+  }
+  :global(.quote-bar .ctrl-btn) {
+    border: 0;
+    padding: 8px 12px;
+  }
+  :global(.quote-bar .ctrl-btn + .ctrl-btn) {
+    border-left: var(--border-w) solid var(--border);
+  }
   /* The depth dial (PostBrief.astro, scripts/depth.ts): the pressed side reads like the current language. */
   .post-reader-drawer :global(.depth-dial) {
     display: flex;
