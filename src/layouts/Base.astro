@@ -55,6 +55,21 @@ const others = LOCALES.filter((l) => l !== lang);
 const ogImageUrl = new URL('/og-card.png', SITE).toString();
 const homePath = localePath(lang, '/');
 const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
+
+const SPECULATION_RULES = JSON.stringify({
+  prefetch: [
+    {
+      where: {
+        and: [
+          { href_matches: '/*' },
+          { not: { href_matches: ['/partials/*', '/ru/partials/*', '*.pdf', '*.vcf', '*.txt', '*.xml'] } },
+          { not: { selector_matches: ['[download]', '[target=_blank]'] } },
+        ],
+      },
+      eagerness: 'moderate',
+    },
+  ],
+});
 ---
 
 <!DOCTYPE html>
@@ -65,6 +80,10 @@ const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {/* Hovering a site link prefetches its page (tests/page-transitions.test.ts). Prefetch, never
+        prerender: a prerendered page runs its scripts, and Umami would count a view nobody made.
+        Allowed by its hash in vercel.json's script-src, like the other inline scripts. */}
+    <script is:inline type="speculationrules" set:html={SPECULATION_RULES} />
     {LOCALES.map((l) => <link rel="alternate" hreflang={l} href={urlIn(l)} />)}
     <link rel="alternate" hreflang="x-default" href={urlIn(DEFAULT_LOCALE)} />
 

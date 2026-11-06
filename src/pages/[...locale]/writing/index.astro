@@ -30,7 +30,8 @@ const posts = [...BLOG_POSTS].sort((a, b) => b.published.localeCompare(a.publish
                 <span class="label">{post.categoryLabel[lang]}</span>
                 <time class="post-stats" datetime={post.published}>{post.published}</time>
               </div>
-              <h2 class="post-title">
+              {/* vt-card: named only when this card is clicked (scripts/site.ts), so one title flies, not 47. */}
+              <h2 class="post-title vt-card" style={`--vt: post-${post.slug}`}>
                 <a href={localePath(lang, postPath(post))}>{post.title[lang]}</a>
               </h2>
               <div class="post-takeaway">{post.takeaway[lang]}</div>
