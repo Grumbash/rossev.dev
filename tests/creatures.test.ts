@@ -69,7 +69,8 @@ describe('where it lives', () => {
     const p = BLOG_POSTS[0];
     const h = html(`writing/${p.slug}/index.html`);
     const svg = h.match(/<svg[^>]*data-creature-grow="[^"]+"[\s\S]*?<\/svg>/)?.[0] ?? '';
-    const cells = [...svg.matchAll(/<rect[^>]*style="--step:\s*(\d+)/g)].map((m) => Number(m[1]));
+    // Each cell, and its shadow under it, carries its step; the shadow rects are class="shadow".
+    const cells = [...svg.matchAll(/<rect(?![^>]*class="shadow")[^>]*style="--step:\s*(\d+)/g)].map((m) => Number(m[1]));
     const c = creature(p.slug);
     expect(cells.length).toBe(c.body.filter(Boolean).length);
     expect(Math.max(...cells)).toBe(Math.max(...c.order));

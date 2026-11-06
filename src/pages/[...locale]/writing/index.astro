@@ -10,6 +10,7 @@ export const getStaticPaths = localeStaticPaths;
 const lang = localeOf(Astro.params.locale);
 const d = t(lang);
 const posts = [...BLOG_POSTS].sort((a, b) => b.published.localeCompare(a.published));
+import Creature from '../../../components/Creature.astro';
 ---
 
 <Base title={d.meta.writingTitle} description={d.meta.writingDescription}>
@@ -28,7 +29,11 @@ const posts = [...BLOG_POSTS].sort((a, b) => b.published.localeCompare(a.publish
           <article class="brutal-box post-card" data-slug={post.slug}>
             <div>
               <div class="post-top">
-                <span class="label">{post.categoryLabel[lang]}</span>
+                {/* The creature and the category sit together on the left; the date or read time stays right. */}
+                <span style="display: inline-flex; align-items: center; gap: 8px;">
+                  <Creature slug={post.slug} color={post.color} size={28} />
+                  <span class="label">{post.categoryLabel[lang]}</span>
+                </span>
                 <time class="post-stats" datetime={post.published}>{post.published}</time>
               </div>
               {/* vt-card: named only when this card is clicked (scripts/site.ts), so one title flies, not 47. */}

@@ -30,6 +30,8 @@ interface Props {
   cta?: boolean;
   // htmx is only needed where partials are swapped in (home).
   htmx?: boolean;
+  // The share preview: a post page passes its own (/og/<slug>.png, with its creature).
+  ogImage?: string;
 }
 
 const {
@@ -52,7 +54,7 @@ const d = t(lang);
 const urlIn = (l: typeof lang) => new URL(localePath(l, path), SITE).toString();
 const canonical = urlIn(lang);
 const others = LOCALES.filter((l) => l !== lang);
-const ogImageUrl = new URL('/og-card.png', SITE).toString();
+const ogImageUrl = new URL(Astro.props.ogImage ?? '/og-card.png', SITE).toString();
 const homePath = localePath(lang, '/');
 const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
 
