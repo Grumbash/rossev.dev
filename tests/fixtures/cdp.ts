@@ -4,7 +4,7 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { CHROME } from './probe';
+import { AUTOMATION_FLAGS, CHROME } from './probe';
 
 export type Cdp = {
   origin: string;
@@ -27,7 +27,7 @@ export async function withChrome<T>(run: (cdp: Cdp) => Promise<T>): Promise<T> {
     },
   });
   const profile = mkdtempSync(join(tmpdir(), 'cdp-'));
-  const chrome = Bun.spawn([CHROME, '--headless=new', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--no-first-run', '--window-size=1280,900', 'about:blank'], { stdout: 'ignore', stderr: 'ignore' });
+  const chrome = Bun.spawn([CHROME, '--headless=new', ...AUTOMATION_FLAGS, '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--window-size=1280,900', 'about:blank'], { stdout: 'ignore', stderr: 'ignore' });
   let ws: WebSocket | undefined;
   try {
     // With port 0 Chrome picks a free port and writes it to DevToolsActivePort.
