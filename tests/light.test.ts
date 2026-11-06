@@ -53,9 +53,11 @@ describe('the build', () => {
 });
 
 describe.skipIf(!hasChrome())('in the browser', () => {
-  const shadow = `getComputedStyle(document.querySelector('.brutal-btn')).boxShadow`;
-  const move = async ({ send }: Cdp, x: number, y: number) => {
-    for (let i = 0; i < 3; i++) await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x + i, y });
+  const shadow = `getComputedStyle(document.querySelector('.brutal-btn:not(.brutal-btn-sm)')).boxShadow`;
+  // fx, fy: where on the viewport, as a share of it (the headless window's viewport is smaller than the window).
+  const move = async ({ send, evaluate }: Cdp, fx: number, fy: number) => {
+    const [w, h] = await evaluate('[innerWidth, innerHeight]');
+    for (let i = 0; i < 3; i++) await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: Math.round(fx * w) - 3 + i, y: Math.round(fy * h) - 2 });
     await Bun.sleep(600);
   };
   const offsets = (s: string) => s.match(/(-?[\d.]+)px (-?[\d.]+)px 0px/)!.slice(1).map(Number);
@@ -66,9 +68,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       await cdp.send('Page.navigate', { url: `${cdp.origin}/` });
       await Bun.sleep(1500);
       const before = await cdp.evaluate(shadow);
-      await move(cdp, 1270, 890);
+      await move(cdp, 1, 1);
       const corner = await cdp.evaluate(shadow);
-      await move(cdp, 640, 450);
+      await move(cdp, 0.5, 0.5);
       return { before, corner, middle: await cdp.evaluate(shadow) };
     });
     expect(offsets(r.before)).toEqual([4, 4]);
@@ -86,7 +88,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       await cdp.send('Page.enable');
       await cdp.send('Page.navigate', { url: `${cdp.origin}/` });
       await Bun.sleep(1500);
-      await move(cdp, 1270, 890);
+      await move(cdp, 1, 1);
       return cdp.evaluate(shadow);
     });
     expect(offsets(r)).toEqual([4, 4]);

@@ -16,9 +16,10 @@
   --purple: #B388FF;
 
   --border-w: 3px;
-  --shadow-sm: 4px 4px 0px var(--shadow);
-  --shadow-md: 6px 6px 0px var(--shadow);
-  --shadow-lg: 10px 10px 0px var(--shadow);
+  /* --lx/--ly: where the light is (scripts/light.ts); 1 1 is down-right, without JS too. */
+  --shadow-sm: calc(4px * var(--lx, 1)) calc(4px * var(--ly, 1)) 0 var(--shadow);
+  --shadow-md: calc(6px * var(--lx, 1)) calc(6px * var(--ly, 1)) 0 var(--shadow);
+  --shadow-lg: calc(10px * var(--lx, 1)) calc(10px * var(--ly, 1)) 0 var(--shadow);
 
   --font-display: 'Space Grotesk Variable', 'Manrope Variable', 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-headline: 'Syne Variable', 'Unbounded Variable', 'Syne', 'Space Grotesk Variable', sans-serif;
@@ -130,7 +131,7 @@ a {
 .brutal-btn:active,
 .brutal-btn.active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--shadow);
+  box-shadow: calc(1px * var(--lx, 1)) calc(1px * var(--ly, 1)) 0 var(--shadow);
 }
 
 .brutal-btn-lime {
@@ -143,7 +144,7 @@ a {
 .brutal-btn-sm {
   padding: 6px 12px;
   font-size: 0.74rem;
-  box-shadow: 3px 3px 0px var(--shadow);
+  box-shadow: calc(3px * var(--lx, 1)) calc(3px * var(--ly, 1)) 0 var(--shadow);
 }
 
 .brutal-btn:focus-visible,

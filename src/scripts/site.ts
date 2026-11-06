@@ -1,4 +1,3 @@
-import { initChanges } from './changes';
 import { initOffline } from './offline';
 import { initTheme } from './theme';
 
@@ -74,7 +73,10 @@ export function initSite() {
   initOffline();
   // The wilting favicon loads on the first hide: nothing up front for a tab that is never left.
   document.addEventListener('visibilitychange', () => void import('./tab').then((m) => m.initTab()), { once: true });
-  void initChanges();
+  // What changed since the last visit (scripts/changes.ts): it waits for /changes.json anyway, so it loads alongside.
+  void import('./changes').then((m) => m.initChanges()).catch(() => {});
+  // Shadows from real light (scripts/light.ts): the cursor, or a phone's tilt, moves them.
+  addEventListener('pointermove', (e) => void import('./light').then((m) => m.initLight(e)).catch(() => {}), { once: true });
   // "Gleb now" in the footer (scripts/now.ts): his clock and the last commit.
   void import('./now').then((m) => m.initNow()).catch(() => {});
   // How the visitor came (scripts/arrival.ts): loaded only when there is a hint to read.
