@@ -200,7 +200,7 @@ describe('CV PDF text for ATS', () => {
     });
   });
 
-  // poppler measures real glyph widths (CI runners without it skip this). Margins are at least 45pt.
+  // poppler measures real glyph widths (machines without it skip this; CI installs it). Margins are at least 45pt.
   const hasPdftotext = (() => {
     try {
       execSync('pdftotext -v', { stdio: 'ignore' });
