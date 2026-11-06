@@ -110,7 +110,8 @@ describe('built /booked', () => {
   // Inline classic scripts in <head>, in document order: the ones that run before any deferred tracker.
   const headScripts = (h: string) =>
     [...head(h).matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)]
-      .filter((m) => !/\ssrc=|type="application\/ld\+json"/.test(m[1] ?? ''))
+      // JSON in a <script> (JSON-LD, speculation rules) is data for the browser, not code it runs.
+      .filter((m) => !/\ssrc=|type="(application\/ld\+json|speculationrules)"/.test(m[1] ?? ''))
       .map((m) => ({ attrs: m[1] ?? '', code: m[2] }));
 
   // A browser just far enough for the head scripts: records URL rewrites, attribute writes and tracker calls.

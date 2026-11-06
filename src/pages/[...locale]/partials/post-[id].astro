@@ -36,7 +36,7 @@ const readTime = readTimeLabel(post);
   </div>
 
   <div style="padding: 22px 24px;">
-    <h3 class="post-reader-heading" tabindex="-1" style="font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; margin-bottom: 10px;">
+    <h3 class="post-reader-heading vt-title" tabindex="-1" style={`--vt: post-${post.slug}; font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; margin-bottom: 10px;`}>
       {post.title[lang]}
     </h3>
 

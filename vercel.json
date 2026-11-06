@@ -6,7 +6,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://cloud.umami.is 'sha256-lzXrKm+9pI/k+dNDBxhuF04ntJmIdxj8g34lqsAp0X8=' 'sha256-8N+wqjuAf4UBE1Y+j4Flbo+nogkqzFyK+jKkAlX3NRE=' 'sha256-aCow6cELchgnHecTxTxFkCd6C1XhtTtIMMvGLLmkcpc='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://gateway.umami.is; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' https://cloud.umami.is 'sha256-lzXrKm+9pI/k+dNDBxhuF04ntJmIdxj8g34lqsAp0X8=' 'sha256-8N+wqjuAf4UBE1Y+j4Flbo+nogkqzFyK+jKkAlX3NRE=' 'sha256-aCow6cELchgnHecTxTxFkCd6C1XhtTtIMMvGLLmkcpc=' 'sha256-KzOaLAZng0YOFz2C8e6YjIdZBO0D2uY/J96URpdI+iM='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://gateway.umami.is; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
         },
         {
           "key": "Strict-Transport-Security",
