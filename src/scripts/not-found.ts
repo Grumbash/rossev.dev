@@ -54,6 +54,10 @@ function splitRoute(path: string): [string, string] {
 export function suggestPath(path: string, routes: readonly string[]): string | null {
   const [prefix, key] = splitRoute(path);
   if (!key) return null;
+  // A route key is at most as long as its full path. Even the longest possible match
+  // would need one deletion per extra character, beyond the most typos we accept.
+  const longest = routes.reduce((length, route) => Math.max(length, route.length), 0);
+  if (key.length > longest + Math.max(1, Math.floor(longest / 3))) return null;
   let best: string | null = null;
   let bestKey = '';
   let bestD = Infinity;

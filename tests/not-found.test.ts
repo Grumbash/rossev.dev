@@ -84,6 +84,20 @@ describe('suggested page', () => {
     expect(suggestPath('/writing/the-new-ai-botleneck', ROUTES)).toBe('/writing/the-new-ai-bottleneck/');
   });
 
+  test('a very long missed path is dismissed without spending a frame per route', () => {
+    const routes: string[] = JSON.parse(readFileSync('dist/routes.json', 'utf8'));
+    const path = '/' + 'x'.repeat(32_768);
+    const started = performance.now();
+    expect(suggestPath(path, routes)).toBeNull();
+    expect(performance.now() - started).toBeLessThan(250);
+  });
+
+  test('the longest acceptable typo still matches, and the closest route still decides eligibility', () => {
+    expect(suggestPath('/writingxx', ['/writing/'])).toBe('/writing/');
+    expect(suggestPath('/abcdefg', ['/abcde/', '/xbcdefgzz/'])).toBeNull();
+    expect(suggestPath('/abcd', ['/abcdxx/', '/axyd/'])).toBeNull();
+  });
+
   test('stays in the language of the missed path', () => {
     expect(suggestPath('/ru/hier/', ROUTES)).toBe('/ru/hire/');
     expect(suggestPath('/ru/writng', ROUTES)).toBe('/ru/writing/');
