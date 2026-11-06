@@ -98,12 +98,13 @@ describe.skipIf(!hasChrome())('in the browser', () => {
   afterAll(() => srv?.stop());
 
   test('hidden, the title whispers and the icon wilts through every stage; back, both come back', async () => {
-    const r = await srv.run('/ru/', 'tab');
+    // The whole wilt takes minutes of virtual time: a budget past the last stage.
+    const r = await srv.run('/ru/', 'tab', [`--virtual-time-budget=${STAGES_MS.at(-1)! + 60_000}`]);
     expect(r.error).toBeUndefined();
     expect(r.before.href).toBe('/favicon.svg');
     expect(r.soon.title.startsWith(ru.tab.wait)).toBe(true);
     expect(r.soon.title).toContain(r.before.title);
-    expect(r.later).toMatchObject({ href: 'data:image/png;base64', stage: String(STAGES_MS.length) });
+    expect(r.later).toMatchObject({ href: 'data:image/png;base64,', stage: String(STAGES_MS.length) });
     expect(r.back).toEqual(r.before);
   });
 });

@@ -240,6 +240,10 @@ export const en = {
     allWriting: '← All writing'
   },
   // The depth dial on a technical post: the same post in plain language or as written.
+  // The tab title while the page is hidden; the favicon wilts meanwhile (scripts/tab.ts).
+  tab: {
+    wait: 'I’ll wait…'
+  },
   // What changed since the last visit (scripts/changes.ts): the card and the tag on new cards.
   changes: {
     title: 'WHILE YOU WERE AWAY',

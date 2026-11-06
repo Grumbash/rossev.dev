@@ -235,6 +235,9 @@ export const ru: Dict = {
     readBriefLink: 'Читать конспект →',
     allWriting: '← Все заметки'
   },
+  tab: {
+    wait: 'Я подожду…'
+  },
   changes: {
     title: 'ПОКА ВАС НЕ БЫЛО',
     postOne: '{n} новый пост',
