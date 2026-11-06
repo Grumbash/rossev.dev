@@ -6,15 +6,16 @@
 // wave (View Transitions), and the block being read stays where it was on the screen.
 // Anything unexpected falls back to an ordinary navigation. Loaded on first reach for the switch.
 
-const SKIP = new Set(['SCRIPT', 'STYLE', 'TEMPLATE', 'NOSCRIPT']);
-const SWAP = '.nav-controls, .post-body';
+const SKIP = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT']);
+// A <template> holds a version not on screen (the depth dial's plain text): swapped like a region.
+const SWAP = '.nav-controls, .post-body, template';
 // State the page's own scripts set (open, pressed, hidden…); the server's copy would undo it.
 const KEEP = new Set(['class', 'style', 'id', 'hidden', 'open', 'checked', 'disabled', 'value', 'aria-expanded', 'aria-pressed', 'aria-selected', 'aria-hidden', 'data-path']);
 const BLOCK = 'p, h1, h2, h3, h4, h5, li, dt, dd, blockquote, pre, figcaption, td, th, a, button, label, summary';
 const MAX_NAMED = 48;
 
 // `quiet`: an attribute only (a link's href), nothing on screen changes.
-type Change = { el: Element; apply: () => void; swap?: boolean; quiet?: boolean };
+export type Change = { el: Element; apply: () => void; swap?: boolean; quiet?: boolean };
 
 // Script-made nodes (data-morph-ignore) have no twin in the fetched page.
 const kids = (el: Element) => [...el.children].filter((c) => !SKIP.has(c.tagName) && !c.hasAttribute('data-morph-ignore'));
@@ -95,6 +96,87 @@ function follow(anchor: Element) {
 
 let busy = false;
 
+/**
+ * Apply `changes` as one melt: the changed blocks on screen dissolve into their new text in a
+ * top-to-bottom wave, and the block being read stays where it was. `extra` runs inside the same
+ * update, before the reader is put back (the head, history, the site:lang event).
+ */
+export async function melt(changes: Change[], extra?: () => void) {
+  const anchor = readingAnchor();
+  const before = anchor?.getBoundingClientRect().top ?? 0;
+  const after = anchor ? follow(anchor) : null;
+
+  // The blocks that melt: changed and on screen, outermost only, in document order.
+  const melting: Element[] = [];
+  for (const c of changes) {
+    if (c.quiet) continue;
+    const targets = c.swap ? [...c.el.children] : [c.el.closest(BLOCK) ?? c.el];
+    for (const el of targets) {
+      if (melting.length >= MAX_NAMED) break;
+      if (!melting.some((m) => m.contains(el) || el.contains(m)) && visible(el)) melting.push(el);
+    }
+  }
+  // Swapped regions get new children: they inherit the melt names by position.
+  const regions = changes.filter((c) => c.swap).map((c) => ({ el: c.el, names: new Map<number, string>() }));
+
+  const apply = () => {
+    for (const c of changes) c.apply();
+    extra?.();
+    for (const r of regions) [...r.el.children].forEach((c, i) => r.names.has(i) && ((c as HTMLElement).style.viewTransitionName = r.names.get(i)!));
+    // Instant: the site scrolls smoothly, and the reader must not see the page slide.
+    if (after) scrollBy({ top: after().getBoundingClientRect().top - before, behavior: 'instant' });
+  };
+
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (still || !document.startViewTransition) return apply();
+
+  const named = melting.map((el, i) => {
+    const name = `lang-morph-${i}`;
+    (el as HTMLElement).style.viewTransitionName = name;
+    (el as HTMLElement).style.setProperty('view-transition-class', 'lang-morph');
+    const r = regions.find((r) => r.el.contains(el));
+    if (r) r.names.set([...r.el.children].indexOf(el), name);
+    return name;
+  });
+  const t = document.startViewTransition(apply);
+  // A tab that paints no frames (in the background) would hold the transition open: cut it short.
+  const cut = setTimeout(() => t.skipTransition(), 1500);
+  const melts: Animation[] = [];
+  t.finished
+    .catch(() => {})
+    .finally(() => {
+      clearTimeout(cut);
+      for (const a of melts) a.cancel();
+      for (const el of document.querySelectorAll<HTMLElement>('[style*="view-transition"]')) {
+        el.style.removeProperty('view-transition-name');
+        el.style.removeProperty('view-transition-class');
+        if (!el.getAttribute('style')) el.removeAttribute('style');
+      }
+    });
+  t.ready
+    .then(() => {
+      named.forEach((name, i) => {
+        const opts = { duration: 420, delay: Math.min(i * 22, 320), easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'both' as const };
+        const fade = (side: 'old' | 'new', frames: Keyframe[]) =>
+          melts.push(document.documentElement.animate(frames, { ...opts, pseudoElement: `::view-transition-${side}(${name})` }));
+        fade('old', [
+          { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' },
+          { opacity: 0, filter: 'blur(6px)', transform: 'translateY(-3px)' },
+        ]);
+        fade('new', [
+          { opacity: 0, filter: 'blur(6px)', transform: 'translateY(3px)' },
+          { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' },
+        ]);
+      });
+    })
+    .catch(() => {});
+  // The page is changed once the update ran; the melt may still be playing.
+  await t.updateCallbackDone;
+}
+
+/** Melt one region's content into `html` (the depth dial). */
+export const meltRegion = (el: Element, html: string) => melt([{ el, swap: true, apply: () => (el.innerHTML = html) }]);
+
 /** Morph into `url`'s page; `push` adds a history entry (false when answering Back/Forward). */
 export async function morphTo(url: string, push = true) {
   if (busy) return;
@@ -104,26 +186,7 @@ export async function morphTo(url: string, push = true) {
     const doc = new DOMParser().parseFromString(await prefetch(url), 'text/html');
     const changes = plan(document.body, doc.body);
     if (!changes) return fallback();
-
-    const anchor = readingAnchor();
-    const before = anchor?.getBoundingClientRect().top ?? 0;
-    const after = anchor ? follow(anchor) : null;
-
-    // The blocks that melt: changed and on screen, outermost only, in document order.
-    const melting: Element[] = [];
-    for (const c of changes) {
-      if (c.quiet) continue;
-      const targets = c.swap ? [...c.el.children] : [c.el.closest(BLOCK) ?? c.el];
-      for (const el of targets) {
-        if (melting.length >= MAX_NAMED) break;
-        if (!melting.some((m) => m.contains(el) || el.contains(m)) && visible(el)) melting.push(el);
-      }
-    }
-    // Swapped regions get new children: they inherit the melt names by position.
-    const regions = changes.filter((c) => c.swap).map((c) => ({ el: c.el, names: new Map<number, string>() }));
-
-    const apply = () => {
-      for (const c of changes) c.apply();
+    await melt(changes, () => {
       document.title = doc.title;
       document.documentElement.lang = doc.documentElement.lang;
       for (const sel of ['meta[name="description"]', 'link[rel="canonical"]']) {
@@ -132,57 +195,10 @@ export async function morphTo(url: string, push = true) {
         if (from && to) for (const attr of ['content', 'href']) if (from.hasAttribute(attr)) to.setAttribute(attr, from.getAttribute(attr)!);
       }
       if (push) history.pushState({ langMorph: true }, '', url);
-      for (const r of regions) [...r.el.children].forEach((c, i) => r.names.has(i) && ((c as HTMLElement).style.viewTransitionName = r.names.get(i)!));
-      // Instant: the site scrolls smoothly, and the reader must not see the page slide.
-      if (after) scrollBy({ top: after().getBoundingClientRect().top - before, behavior: 'instant' });
+      // Islands that hold language state follow here, inside the same update (the depth dial
+      // puts the plain version back, the replay relabels its canvas).
       document.dispatchEvent(new CustomEvent('site:lang', { detail: { lang: doc.documentElement.lang } }));
-    };
-
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (still || !document.startViewTransition) return apply();
-
-    const named = melting.map((el, i) => {
-      const name = `lang-morph-${i}`;
-      (el as HTMLElement).style.viewTransitionName = name;
-      (el as HTMLElement).style.setProperty('view-transition-class', 'lang-morph');
-      const r = regions.find((r) => r.el.contains(el));
-      if (r) r.names.set([...r.el.children].indexOf(el), name);
-      return name;
     });
-    const t = document.startViewTransition(apply);
-    // A tab that paints no frames (in the background) would hold the transition open: cut it short.
-    const cut = setTimeout(() => t.skipTransition(), 1500);
-    const melts: Animation[] = [];
-    t.finished
-      .catch(() => {})
-      .finally(() => {
-        clearTimeout(cut);
-        for (const a of melts) a.cancel();
-        for (const el of document.querySelectorAll<HTMLElement>('[style*="view-transition"]')) {
-          el.style.removeProperty('view-transition-name');
-          el.style.removeProperty('view-transition-class');
-          if (!el.getAttribute('style')) el.removeAttribute('style');
-        }
-      });
-    t.ready
-      .then(() => {
-        named.forEach((name, i) => {
-          const opts = { duration: 420, delay: Math.min(i * 22, 320), easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'both' as const };
-          const melt = (side: 'old' | 'new', frames: Keyframe[]) =>
-            melts.push(document.documentElement.animate(frames, { ...opts, pseudoElement: `::view-transition-${side}(${name})` }));
-          melt('old', [
-            { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' },
-            { opacity: 0, filter: 'blur(6px)', transform: 'translateY(-3px)' },
-          ]);
-          melt('new', [
-            { opacity: 0, filter: 'blur(6px)', transform: 'translateY(3px)' },
-            { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' },
-          ]);
-        });
-      })
-      .catch(() => {});
-    // The page is the other language once the update ran; the melt may still be playing.
-    await t.updateCallbackDone;
   } catch {
     fallback();
   } finally {

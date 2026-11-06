@@ -47,11 +47,12 @@ export const PLATFORMS = ['linkedin'] as const;
 
 // --- the source file -------------------------------------------------------------------------
 
-export type Source = { slug: string; title: string; category: Category; distribute: string[]; text: string; lang: 'en' | 'ru' };
+// depth: the post asks for the depth dial, so it carries a plain-language version (`plain`).
+export type Source = { slug: string; title: string; category: Category; distribute: string[]; text: string; lang: 'en' | 'ru'; depth: boolean };
 
 const unquote = (v: string) => v.trim().replace(/^(["'])(.*)\1$/, '$2').trim();
 
-/** `<slug>.md`: front matter with title, category and distribute, then the text. Never throws. */
+/** `<slug>.md`: front matter with title, category, distribute and optional depth, then the text. Never throws. */
 export function parseSource(file: string, raw: string): { ok: true; source: Source } | { ok: false; errors: string[] } {
   const slug = file.replace(/\.md$/, '');
   const errors: string[] = [];
@@ -66,7 +67,7 @@ export function parseSource(file: string, raw: string): { ok: true; source: Sour
     if (!kv) errors.push(`front matter: cannot read "${l.trim().slice(0, 40)}"`);
     else meta[kv[1]] = kv[2];
   }
-  const extra = Object.keys(meta).filter((k) => !['title', 'category', 'distribute'].includes(k));
+  const extra = Object.keys(meta).filter((k) => !['title', 'category', 'distribute', 'depth'].includes(k));
   if (extra.length) errors.push(`front matter: unknown field(s) ${extra.join(', ')}`);
   const title = unquote(meta.title ?? '');
   if (!str(title, 8, 140)) errors.push('title: 8-140 chars');
@@ -80,11 +81,13 @@ export function parseSource(file: string, raw: string): { ok: true; source: Sour
     .filter(Boolean);
   if (list && !/^\[.*\]$/.test(list)) errors.push('distribute: a list like [linkedin], or [] for the site only');
   for (const d of distribute) if (!(PLATFORMS as readonly string[]).includes(d)) errors.push(`distribute: ${d} is not one of ${PLATFORMS.join(', ')}`);
+  const depthField = unquote(meta.depth ?? 'false');
+  if (depthField !== 'true' && depthField !== 'false') errors.push('depth: true or false');
   const text = m[2].trim();
   if (!str(text, 200, 40_000)) errors.push('text: 200-40000 chars');
   if (errors.length) return { ok: false, errors };
   const lang = isRussian(`${title}\n${text}`) ? 'ru' : 'en';
-  return { ok: true, source: { slug, title, category, distribute: [...new Set(distribute)], text, lang } };
+  return { ok: true, source: { slug, title, category, distribute: [...new Set(distribute)], text, lang, depth: depthField === 'true' } };
 }
 
 // --- the model's draft -----------------------------------------------------------------------
@@ -244,6 +247,8 @@ export function buildEntry(o: { source: Source; draft: Draft; existing: BlogPost
       bullets: { en: d.bullets.en.map((x) => x.trim()), ru: d.bullets.ru.map((x) => x.trim()) },
     },
     body: both(s.text, d.body.trim()),
+    // Written by hand for now and kept across redrafts; the run notes when it may be out of date.
+    ...(s.depth && old?.plain ? { plain: old.plain } : {}),
     // The next color after the top card's, so the new card never repeats its neighbour.
     color: old?.color ?? colors[(colors.indexOf(existing[0]?.color) + 1) % colors.length],
     ...(old?.publora ? { publora: old.publora } : {}),
@@ -351,6 +356,8 @@ export async function run(env: Record<string, string | undefined>, deps: Deps) {
         posts = i >= 0 ? posts.map((p, j) => (j === i ? entry : p)) : [entry, ...posts];
         written.push(entry);
         log(`${i >= 0 ? 'redrafted' : 'added'} ${entry.id} /writing/${entry.slug}/`);
+        if (s.depth)
+          problem(s.slug, entry.plain ? 'depth: the plain version was written for the previous text; check it still matches' : 'depth: true, but no plain version yet: add `plain` to its src/data/posts/ file');
       }
 
     // Publora drafts: one per post, English text, for posts not yet out on LinkedIn.

@@ -197,7 +197,8 @@ describe('the posts on the site (one file each: tests/posts-store.test.ts)', () 
   });
 
   test('a post with no LinkedIn url is a hand-written one and must carry its full text', () => {
-    const own = BLOG_POSTS.find((p) => !p.url && p.body) as BlogPost;
+    // One without a plain version: that one would also need its body (the depth dial's check).
+    const own = BLOG_POSTS.find((p) => !p.url && p.body && !p.plain) as BlogPost;
     expect(own).toBeDefined();
     expect(checkEntry({ ...own, body: undefined })).toEqual(['url: none, so the post needs its full text in body']);
     expect(checkEntry({ ...own, url: 'https://example.com/post' })[0]).toMatch(/^url: not a LinkedIn post url/);

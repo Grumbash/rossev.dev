@@ -51,6 +51,8 @@ export const EVENTS = {
   vad_demo: ['action', 'ms'],
   // Language switch to a different language. to: en|ru
   lang_switch: ['to'],
+  // Depth dial on a technical post. to: plain|engineers
+  depth_switch: ['to'],
   // Theme toggle. to: light|dark (read after the toggle)
   theme_switch: ['to'],
   // Home section scrolled into view, once per page view. section: experience|writing|contact

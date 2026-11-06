@@ -233,6 +233,11 @@ export const ru: Dict = {
     readBriefLink: 'Читать конспект →',
     allWriting: '← Все заметки'
   },
+  depth: {
+    label: 'НАПИСАНО ДЛЯ:',
+    plain: 'ЛЮДЕЙ',
+    engineers: 'ИНЖЕНЕРОВ'
+  },
   reader: {
     header: '// КОНСПЕКТ ЗАМЕТКИ //',
     close: 'ЗАКРЫТЬ ×',

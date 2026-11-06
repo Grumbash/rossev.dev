@@ -16,6 +16,7 @@ interface Props {
 
 const { post, lang, inline = false } = Astro.props;
 const d = t(lang).reader;
+const dd = t(lang).depth;
 const next = BLOG_POSTS[(BLOG_POSTS.indexOf(post) + 1) % BLOG_POSTS.length];
 const pageUrl = new URL(localePath(lang, postPath(post)), SITE).toString();
 const linkedin = linkedinLabel(post);
@@ -44,9 +45,21 @@ const nextInline = inline
   ))}
 </ul>
 
+{/* The depth dial (scripts/depth.ts): hidden until the script can switch it; the plain version
+    waits in a <template>, so it is neither shown nor read twice by crawlers. */}
+{!inline && post.body && post.plain && (
+  <div class="depth-dial" data-depth-dial hidden role="group" aria-label={dd.label}>
+    <span class="depth-dial-label">{dd.label}</span>
+    <button type="button" class="ctrl-btn" data-depth-to="plain" aria-pressed="false" data-track="depth_switch" data-track-to="plain">{dd.plain}</button>
+    <button type="button" class="ctrl-btn" data-depth-to="engineers" aria-pressed="true" data-track="depth_switch" data-track-to="engineers">{dd.engineers}</button>
+  </div>
+)}
+
 {!inline && post.body && (
   <div class="post-body" set:html={bodyHtml(post.body[lang])} />
 )}
+
+{!inline && post.body && post.plain && <template data-depth-plain set:html={bodyHtml(post.plain[lang])} />}
 
 {fullPost && (
   <a href={localePath(lang, fullPost.href)} class="brutal-btn" style="display: inline-flex; margin-bottom: 18px; padding: 8px 14px; font-size: 0.78rem;" data-track="post_open" data-track-id={post.id}>

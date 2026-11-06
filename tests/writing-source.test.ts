@@ -108,7 +108,7 @@ const publoraCalls = (h: ReturnType<typeof harness>) => h.calls.filter((c) => c.
 describe('the source file', () => {
   test('front matter gives title, category and platforms; the file name is the slug; the language is detected', () => {
     const en = src('waiting-problem.md', FILE_EN);
-    expect(en).toEqual({ slug: 'waiting-problem', title: 'Your Team Has a Waiting Problem', category: 'delivery', distribute: ['linkedin'], text: TEXT_EN, lang: 'en' });
+    expect(en).toEqual({ slug: 'waiting-problem', title: 'Your Team Has a Waiting Problem', category: 'delivery', distribute: ['linkedin'], text: TEXT_EN, lang: 'en', depth: false });
     const ru = src('waiting-ru.md', FILE_RU);
     expect([ru.title, ru.lang, ru.distribute]).toEqual(['У команды проблема с ожиданием', 'ru', []]);
     expect(src('x-y.md', FILE_EN.replace('distribute: [linkedin]   # where it goes\n', '')).distribute).toEqual([]);

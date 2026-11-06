@@ -2,6 +2,7 @@
 title: "I benchmarked 8 models on our own code reviews. The first bug was ours."
 category: ai
 distribute: []
+depth: true
 ---
 
 Claude Opus 5.5 failed the same review three runs out of three. Same pull request, same reviewer role, same result: the stage output "failed to parse", the review was marked errored, and Opus dropped to the bottom of my table.
@@ -100,4 +101,4 @@ The whole exercise cost about $51 in model spend, debugging runs included.
 
 The open question is the middle of the table. Five PRs, all from our own repo, can tell me that K3 should go. They can't tell me whether Qwen, GLM or Sonnet should replace it. The next step is AACR-Bench: about 200 expert-reviewed pull requests from public repositories that none of these models have reviewed for us, with its own judge. I haven't run it yet.
 
-The lesson I'd keep from this round has nothing to do with Kimi. Before comparing models on your own pipeline, check that the pipeline can actually hear each of them. Two of my eight models were losing reviews to our parser and prompt, and a third was never called at all.
+The lesson I'd keep from this round has nothing to do with Kimi. Before comparing models on your own pipeline, check that the pipeline can actually hear each of them. Two of my eight models were losing reviews to our parser and prompt, and one of those two wasn't even being called at first.
