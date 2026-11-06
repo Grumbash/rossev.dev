@@ -10,7 +10,7 @@ export const EVENTS = {
   cta_book: ['placement', 'lang'],
   // "copy email" button. placement: hero|footer
   email_copy: ['placement'],
-  // mailto: link. placement: hero|footer
+  // mailto: link. placement: hero|footer|hire
   email_click: ['placement'],
   // CV PDF link. placement: hero|footer
   cv_download: ['placement'],

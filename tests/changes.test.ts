@@ -91,6 +91,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const tags = () => [...document.querySelectorAll('[data-changes-new]')].map((t) => t.closest('article').dataset.slug);
     const tagWords = () => [...new Set([...document.querySelectorAll('[data-changes-new]')].map((t) => t.textContent.trim()))];
     if (phase === 'seed') {
+      // The first visit records what it saw once its own /changes.json arrives; seeded before that,
+      // a slow runner has the page overwrite the seed (CI on #84).
+      await until(() => localStorage.getItem('rosev_seen'));
       const m = await (await fetch('/changes.json')).json();
       const pages = Object.fromEntries(Object.entries(m.pages).map(([p, v]) => [p, p === '/hire/' ? 'stale000' : v.h]));
       localStorage.setItem('rosev_seen', JSON.stringify({ t: Date.now() - 2 * 3600e3, posts: m.posts.slice(2).map((p) => p.slug), pages }));
