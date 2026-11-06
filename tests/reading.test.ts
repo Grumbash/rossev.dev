@@ -114,7 +114,16 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       dispatchEvent(new Event('pagehide'));
       out.stored = JSON.parse(localStorage.getItem('rosev_reading') || '{}')['${POST}'];
       out.halfIndex = ps.indexOf(half); out.count = ps.length;
-      return go('back', location.pathname + '?probe=reading');
+      return go('glance', location.pathname + '?probe=reading');
+    }
+    if (phase === 'glance') {
+      out.glance = { scroll: scrollY, pill: pill()?.textContent.trim() };
+      return go('glance-list', '/writing/?probe=reading');
+    }
+    if (phase === 'glance-list') {
+      out.afterGlance = JSON.parse(localStorage.getItem('rosev_reading') || '{}')['${POST}'];
+      out.glanceBadge = document.querySelector('article.post-card[data-slug="${POST}"] [data-reading-badge]')?.textContent.trim();
+      return go('back', '/writing/${POST}/?probe=reading');
     }
     if (phase === 'back') {
       out.scrollOnReturn = Math.round(scrollY);
@@ -154,6 +163,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.stored.f).toBeGreaterThan(0.4);
     expect(r.stored.f).toBeLessThan(0.6);
     const pct = Math.round(r.stored.f * 100);
+    expect(r.glance).toEqual({ scroll: 0, pill: en.reading.continue.replace('{n}', String(pct)) });
+    expect(r.afterGlance).toEqual(r.stored);
+    expect(r.glanceBadge).toBe(en.reading.part.replace('{n}', String(pct)));
     // Coming back does not move the page: it offers.
     expect(r.scrollOnReturn).toBe(0);
     expect(r.pill).toBe(en.reading.continue.replace('{n}', String(pct)));

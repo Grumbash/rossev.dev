@@ -102,7 +102,10 @@ export function initReading() {
   }
 
   let last = -1;
+  let scrolled = false;
   const keep = () => {
+    // Leaving a reopened post without scrolling must preserve the offered bookmark.
+    if (offered !== null && !scrolled) return;
     const b = body();
     if (!b) return;
     const f = Math.round(shareRead(b) * 1000) / 1000;
@@ -112,6 +115,7 @@ export function initReading() {
   };
   let timer = 0;
   addEventListener('scroll', () => {
+    scrolled = true;
     clearTimeout(timer);
     timer = window.setTimeout(keep, 400);
   }, { passive: true });
