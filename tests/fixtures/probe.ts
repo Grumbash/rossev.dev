@@ -32,9 +32,10 @@ export function probeServer(probe: (mode: string) => string) {
   });
   return {
     stop: () => server.stop(true),
-    async run(path: string, mode: string) {
+    /** `flags`: extra Chrome switches, e.g. --force-dark-mode or --force-prefers-reduced-motion. */
+    async run(path: string, mode: string, flags: string[] = []) {
       const proc = Bun.spawn(
-        [CHROME, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', '--window-size=1320,1000', '--virtual-time-budget=30000', '--dump-dom', `http://localhost:${server.port}/frame?path=${encodeURIComponent(path)}&mode=${mode}`],
+        [CHROME, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', '--window-size=1320,1000', '--virtual-time-budget=30000', ...flags, '--dump-dom', `http://localhost:${server.port}/frame?path=${encodeURIComponent(path)}&mode=${mode}`],
         { stdout: 'pipe', stderr: 'ignore' },
       );
       const dom = await new Response(proc.stdout).text();
