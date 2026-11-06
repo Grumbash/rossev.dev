@@ -54,9 +54,11 @@ export function initCompanion(slug: string, before = 0) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
+  // The hour is looked at again when the reader comes back to the tab or scrolls: no timer running.
   const night = () => box.classList.toggle('is-asleep', asleep(new Date().getHours()));
   night();
-  setInterval(night, 60_000);
+  document.addEventListener('visibilitychange', night);
+  addEventListener('scroll', night, { passive: true });
 
   const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
   const send = (msg: ToWorker, transfer: Transferable[] = []) => worker.postMessage(msg, transfer);
