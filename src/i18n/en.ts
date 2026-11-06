@@ -243,6 +243,20 @@ export const en = {
   tab: {
     wait: 'I’ll wait…'
   },
+  // The letter on /hire that starts itself from what this browser read (scripts/letter.ts).
+  letter: {
+    write: 'WRITE ME AN EMAIL',
+    subject: 'From rossev.dev',
+    hello: 'Hi Gleb,',
+    readOne: 'I’m writing after reading {posts} on your site.',
+    readMany: 'I’m writing after reading {posts} on your site.',
+    and: ' and ',
+    open: '“',
+    close: '”',
+    offer: 'I’m interested in: {offer}.',
+    preview: 'The letter already starts:',
+    note: 'Nothing leaves this browser until you send it.'
+  },
   // "Gleb now" in the footer (scripts/now.ts): his time and the site's last commit.
   now: {
     label: 'Gleb now',

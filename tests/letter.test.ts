@@ -24,6 +24,7 @@ describe('the letter', () => {
   test('the two posts read most recently, then the offer; a glance does not count', () => {
     const store = { a: { f: 0.5, t: 1 }, b: { f: 1, t: 3, d: 1 as const }, c: { f: 0.3, t: 2 }, d: { f: 0.02, t: 9 } };
     const l = letter({ store, titles, offer: 'AI agent reliability audit', w: en.letter })!;
+    expect(letter({ store: {}, titles, offer: 'Аудит надёжности', w: ru.letter })!.lines).toEqual(['Интересует: аудит надёжности.']);
     expect(l.lines).toEqual(['I’m writing after reading “Post B” and “Post C” on your site.', 'I’m interested in: AI agent reliability audit.']);
     expect(l.body).toBe(`Hi Gleb,\n\n${l.lines.join(' ')}\n\n`);
   });
@@ -50,7 +51,7 @@ describe('the build', () => {
       expect(a).toContain('data-track-placement="hire"');
       expect(a).toContain(`data-letter-hello="${d.letter.hello}"`);
       expect(html).toContain(d.letter.write);
-      expect(html).toMatch(/<p[^>]*data-letter-preview[^>]*hidden/);
+      expect(html).toMatch(/<p[^>]*data-letter-line[^>]*hidden/);
     }
   });
 });
@@ -67,7 +68,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     document.querySelector('.hire-jump a[href="#audit"]').click();
     await wait(1500);
     const a = document.querySelector('[data-letter]');
-    const p = document.querySelector('[data-letter-preview]');
+    const p = document.querySelector('[data-letter-line]');
     const pre = document.createElement('pre'); pre.id = '__probe';
     pre.textContent = JSON.stringify({ href: a.href, preview: p.hidden ? null : p.textContent });
     document.body.appendChild(pre);
@@ -82,7 +83,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.error).toBeUndefined();
     const body = decodeURIComponent(new URL(r.href).searchParams.get('body') ?? '');
     expect(body).toContain(`«${one.title.ru}» и «${two.title.ru}»`);
-    expect(body).toContain('Аудит надёжности AI-агентов');
+    expect(body).toContain('Интересует: аудит надёжности AI-агентов.');
     expect(new URL(r.href).searchParams.get('subject')).toBe(ru.letter.subject);
     expect(r.preview).toContain(one.title.ru);
     expect(r.preview).toContain(ru.letter.note);

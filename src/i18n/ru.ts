@@ -238,6 +238,19 @@ export const ru: Dict = {
   tab: {
     wait: 'Я подожду…'
   },
+  letter: {
+    write: 'НАПИСАТЬ ПИСЬМО',
+    subject: 'С rossev.dev',
+    hello: 'Привет, Глеб!',
+    readOne: 'Пишу после вашего поста {posts}.',
+    readMany: 'Пишу после ваших постов {posts}.',
+    and: ' и ',
+    open: '«',
+    close: '»',
+    offer: 'Интересует: {offer}.',
+    preview: 'Письмо уже начато:',
+    note: 'Ничего не уйдёт из браузера, пока вы его не отправите.'
+  },
   now: {
     label: 'Глеб сейчас',
     time: '{t} в Тбилиси',
