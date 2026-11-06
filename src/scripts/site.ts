@@ -72,6 +72,8 @@ export function initSite() {
 
   initTheme();
   initOffline();
+  // The wilting favicon loads on the first hide: nothing up front for a tab that is never left.
+  document.addEventListener('visibilitychange', () => void import('./tab').then((m) => m.initTab()), { once: true });
   void initChanges();
 
 
