@@ -418,6 +418,14 @@ describe('.github/workflows/perf.yml', () => {
     }
   });
 
+  test('pdftotext is installed before the tests, so the CV margin check runs in CI too', () => {
+    const runs = steps.map((s) => String(s.run ?? ''));
+    const iPoppler = runs.findIndex((r) => r.includes('poppler-utils'));
+    const iTest = runs.findIndex((r) => /\bbun (run )?test\b/.test(r));
+    expect(iPoppler).toBeGreaterThanOrEqual(0);
+    expect(iPoppler).toBeLessThan(iTest);
+  });
+
   test('in CI a missing Chrome fails the browser tests instead of silently skipping them', () => {
     expect(readFileSync('tests/fixtures/probe.ts', 'utf8')).toMatch(/process\.env\.CI[\s\S]{0,200}throw new Error\([^)]*Chrome/);
   });

@@ -55,6 +55,9 @@ jobs:
       # of turning Chrome's own sandbox off.
       - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
+      # tests/cv-pdf.test.ts checks the CV's word boxes with pdftotext, which the runner lacks.
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends poppler-utils
+
       # The NCA simulations run in nca.yml, one runner per file; here they timed out on a shared CPU.
       # The browser tests find the runner's google-chrome through scripts/chrome.ts, as perf does.
       - run: bun run test --skip-simulations
