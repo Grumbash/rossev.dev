@@ -55,6 +55,37 @@ const serviceWorker = {
   }
 };
 
+// /changes.json: what a returning visitor compares with what they saw last time (src/scripts/changes.ts).
+// Every post newest first, with its title, and a fingerprint of the text of the pages worth coming
+// back to: /hire/ and the case pages. Home and /writing/ change with every post, /how-its-built/
+// with every PR, so they would always look "updated".
+const changesJson = {
+  name: 'changes-json',
+  hooks: {
+    'astro:build:done': ({ dir }) => {
+      const root = fileURLToPath(dir);
+      const idNumber = (p) => Number(p.id.replace('post-', '')) || 0;
+      const posts = readdirSync('src/data/posts')
+        .filter((f) => f.endsWith('.json'))
+        .map((f) => JSON.parse(readFileSync(join('src/data/posts', f), 'utf8')))
+        .sort((a, b) => b.published.localeCompare(a.published) || idNumber(b) - idNumber(a))
+        .map((p) => ({ slug: p.slug, title: p.title }));
+      const text = (html) =>
+        (html.match(/<main[^>]*>([\s\S]*?)<\/main>/)?.[1] ?? '').replace(/<(script|style)\b[\s\S]*?<\/\1>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      // The page's own name: its <title> without the last " — …" or " · …" (the site's name or tagline).
+      const titleOf = (html) => (html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '').replace(/&amp;/g, '&').replace(/\s[—·]\s[^—·]*$/, '').trim();
+      const cases = readdirSync(join(root, 'cases')).map((id) => `/cases/${id}/`);
+      const pages = {};
+      for (const path of ['/hire/', ...cases].sort()) {
+        const en = readFileSync(join(root, path, 'index.html'), 'utf8');
+        const ru = readFileSync(join(root, 'ru', path, 'index.html'), 'utf8');
+        pages[path] = { h: createHash('sha256').update(text(en)).digest('hex').slice(0, 8), title: { en: titleOf(en), ru: titleOf(ru) } };
+      }
+      writeFileSync(join(root, 'changes.json'), JSON.stringify({ posts, pages }));
+    }
+  }
+};
+
 export default defineConfig({
   site: 'https://rossev.dev',
   // Pages build to <route>/index.html, so post pages live at /writing/<slug>/ (the canonical form).
@@ -76,6 +107,7 @@ export default defineConfig({
       i18n: { defaultLocale: 'en', locales: { en: 'en', ru: 'ru' } }
     }),
     routesJson,
+    changesJson,
     serviceWorker
   ],
   // A small <script> would otherwise be inlined, and every inline script needs its own CSP hash in

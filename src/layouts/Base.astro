@@ -271,7 +271,18 @@ const SPECULATION_RULES = JSON.stringify({
     </main>
 
     <!-- Toast Notification -->
-    <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite" data-copied={d.toast.copied} data-offline={d.offline.toast}>
+    <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite" data-copied={d.toast.copied}
+      data-offline={d.offline.toast}
+      data-changes-title={d.changes.title}
+      data-changes-post-one={d.changes.postOne}
+      data-changes-post-few={d.changes.postFew}
+      data-changes-post-many={d.changes.postMany}
+      data-changes-post-other={d.changes.postOther}
+      data-changes-more={d.changes.more}
+      data-changes-updated={d.changes.updated}
+      data-changes-tag={d.changes.tag}
+      data-changes-close={d.changes.close}
+    >
       {d.toast.copiedDefault}
     </div>
 

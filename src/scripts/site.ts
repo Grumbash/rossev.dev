@@ -1,3 +1,4 @@
+import { initChanges } from './changes';
 import { initOffline } from './offline';
 import { initTheme } from './theme';
 
@@ -71,6 +72,7 @@ export function initSite() {
 
   initTheme();
   initOffline();
+  void initChanges();
 
 
   // Deep links for cases and posts: rewrite the query without a history entry.
