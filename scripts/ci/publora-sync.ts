@@ -248,7 +248,7 @@ export function validateDraft(raw: unknown, source: string): { ok: true; draft: 
 // --- the site entry --------------------------------------------------------------------------
 
 const ENTRY_KEYS = ['id', 'slug', 'published', 'category', 'categoryLabel', 'originalMinutes', 'url', 'title', 'takeaway', 'tags', 'brief', 'body', 'plain', 'color', 'publora'];
-const okPair = (v: any) => exactKeys(v, ['en', 'ru']) && str(v.en, 1, 10_000) && str(v.ru, 1, 50_000);
+const okPair = (v: any) => exactKeys(v, ['en', 'ru']) && str(v.en, 1, 20_000) && str(v.ru, 1, 50_000);
 
 /** Each page's <title> and meta description must be unique (the page tests check it). */
 export const clashes = (e: BlogPost, others: BlogPost[]) => [

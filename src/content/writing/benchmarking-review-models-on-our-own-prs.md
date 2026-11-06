@@ -94,7 +94,7 @@ Across both rounds (six runs per model):
 - **K3.1 Pro is at least as good as K3** and costs about a third less per review on these PRs.
 - **DeepSeek V4.1 Flash is close to the pack at about a fifth of K3.1 Pro's price** and is the fastest. It's a candidate for the high-volume specialist roles.
 - **Sonnet 5.5 was top three both times**, with the best F1 among the high-recall models and the fastest reviews of the strong group.
-- **Opus 5.5 is the most expensive and wrote the noisiest reviews** (precision 0.15). I haven't tuned its effort setting for this eval, so I'd treat its row as untested rather than as a verdict on Opus.
+- **Opus 5.5 is the most expensive.** Its low precision (0.15) turned out to be mostly correct minor findings, not noise (see the update below). I haven't tuned its effort setting for this eval, so I'd treat its row as untested rather than as a verdict on Opus.
 - **Everything between 49 and 55 is a tie** on five PRs.
 
 The whole exercise cost about $51 in model spend, debugging runs included.
@@ -102,3 +102,15 @@ The whole exercise cost about $51 in model spend, debugging runs included.
 The open question is the middle of the table. Five PRs, all from our own repo, can tell me that K3 should go. They can't tell me whether Qwen, GLM or Sonnet should replace it. The next step is AACR-Bench: about 200 expert-reviewed pull requests from public repositories that none of these models have reviewed for us, with its own judge. I haven't run it yet.
 
 The lesson I'd keep from this round has nothing to do with Kimi. Before comparing models on your own pipeline, check that the pipeline can actually hear each of them. Two of my eight models were losing reviews to our parser and prompt, and one of those two wasn't even being called at first.
+
+## Update: what the low precision means
+
+A reader asked how many of the unmatched findings were real bugs that my gold list didn't have. I hadn't checked, so I did.
+
+Across the panel round there were 447 findings the judges didn't match to gold. Each one was checked against the code of its PR. None of them was a real defect missing from the gold list. About three quarters (338) were correct but minor: naming, comments that don't match the code, edge cases the PR doesn't reach. 54 were wrong, 52 were too vague to act on, and 3 repeated another finding.
+
+So precision here mostly measures how much a model comments beyond a short gold list (8 findings on 5 PRs), not how often it's wrong. If correct minor findings count as hits, precision moves from 0.11–0.28 to 0.73–0.92, with Sonnet (0.92) and Opus (0.91) at the top. A model sorted these findings with a strict rubric, and I've only checked a few of them by hand, so I'd read this as a strong hint rather than a final number.
+
+The check also found two more problems on our side. One PR has an empty gold list, so a model that approves it without comments gets full precision. Kimi K3 did that in two runs of three and Sonnet in one, which lifts both. And 13 findings said the PR shipped no tests because the fixture only included the source file, while the merged PR had a test file.
+
+Both go into the fixtures before AACR-Bench. I think the judge also needs a "correct but not in gold" verdict, so this number ends up in the CSV instead of in a follow-up.
