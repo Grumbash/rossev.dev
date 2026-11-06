@@ -7,10 +7,11 @@
 // Real Chrome over CDP: the model runs in a worker on real time, which --dump-dom's virtual time
 // does not give it.
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { buildSite } from './fixtures/build';
 import { withChrome, type Cdp } from './fixtures/cdp';
 import { hasChrome } from './fixtures/probe';
+import { stepsFor } from '../src/scripts/nca/companion';
 
 setDefaultTimeout(180_000);
 
@@ -18,9 +19,21 @@ beforeAll(() => buildSite());
 
 const POST = 'self-healing-monogram';
 
+describe('how far it grows', () => {
+  test('nothing read, a seed; half read, about half the GR; done, the whole 300 steps; never backwards', () => {
+    expect(stepsFor(0)).toBe(0);
+    expect(stepsFor(0.5)).toBeGreaterThan(35);
+    expect(stepsFor(0.5)).toBeLessThan(55);
+    expect(stepsFor(1)).toBe(300);
+    const s = Array.from({ length: 21 }, (_, i) => stepsFor(i / 20));
+    expect(s).toEqual([...s].sort((a, b) => a - b));
+  });
+});
+
 describe('where it is', () => {
   test('post pages load it; home, /writing/ and the other pages do not', () => {
-    const scripts = (path: string) => [...readFileSync(`dist/${path}`, 'utf8').matchAll(/<script[^>]+src="([^"]+)"/g)].map((m) => readFileSync(`dist${m[1]}`, 'utf8')).join('\n');
+    // Vercel serves /_vercel/* itself; those are not in dist/.
+    const scripts = (path: string) => [...readFileSync(`dist/${path}`, 'utf8').matchAll(/<script[^>]+src="([^"]+)"/g)].map((m) => `dist${m[1]}`).filter((f) => existsSync(f)).map((f) => readFileSync(f, 'utf8')).join('\n');
     // The lazy chunk is named after src/scripts/nca/companion.ts; only a post page's eager script points at it.
     const lazy = /companion\.[\w-]+\.js/;
     expect(scripts(`writing/${POST}/index.html`)).toMatch(lazy);
@@ -32,7 +45,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
   // Opaque pixels on the companion's canvas: how much of the GR has grown.
   const ALIVE = `(() => { const c = document.querySelector('[data-nca-companion] canvas'); if (!c) return -1; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i] > 128) n++; return n; })()`;
   const readTo = (share: number) =>
-    `(() => { const ps = [...document.querySelectorAll('.post-body > *')]; const b = ps[Math.min(ps.length - 1, Math.floor(share * ps.length))]; b.scrollIntoView({ block: 'start', behavior: 'instant' }); scrollBy({ top: -(innerHeight * 0.25 - 4), behavior: 'instant' }); })()`;
+    `(() => { const ps = [...document.querySelectorAll('.post-body > *')]; const b = ps[Math.min(ps.length - 1, Math.floor(${share} * ps.length))]; b.scrollIntoView({ block: 'start', behavior: 'instant' }); scrollBy({ top: -(innerHeight * 0.25 - 4), behavior: 'instant' }); })()`;
   const open = async ({ origin, send }: Cdp, path: string) => {
     await send('Page.enable');
     await send('Page.navigate', { url: `${origin}${path}` });
@@ -59,17 +72,20 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       return { start, half, halfLater, full, grown };
     });
     expect(r.start).toBeGreaterThanOrEqual(0);
-    expect(r.half).toBeGreaterThan(r.start + 50);
+    // Half the post read, roughly half the GR: not a seed, not the whole thing.
+    expect(r.half).toBeGreaterThan(r.full * 0.3);
+    expect(r.half).toBeLessThan(r.full * 0.8);
     // It waits where the reader is: no growing past the share read.
     expect(Math.abs(r.halfLater - r.half)).toBeLessThan(r.half * 0.1 + 20);
-    expect(r.full).toBeGreaterThan(r.half);
+    expect(r.full).toBeGreaterThan(900);
     expect(r.grown).toBe('true');
   });
 
   test('a post started earlier starts it that far along', async () => {
     const r = await withChrome(async (cdp) => {
-      await open(cdp, `/writing/${POST}/`);
-      await cdp.evaluate(`localStorage.setItem('rosev_reading', JSON.stringify({ '${POST}': { f: 0.7, t: 1 } }))`);
+      // Stored before the page's own scripts run: seeding an open page would be overwritten by its pagehide.
+      await cdp.send('Page.enable');
+      await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: `if (!sessionStorage.getItem('seeded')) { sessionStorage.setItem('seeded', '1'); localStorage.setItem('rosev_reading', JSON.stringify({ '${POST}': { f: 0.7, t: 1 } })); }` });
       await open(cdp, `/writing/${POST}/`);
       await cdp.evaluate(readTo(0.02));
       await Bun.sleep(8000);
@@ -80,8 +96,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
 
   test('grown, a cursor wounds it and it heals', async () => {
     const r = await withChrome(async (cdp) => {
-      await open(cdp, `/writing/${POST}/`);
-      await cdp.evaluate(`localStorage.setItem('rosev_reading', JSON.stringify({ '${POST}': { f: 1, t: 1, d: 1 } }))`);
+      // Stored before the page's own scripts run: seeding an open page would be overwritten by its pagehide.
+      await cdp.send('Page.enable');
+      await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: `if (!sessionStorage.getItem('seeded')) { sessionStorage.setItem('seeded', '1'); localStorage.setItem('rosev_reading', JSON.stringify({ '${POST}': { f: 1, t: 1, d: 1 } })); }` });
       await open(cdp, `/writing/${POST}/`);
       await cdp.evaluate(readTo(0.02));
       await Bun.sleep(9000);

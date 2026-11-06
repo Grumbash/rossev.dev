@@ -8,7 +8,10 @@ import { createTicker } from './ticker';
 import { createHealer, type Healer, type HealerStatus } from './healer';
 
 export type ToWorker =
-  | { type: 'init'; weightsUrl: string; reducedMotion: boolean }
+  /** `from: 'seed'` starts from one cell instead of the grown monogram (the post-page companion). */
+  | { type: 'init'; weightsUrl: string; reducedMotion: boolean; from?: 'grown' | 'seed' }
+  /** The companion grows only this many steps from its seed, as far as the post has been read. */
+  | { type: 'cap'; steps: number }
   | { type: 'visible'; visible: boolean }
   | { type: 'damage'; points: { x: number; y: number }[]; r: number }
   | { type: 'reset' }
@@ -46,6 +49,11 @@ let owed = 0;
 let lastTick = 0;
 let noticeUntil = 0;
 let silentGrowAt = 0; // when to grow a reduced-motion regrow out of sight; 0 = none pending
+// The companion's first growth from its seed stops at `cap` steps until the reader reads on;
+// Infinity everywhere else. Healing after damage is never capped.
+let cap = Infinity;
+let grownSteps = 0;
+let capping = false;
 
 // Pixel buffers travel to the page (transferred, not copied) and come back via
 // 'recycle'. The RGBA floats come from the healer, which reads them for its stats.
@@ -109,7 +117,17 @@ function tick(): boolean {
   }
   owed = Math.min(owed + ((now - lastTick) / 1000) * STEPS_PER_SECOND, MAX_STEPS_PER_TICK);
   lastTick = now;
-  const n = Math.floor(owed);
+  let n = Math.floor(owed);
+  // Growing toward the reader: no further than the share read, then wait for more.
+  if (capping) {
+    n = Math.min(n, cap - grownSteps);
+    if (n <= 0) {
+      owed = 0;
+      return false;
+    }
+    grownSteps += n;
+    if (grownSteps >= GROWN_STEPS) capping = false;
+  }
   if (n > 0) {
     const status: HealerStatus = healer.step(n);
     owed -= n;
@@ -153,9 +171,19 @@ scope.onmessage = async (event: MessageEvent<ToWorker>) => {
         scope.postMessage({ type: 'error', message: String(err) } satisfies FromWorker);
         return;
       }
-      reset(true);
+      if (msg.from === 'seed') {
+        capping = true;
+        healer.restart();
+        active = true;
+        postFrame();
+        wake();
+      } else reset(true);
       break;
     }
+    case 'cap':
+      cap = msg.steps;
+      wake();
+      break;
     case 'visible':
       visible = msg.visible;
       wake();

@@ -30,6 +30,9 @@ export const badge = (e?: Entry): 'read' | number | null => (!e ? null : e.d ? '
 /** The percent to offer continuing from, when the post was started and not finished. */
 export const offer = (e?: Entry): number | null => (e && !e.d && e.f >= MIN && e.f < DONE ? Math.round(e.f * 100) : null);
 
+/** The share of `slug` read before, 0 for a post not opened. */
+export const readBefore = (slug: string) => load()[slug]?.f ?? 0;
+
 const load = (): Store => {
   try {
     const s = JSON.parse(localStorage.getItem(KEY) || '{}');
@@ -48,7 +51,7 @@ const save = (s: Store) => {
 const line = () => innerHeight * 0.25;
 
 /** How far into `body` the reading line is: 0 above it, 1 past its end. */
-function shareRead(body: Element) {
+export function shareRead(body: Element) {
   const blocks = [...body.children];
   if (!blocks.length) return 0;
   const y = line();
