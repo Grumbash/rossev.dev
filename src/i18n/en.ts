@@ -240,6 +240,15 @@ export const en = {
     allWriting: '← All writing'
   },
   // The depth dial on a technical post: the same post in plain language or as written.
+  // What the site remembers of your reading, in this browser only (scripts/reading.ts).
+  reading: {
+    continue: 'YOU STOPPED AT {n}% ↓',
+    here: 'YOU STOPPED HERE',
+    read: 'READ ✓',
+    part: '{n}% READ',
+    note: 'Your reading progress stays in this browser only.',
+    forget: 'Forget it'
+  },
   // The bar over a passage selected on a post page (scripts/quote.ts).
   quote: {
     card: 'QUOTE CARD',

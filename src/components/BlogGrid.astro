@@ -14,9 +14,9 @@ const d = t(lang);
 {/* Home's cards: category, read time, title and the way in. Their size must not depend on the
     post, since the Publora sync keeps adding posts (tests/home-flat.test.ts): the takeaway, tags
     and the LinkedIn link live on /writing/, in the brief and on the post page. */}
-<div class="posts-grid">
+<div class="posts-grid" data-reading-read={d.reading.read} data-reading-part={d.reading.part}>
   {posts.map((post) => (
-    <article class="brutal-box post-card">
+    <article class="brutal-box post-card" data-slug={post.slug}>
       <div>
         <div class="post-top">
           <span class="label">{post.categoryLabel[lang]}</span>

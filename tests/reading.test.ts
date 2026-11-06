@@ -146,7 +146,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
   afterAll(() => srv?.stop());
 
   test('read half, leave, come back: the post offers to continue and takes you there; the list says how far; forget forgets', async () => {
-    const r = await srv.run(`/writing/${POST}/`, 'reading');
+    // Reduced motion: the jump to the paragraph is instant. A smooth scroll needs rendered frames,
+    // which --dump-dom's virtual time never draws.
+    const r = await srv.run(`/writing/${POST}/`, 'reading', ['--force-prefers-reduced-motion']);
     expect(r.error).toBeUndefined();
     expect(r.firstPill).toBe(false);
     expect(r.stored.f).toBeGreaterThan(0.4);
