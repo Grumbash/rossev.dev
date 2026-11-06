@@ -4,6 +4,7 @@
 // scrolls to and highlights. Copying a passage pastes it with the post title and that link.
 // The words, the title and the url are data-quote-* on the post's <article>, rendered in the page's
 // language; the language morph updates them like any attribute, so nothing here tracks the language.
+import { copyText } from './clipboard';
 import { track } from './analytics';
 import { SIDE, creature } from '../data/creature';
 
@@ -140,14 +141,6 @@ async function drawCard(text: string, title: string, url: string, slug: string, 
   return new Promise((done) => c.toBlob(done, 'image/png'));
 }
 
-function toast(message: string) {
-  const el = document.getElementById('brutal-toast');
-  if (!el) return;
-  el.textContent = message;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2400);
-}
-
 export function initQuote() {
   const article = document.querySelector<HTMLElement>('article[data-quote-title]');
   if (!article) return;
@@ -210,11 +203,10 @@ export function initQuote() {
     if (getSelection()?.isCollapsed) bar.hidden = true;
   });
 
-  linkBtn.addEventListener('click', () => {
+  linkBtn.addEventListener('click', async () => {
     if (!current) return;
-    navigator.clipboard?.writeText(quoteLink(data().quoteUrl, current.text, plain())).catch(() => {});
-    toast(data().quoteCopied);
-    track('quote_share', { kind: 'link' });
+    const copied = await copyText(quoteLink(data().quoteUrl, current.text, plain()), data().quoteCopied);
+    if (copied) track('quote_share', { kind: 'link' });
   });
 
   cardBtn.addEventListener('click', async () => {

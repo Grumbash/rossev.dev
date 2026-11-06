@@ -6,7 +6,7 @@
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { latinLayoutPath, suggestPath } from '../src/scripts/not-found';
+import { latinLayoutPath, layoutRedirect, suggestPath } from '../src/scripts/not-found';
 import { t } from '../src/i18n';
 import { buildSite } from './fixtures/build';
 
@@ -27,6 +27,14 @@ describe('Russian keyboard layout', () => {
     expect(latinLayoutPath('/ршку/')).toBe('/hire/');
     expect(latinLayoutPath('/ru/ршку/')).toBe('/ru/hire/');
     expect(latinLayoutPath('/цкшештп/')).toBe('/writing/');
+  });
+
+  test('repairs a local address with its search and hash, and rejects external destinations', () => {
+    const site = 'https://rossev.dev';
+    expect(layoutRedirect(new URL('/ru/ршку/?from=cv#contact', site))?.href).toBe(site + '/ru/hire/?from=cv#contact');
+    for (const path of ['/%2Fexample.org/%D1%81', '/%5Cexample.org/%D1%81', '/%09%2Fexample.org/с', '/%FF/с']) {
+      expect(layoutRedirect(new URL(path, site))).toBeNull();
+    }
   });
 
   test('a path with nothing to fix is left alone, so the 404 can never redirect in a loop', () => {

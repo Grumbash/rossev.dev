@@ -1,3 +1,4 @@
+import { copyText } from './clipboard';
 import { initOffline } from './offline';
 import { initTheme } from './theme';
 
@@ -93,12 +94,5 @@ export function initSite() {
     } catch {}
   };
 
-  window.copyToClipboard = (text, label) => {
-    navigator.clipboard?.writeText(text).catch(() => {});
-    const toast = document.getElementById('brutal-toast');
-    if (!toast) return;
-    toast.textContent = (toast.dataset.copied ?? 'Copied: ') + (label || text);
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2400);
-  };
+  window.copyToClipboard = (text, label) => { void copyText(text, undefined, label); };
 }

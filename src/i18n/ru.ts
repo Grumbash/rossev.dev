@@ -58,6 +58,7 @@ export const ru: Dict = {
   },
   toast: {
     copied: 'Скопировано: ',
+    copyFailed: 'Не удалось скопировать в буфер обмена.',
     copiedDefault: 'СКОПИРОВАНО'
   },
   hero: {

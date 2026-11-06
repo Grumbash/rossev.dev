@@ -2,6 +2,7 @@
 // here, shows the missed path in its fake test run, and first of all rescues the commonest miss: a
 // path typed with the Russian layout on (/с for /c, /ршку/ for /hire/). Then it suggests the closest
 // real page and takes a bite out of the GR monogram, which heals while the visitor reads.
+import { initTheme } from './theme';
 import type { NcaMonogram } from './nca/monogram';
 
 // Not imported from ./nca/loader on purpose: a module shared with the home page's script would be
@@ -98,21 +99,33 @@ function healMonogram(): void {
   }, () => {});
 }
 
+// Only repair a path on this site. Decoding the path can expose a leading // or backslash.
+export function layoutRedirect(url: URL): URL | null {
+  try {
+    const fixed = latinLayoutPath(decodeURIComponent(url.pathname));
+    if (!fixed) return null;
+    const dest = new URL(fixed, url);
+    if (dest.origin !== url.origin) return null;
+    dest.search = url.search;
+    dest.hash = url.hash;
+    return dest;
+  } catch {
+    return null;
+  }
+}
+
 export function initNotFound() {
+  const fixed = layoutRedirect(new URL(location.href));
+  if (fixed) {
+    location.replace(fixed.href);
+    return;
+  }
   let path = location.pathname;
   try {
     path = decodeURIComponent(path);
   } catch {}
-  const fixed = latinLayoutPath(path);
-  if (fixed) {
-    location.replace(fixed + location.search + location.hash);
-    return;
-  }
 
-  try {
-    const theme = localStorage.getItem('rosev_theme');
-    if (theme) document.documentElement.setAttribute('data-theme', theme);
-  } catch {}
+  initTheme();
 
   const ru = path.startsWith('/ru/') || (!path.startsWith('/ru') && navigator.language.toLowerCase().startsWith('ru'));
   if (ru) {

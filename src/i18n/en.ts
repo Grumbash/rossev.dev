@@ -61,6 +61,7 @@ export const en = {
   },
   toast: {
     copied: 'Copied: ',
+    copyFailed: 'Could not copy to clipboard.',
     copiedDefault: 'COPIED TO CLIPBOARD'
   },
   hero: {

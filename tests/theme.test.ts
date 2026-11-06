@@ -32,8 +32,8 @@ describe('the order of the modes', () => {
 
 describe('before first paint', () => {
   // The inline head script, run against a fake page: what it sets on <html>.
-  const bootstrap = () => {
-    const head = readFileSync('dist/index.html', 'utf8').match(/<head>([\s\S]*?)<\/head>/)![1];
+  const bootstrap = (file = 'index.html') => {
+    const head = readFileSync('dist/' + file, 'utf8').match(/<head>([\s\S]*?)<\/head>/)![1];
     return [...head.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((s) => s.includes('rosev_theme'))!;
   };
   const run = (stored: string | null | 'throws', systemDark: boolean) => {
@@ -46,6 +46,10 @@ describe('before first paint', () => {
     runInNewContext(bootstrap(), { ...ctx, window: ctx });
     return [attrs['data-theme'], attrs['data-theme-mode']];
   };
+
+  test('missing pages use the same theme before first paint', () => {
+    expect(bootstrap('404.html')).toBe(bootstrap());
+  });
 
   test('nothing picked: the system decides', () => {
     expect(run(null, true)).toEqual(['dark', 'system']);
@@ -131,11 +135,10 @@ describe.skipIf(!hasChrome())('in the browser', () => {
   });
 
   test('on a light system AUTO is light, and the first press goes dark', async () => {
-    const r = await srv.run('/writing/', 'theme');
-    expect(r.error).toBeUndefined();
-    expect(r.load).toMatchObject({ theme: 'light', mode: 'system' });
-    expect(r.one).toMatchObject({ theme: 'dark', mode: 'dark' });
-  });
+    const r = await press([{ name: 'prefers-color-scheme', value: 'light' }]);
+    expect(r.load).toEqual({ theme: 'light', mode: 'system' });
+    expect(r).toMatchObject({ theme: 'dark', mode: 'dark' });
+  }, 60_000);
 
   // The circle needs rendered frames, which --dump-dom's virtual time never draws: real Chrome here,
   // with the system theme and reduced motion emulated, and a real mouse press.
@@ -148,10 +151,11 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       });
       await send('Page.navigate', { url: `${origin}/writing/` });
       await Bun.sleep(1500);
+      const load = await evaluate(`({ theme: document.documentElement.dataset.theme, mode: document.documentElement.dataset.themeMode })`);
       const at = await evaluate(`(() => { const r = document.getElementById('btn-theme-toggle').getBoundingClientRect(); return { x: Math.round(r.left + 6), y: Math.round(r.top + 6) }; })()`);
       for (const type of ['mousePressed', 'mouseReleased']) await send('Input.dispatchMouseEvent', { type, x: at.x, y: at.y, button: 'left', clickCount: 1 });
       await Bun.sleep(1200);
-      return { at, ...(await evaluate(`({ theme: document.documentElement.dataset.theme, seen: window.__seen, sheets: document.adoptedStyleSheets.length })`)) };
+      return { at, load, ...(await evaluate(`({ theme: document.documentElement.dataset.theme, mode: document.documentElement.dataset.themeMode, seen: window.__seen, sheets: document.adoptedStyleSheets.length })`)) };
     });
 
   test('a press is a light switch: the new theme spreads in a circle from the press, past the far corner', async () => {

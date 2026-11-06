@@ -133,9 +133,16 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     out.selected = select();
     await until(() => bar() && !bar().hidden);
     out.bar = { shown: !!bar() && !bar().hidden, words: [...bar().querySelectorAll('button')].map((b) => b.textContent.trim()), ignored: bar().hasAttribute('data-morph-ignore') };
+    out.shares = [];
+    window.umami = { track: (name, props) => { if (name === 'quote_share') out.shares.push(props.kind); } };
     bar().querySelector('[data-quote-do="link"]').click();
     await until(() => clip);
     out.link = clip;
+    out.linkSuccess = document.getElementById('brutal-toast').textContent;
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: async () => { throw new DOMException('Denied', 'NotAllowedError'); } }, configurable: true });
+    bar().querySelector('[data-quote-do="link"]').click();
+    await wait(0);
+    out.linkDenied = document.getElementById('brutal-toast').textContent;
     const dt = new DataTransfer();
     document.querySelector('.post-body').dispatchEvent(new ClipboardEvent('copy', { bubbles: true, cancelable: true, clipboardData: dt }));
     out.copied = { text: dt.getData('text/plain'), html: dt.getData('text/html') };
@@ -155,6 +162,10 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     await until(() => document.documentElement.lang === 'ru' && !document.querySelector('[style*="view-transition"]'));
     select(); await until(() => bar() && !bar().hidden);
     out.ru = [...bar().querySelectorAll('button')].map((b) => b.textContent.trim());
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+    document.querySelector('[data-action="copy"]').click();
+    await wait(0);
+    out.clipboardMissing = document.getElementById('brutal-toast').textContent;
     report(out);
     } catch (e) {
       const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify({ error: String(e && e.stack || e) }); document.body.appendChild(pre);
@@ -170,6 +181,10 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const host = /^http:\/\/localhost:\d+/;
     expect(r.bar).toEqual({ shown: true, words: [en.quote.card, en.quote.link], ignored: true });
     expect(r.link.replace(host, 'https://rossev.dev')).toBe(quoteLink(`https://rossev.dev/writing/${POST}/`, r.selected));
+    expect(r.linkSuccess).toBe(en.quote.copied);
+    expect(r.linkDenied).toBe(en.toast.copyFailed);
+    expect(r.shares).toEqual(['link', 'card']);
+    expect(r.clipboardMissing).toBe(ru.toast.copyFailed);
     expect(r.copied.text).toContain(`${r.selected}\n\n— ${BLOG_POSTS.find((p) => p.slug === POST)!.title.en}\n`);
     expect(r.copied.text).toContain(textFragment(r.selected));
     expect(r.copied.html).toContain('<a href=');
