@@ -132,11 +132,13 @@ export function initNotFound() {
   initTheme();
 
   const ru = path.startsWith('/ru/') || (!path.startsWith('/ru') && navigator.language.toLowerCase().startsWith('ru'));
-  if (ru) {
-    document.documentElement.lang = 'ru';
-    document.title = document.querySelector<HTMLElement>('[data-lang="ru"]')?.dataset.title ?? document.title;
-  }
-  for (const el of document.querySelectorAll<HTMLElement>('[data-lang]')) el.hidden = el.dataset.lang !== (ru ? 'ru' : 'en');
+  const lang = ru ? 'ru' : 'en';
+  document.documentElement.lang = lang;
+  const copy = document.querySelector<HTMLElement>(`[data-title][data-lang="${lang}"]`)!.dataset;
+  document.title = copy.title!;
+  document.getElementById('nca-canvas')!.setAttribute('aria-label', copy.healLabel!);
+  document.querySelector<HTMLElement>('.nca-notice')!.dataset.regrowing = copy.regrowing;
+  for (const el of document.querySelectorAll<HTMLElement>('[data-lang]')) el.hidden = el.dataset.lang !== lang;
   for (const el of document.querySelectorAll('[data-path]')) el.textContent = path;
   suggest(path);
   healMonogram();

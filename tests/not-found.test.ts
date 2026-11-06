@@ -3,11 +3,12 @@
 // /404.html for every locale, so it carries both languages and a script shows the visitor's one.
 // The script also fixes the commonest miss: a path typed in the Russian keyboard layout (/с for /c,
 // /ршку/ for /hire/) is sent to the path those same keys spell in the Latin layout.
-import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
+import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { latinLayoutPath, layoutRedirect, suggestPath } from '../src/scripts/not-found';
 import { t } from '../src/i18n';
+import { hasChrome, probeServer } from './fixtures/probe';
 import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
@@ -132,4 +133,34 @@ describe('healing monogram', () => {
     expect(html).toMatch(/<svg[^>]*class="[^"]*nca-fallback/);
     for (const l of ['en', 'ru'] as const) expect(html).toContain(t(l).notFound.healCaption);
   });
+});
+
+describe.skipIf(!hasChrome())('the monogram on a missing page', () => {
+  let srv: ReturnType<typeof probeServer>;
+  beforeAll(() => {
+    srv = probeServer((lang) => `<script>
+      history.replaceState(null, '', '${lang === 'ru' ? '/ru' : ''}/missing');
+      Object.defineProperty(navigator, 'language', { value: 'en' });
+      // Deliver a repair notification immediately, before the first animation frame.
+      window.Worker = class {
+        postMessage(message) {
+          if (message.type !== 'init') return;
+          const label = document.getElementById('nca-canvas').getAttribute('aria-label');
+          this.onmessage({ data: { type: 'notice' } });
+          setTimeout(() => {
+            const result = document.createElement('pre');
+            result.id = '__probe';
+            result.textContent = JSON.stringify({ label, notice: document.querySelector('.nca-notice').textContent });
+            document.body.append(result);
+          }, 100);
+        }
+      };
+    </script>`);
+  });
+  afterAll(() => srv?.stop());
+  for (const lang of ['en', 'ru'] as const) {
+    test(`the accessible name and first repair announcement use ${lang}`, async () => {
+      expect(await srv.run('/404.html', lang)).toEqual({ label: t(lang).notFound.healLabel, notice: t(lang).nca.regrowing });
+    });
+  }
 });
