@@ -243,6 +243,14 @@ export const en = {
   tab: {
     wait: 'I’ll wait…'
   },
+  // "Gleb now" in the footer (scripts/now.ts): his time and the site's last commit.
+  now: {
+    label: 'Gleb now',
+    time: '{t} in Tbilisi',
+    night: '{t} in Tbilisi, probably asleep',
+    commit: 'last commit {ago}:',
+    justNow: 'just now'
+  },
   // How the visitor came (scripts/arrival.ts): the case QR, LinkedIn, or /hire to the home page.
   arrival: {
     case: 'Looks like we just met. Here is the longer version.',

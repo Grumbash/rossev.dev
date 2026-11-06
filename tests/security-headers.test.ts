@@ -75,8 +75,9 @@ describe('vercel.json sends the security headers on every path', () => {
     for (const v of s) expect(v).toMatch(/^('self'|https:\/\/cloud\.umami\.is|'sha256-[A-Za-z0-9+/]+=*')$/);
   });
 
-  test('Umami Cloud may send its events; nothing else leaves the origin', () => {
-    expect(csp()['connect-src']).toEqual(["'self'", 'https://gateway.umami.is']);
+  // GitHub's API: the footer's "Gleb now" asks it for the last commit (tests/now.test.ts).
+  test('Umami Cloud may send its events, the footer may ask GitHub for the last commit; nothing else leaves the origin', () => {
+    expect(csp()['connect-src']).toEqual(["'self'", 'https://gateway.umami.is', 'https://api.github.com']);
   });
 });
 
