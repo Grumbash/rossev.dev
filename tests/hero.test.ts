@@ -2,14 +2,14 @@
 // how do I book him. The hero card must say that before the fold, in EN and RU.
 // Checks the built output; the layout part drives headless Chrome when it is installed.
 import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CASE_STUDIES, PROFILE } from '../src/data/profile';
 import { buildSite } from './fixtures/build';
+import { CHROME, hasChrome } from './fixtures/probe';
 
 setDefaultTimeout(120_000);
 
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const CV_NAME = 'Gleb_Rosev_Founding_Engineer_CV.pdf';
 
 let html = '';
@@ -116,7 +116,7 @@ describe('contacts are compact', () => {
 // Above the fold on a 375×812 phone: stats and the primary CTA, in EN and RU.
 // Headless Chrome will not make a window narrower than 500px, so the page runs in a
 // 375×812 iframe and the outer page copies the probe result out for --dump-dom.
-describe.skipIf(!existsSync(CHROME))('layout at 375×812', () => {
+describe.skipIf(!hasChrome())('layout at 375×812', () => {
   const PROBE = `<script>(async()=>{
     await document.fonts.ready;
     // Headless virtual time stops producing frames once the page is idle, so a frame may never

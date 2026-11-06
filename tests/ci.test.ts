@@ -402,6 +402,26 @@ describe('.github/workflows/perf.yml', () => {
     expect(readFileSync('scripts/perf-check.ts', 'utf8')).not.toContain('--no-sandbox');
   });
 
+  test('the browser tests run in CI: the userns lift comes before the test step, and every browser test finds Chrome through scripts/chrome.ts', () => {
+    const runs = steps.map((s) => String(s.run ?? ''));
+    const iUserns = runs.findIndex((r) => r.includes('kernel.apparmor_restrict_unprivileged_userns=0'));
+    const iTest = runs.findIndex((r) => /\bbun (run )?test\b/.test(r));
+    expect(iUserns).toBeGreaterThanOrEqual(0);
+    expect(iUserns).toBeLessThan(iTest);
+    expect(readFileSync('scripts/perf-check.ts', 'utf8')).toMatch(/import \{ findChrome \} from '\.\/chrome'/);
+    expect(readFileSync('tests/fixtures/probe.ts', 'utf8')).toContain('findChrome()');
+    for (const f of [...new Bun.Glob('tests/**/*.ts').scanSync('.')].filter((f) => f !== 'tests/ci.test.ts')) {
+      const src = readFileSync(f, 'utf8');
+      // Only the macOS path, and the suite skips every browser test on ubuntu-latest.
+      expect({ f, hardcoded: src.includes('/Applications/Google Chrome.app') }).toEqual({ f, hardcoded: false });
+      expect({ f, noSandbox: src.includes('--no-sandbox') }).toEqual({ f, noSandbox: false });
+    }
+  });
+
+  test('in CI a missing Chrome fails the browser tests instead of silently skipping them', () => {
+    expect(readFileSync('tests/fixtures/probe.ts', 'utf8')).toMatch(/process\.env\.CI[\s\S]{0,200}throw new Error\([^)]*Chrome/);
+  });
+
   test('forks are told apart, runs are bounded and superseded runs cancelled', () => {
     expect(raw).toContain('github.event.pull_request.head.repo.full_name');
     expect(wf.concurrency?.['cancel-in-progress']).toBe(true);
