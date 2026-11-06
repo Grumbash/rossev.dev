@@ -238,11 +238,24 @@ describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
   const pages = { en: '', ru: '' };
   const RAF = `<script>window.__raf=0;window.requestAnimationFrame=(cb)=>{window.__raf++;return setTimeout(()=>cb(performance.now()),16)};
     window.cancelAnimationFrame=(id)=>clearTimeout(id);</script>`;
+  // The page seeds each fresh service from Math.random, and the policy blocks a bad deploy on most
+  // seeds, not all (≥95 of 100 above; about 3% miss after this probe's latency, surge and node_down).
+  // An unpinned seed made "caught" flaky, so every pick pins the seed for its synchronous handler.
+  // SEED is one where the whole sequence passes with the surge run cut after 0 to 3 ticks.
+  const SEED = 1;
   const PROBE = `<script>(async()=>{
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const until = async (f, ms = 15000) => { for (let t = 0; t < ms && !f(); t += 100) await wait(100); return f(); };
     await document.fonts.ready; await wait(2500);
     const card = document.querySelector('.stage-iso-card');
     const $ = (s) => card.querySelector(s);
+    const outcome = () => card.getAttribute('data-outcome');
+    const settled = () => ['caught', 'recovered', 'failed'].includes(outcome());
+    const pick = async (kind) => {
+      $('[data-sim-fault]').click(); await until(() => $('[data-sim-fault]').getAttribute('aria-expanded') === 'true');
+      const random = Math.random; Math.random = () => (${SEED} + 0.5) / 2 ** 31;
+      try { $('[data-sim-fault-kind="' + kind + '"]').click(); } finally { Math.random = random; }
+    };
     const fetched = () => performance.getEntriesByType('resource').map((e) => e.name).filter((n) => n.includes('policy.bin'));
     const snap = () => ({ outcome: card.getAttribute('data-outcome'), action: card.getAttribute('data-policy-action'),
       confidence: card.getAttribute('data-policy-confidence'), label: $('[data-policy-label]')?.textContent.trim() ?? null,
@@ -256,15 +269,15 @@ describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(200);
     out.afterEscape = { expanded: $('[data-sim-fault]').getAttribute('aria-expanded'), focusOnButton: document.activeElement === $('[data-sim-fault]') };
     // A slow dependency picked on its own is judged as a slow dependency, not as a caught deploy.
-    $('[data-sim-fault]').click(); await wait(300); $('[data-sim-fault-kind="latency"]').click(); await wait(8000); out.latency = snap();
+    await pick('latency'); await until(settled); out.latency = snap();
     // Explore pauses the policy run: no outcome lands behind free play.
-    $('[data-sim-fault]').click(); await wait(300); $('[data-sim-fault-kind="surge"]').click(); await wait(600);
-    $('[data-story-explore]').click(); const o0 = card.getAttribute('data-outcome'); await wait(6000);
-    out.exploreHeld = card.getAttribute('data-outcome') === o0; $('[data-story-explore]').click(); await wait(300);
-    const pick = async (kind) => { $('[data-sim-fault]').click(); await wait(200); $('[data-sim-fault-kind="' + kind + '"]').click(); };
-    await pick('node_down'); await wait(1500); out.during = snap(); await wait(6000); out.nodeDown = snap(); out.after = fetched().length;
-    await pick('bad_deploy'); await wait(6000); out.badOn = snap();
-    $('[data-sim-judge]').click(); await wait(200); await pick('bad_deploy'); await wait(9000); out.badOff = snap();
+    await pick('surge'); await wait(600);
+    $('[data-story-explore]').click(); const o0 = outcome(); await wait(6000);
+    out.exploreHeld = outcome() === o0; $('[data-story-explore]').click(); await wait(300);
+    await pick('node_down'); await wait(1500); out.during = snap(); await until(settled); out.nodeDown = snap(); out.after = fetched().length;
+    // The first verdict on a bad deploy decides: caught before merge, or shipped.
+    await pick('bad_deploy'); await until(outcome); out.badOn = snap();
+    $('[data-sim-judge]').click(); await wait(200); await pick('bad_deploy'); await until(outcome); out.badOff = snap();
     out.sw = document.documentElement.scrollWidth;
     const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(out); document.body.appendChild(pre);
   })();</script>`;
