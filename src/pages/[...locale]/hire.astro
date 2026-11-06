@@ -4,6 +4,7 @@
 // (makesOffer), so search and answer engines can say what he can be brought in for.
 import Base from '../../layouts/Base.astro';
 import CaseQr from '../../components/CaseQr.astro';
+import PrintCv from '../../components/PrintCv.astro';
 import { OFFERS, PROFILE } from '../../data/profile';
 import { calUrl } from '../../scripts/analytics';
 import { localeOf, localePath, localeStaticPaths, t } from '../../i18n';
@@ -132,6 +133,7 @@ const jsonLd = {
       </div>
     </div>
   </section>
+  <PrintCv lang={lang} />
 </Base>
 
 <script>

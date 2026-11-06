@@ -1,0 +1,40 @@
+---
+// The one-page CV that Ctrl+P on /hire prints (public/print.css; tests/print.test.ts): the same
+// src/data/profile.ts as the PDF, cut to fit a page: three highlights a role, skills a line a group.
+// `hidden` on screen, so it costs the screen no CSS.
+import { CAPABILITIES, EXPERIENCE, PROFILE } from '../data/profile';
+import { t } from '../i18n';
+
+const { lang } = Astro.props as { lang: 'en' | 'ru' };
+const d = t(lang);
+---
+
+<section class="print-cv" hidden>
+  <h1>{PROFILE.name[lang]}</h1>
+  <p class="pcv-role">{PROFILE.tagline[lang]}</p>
+  <p class="pcv-contacts">
+    {PROFILE.email} · {PROFILE.phone} · {PROFILE.linkedinHandle} · {PROFILE.githubHandle} · rossev.dev · {PROFILE.location[lang]}, {PROFILE.timezone}
+  </p>
+  <p class="pcv-summary">{PROFILE.bioShort[lang]}</p>
+  <h2>{d.print.experience}</h2>
+  {EXPERIENCE.map((e) => (
+    <article>
+      <h3>{e.role[lang]} · {e.company}<span>{e.period[lang]}</span></h3>
+      <ul>{e.highlights[lang].slice(0, 3).map((h) => <li>{h}</li>)}</ul>
+    </article>
+  ))}
+  <h2>{d.print.skills}</h2>
+  <dl>
+    {CAPABILITIES.map((c) => (
+      <div>
+        <dt>{c.title[lang]}</dt>
+        <dd>{c.skills.join(' · ')}</dd>
+      </div>
+    ))}
+    <div>
+      <dt>{d.print.languages}</dt>
+      <dd>{PROFILE.languages.map((l) => l[lang]).join(' · ')}</dd>
+    </div>
+  </dl>
+  <p class="pcv-foot">{d.print.cvFoot}</p>
+</section>

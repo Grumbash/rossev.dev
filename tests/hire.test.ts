@@ -48,7 +48,8 @@ describe('/hire page', () => {
   });
 
   test('shows no prices: the first step is a call', () => {
-    for (const l of ['en', 'ru'] as const) expect(html[l]).not.toMatch(/[$€₽]\s?\d|\d\s?(?:USD|EUR)/);
+    // The print-only CV (tests/print.test.ts) is a CV, not an offer: its "$10M+ in investment" is no price.
+    for (const l of ['en', 'ru'] as const) expect(html[l].replace(/<section[^>]*class="print-cv"[\s\S]*?<\/section>/, '')).not.toMatch(/[$€₽]\s?\d|\d\s?(?:USD|EUR)/);
   });
 
   test('every cal.com link is tagged with the hire placement', () => {

@@ -238,6 +238,13 @@ export const ru: Dict = {
   tab: {
     wait: 'Я подожду…'
   },
+  print: {
+    experience: 'Опыт',
+    skills: 'Навыки',
+    languages: 'Языки',
+    cvFoot: 'Напечатано с rossev.dev/ru/hire · собрано из того же profile.ts, что и PDF-резюме',
+    masthead: 'rossev.dev · тексты'
+  },
   letter: {
     write: 'НАПИСАТЬ ПИСЬМО',
     subject: 'С rossev.dev',

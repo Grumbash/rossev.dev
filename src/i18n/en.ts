@@ -243,6 +243,14 @@ export const en = {
   tab: {
     wait: 'I’ll wait…'
   },
+  // Print (public/print.css): the one-page CV on /hire and a post's newspaper masthead.
+  print: {
+    experience: 'Experience',
+    skills: 'Skills',
+    languages: 'Languages',
+    cvFoot: 'Printed from rossev.dev/hire · compiled from the same profile.ts as the PDF CV',
+    masthead: 'rossev.dev · writing'
+  },
   // The letter on /hire that starts itself from what this browser read (scripts/letter.ts).
   letter: {
     write: 'WRITE ME AN EMAIL',
