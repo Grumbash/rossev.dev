@@ -1,0 +1,59 @@
+/* Print as magic (tests/print.test.ts). Linked with media="print", so the screen never loads it into
+   its rules and the inline CSS budget never sees it. Print-only blocks are `hidden` on screen and
+   shown here: the CV on /hire (components/PrintCv.astro), the masthead on a post. */
+
+@page { margin: 13mm 13mm 15mm; }
+
+html, body { background: #fff !important; color: #000 !important; }
+* { box-shadow: none !important; text-shadow: none !important; }
+body::before, body::after { display: none !important; }
+
+/* Never on paper: the site's chrome and what scripts float over the page. */
+.top-nav, .site-footer, .stage-iso-card, .filter-bar, #brutal-toast, .changes-card, .reading-pill,
+.nca-companion, .quote-bar, .depth-dial, .reader-footer, .brutal-btn, .skip-link { display: none !important; }
+
+.brutal-box { border: 1px solid #000 !important; break-inside: avoid; }
+
+/* ---------- /hire: the one-page CV, and only the CV ---------- */
+body:has(main > .print-cv) > :not(main), body:has(main > .print-cv) main > :not(.print-cv) { display: none !important; }
+.print-cv[hidden] { display: block !important; }
+.print-cv { font: 9.2pt/1.36 var(--font-display); color: #000; }
+.print-cv h1 { font: 800 25pt/1 var(--font-headline); text-transform: uppercase; letter-spacing: -0.01em; margin: 0; }
+.print-cv .pcv-role { font: 700 8.6pt/1.3 var(--font-mono); margin: 4pt 0 2pt; }
+.print-cv .pcv-contacts { font: 8pt/1.3 var(--font-mono); margin: 0 0 6pt; padding-bottom: 6pt; border-bottom: 2.5pt solid #000; }
+.print-cv .pcv-summary { margin: 0 0 6pt; }
+.print-cv h2 { font: 800 9pt/1 var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; margin: 7pt 0 3pt; padding: 2pt 4pt; background: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.print-cv h3 { display: flex; justify-content: space-between; gap: 8pt; font-size: 9.4pt; margin: 5pt 0 1pt; break-after: avoid; }
+.print-cv h3 span { font: 400 8pt var(--font-mono); white-space: nowrap; }
+.print-cv ul { margin: 0; padding-left: 11pt; }
+.print-cv li { margin: 0; }
+.print-cv article { break-inside: avoid; }
+.print-cv dl { margin: 0; }
+.print-cv dl div { display: grid; grid-template-columns: 34% 1fr; gap: 6pt; }
+.print-cv dt { font: 700 7.8pt/1.36 var(--font-mono); text-transform: uppercase; }
+.print-cv dd { margin: 0; }
+.print-cv .pcv-foot { margin-top: 7pt; padding-top: 4pt; border-top: 1pt solid #000; font: 7pt var(--font-mono); }
+
+/* ---------- A post: a brutalist newspaper page ---------- */
+.print-masthead[hidden] { display: block !important; }
+.print-masthead { border-bottom: 4pt solid #000; padding-bottom: 4pt; margin-bottom: 10pt; }
+.print-masthead strong { display: block; font: 800 22pt/1 var(--font-headline); text-transform: uppercase; letter-spacing: -0.02em; white-space: nowrap; }
+.print-masthead span { display: flex; justify-content: space-between; gap: 10pt; margin-top: 4pt; padding-top: 3pt; border-top: 1pt solid #000; font: 7.5pt var(--font-mono); text-transform: uppercase; }
+section .container > a.text-link { display: none !important; }
+.container { max-width: none !important; padding: 0 !important; }
+.section-block { padding: 0 !important; }
+.post-reader-drawer { border: 0 !important; break-inside: auto; }
+.post-reader-drawer > div { padding: 0 !important; }
+.post-reader-drawer .blueprint-header { background: none !important; color: #000 !important; border: 0 !important; border-bottom: 1pt solid #000 !important; padding: 0 0 3pt !important; font-size: 7.5pt !important; }
+.post-reader-drawer h1 { font-size: 26pt !important; line-height: 1.02 !important; text-transform: uppercase; margin: 8pt 0 6pt !important; }
+.post-takeaway { font-size: 11pt !important; font-weight: 600; border-bottom: 1pt solid #000; padding-bottom: 6pt; }
+.post-takeaway + p { background: none !important; color: #000 !important; border-left: 4pt solid #000 !important; font-size: 10pt !important; font-style: italic; }
+.post-reader-drawer .exp-bullets { font-size: 9pt; border: 1pt solid #000; padding: 6pt 6pt 6pt 18pt !important; }
+.post-body { columns: 2; column-gap: 7mm; column-rule: 1px solid #000; font-size: 9.6pt; line-height: 1.42; text-align: justify; hyphens: auto; }
+.post-body > p:first-of-type::first-letter { float: left; font: 800 3.4em/0.82 var(--font-headline); margin: 0.04em 0.08em 0 0; }
+.post-body h2, .post-body h3 { break-after: avoid; text-align: left; font-size: 11pt; text-transform: uppercase; }
+.post-body pre, .post-body figure, .post-body blockquote, .post-body table { break-inside: avoid; }
+.post-body pre { white-space: pre-wrap; font-size: 7.6pt; border: 1px solid #000; }
+.post-body a { color: #000 !important; }
+.post-body a[href^="http"]::after { content: " ⟨" attr(href) "⟩"; font: 7pt var(--font-mono); word-break: break-all; }
+.post-creature { float: right; }

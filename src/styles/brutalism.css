@@ -1790,22 +1790,7 @@ html[data-theme="dark"] .zone-beyond .filter-tab.active {
   }
 }
 
-@media print {
-  .top-nav,
-  .stage-iso-card,
-  .filter-bar {
-    display: none !important;
-  }
-  body {
-    background: #fff !important;
-    color: #000 !important;
-  }
-  .brutal-box {
-    box-shadow: none !important;
-    border: 1px solid #000 !important;
-    break-inside: avoid;
-  }
-}
+/* Print styles live in /print.css (media="print" in Base.astro): none of it is inlined. */
 
 /* The language morph (scripts/lang-morph.ts) melts its blocks itself; the group still moves them. */
 ::view-transition-old(*.lang-morph),::view-transition-new(*.lang-morph){animation:none;mix-blend-mode:normal}

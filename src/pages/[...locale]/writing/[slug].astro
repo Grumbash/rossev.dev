@@ -63,6 +63,11 @@ const jsonLd = {
       </a>
 
       {/* data-quote-*: what the quote bar (scripts/quote.ts) says and shares, in this page's language. */}
+      {/* The newspaper masthead, on paper only (public/print.css). */}
+      <header class="print-masthead" hidden>
+        <strong>{d.print.masthead}</strong>
+        <span><time datetime={post.published}>{post.published}</time>{url.replace('https://', '')}</span>
+      </header>
       <article
         class="brutal-box post-reader-drawer"
         data-quote-title={post.title[lang]}

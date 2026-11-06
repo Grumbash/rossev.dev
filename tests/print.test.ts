@@ -59,7 +59,7 @@ describe.skipIf(!hasChrome())('printed, in Chrome', () => {
     const { data } = await cdp.send('Page.printToPDF', { paperWidth, paperHeight, printBackground: true });
     return (Buffer.from(data, 'base64').toString('latin1').match(/\/Type\s*\/Page(?![s\w])/g) ?? []).length;
   };
-  const shown = (sel: string) => `(() => { const e = document.querySelector('${sel}'); return !!e && getComputedStyle(e).display !== 'none'; })()`;
+  const shown = (sel: string) => `(() => { const e = document.querySelector('${sel}'); return !!e && e.checkVisibility(); })()`;
 
   test('/hire is one page, on A4 and on Letter, in both languages: the CV and nothing else', async () => {
     const r = await withChrome(async (cdp) => {
