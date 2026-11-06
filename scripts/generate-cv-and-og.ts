@@ -1,8 +1,9 @@
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { deflateSync } from 'node:zlib';
 import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, OFFERS, postPath } from '../src/data/profile';
 import { BLOG_POSTS } from '../src/data/posts';
+import { SIDE, creature } from '../src/data/creature';
 
 const ROOT_DIR = resolve(import.meta.dir, '..');
 const PUBLIC_DIR = resolve(ROOT_DIR, 'public');
@@ -544,20 +545,11 @@ const FONT_5X7: Record<string, number[]> = {
   ' ': [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
 };
 
-function generateOgPng(): void {
-  const W = 1200;
-  const H = 630;
+/** A W×H RGB canvas with the two primitives the share images use, and its PNG. */
+function pixelCanvas(W: number, H: number) {
   // Row-major RGB buffer with 1 filter byte per scanline
   const stride = W * 3 + 1;
   const raw = new Uint8Array(stride * H);
-
-  const setPx = (x: number, y: number, r: number, g: number, b: number) => {
-    if (x < 0 || x >= W || y < 0 || y >= H) return;
-    const idx = y * stride + 1 + x * 3;
-    raw[idx] = r;
-    raw[idx + 1] = g;
-    raw[idx + 2] = b;
-  };
 
   const fillRect = (x0: number, y0: number, w: number, h: number, r: number, g: number, b: number) => {
     const xEnd = Math.min(W, x0 + w);
@@ -589,6 +581,24 @@ function generateOgPng(): void {
       curX += 6 * scale;
     }
   };
+
+  const png = () => {
+    const ihdr = Buffer.alloc(13);
+    ihdr.writeUInt32BE(W, 0);
+    ihdr.writeUInt32BE(H, 4);
+    ihdr[8] = 8; // 8-bit depth
+    ihdr[9] = 2; // RGB color type
+    const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+    return Buffer.concat([signature, pngChunk('IHDR', ihdr), pngChunk('IDAT', deflateSync(raw, { level: 9 })), pngChunk('IEND', new Uint8Array(0))]);
+  };
+
+  return { fillRect, drawTextBitmap, png };
+}
+
+function generateOgPng(): void {
+  const W = 1200;
+  const H = 630;
+  const { fillRect, drawTextBitmap, png } = pixelCanvas(W, H);
 
   // 1. Dark Neo-Brutalist canvas background (#0D0E12) + subtle grid
   fillRect(0, 0, W, H, 13, 14, 18);
@@ -641,28 +651,60 @@ function generateOgPng(): void {
   fillRect(88, 486, 980, 44, 13, 14, 18);
   drawTextBitmap('GITHUB.COM/GRUMBASH   |   LINKEDIN.COM/IN/ROSSEV   |   /LLMS.TXT', 108, 501, 2, 200, 255, 0);
 
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(W, 0);
-  ihdr.writeUInt32BE(H, 4);
-  ihdr[8] = 8; // 8-bit depth
-  ihdr[9] = 2; // RGB color type
-  ihdr[10] = 0;
-  ihdr[11] = 0;
-  ihdr[12] = 0;
-
-  const compressed = deflateSync(raw, { level: 9 });
-  const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
-  const pngBuffer = Buffer.concat([
-    signature,
-    pngChunk('IHDR', ihdr),
-    pngChunk('IDAT', compressed),
-    pngChunk('IEND', new Uint8Array(0))
-  ]);
-
-  writeFileSync(resolve(PUBLIC_DIR, 'og-card.png'), pngBuffer);
+  writeFileSync(resolve(PUBLIC_DIR, 'og-card.png'), png());
   console.log('✓ Generated public/og-card.png (1200x630 raster PNG)');
+}
+
+// ============================================================================
+// 4. GENERATE /public/og/<slug>.png: EACH POST'S SHARE PREVIEW, WITH ITS CREATURE
+// ============================================================================
+// Generated, not committed (.gitignore): every build draws them from src/data/creature.ts. The
+// title stays out: the 5x7 font is Latin capitals only, and the share card shows og:title anyway.
+const PALETTE: Record<string, [number, number, number]> = {
+  lime: [200, 255, 0],
+  yellow: [255, 214, 0],
+  cyan: [0, 229, 255],
+  orange: [255, 85, 0],
+  pink: [255, 51, 133],
+  purple: [179, 136, 255],
+};
+
+function generatePostOgPngs(): void {
+  const dir = resolve(PUBLIC_DIR, 'og');
+  mkdirSync(dir, { recursive: true });
+  for (const post of BLOG_POSTS) {
+    const { fillRect, drawTextBitmap, png } = pixelCanvas(1200, 630);
+    const [r, g, b] = PALETTE[post.color.match(/--([\w-]+)/)?.[1] ?? 'lime'] ?? PALETTE.lime;
+    // The site's dark grid and a paper card with a hard shadow in the post's colour, as og-card.png.
+    fillRect(0, 0, 1200, 630, 13, 14, 18);
+    for (let gx = 0; gx < 1200; gx += 40) fillRect(gx, 0, 1, 630, 24, 26, 34);
+    for (let gy = 0; gy < 630; gy += 40) fillRect(0, gy, 1200, 1, 24, 26, 34);
+    fillRect(58, 58, 1096, 526, r, g, b);
+    fillRect(44, 44, 1096, 526, 10, 10, 10);
+    fillRect(50, 50, 1084, 514, 244, 240, 234);
+    // The creature, 36 px a cell, with its own hard shadow.
+    const c = creature(post.slug);
+    const CELL = 36;
+    const [ox, oy] = [104, 118];
+    c.body.forEach((on, i) => on && fillRect(ox + (i % SIDE) * CELL + 9, oy + Math.floor(i / SIDE) * CELL + 9, CELL, CELL, 10, 10, 10));
+    c.body.forEach((on, i) => {
+      if (!on) return;
+      const eye = c.eyes.includes(i);
+      fillRect(ox + (i % SIDE) * CELL, oy + Math.floor(i / SIDE) * CELL, CELL, CELL, eye ? 10 : r, eye ? 10 : g, eye ? 10 : b);
+    });
+    // Who and where.
+    fillRect(560, 150, 6 * 6 * 'WRITING'.length + 24, 52, 10, 10, 10);
+    drawTextBitmap('WRITING', 572, 158, 6, r, g, b);
+    drawTextBitmap('GLEB', 560, 236, 12, 10, 10, 10);
+    drawTextBitmap('ROSEV', 560, 336, 12, 10, 10, 10);
+    drawTextBitmap(post.categoryLabel.en, 560, 448, 4, 10, 10, 10);
+    drawTextBitmap('ROSSEV.DEV/WRITING', 560, 500, 3, 60, 60, 60);
+    writeFileSync(resolve(dir, `${post.slug}.png`), png());
+  }
+  console.log(`✓ Generated public/og/<slug>.png for ${BLOG_POSTS.length} posts`);
 }
 
 generateLlmsTxt();
 generatePdfCv();
 generateOgPng();
+generatePostOgPngs();

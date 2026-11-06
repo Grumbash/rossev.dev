@@ -5,6 +5,7 @@
 // The words, the title and the url are data-quote-* on the post's <article>, rendered in the page's
 // language; the language morph updates them like any attribute, so nothing here tracks the language.
 import { track } from './analytics';
+import { SIDE, creature } from '../data/creature';
 
 export const CARD = {
   w: 1080,
@@ -67,14 +68,14 @@ export function fitQuote(text: string, measure: (s: string, px: number) => numbe
 
 const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
-async function drawCard(text: string, title: string, url: string): Promise<Blob | null> {
+async function drawCard(text: string, title: string, url: string, slug: string, color: string): Promise<Blob | null> {
   const display = cssVar('--font-display') || 'sans-serif';
   const headline = cssVar('--font-headline') || display;
   const mono = cssVar('--font-mono') || 'monospace';
   // The web fonts load by what they are asked to draw: Cyrillic pulls in the Cyrillic faces.
   await Promise.all([
     document.fonts.load(`600 64px ${display}`, text),
-    document.fonts.load(`800 48px ${headline}`, 'GR'),
+    document.fonts.load(`800 180px ${headline}`, '“'),
     document.fonts.load(`700 30px ${mono}`, title + url),
   ]).catch(() => {});
 
@@ -94,21 +95,20 @@ async function drawCard(text: string, title: string, url: string): Promise<Blob 
   ctx.lineWidth = 8;
   ctx.strokeRect(36, 36, CARD.w - 72, CARD.h - 72);
 
-  // The brand: the lime GR badge and the name, as in the site's top bar.
-  ctx.fillStyle = LIME;
-  ctx.fillRect(pad, pad, 96, 96);
-  ctx.fillStyle = INK;
-  // Syne is wide: the size that keeps GR inside the badge.
-  let gr = 48;
-  do ctx.font = `800 ${gr}px ${headline}`;
-  while (ctx.measureText('GR').width > 68 && (gr -= 2) > 20);
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('GR', pad + 48, pad + 50);
-  ctx.textAlign = 'left';
+  // The post's creature (src/data/creature.ts) where the site's bar has its badge; on the dark card
+  // its eyes are the card showing through.
+  const beast = creature(slug);
+  const CELL = 9;
+  beast.body.forEach((on, i) => {
+    if (!on) return;
+    const [x, y] = [pad + (i % SIDE) * CELL, pad + Math.floor(i / SIDE) * CELL];
+    ctx.fillStyle = beast.eyes.includes(i) ? INK : color;
+    ctx.fillRect(x, y, CELL, CELL);
+  });
   ctx.fillStyle = PAPER;
   ctx.font = `700 34px ${mono}`;
-  ctx.fillText('GLEB ROSEV', pad + 124, pad + 50);
+  ctx.textBaseline = 'middle';
+  ctx.fillText('GLEB ROSEV', pad + SIDE * CELL + 28, pad + (SIDE * CELL) / 2);
 
   const quote = fitQuote(text, (s, px) => {
     ctx.font = `600 ${px}px ${display}`;
@@ -220,7 +220,12 @@ export function initQuote() {
   cardBtn.addEventListener('click', async () => {
     if (!current) return;
     const { quoteTitle: title, quoteUrl: url, quoteSlug: slug } = data();
-    const blob = await drawCard(current.text, title, url);
+    // The post's colour, from its var(--…), as the canvas needs it.
+    const probe = document.body.appendChild(document.createElement('span'));
+    probe.style.color = article.dataset.quoteColor ?? 'var(--lime)';
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    const blob = await drawCard(current.text, title, url, slug, color);
     if (!blob) return;
     track('quote_share', { kind: 'card' });
     const file = new File([blob], `rossev-${slug}-quote.png`, { type: 'image/png' });

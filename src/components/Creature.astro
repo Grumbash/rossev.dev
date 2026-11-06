@@ -1,0 +1,36 @@
+---
+// A post's creature (src/data/creature.ts) as inline SVG, one unit per cell, in the post's colour
+// with a hard ink shadow like the site's boxes. `grow`: every cell is its own group (its shadow and
+// itself) carrying its growth step (--step), and the post page animates it outward from the middle,
+// shadow and all; otherwise the body is one compact path, small enough for 47 cards on /writing/.
+// crispEdges: no seams between cells for the shadow to show through. Decorative: aria-hidden.
+import { SIDE, creature, creaturePaths } from '../data/creature';
+
+interface Props {
+  slug: string;
+  color: string;
+  size: number;
+  grow?: boolean;
+}
+
+const { slug, color, size, grow = false } = Astro.props;
+const c = creature(slug);
+const { body, eyes } = creaturePaths(c);
+const cells = c.body.flatMap((on, i) => (on ? [{ x: i % SIDE, y: Math.floor(i / SIDE), step: c.order[i], eye: c.eyes.includes(i) }] : []));
+const attrs = grow ? { 'data-creature-grow': slug } : { 'data-creature': slug };
+---
+
+<svg class:list={['creature', { 'creature-grow': grow }]} {...attrs} viewBox={`0 0 ${SIDE + 0.5} ${SIDE + 0.5}`} width={size} height={size} shape-rendering="crispEdges" aria-hidden="true" style={`color: ${color}`}>
+  {grow ? (
+    <>
+      {cells.map((cell) => <rect x={cell.x + 0.5} y={cell.y + 0.5} width="1" height="1" fill="var(--ink)" class="shadow" style={`--step: ${cell.step}`} />)}
+      {cells.map((cell) => <rect x={cell.x} y={cell.y} width="1" height="1" fill={cell.eye ? 'var(--ink)' : 'currentColor'} style={`--step: ${cell.step}`} />)}
+    </>
+  ) : (
+    <>
+      <path d={body + eyes} fill="var(--ink)" transform="translate(.5 .5)" />
+      <path d={body} fill="currentColor" />
+      <path d={eyes} fill="var(--ink)" />
+    </>
+  )}
+</svg>

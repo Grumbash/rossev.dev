@@ -32,3 +32,6 @@ dist/
 
 # Local notes and drafts, never part of the site
 /docs/
+
+# Share previews per post, drawn on every build (scripts/generate-cv-and-og.ts)
+public/og/

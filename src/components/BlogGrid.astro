@@ -1,6 +1,7 @@
 ---
 import { cardReadTime, postPath, type BlogPost } from '../data/profile';
 import { localePath, t, type Locale } from '../i18n';
+import Creature from './Creature.astro';
 
 interface Props {
   posts: BlogPost[];
@@ -19,7 +20,11 @@ const d = t(lang);
     <article class="brutal-box post-card" data-slug={post.slug}>
       <div>
         <div class="post-top">
-          <span class="label">{post.categoryLabel[lang]}</span>
+          {/* The creature and the category sit together on the left; the date or read time stays right. */}
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <Creature slug={post.slug} color={post.color} size={28} />
+            <span class="label">{post.categoryLabel[lang]}</span>
+          </span>
           <span class="post-stats">{cardReadTime(post)[lang]}</span>
         </div>
 
