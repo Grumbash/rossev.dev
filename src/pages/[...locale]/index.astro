@@ -780,8 +780,10 @@ const jsonLd = {
       import { initTopologyReplay } from '../../scripts/topology-replay';
       import { initCaseLoader } from '../../scripts/case-loader';
       import { initHome } from '../../scripts/home';
+      import { initReadingList } from '../../scripts/reading';
       initHome();
       initCaseLoader();
+      initReadingList();
       document.addEventListener('DOMContentLoaded', () => {
         initTopologyReplay();
       });

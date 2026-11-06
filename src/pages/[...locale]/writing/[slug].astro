@@ -67,6 +67,8 @@ const jsonLd = {
         data-quote-card={d.quote.card}
         data-quote-link={d.quote.link}
         data-quote-copied={d.quote.copied}
+        data-reading-continue={d.reading.continue}
+        data-reading-here={d.reading.here}
       >
         <div class="blueprint-header">
           <span>{d.reader.header} {post.categoryLabel[lang]} · {readTime[lang]}</span>
@@ -91,13 +93,46 @@ const jsonLd = {
     <script>
       import { initDepth } from '../../../scripts/depth';
       import { initQuote } from '../../../scripts/quote';
+      import { initReading } from '../../../scripts/reading';
       initDepth();
       initQuote();
+      initReading();
     </script>
   </Fragment>
 </Base>
 
 <style>
+  /* Where the reader stopped (scripts/reading.ts): the offer at the bottom, the mark on the paragraph. */
+  :global(.reading-pill) {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    z-index: 55;
+    padding: 10px 16px;
+    background: var(--lime);
+    color: #0a0a0a;
+    border: var(--border-w) solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  :global(.reading-pill[hidden]) {
+    display: none;
+  }
+  .post-reader-drawer :global(.post-body > [data-reading-mark]) {
+    position: relative;
+    box-shadow: -14px 0 0 var(--lime);
+    transition: box-shadow 0.6s;
+  }
+  .post-reader-drawer :global(.post-body > [data-reading-mark])::before {
+    content: attr(data-reading-mark);
+    position: absolute;
+    top: -1.6em;
+    left: 0;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--ink-muted);
+  }
   /* The quote bar over a selected passage, made by scripts/quote.ts at the end of <body>. */
   :global(.quote-bar) {
     position: absolute;

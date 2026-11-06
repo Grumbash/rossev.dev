@@ -22,9 +22,10 @@ const posts = [...BLOG_POSTS].sort((a, b) => b.published.localeCompare(a.publish
         </div>
       </div>
 
-      <div class="posts-grid">
+      {/* data-reading-*: the words on read and started cards (scripts/reading.ts), in this page's language. */}
+      <div class="posts-grid" data-reading-read={d.reading.read} data-reading-part={d.reading.part}>
         {posts.map((post) => (
-          <article class="brutal-box post-card">
+          <article class="brutal-box post-card" data-slug={post.slug}>
             <div>
               <div class="post-top">
                 <span class="label">{post.categoryLabel[lang]}</span>
@@ -42,6 +43,15 @@ const posts = [...BLOG_POSTS].sort((a, b) => b.published.localeCompare(a.publish
           </article>
         ))}
       </div>
+      <p data-reading-note hidden style="margin-top: 22px; font-size: 0.85rem; color: var(--ink-muted);">
+        {d.reading.note} <button type="button" class="text-link" data-reading-forget style="background: none; border: 0; padding: 0; cursor: pointer; font: inherit;">{d.reading.forget}</button>
+      </p>
     </div>
   </section>
+  <Fragment slot="scripts">
+    <script>
+      import { initReadingList } from '../../../scripts/reading';
+      initReadingList();
+    </script>
+  </Fragment>
 </Base>
