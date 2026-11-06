@@ -233,6 +233,11 @@ export const ru: Dict = {
     readBriefLink: 'Читать конспект →',
     allWriting: '← Все заметки'
   },
+  quote: {
+    card: 'КАРТОЧКА',
+    link: 'ССЫЛКА СЮДА',
+    copied: 'ССЫЛКА НА ЭТО МЕСТО СКОПИРОВАНА'
+  },
   depth: {
     label: 'НАПИСАНО ДЛЯ:',
     plain: 'ЛЮДЕЙ',

@@ -237,6 +237,12 @@ export const en = {
     allWriting: '← All writing'
   },
   // The depth dial on a technical post: the same post in plain language or as written.
+  // The bar over a passage selected on a post page (scripts/quote.ts).
+  quote: {
+    card: 'QUOTE CARD',
+    link: 'LINK TO HERE',
+    copied: 'LINK TO THIS PASSAGE COPIED'
+  },
   depth: {
     label: 'WRITTEN FOR:',
     plain: 'PEOPLE',

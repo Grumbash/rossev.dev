@@ -126,6 +126,8 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const report = (o) => { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(o); document.body.appendChild(pre); };
     // Waits on what the page shows, never on a fixed time: a slow chunk load cannot race the check.
     await until(() => !document.querySelector('[data-depth-dial]').hidden);
+    // A link to a passage of the plain version: ?depth=plain opens it, the stored choice untouched.
+    if ('${mode}' === 'asked') return report({ load: snap(), stored: localStorage.getItem('rosev_depth') });
     // A visitor who picked "for people" before: stored, then a fresh load of a post page.
     if ('${mode}' === 'remembered') {
       if (!sessionStorage.getItem('reloaded')) { sessionStorage.setItem('reloaded', '1'); localStorage.setItem('rosev_depth', 'plain'); return location.reload(); }
@@ -168,6 +170,12 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.stored).toBe('plain');
     expect(r.ru).toMatchObject({ lang: 'ru', pressed: 'plain', body: plainStart('ru'), marker: true });
     expect(r.back).toMatchObject({ pressed: 'engineers', body: bodyStart('ru'), marker: true });
+  });
+
+  test('a shared link to the plain version opens it, and does not change the visitor\'s choice', async () => {
+    const r = await srv.run(`/writing/${POST}/?depth=plain`, 'asked');
+    expect(r.load).toMatchObject({ pressed: 'plain', body: plainStart('en') });
+    expect(r.stored).toBeNull();
   });
 
   test('the choice is remembered: a visitor who picked "for people" gets it on the next post page', async () => {

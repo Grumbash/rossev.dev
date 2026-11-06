@@ -23,7 +23,10 @@ export function initDepth() {
   try {
     stored = localStorage.getItem(KEY);
   } catch {}
-  if (stored === 'plain') {
+  // A link to a passage of the plain version (scripts/quote.ts) opens that version, without
+  // changing what this visitor chose before.
+  const asked = new URLSearchParams(window.location.search).get('depth');
+  if ((asked ?? stored) === 'plain') {
     body.innerHTML = plain();
     show('plain');
   }
