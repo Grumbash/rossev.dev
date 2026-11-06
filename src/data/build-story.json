@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-05T22:31:19.972Z",
-  "throughSha": "34fe7c3b2bfe835fd4cfb61b74c511170d9eb5bb",
+  "generatedAt": "2026-11-06T15:50:06.252Z",
+  "throughSha": "50a707380c5985c3591e2101711412d179c84385",
   "prs": [
     {
       "number": 1,
@@ -2397,6 +2397,270 @@
           "subject": "Backlinks are pinned: every post address ever published, /writing/<slug>/ and /ru/writing/<slug>/, must still exist; new posts only add to the list",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/92739c848491d1b29358de2295c0a3e09d301e6c"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 65,
+      "title": "EN↔RU morphs the page in place instead of reloading it",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/65",
+      "mergedAt": "2026-11-05T22:51:35Z",
+      "additions": 454,
+      "deletions": 4,
+      "changedFiles": 6,
+      "redTest": {
+        "sha": "50805a83a9d82bf09038318d2ad85da3e5db5efb",
+        "subject": "Red test: the language link morphs the page into its other-language twin in place, keeps the paragraph being read where it was, Back morphs it back, and a page whose structure changed falls back to a navigation; every EN page and its RU twin share one structure outside the swapped regions",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/50805a83a9d82bf09038318d2ad85da3e5db5efb"
+      },
+      "commits": [
+        {
+          "sha": "50805a83a9d82bf09038318d2ad85da3e5db5efb",
+          "subject": "Red test: the language link morphs the page into its other-language twin in place, keeps the paragraph being read where it was, Back morphs it back, and a page whose structure changed falls back to a navigation; every EN page and its RU twin share one structure outside the swapped regions",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/50805a83a9d82bf09038318d2ad85da3e5db5efb"
+        },
+        {
+          "sha": "c9b6bd41708b4e29fc8fa04f728952847932d5ab",
+          "subject": "EN↔RU morphs the page in place: the language link fetches the other-language twin and changes text and links where they stand, swaps the post body and the switch whole, melts each changed block in a top-to-bottom wave, keeps the paragraph being read on the reading line, follows Back and Forward, and falls back to a navigation on anything unexpected; the PR #11 replay follows the language",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c9b6bd41708b4e29fc8fa04f728952847932d5ab"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 67,
+      "title": "A depth dial on technical posts: written for people or for engineers",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/67",
+      "mergedAt": "2026-11-06T11:57:51Z",
+      "additions": 476,
+      "deletions": 126,
+      "changedFiles": 20,
+      "redTest": {
+        "sha": "45ec1c981211808932e5b9305bdbc28b7ca2fab8",
+        "subject": "Red test: a depth dial on the technical posts morphs the post into its plain-language version in place and back, keeps the paragraph being read, follows the language switch and the next visit; a post opts in with depth: true in its .md front matter or a plain version in its json",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/45ec1c981211808932e5b9305bdbc28b7ca2fab8"
+      },
+      "commits": [
+        {
+          "sha": "45ec1c981211808932e5b9305bdbc28b7ca2fab8",
+          "subject": "Red test: a depth dial on the technical posts morphs the post into its plain-language version in place and back, keeps the paragraph being read, follows the language switch and the next visit; a post opts in with depth: true in its .md front matter or a plain version in its json",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/45ec1c981211808932e5b9305bdbc28b7ca2fab8"
+        },
+        {
+          "sha": "db512c7d281ba90cd0c0466c5692689245824431",
+          "subject": "A depth dial on the three technical posts: \"written for people\" melts the post into its plain-language version in place and \"engineers\" back, with the paragraph being read kept still, the choice held across the language switch and visits; a post opts in with depth: true in its .md or a plain version in its json, the entry check and the writing run know the field, depth_switch is a funnel event",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/db512c7d281ba90cd0c0466c5692689245824431"
+        },
+        {
+          "sha": "048a341bb446c01b64b59e3b9a1bba5a2c59f090",
+          "subject": "Review fixes to the plain versions: the benchmark opens with the brace in { db } and keeps the one failure whose raw answer was never saved; the monogram waits before the stick, owns the round-hole training and measures where healing stops; the topology asks about Three.js, works the 100-pixel example and answers it at the end; the full benchmark post's closing count is right (one of the two models, not a third)",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/048a341bb446c01b64b59e3b9a1bba5a2c59f090"
+        },
+        {
+          "sha": "560b548c69a6a2ff65764055f126160a88f93cf0",
+          "subject": "The monogram's first lesson in one sentence, as Gleb put it: I asked people to drag the cursor through the logo, and trained the model on round holes",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/560b548c69a6a2ff65764055f126160a88f93cf0"
+        },
+        {
+          "sha": "f07082f7e45dcba58040e5468fcbca2ed0999ee1",
+          "subject": "The browser tests wait for what the page shows, not for a fixed time: the dial and the language morph are checked once the text has changed and the melt is over, so a slow chunk load cannot race the check",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f07082f7e45dcba58040e5468fcbca2ed0999ee1"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 68,
+      "title": "Share a quote from a post: a card, a link to the passage, and attribution on copy",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/68",
+      "mergedAt": "2026-11-06T12:18:11Z",
+      "additions": 483,
+      "deletions": 2,
+      "changedFiles": 9,
+      "redTest": {
+        "sha": "98dda5ca0728ae5eef3d678698b7b1bf531b3593",
+        "subject": "Red test: on a post page a selected passage gets a bar with a quote card (1080×1350 PNG) and a link to that passage as a text fragment, a copied passage pastes with the post title and that link, and the bar's words follow the language morph",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/98dda5ca0728ae5eef3d678698b7b1bf531b3593"
+      },
+      "commits": [
+        {
+          "sha": "98dda5ca0728ae5eef3d678698b7b1bf531b3593",
+          "subject": "Red test: on a post page a selected passage gets a bar with a quote card (1080×1350 PNG) and a link to that passage as a text fragment, a copied passage pastes with the post title and that link, and the bar's words follow the language morph",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/98dda5ca0728ae5eef3d678698b7b1bf531b3593"
+        },
+        {
+          "sha": "4d5a5bd419ea09329180e6daffeec3094467ded8",
+          "subject": "Share a quote from a post: a selected passage gets a bar with a quote card (a 1080×1350 image in the site's style, shared or downloaded) and a link to that passage as a text fragment; a copied passage pastes with the post title and that link; a passage of the plain version links with ?depth=plain, which opens that version; quote_share is a funnel event",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4d5a5bd419ea09329180e6daffeec3094467ded8"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 70,
+      "title": "Pin the toy service seed in the policy take-over probe",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/70",
+      "mergedAt": "2026-11-06T12:50:31Z",
+      "additions": 21,
+      "deletions": 8,
+      "changedFiles": 1,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "53b28289d64d9e762a681f60be70906394f64f70",
+          "subject": "Pin the toy service seed in the policy take-over probe",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/53b28289d64d9e762a681f60be70906394f64f70"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 69,
+      "title": "No page loads between pages: view transitions and hover prefetch",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/69",
+      "mergedAt": "2026-11-06T12:50:51Z",
+      "additions": 204,
+      "deletions": 5,
+      "changedFiles": 9,
+      "redTest": {
+        "sha": "83f81ac1b53ec4ac590bf557b5cf0d6ce355c1a8",
+        "subject": "Red test: every page opts into cross-document view transitions (not under reduced motion), the top bar stays put, a post title on /writing/ and in the inline brief flies into the post heading, home cards stay unnamed, and hovering a site link prefetches it with speculation rules, never prerender",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/83f81ac1b53ec4ac590bf557b5cf0d6ce355c1a8"
+      },
+      "commits": [
+        {
+          "sha": "83f81ac1b53ec4ac590bf557b5cf0d6ce355c1a8",
+          "subject": "Red test: every page opts into cross-document view transitions (not under reduced motion), the top bar stays put, a post title on /writing/ and in the inline brief flies into the post heading, home cards stay unnamed, and hovering a site link prefetches it with speculation rules, never prerender",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/83f81ac1b53ec4ac590bf557b5cf0d6ce355c1a8"
+        },
+        {
+          "sha": "4916b3bf05d29abd88a6340e647f83d0907dafde",
+          "subject": "No page loads between pages: every page opts into cross-document view transitions (not under reduced motion), the top bar stays put, the clicked card's title on /writing/ and the inline brief heading fly into the post heading, and hovering a site link prefetches its page with speculation rules (hash in the CSP), never prerender, so Umami counts no view nobody made",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4916b3bf05d29abd88a6340e647f83d0907dafde"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 71,
+      "title": "The theme follows the system, and switching it is a light switch",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/71",
+      "mergedAt": "2026-11-06T13:22:31Z",
+      "additions": 367,
+      "deletions": 75,
+      "changedFiles": 15,
+      "redTest": {
+        "sha": "22f3e77750936c34f1744313defbead081443ea5",
+        "subject": "Red test: the theme follows the system until the visitor picks one, the button walks auto, the other theme, the same theme, auto, with the mode as its label, and a switch spreads the new theme in a circle from the press (instant under reduced motion)",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/22f3e77750936c34f1744313defbead081443ea5"
+      },
+      "commits": [
+        {
+          "sha": "22f3e77750936c34f1744313defbead081443ea5",
+          "subject": "Red test: the theme follows the system until the visitor picks one, the button walks auto, the other theme, the same theme, auto, with the mode as its label, and a switch spreads the new theme in a circle from the press (instant under reduced motion)",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/22f3e77750936c34f1744313defbead081443ea5"
+        },
+        {
+          "sha": "1f50f3ebdb38779cccbfca04a79bc35dc8c9989c",
+          "subject": "The theme follows the system until the visitor picks one: the button walks auto, the other theme, the same theme, auto, labelled with the mode, and follows the system live in auto; a press is a light switch, the new theme spreading in a circle from the press (instant under reduced motion); theme_switch reports the mode; the real-Chrome harness is shared in tests/fixtures/cdp.ts",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1f50f3ebdb38779cccbfca04a79bc35dc8c9989c"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 74,
+      "title": "Browser tests run in CI: one Chrome lookup for Linux and macOS",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/74",
+      "mergedAt": "2026-11-06T15:44:24Z",
+      "additions": 79,
+      "deletions": 34,
+      "changedFiles": 9,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "e5c61a3c4e9c6492159aacabbbecd07a755c76ea",
+          "subject": "Browser tests find Chrome on Linux too, so CI runs them",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e5c61a3c4e9c6492159aacabbbecd07a755c76ea"
+        },
+        {
+          "sha": "553fda282e269043e0ca4d9554ac452760bf62c2",
+          "subject": "Drop a temp i18n fixture committed by accident",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/553fda282e269043e0ca4d9554ac452760bf62c2"
+        },
+        {
+          "sha": "13185f28a6f565314f4d8afb10554684ca6bd4d5",
+          "subject": "CI installs poppler-utils, so the CV margin check runs there too",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/13185f28a6f565314f4d8afb10554684ca6bd4d5"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 73,
+      "title": "The site remembers what you read, in this browser only",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/73",
+      "mergedAt": "2026-11-06T15:45:17Z",
+      "additions": 388,
+      "deletions": 4,
+      "changedFiles": 8,
+      "redTest": {
+        "sha": "ad59052202e7134bf0551061af3bf9e75277385d",
+        "subject": "Red test: a post page remembers how far it was read, coming back offers to continue at that paragraph without moving the page, lists tag read and started posts, /writing/ offers to forget it, and none of it reaches analytics",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/ad59052202e7134bf0551061af3bf9e75277385d"
+      },
+      "commits": [
+        {
+          "sha": "ad59052202e7134bf0551061af3bf9e75277385d",
+          "subject": "Red test: a post page remembers how far it was read, coming back offers to continue at that paragraph without moving the page, lists tag read and started posts, /writing/ offers to forget it, and none of it reaches analytics",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ad59052202e7134bf0551061af3bf9e75277385d"
+        },
+        {
+          "sha": "1b5c434c21642041aa2ba9a246b9ce8db7f4278b",
+          "subject": "The site remembers what you read, in this browser only: a post page records how far it was read, coming back to a post started but not finished offers to continue and takes the reader to that paragraph without the page moving on its own, lists tag read and started cards, and /writing/ offers to forget it",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1b5c434c21642041aa2ba9a246b9ce8db7f4278b"
+        },
+        {
+          "sha": "114e1f78ed9301f45704987770151e9b61422c84",
+          "subject": "Merge remote-tracking branch 'origin/main' into reading-memory",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/114e1f78ed9301f45704987770151e9b61422c84"
         }
       ],
       "findings": [],
