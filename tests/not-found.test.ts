@@ -85,7 +85,7 @@ describe('suggested page', () => {
     for (const p of ['/completely-unrelated-thing', '/wp-admin/setup.php', '/x/y/z/q']) expect(suggestPath(p, ROUTES)).toBeNull();
   });
 
-  test('/routes.json lists exactly the pages the build emitted, except fragments, /booked and the /c card', () => {
+  test('/routes.json lists exactly the pages the build emitted, except fragments, /booked, the /c card and the offline page', () => {
     const pages: string[] = [];
     const walk = (dir: string) => {
       for (const e of readdirSync(dir, { withFileTypes: true })) {
@@ -95,7 +95,7 @@ describe('suggested page', () => {
       }
     };
     walk('dist');
-    const want = pages.filter((p) => !/\/partials\/|^(\/ru)?\/(booked|c)\/$/.test(p)).sort();
+    const want = pages.filter((p) => !/\/partials\/|^(\/ru)?\/(booked|c|offline)\/$/.test(p)).sort();
     const routes: string[] = JSON.parse(readFileSync('dist/routes.json', 'utf8'));
     expect([...routes].sort()).toEqual(want);
     expect(routes).toContain('/hire/');

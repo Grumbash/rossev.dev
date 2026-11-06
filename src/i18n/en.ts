@@ -240,6 +240,15 @@ export const en = {
     allWriting: '← All writing'
   },
   // The depth dial on a technical post: the same post in plain language or as written.
+  // Offline (src/sw/sw.ts, scripts/offline.ts): the page for a page not stored yet, and the toast.
+  offline: {
+    kicker: 'Offline',
+    title: 'No network right now',
+    lead: 'These posts are already in this browser and open without it:',
+    empty: 'Nothing here yet. Open a post while you are online, and it stays with you.',
+    home: '← Home',
+    toast: 'NO NETWORK: SHOWING WHAT IS SAVED'
+  },
   // What the site remembers of your reading, in this browser only (scripts/reading.ts).
   reading: {
     continue: 'YOU STOPPED AT {n}% ↓',

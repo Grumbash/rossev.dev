@@ -1,0 +1,37 @@
+---
+// The service worker's page for a page this browser has not stored yet, while the network is gone
+// (src/sw/sw.ts). It lists the posts that are stored and open offline (src/scripts/offline.ts).
+// Precached in both languages on the first visit; noindex, and out of the sitemap and routes.json.
+import Base from '../../layouts/Base.astro';
+import { localeOf, localeParams, localePath, t } from '../../i18n';
+
+export function getStaticPaths() {
+  return localeParams().map((params) => ({ params }));
+}
+
+const lang = localeOf(Astro.params.locale);
+const d = t(lang);
+---
+
+<Base title={`${d.offline.title} — ${d.meta.name}`} description={d.offline.lead} cta={false}>
+  <meta slot="head" name="robots" content="noindex" />
+  <section class="section-block">
+    <div class="container" style="max-width: 860px;">
+      <span class="section-kicker">{d.offline.kicker}</span>
+      <h1 class="section-title">{d.offline.title}</h1>
+      <p style="margin: 14px 0 18px;">{d.offline.lead}</p>
+      <ul class="exp-bullets" data-offline-list></ul>
+      <p data-offline-empty style="color: var(--ink-muted);">{d.offline.empty}</p>
+      <p style="margin-top: 22px; display: flex; gap: 18px; flex-wrap: wrap;">
+        <a class="text-link" href={localePath(lang, '/')}>{d.offline.home}</a>
+        <a class="text-link" href={localePath(lang, '/writing/')}>{d.writing.allWriting}</a>
+      </p>
+    </div>
+  </section>
+  <Fragment slot="scripts">
+    <script>
+      import { initOfflinePage } from '../../scripts/offline';
+      initOfflinePage();
+    </script>
+  </Fragment>
+</Base>

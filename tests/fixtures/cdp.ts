@@ -8,6 +8,8 @@ import { CHROME } from './probe';
 
 export type Cdp = {
   origin: string;
+  /** Take the site down: the network is gone, as far as the page can tell. */
+  stopServer: () => void;
   send: (method: string, params?: object) => Promise<any>;
   evaluate: (expression: string) => Promise<any>;
   /** Protocol events, as they arrive. */
@@ -47,7 +49,7 @@ export async function withChrome<T>(run: (cdp: Cdp) => Promise<T>): Promise<T> {
     };
     const send = (method: string, params: object = {}) => new Promise<any>((r) => (pending.set(++id, r), socket.send(JSON.stringify({ id, method, params }))));
     const evaluate = async (expression: string) => (await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true })).result?.value;
-    return await run({ origin: `http://localhost:${server.port}`, send, evaluate, on: (h) => handlers.push(h) });
+    return await run({ origin: `http://localhost:${server.port}`, stopServer: () => server.stop(true), send, evaluate, on: (h) => handlers.push(h) });
   } finally {
     ws?.close();
     chrome.kill();
