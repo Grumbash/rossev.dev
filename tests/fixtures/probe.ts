@@ -2,12 +2,17 @@
 // a probe script injected into the page loaded with ?probe=<mode>. The probe appends
 // <pre id="__probe">JSON</pre>; the frame copies it out for --dump-dom. Pages the probe page
 // fetches or navigates to are served untouched, unless they too carry ?probe=.
-import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect } from 'bun:test';
+import { findChrome } from '../../scripts/chrome';
 
-export const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-export const hasChrome = () => existsSync(CHROME);
+/** The Chrome binary, or '' when there is none (browser tests then skip). */
+export const CHROME = findChrome() ?? '';
+// Locally the browser tests skip without Chrome; in CI that would pass with nothing checked.
+export const hasChrome = () => {
+  if (!CHROME && process.env.CI) throw new Error('No Chrome found in CI: set CHROME_PATH or install google-chrome');
+  return CHROME !== '';
+};
 
 const FRAME = (path: string, mode: string) => `<!doctype html><body style="margin:0">
   <iframe src="${path}${path.includes('?') ? '&' : '?'}probe=${mode}" width="1280" height="900" style="border:0;display:block"></iframe>

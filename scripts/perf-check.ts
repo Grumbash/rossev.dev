@@ -12,6 +12,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync
 import { createServer } from 'node:net';
 import { dirname, join, resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
+import { findChrome } from './chrome';
 
 export type ByteBudgets = {
   htmlGzip: number;
@@ -191,22 +192,6 @@ async function waitFor(url: string, ms = 30_000) {
     await new Promise((r) => setTimeout(r, 250));
   }
   throw new Error(`astro preview did not answer at ${url} within ${ms}ms`);
-}
-
-function findChrome(): string | null {
-  if (process.env.CHROME_PATH && existsSync(process.env.CHROME_PATH)) return process.env.CHROME_PATH;
-  const known = [
-    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    '/Applications/Chromium.app/Contents/MacOS/Chromium',
-    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-  ];
-  for (const p of known) if (existsSync(p)) return p;
-  for (const bin of ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser']) {
-    try {
-      return execSync(`command -v ${bin}`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim() || null;
-    } catch {}
-  }
-  return null;
 }
 
 function lighthouse(url: string, desktop: boolean): LhrLike {

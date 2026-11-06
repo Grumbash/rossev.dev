@@ -26,10 +26,10 @@ import {
   toggleJudge,
 } from '../src/scripts/replay/sim';
 import { buildSite } from './fixtures/build';
+import { CHROME, hasChrome } from './fixtures/probe';
 
 setDefaultTimeout(180_000);
 
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const replay = JSON.parse(readFileSync('src/data/replay-pr11.json', 'utf8'));
 const N = replay.events.length;
 
@@ -293,7 +293,7 @@ describe('the card is a replay you can take over', () => {
 // In a real browser. Headless Chrome will not make a window narrower than 500px, so the page runs in an
 // iframe of the wanted size and the outer page copies the probe result out for --dump-dom.
 // rAF stalls inside an iframe under --virtual-time-budget: frames run on a 16 ms timer, counted.
-describe.skipIf(!existsSync(CHROME))('layout and behaviour', () => {
+describe.skipIf(!hasChrome())('layout and behaviour', () => {
   const RAF = `<script>window.__raf=0;window.requestAnimationFrame=(cb)=>{window.__raf++;return setTimeout(()=>cb(performance.now()),16)};
     window.cancelAnimationFrame=(id)=>clearTimeout(id);</script>`;
   const PROBE = `<script>(async()=>{

@@ -6,7 +6,7 @@
 // Unit part: simulator, controllers, weights, Python/TS parity. Layout part: headless Chrome.
 import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { execSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { EVENTS } from '../src/scripts/analytics';
 import { en } from '../src/i18n/en';
@@ -18,10 +18,10 @@ import { expert } from '../src/scripts/policy/expert';
 import { act, decodePolicy, paramCount, type Policy } from '../src/scripts/policy/net';
 import { evaluate, type Controller } from '../src/scripts/policy/eval';
 import { buildSite } from './fixtures/build';
+import { CHROME, hasChrome } from './fixtures/probe';
 
 setDefaultTimeout(180_000);
 
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const BIN = 'public/policy/policy.bin';
 const SEEDS = Array.from({ length: 100 }, (_, i) => 1000 + i);
 const MAX_TICKS = 12; // recover within this many ticks of the fault
@@ -234,7 +234,7 @@ describe('page copy and analytics', () => {
 });
 
 // In a real browser: take over, pick a fault, watch the policy decide per tick.
-describe.skipIf(!existsSync(CHROME))('take-over with the policy', () => {
+describe.skipIf(!hasChrome())('take-over with the policy', () => {
   const pages = { en: '', ru: '' };
   const RAF = `<script>window.__raf=0;window.requestAnimationFrame=(cb)=>{window.__raf++;return setTimeout(()=>cb(performance.now()),16)};
     window.cancelAnimationFrame=(id)=>clearTimeout(id);</script>`;
