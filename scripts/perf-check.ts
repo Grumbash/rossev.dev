@@ -295,7 +295,7 @@ async function main() {
       stage = 'preview';
       const port = await freePort();
       const url = `http://127.0.0.1:${port}/`;
-      preview = spawn(join(ROOT, 'node_modules/.bin/astro'), ['preview', '--host', '127.0.0.1', '--port', String(port)], {
+      preview = spawn(join(ROOT, 'node_modules/.bin/astro'), ['preview', '--ignore-lock', '--host', '127.0.0.1', '--port', String(port)], {
         cwd: target,
         env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' },
         stdio: 'ignore',
