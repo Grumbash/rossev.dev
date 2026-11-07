@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-06T15:50:06.252Z",
-  "throughSha": "50a707380c5985c3591e2101711412d179c84385",
+  "generatedAt": "2026-11-06T20:26:48.292Z",
+  "throughSha": "fd633ec906f6fbe2112d7c8d40ba9eab6626b8c8",
   "prs": [
     {
       "number": 1,
@@ -2661,6 +2661,421 @@
           "subject": "Merge remote-tracking branch 'origin/main' into reading-memory",
           "role": "merge",
           "url": "https://github.com/Grumbash/rossev.dev/commit/114e1f78ed9301f45704987770151e9b61422c84"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 75,
+      "title": "Offline: the site works without the network",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/75",
+      "mergedAt": "2026-11-06T16:10:50Z",
+      "additions": 379,
+      "deletions": 9,
+      "changedFiles": 13,
+      "redTest": {
+        "sha": "6ee08de560bc6299d6793172d8d0cc41e04edc9a",
+        "subject": "Red test: a service worker keeps the shell and every page opened, pages network first and hashed assets cache first, never /booked/ or other origins or a query; offline, a read post and home still open and an unread page gets the offline page listing what this browser can read",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/6ee08de560bc6299d6793172d8d0cc41e04edc9a"
+      },
+      "commits": [
+        {
+          "sha": "6ee08de560bc6299d6793172d8d0cc41e04edc9a",
+          "subject": "Red test: a service worker keeps the shell and every page opened, pages network first and hashed assets cache first, never /booked/ or other origins or a query; offline, a read post and home still open and an unread page gets the offline page listing what this browser can read",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6ee08de560bc6299d6793172d8d0cc41e04edc9a"
+        },
+        {
+          "sha": "8a4aa74e0b56d260db0696989473b4f632b2bc7a",
+          "subject": "Offline: a service worker keeps the shell from the first visit and every page opened, pages network first and hashed assets cache first, never /booked/, other origins or a query; offline, a page not stored gets the offline page in its language, listing the posts this browser can read, and a toast says the network went away",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8a4aa74e0b56d260db0696989473b4f632b2bc7a"
+        },
+        {
+          "sha": "a90044348554d73d65f23916c5f674392349e413",
+          "subject": "The service worker is built with TypeScript, a devDependency, not esbuild: a clean install has no esbuild, so CI could not load the Astro config",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a90044348554d73d65f23916c5f674392349e413"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 76,
+      "title": "What changed since your last visit",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/76",
+      "mergedAt": "2026-11-06T16:31:20Z",
+      "additions": 369,
+      "deletions": 1,
+      "changedFiles": 7,
+      "redTest": {
+        "sha": "b669210290eb4dbaa3d357984a7a9c0b7b510e2a",
+        "subject": "Red test: the build lists posts and fingerprints /hire/ and the case pages in /changes.json; a returning visit after half an hour gets a card with the new posts and updated pages, new cards say NEW for the visit, the first visit shows nothing, and none of it is tracked",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/b669210290eb4dbaa3d357984a7a9c0b7b510e2a"
+      },
+      "commits": [
+        {
+          "sha": "b669210290eb4dbaa3d357984a7a9c0b7b510e2a",
+          "subject": "Red test: the build lists posts and fingerprints /hire/ and the case pages in /changes.json; a returning visit after half an hour gets a card with the new posts and updated pages, new cards say NEW for the visit, the first visit shows nothing, and none of it is tracked",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b669210290eb4dbaa3d357984a7a9c0b7b510e2a"
+        },
+        {
+          "sha": "1651b260161957429fa9b81aa5349fa85296f743",
+          "subject": "What changed since the last visit: the build writes /changes.json (posts, and fingerprints of /hire/ and the case pages); a returning visit after half an hour of quiet gets a card with the new posts and updated pages, with honest plurals, new cards say NEW for the visit, the first visit shows nothing, and it all stays in the browser",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1651b260161957429fa9b81aa5349fa85296f743"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 77,
+      "title": "The GR companion grows as you read a post",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/77",
+      "mergedAt": "2026-11-06T18:14:40Z",
+      "additions": 352,
+      "deletions": 18,
+      "changedFiles": 12,
+      "redTest": {
+        "sha": "8970c2138afa0b08d45123e0015d35a8e837f0c0",
+        "subject": "Red test: on a post page a small GR companion grows from one cell as far as the post is read and waits there, starts as far as a post was read before, grown it is wounded by a passing cursor and heals, sleeps at night, and loads only on post pages",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/8970c2138afa0b08d45123e0015d35a8e837f0c0"
+      },
+      "commits": [
+        {
+          "sha": "8970c2138afa0b08d45123e0015d35a8e837f0c0",
+          "subject": "Red test: on a post page a small GR companion grows from one cell as far as the post is read and waits there, starts as far as a post was read before, grown it is wounded by a passing cursor and heals, sleeps at night, and loads only on post pages",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8970c2138afa0b08d45123e0015d35a8e837f0c0"
+        },
+        {
+          "sha": "b2f6f7a8b21a51beff0e9c6e75414d58a8402264",
+          "subject": "A GR companion on post pages: the home monogram, small in the bottom right corner, grows from one cell as far as the post is read (half read, half the cells, by the model's measured growth curve) and waits there, starts as far as the post was read before, grown it is wounded by a passing cursor and heals, sleeps at night by the reader's clock; lazy, post pages only, never on Save-Data or 2G",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b2f6f7a8b21a51beff0e9c6e75414d58a8402264"
+        },
+        {
+          "sha": "28a599aba7f405572975fdb813a6660a701a784d",
+          "subject": "The companion loads on the first scroll into the post and checks the hour on scroll and tab return instead of a timer; probes run without it: creating its worker on a post page that then navigates kept --virtual-time-budget from running out (bisected), and it has its own real-Chrome tests. Probe and CDP Chromes get their own profiles and the usual automation switches, and a probe Chrome that hangs is killed after 45 s with a reason",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/28a599aba7f405572975fdb813a6660a701a784d"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 79,
+      "title": "Every post grows its own creature",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/79",
+      "mergedAt": "2026-11-06T18:48:54Z",
+      "additions": 409,
+      "deletions": 51,
+      "changedFiles": 10,
+      "redTest": {
+        "sha": "c4eff94a613d8f9db060cb4bf6e84722f10dd827",
+        "subject": "Red test: every post grows its own symmetric pixel creature from its slug, the same each time and different for each post, shown on its cards, grown cell by cell in its header, and as its own 1200×630 share preview",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/c4eff94a613d8f9db060cb4bf6e84722f10dd827"
+      },
+      "commits": [
+        {
+          "sha": "c4eff94a613d8f9db060cb4bf6e84722f10dd827",
+          "subject": "Red test: every post grows its own symmetric pixel creature from its slug, the same each time and different for each post, shown on its cards, grown cell by cell in its header, and as its own 1200×630 share preview",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c4eff94a613d8f9db060cb4bf6e84722f10dd827"
+        },
+        {
+          "sha": "3f791c8771cf0a85c3dfd2f227c98a4ee37a3f17",
+          "subject": "Every post grows its own creature: a symmetric pixel organism from its slug (a cave-style cellular automaton, mirrored, the largest piece kept, two eyes set in), on its cards on /writing/ and home, grown cell by cell with its shadow in the post header, on its quote card, and as its own 1200x630 share preview drawn at build",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3f791c8771cf0a85c3dfd2f227c98a4ee37a3f17"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 80,
+      "title": "The tab misses you",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/80",
+      "mergedAt": "2026-11-06T18:49:00Z",
+      "additions": 234,
+      "deletions": 0,
+      "changedFiles": 6,
+      "redTest": {
+        "sha": "e73f68f34f0ac1b2d45f0707b64dd7c4fa005542",
+        "subject": "Red test: while the tab is hidden its favicon wilts through six stages over a few minutes (lower and greyer each time) and the title whispers I'll wait; back on the tab both come back",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/e73f68f34f0ac1b2d45f0707b64dd7c4fa005542"
+      },
+      "commits": [
+        {
+          "sha": "e73f68f34f0ac1b2d45f0707b64dd7c4fa005542",
+          "subject": "Red test: while the tab is hidden its favicon wilts through six stages over a few minutes (lower and greyer each time) and the title whispers I'll wait; back on the tab both come back",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e73f68f34f0ac1b2d45f0707b64dd7c4fa005542"
+        },
+        {
+          "sha": "098f3658adaaa00dfb30be9a1138780339f17949",
+          "subject": "The tab misses you: hidden, the favicon wilts through six stages and the title whispers I'll wait; back, both grow back",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/098f3658adaaa00dfb30be9a1138780339f17949"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 81,
+      "title": "The site knows how you came",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/81",
+      "mergedAt": "2026-11-06T19:03:02Z",
+      "additions": 179,
+      "deletions": 5,
+      "changedFiles": 8,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "9bc5953ea80bb2284db8fd764d8d48bb0cf0a585",
+          "subject": "Red test: the site knows how you came — from the case QR (?from=case) it says we just met, from LinkedIn that this is the full text, from /hire to start with the cases; once a visit, in the page's language, untracked",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9bc5953ea80bb2284db8fd764d8d48bb0cf0a585"
+        },
+        {
+          "sha": "7beddb08853e25a9fa9f3a02832b1974a3fa8c63",
+          "subject": "The site knows how you came: the case QR says we just met, LinkedIn that this is the full text, /hire to start with the cases",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7beddb08853e25a9fa9f3a02832b1974a3fa8c63"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 83,
+      "title": "Benchmark post: what the low precision means",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/83",
+      "mergedAt": "2026-11-06T19:12:27Z",
+      "additions": 17,
+      "deletions": 5,
+      "changedFiles": 3,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "76795893eca94c8422b41c23eb4d4bd6a4fe683d",
+          "subject": "Benchmark post: what the low precision means",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/76795893eca94c8422b41c23eb4d4bd6a4fe683d"
+        },
+        {
+          "sha": "0d12163e47ccd9e175cfbca359aeb3a953addfbe",
+          "subject": "Benchmark update: say who checked the findings, split out noise, add a near miss",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/0d12163e47ccd9e175cfbca359aeb3a953addfbe"
+        },
+        {
+          "sha": "09e0b5feaf84238b019cd9d26c883ad2961309c4",
+          "subject": "Benchmark post: tie the precision update back to the claims",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/09e0b5feaf84238b019cd9d26c883ad2961309c4"
+        },
+        {
+          "sha": "97a9fd0ea6a48c0ff656ffe07e1eb24afe359717",
+          "subject": "Benchmark plain versions: clarify the precision update",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/97a9fd0ea6a48c0ff656ffe07e1eb24afe359717"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 82,
+      "title": "Gleb now",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/82",
+      "mergedAt": "2026-11-06T19:14:53Z",
+      "additions": 210,
+      "deletions": 4,
+      "changedFiles": 10,
+      "redTest": {
+        "sha": "e71a1e70e4148f55d89cf1320db7e1830c40758b",
+        "subject": "Red test: Gleb now — the footer tells his time in Tbilisi (asleep at night) and the site's last commit, from git at build and fresher from GitHub once the footer is in view",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/e71a1e70e4148f55d89cf1320db7e1830c40758b"
+      },
+      "commits": [
+        {
+          "sha": "e71a1e70e4148f55d89cf1320db7e1830c40758b",
+          "subject": "Red test: Gleb now — the footer tells his time in Tbilisi (asleep at night) and the site's last commit, from git at build and fresher from GitHub once the footer is in view",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e71a1e70e4148f55d89cf1320db7e1830c40758b"
+        },
+        {
+          "sha": "34d455296637a7af5f435790395c03da58176c84",
+          "subject": "Gleb now: the footer tells his time in Tbilisi and the site's last commit, how long ago",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/34d455296637a7af5f435790395c03da58176c84"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 84,
+      "title": "A letter that knows the context",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/84",
+      "mergedAt": "2026-11-06T19:31:21Z",
+      "additions": 220,
+      "deletions": 12,
+      "changedFiles": 7,
+      "redTest": {
+        "sha": "55cba13664253b15abc8a650c2357f8b93dbc92c",
+        "subject": "Red test: a letter that knows the context — on /hire, WRITE ME AN EMAIL starts the letter with the posts this browser read and the offer the visitor jumped to; nothing leaves until they send it",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/55cba13664253b15abc8a650c2357f8b93dbc92c"
+      },
+      "commits": [
+        {
+          "sha": "55cba13664253b15abc8a650c2357f8b93dbc92c",
+          "subject": "Red test: a letter that knows the context — on /hire, WRITE ME AN EMAIL starts the letter with the posts this browser read and the offer the visitor jumped to; nothing leaves until they send it",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/55cba13664253b15abc8a650c2357f8b93dbc92c"
+        },
+        {
+          "sha": "4e47d3021b4268845733f7f8057ec67e7dd6024f",
+          "subject": "A letter that knows the context: on /hire, WRITE ME AN EMAIL starts the letter with the posts this browser read and the offer the visitor jumped to",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4e47d3021b4268845733f7f8057ec67e7dd6024f"
+        },
+        {
+          "sha": "62f819283633d4bbdcce8ad8059e92b6d420b6c8",
+          "subject": "changes test: seed the last visit only after the page has recorded its first one",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/62f819283633d4bbdcce8ad8059e92b6d420b6c8"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 85,
+      "title": "Print as magic",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/85",
+      "mergedAt": "2026-11-06T19:50:47Z",
+      "additions": 238,
+      "deletions": 17,
+      "changedFiles": 10,
+      "redTest": {
+        "sha": "90339fd978ef05faa9555adb0ddf6b0980910973",
+        "subject": "Red test: print as magic — Ctrl+P on /hire is a one-page CV (A4 and Letter, EN and RU), a post prints as a newspaper page with a masthead, two ruled columns, a drop cap and link addresses; all from /print.css behind media=print",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/90339fd978ef05faa9555adb0ddf6b0980910973"
+      },
+      "commits": [
+        {
+          "sha": "90339fd978ef05faa9555adb0ddf6b0980910973",
+          "subject": "Red test: print as magic — Ctrl+P on /hire is a one-page CV (A4 and Letter, EN and RU), a post prints as a newspaper page with a masthead, two ruled columns, a drop cap and link addresses; all from /print.css behind media=print",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/90339fd978ef05faa9555adb0ddf6b0980910973"
+        },
+        {
+          "sha": "c24425b0dd1f0863b3e8c1dea86fc19d995b38a3",
+          "subject": "Print as magic: Ctrl+P on /hire prints a one-page CV, a post prints as a newspaper page",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c24425b0dd1f0863b3e8c1dea86fc19d995b38a3"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 86,
+      "title": "Shadows from real light",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/86",
+      "mergedAt": "2026-11-06T20:02:20Z",
+      "additions": 150,
+      "deletions": 7,
+      "changedFiles": 4,
+      "redTest": {
+        "sha": "eb23b438d4cdf6611ea4198ebb5895b3e16e7d55",
+        "subject": "Red test: shadows from real light — the cursor is the light and the hard shadows fall away from it, the same length; down-right in the middle and without JS; still under reduced motion",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/eb23b438d4cdf6611ea4198ebb5895b3e16e7d55"
+      },
+      "commits": [
+        {
+          "sha": "eb23b438d4cdf6611ea4198ebb5895b3e16e7d55",
+          "subject": "Red test: shadows from real light — the cursor is the light and the hard shadows fall away from it, the same length; down-right in the middle and without JS; still under reduced motion",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/eb23b438d4cdf6611ea4198ebb5895b3e16e7d55"
+        },
+        {
+          "sha": "5962547e3e5ed455026fffe37f667c2cd95ea528",
+          "subject": "Shadows from real light: the cursor, or a phone's tilt, is the light and the hard shadows fall away from it",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5962547e3e5ed455026fffe37f667c2cd95ea528"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 87,
+      "title": "The site measures itself",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/87",
+      "mergedAt": "2026-11-06T20:11:57Z",
+      "additions": 163,
+      "deletions": 0,
+      "changedFiles": 6,
+      "redTest": {
+        "sha": "e3338b28c5b9a176074b04d716b5ce05ebefcfe6",
+        "subject": "Red test: the site measures itself — the footer says how fast this page opened for this visitor (LCP, else FCP) and how: server, first paint, bytes over the network or from cache; real Performance API numbers, sent nowhere",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/e3338b28c5b9a176074b04d716b5ce05ebefcfe6"
+      },
+      "commits": [
+        {
+          "sha": "e3338b28c5b9a176074b04d716b5ce05ebefcfe6",
+          "subject": "Red test: the site measures itself — the footer says how fast this page opened for this visitor (LCP, else FCP) and how: server, first paint, bytes over the network or from cache; real Performance API numbers, sent nowhere",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e3338b28c5b9a176074b04d716b5ce05ebefcfe6"
+        },
+        {
+          "sha": "0c5ffec88e78d3bbe9364df622153ab62d2763f8",
+          "subject": "The site measures itself: the footer says how fast this page opened for this visitor, and how",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/0c5ffec88e78d3bbe9364df622153ab62d2763f8"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 89,
+      "title": "Theme test: pin the light system, more virtual time",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/89",
+      "mergedAt": "2026-11-06T20:25:53Z",
+      "additions": 6,
+      "deletions": 2,
+      "changedFiles": 1,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "7d6b526e048fb08a0f014ba1cbdde9b84e660a98",
+          "subject": "theme test: pin the light system and give the probe more virtual time",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7d6b526e048fb08a0f014ba1cbdde9b84e660a98"
         }
       ],
       "findings": [],
