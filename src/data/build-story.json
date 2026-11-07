@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-06T20:26:48.292Z",
-  "throughSha": "fd633ec906f6fbe2112d7c8d40ba9eab6626b8c8",
+  "generatedAt": "2026-11-07T13:21:58.505Z",
+  "throughSha": "d04b824fe929baff157465fb20ce59beff68d571",
   "prs": [
     {
       "number": 1,
@@ -3076,6 +3076,223 @@
           "subject": "theme test: pin the light system and give the probe more virtual time",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/7d6b526e048fb08a0f014ba1cbdde9b84e660a98"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 88,
+      "title": "A layer for insiders",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/88",
+      "mergedAt": "2026-11-06T20:30:09Z",
+      "additions": 281,
+      "deletions": 0,
+      "changedFiles": 7,
+      "redTest": {
+        "sha": "179e160f70541a0aa68b8c774c159a3d1af7fcaa",
+        "subject": "Red test: a layer for insiders — a DevTools greeting pointing at /how-its-built/, ? for the shortcuts, j/k between posts and cards, Alt+click opens the block's source on GitHub; every page names its source",
+        "url": "https://github.com/Grumbash/rossev.dev/commit/179e160f70541a0aa68b8c774c159a3d1af7fcaa"
+      },
+      "commits": [
+        {
+          "sha": "179e160f70541a0aa68b8c774c159a3d1af7fcaa",
+          "subject": "Red test: a layer for insiders — a DevTools greeting pointing at /how-its-built/, ? for the shortcuts, j/k between posts and cards, Alt+click opens the block's source on GitHub; every page names its source",
+          "role": "red",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/179e160f70541a0aa68b8c774c159a3d1af7fcaa"
+        },
+        {
+          "sha": "069f13950b617e967930de98005639a188f48f64",
+          "subject": "A layer for insiders: a DevTools greeting, ? for shortcuts, j/k between posts and cards, Alt+click to the block's source on GitHub",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/069f13950b617e967930de98005639a188f48f64"
+        },
+        {
+          "sha": "16fbcd8dc510d4562b22a155d866c6eec6f5dce7",
+          "subject": "Merge branch 'main' into insiders",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/16fbcd8dc510d4562b22a155d866c6eec6f5dce7"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 90,
+      "title": "Monogram and topology posts: what changed in the four days since",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/90",
+      "mergedAt": "2026-11-07T11:30:41Z",
+      "additions": 8,
+      "deletions": 8,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "e0a3900903869ff52d62db0488d2ac8fee25b8e4",
+          "subject": "Monogram and topology posts: what changed in the four days since",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e0a3900903869ff52d62db0488d2ac8fee25b8e4"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 91,
+      "title": "Fix navigation, offline reading and interactive site regressions",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/91",
+      "mergedAt": "2026-11-07T13:21:02Z",
+      "additions": 969,
+      "deletions": 228,
+      "changedFiles": 37,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "6f97f0182436b31dfe2b68e45b5aaca961dfd2fb",
+          "subject": "Fix 404 redirects, theme handling and clipboard feedback",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/6f97f0182436b31dfe2b68e45b5aaca961dfd2fb"
+        },
+        {
+          "sha": "bea69b8cb738ba787876424b42aac7caa1004d55",
+          "subject": "Bound 404 suggestions for excessively long paths",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/bea69b8cb738ba787876424b42aac7caa1004d55"
+        },
+        {
+          "sha": "32bbd1c4760035bcfa50dea132e8710464ffbae1",
+          "subject": "Preserve reading progress on a brief return visit",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/32bbd1c4760035bcfa50dea132e8710464ffbae1"
+        },
+        {
+          "sha": "32d584bdded0e02c204aaf395092bb7b6385f59e",
+          "subject": "Keep the contact draft usable after a malformed fragment",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/32d584bdded0e02c204aaf395092bb7b6385f59e"
+        },
+        {
+          "sha": "d0f87c996633a1cd48a46daca76080ff89dc61e2",
+          "subject": "Localize the 404 monogram for screen readers",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d0f87c996633a1cd48a46daca76080ff89dc61e2"
+        },
+        {
+          "sha": "eb49f4b5f72b44283f210e79a8a2316c22f96ea2",
+          "subject": "Keep the first directly visited article available offline",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/eb49f4b5f72b44283f210e79a8a2316c22f96ea2"
+        },
+        {
+          "sha": "8961591443659d5a4dce41f32965a97ef20dd38a",
+          "subject": "Offer the quote image when system sharing is refused",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8961591443659d5a4dce41f32965a97ef20dd38a"
+        },
+        {
+          "sha": "a0f7c4ea26f1d46fe26b5e0a6b0cbcc860b568d7",
+          "subject": "Keep the active writing filter in sync with displayed posts",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a0f7c4ea26f1d46fe26b5e0a6b0cbcc860b568d7"
+        },
+        {
+          "sha": "9d75b97cbaf3994114b99fc60e3eaca46da55234",
+          "subject": "Ignore repeated microphone requests while the voice demo is busy",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9d75b97cbaf3994114b99fc60e3eaca46da55234"
+        },
+        {
+          "sha": "f7080fc633dd7be408b01f289e4a80f4384d19c8",
+          "subject": "Keep language history in sync during rapid navigation",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f7080fc633dd7be408b01f289e4a80f4384d19c8"
+        },
+        {
+          "sha": "3bf28b6df2412eaa6a8061b8ee37679e681eb9f5",
+          "subject": "Merge main before the full site audit",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3bf28b6df2412eaa6a8061b8ee37679e681eb9f5"
+        },
+        {
+          "sha": "0c17eb242b5b6e102863b2e8a0fe0d14d8c108b6",
+          "subject": "Include the latest published build story in the audit",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/0c17eb242b5b6e102863b2e8a0fe0d14d8c108b6"
+        },
+        {
+          "sha": "c19154dfb55ccf6197d57d6bfeb82f7c565dfada",
+          "subject": "Load an open case in the current page language",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c19154dfb55ccf6197d57d6bfeb82f7c565dfada"
+        },
+        {
+          "sha": "9e58bd4039ce9add23df3e108aece1b47e545a21",
+          "subject": "Show the observed largest contentful paint in the page footer",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9e58bd4039ce9add23df3e108aece1b47e545a21"
+        },
+        {
+          "sha": "0f4a63b13992bac9ec5f46a580e2ecee3cec5d72",
+          "subject": "Include the visible language code in the switcher name",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/0f4a63b13992bac9ec5f46a580e2ecee3cec5d72"
+        },
+        {
+          "sha": "a22ada6af48e376b4fc4af39cf56c5a27fbca57b",
+          "subject": "Preserve the assets of offline articles across site updates",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/a22ada6af48e376b4fc4af39cf56c5a27fbca57b"
+        },
+        {
+          "sha": "9eee81f88bc89acb2bd5d80e9e6fac0564045c9f",
+          "subject": "Improve the contrast of error text in the light theme",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9eee81f88bc89acb2bd5d80e9e6fac0564045c9f"
+        },
+        {
+          "sha": "9388a7179380f2b20e1d40b10913e7ae924419c8",
+          "subject": "Make topology nodes selectable by touch and localize their controls",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9388a7179380f2b20e1d40b10913e7ae924419c8"
+        },
+        {
+          "sha": "1639d28c430b8e2662fa2808ffc70baf8d9055eb",
+          "subject": "Fit long words and links inside exported quote cards",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1639d28c430b8e2662fa2808ffc70baf8d9055eb"
+        },
+        {
+          "sha": "2998a08e1a8096411784f64baf8f743f2b1b0a88",
+          "subject": "Release pending microphone requests and reject incomplete voice models",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2998a08e1a8096411784f64baf8f743f2b1b0a88"
+        },
+        {
+          "sha": "8025df8a87b3c20143b09eb1dfe287ec3dd2dae7",
+          "subject": "Isolate the preview server used for performance checks",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8025df8a87b3c20143b09eb1dfe287ec3dd2dae7"
+        },
+        {
+          "sha": "92cc45c13c61612285a87ae800635d8fd62426e6",
+          "subject": "Load topology status text with the interactive diagram",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/92cc45c13c61612285a87ae800635d8fd62426e6"
+        },
+        {
+          "sha": "d89cad1a9fc548252e344fcf1e5b5fc2c9b906f1",
+          "subject": "Merge the latest published site changes before review",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d89cad1a9fc548252e344fcf1e5b5fc2c9b906f1"
+        },
+        {
+          "sha": "f713134d292c182a138b16672414b845eb74fc4e",
+          "subject": "Wait for writing filters to initialize in the browser test",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/f713134d292c182a138b16672414b845eb74fc4e"
         }
       ],
       "findings": [],
