@@ -45,26 +45,61 @@ export function attribution(text: string, title: string, pageUrl: string, plain 
 
 /** The quote's lines and size on the card: as large as fits, cut at a word with an ellipsis past it. */
 export function fitQuote(text: string, measure: (s: string, px: number) => number) {
-  let w = words(text);
-  const cut = (n: number) => [...w.slice(0, n - 1), `${w[n - 1]}…`];
-  while (w.join(' ').length > CARD.maxChars && w.length > 1) w = cut(w.length - 1);
-  const wrap = (ws: string[], px: number) => {
+  const graphemes = (word: string) => typeof Intl.Segmenter === 'function'
+    ? Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(word), (s) => s.segment)
+    : Array.from(word);
+  const w: string[] = [];
+  let length = 0;
+  for (const word of words(text)) {
+    const next = length + (w.length ? 1 : 0) + word.length;
+    if (next > CARD.maxChars) {
+      if (w.length) w[w.length - 1] += '…';
+      else w.push(graphemes(word).slice(0, CARD.maxChars - 1).join('') + '…');
+      break;
+    }
+    w.push(word);
+    length = next;
+  }
+  const wrap = (px: number, splitLongWords = false) => {
     const lines: string[] = [];
-    for (const word of ws) {
+    for (const word of w) {
       const last = lines.at(-1);
-      if (last !== undefined && measure(`${last} ${word}`, px) <= CARD.textWidth) lines[lines.length - 1] = `${last} ${word}`;
-      else lines.push(word);
+      if (last && measure(last + ' ' + word, px) <= CARD.textWidth) {
+        lines[lines.length - 1] = last + ' ' + word;
+      } else if (splitLongWords && measure(word, px) > CARD.textWidth) {
+        let chunk = '';
+        for (const glyph of graphemes(word)) {
+          if (chunk && measure(chunk + glyph, px) > CARD.textWidth) {
+            lines.push(chunk);
+            chunk = '';
+          }
+          chunk += glyph;
+        }
+        lines.push(chunk);
+      } else lines.push(word);
     }
     return lines;
   };
-  const fits = (lines: string[], px: number) => lines.length * px * CARD.lineHeight <= CARD.textHeight;
   for (let px = CARD.maxPx; px >= CARD.minPx; px -= 2) {
-    const lines = wrap(w, px);
-    if (fits(lines, px)) return { px, lines };
+    const lines = wrap(px);
+    if (lines.length * px * CARD.lineHeight <= CARD.textHeight && lines.every((l) => measure(l, px) <= CARD.textWidth)) return { px, lines };
   }
-  let lines = wrap(w, CARD.minPx);
-  while (!fits(lines, CARD.minPx) && w.length > 1) lines = wrap((w = cut(w.length - 1)), CARD.minPx);
-  return { px: CARD.minPx, lines };
+
+  const px = CARD.minPx;
+  const maxLines = Math.floor(CARD.textHeight / (px * CARD.lineHeight));
+  let lines = wrap(px, true);
+  while (lines.length > maxLines && w.length > 1) {
+    w.pop();
+    w[w.length - 1] += '…';
+    lines = wrap(px, true);
+  }
+  if (lines.length > maxLines) {
+    lines.length = maxLines;
+    const last = graphemes(lines[maxLines - 1]);
+    while (last.length && measure(last.join('') + '…', px) > CARD.textWidth) last.pop();
+    lines[maxLines - 1] = last.join('') + '…';
+  }
+  return { px, lines };
 }
 
 const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();

@@ -69,6 +69,19 @@ describe('the card layout', () => {
     expect(long.lines.join(' ')).toContain('restarts it honestly.');
   });
 
+  test('long words and URLs stay inside the card at the largest fitting size or wrap at minimum size', () => {
+    for (const token of ['github.com/Grumbash/rossev.dev.', 'документо-ориентированные', 'https://example.org/' + 'x'.repeat(120)]) {
+      const layout = fitQuote('Read ' + token + ' today', measure);
+      expect(layout.lines.join('').replaceAll(' ', '')).toBe('Read' + token + 'today');
+      expect(layout.lines.every(l => measure(l, layout.px) <= CARD.textWidth)).toBe(true);
+      expect(layout.lines.length * layout.px * CARD.lineHeight).toBeLessThanOrEqual(CARD.textHeight);
+    }
+    const giant = fitQuote('Ж'.repeat(800), (s, px) => s.length * px * 1.5);
+    expect(giant.lines.at(-1)).toEndWith('…');
+    expect(giant.lines.every(l => l.length * giant.px * 1.5 <= CARD.textWidth)).toBe(true);
+    expect(giant.lines.length * giant.px * CARD.lineHeight).toBeLessThanOrEqual(CARD.textHeight);
+  });
+
   test('past the card a quote is cut at a word with an ellipsis, never mid-word', () => {
     const f = fitQuote('word '.repeat(200).trim(), measure);
     const text = f.lines.join(' ');
