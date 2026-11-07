@@ -95,7 +95,7 @@ const jsonLd = {
     {/* Without JS the GR monogram is a static picture: drop the copy and Reset button that invite damage. */}
     <noscript><style>[data-nca-live]{display:none!important}</style></noscript>
   </Fragment>
-      <!-- HERO: who, what, how to reach me. Topology stays on the right. -->
+      {/* HERO: who, what, how to reach me. Topology stays on the right. */}
       <section class="hero-section container">
         <div class="hero-grid">
           <div class="brutal-box hero-card">
@@ -194,14 +194,14 @@ const jsonLd = {
             </div>
           </div>
 
-          <!-- Right: Deep Interactive 3D System Topology & Architecture Engine -->
+          {/* Right: Deep Interactive 3D System Topology & Architecture Engine */}
           <div class="brutal-box stage-iso-card">
             <div class="stage-header">
               <span>
                 <a href={localePath(lang, '/how-its-built/')}>{d.topology.title}</a>
               </span>
               <span class="replay-badge" data-replay-badge>{d.topology.replayBadge}</span>
-              <span id="iso-trace-status" {...Object.fromEntries(Object.entries(d.topology.status).map(([key, value]) => [`data-${key}`, value]))}></span>
+              <span id="iso-trace-status"></span>
             </div>
 
             {/* The card plays a replay of a real agent run on this site (src/scripts/replay/player.ts,
@@ -459,7 +459,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- EXPERIENCE: one chronology. Each job carries its story, numbers, stack and architecture. -->
+      {/* EXPERIENCE: one chronology. Each job carries its story, numbers, stack and architecture. */}
       <section id="experience" class="section-block">
         <div class="container">
           <div class="section-head">
@@ -612,7 +612,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- BEYOND THE CV: essays live in their own visual zone -->
+      {/* BEYOND THE CV: essays live in their own visual zone */}
       <div class="zone-beyond">
         <div class="container">
           <div class="zone-divider">
@@ -755,7 +755,7 @@ const jsonLd = {
               </button>
             </div>
 
-            <!-- HTMX On-Site Post Reader Slot -->
+            {/* HTMX On-Site Post Reader Slot */}
             <div id="post-reader-slot" aria-live="polite"></div>
 
             <div id="blog-posts-container" aria-live="polite">
@@ -770,7 +770,7 @@ const jsonLd = {
       </div>
 
   <Fragment slot="scripts">
-    <!-- Bundled page code: the topology's loader (engine and replay are lazy), case loader, post reader, toolbox -->
+    {/* Bundled page code: the topology's loader (engine and replay are lazy), case loader, post reader, toolbox */}
     <script>
       import { initTopologyReplay } from '../../scripts/topology-replay';
       import { initCaseLoader } from '../../scripts/case-loader';

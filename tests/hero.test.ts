@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CASE_STUDIES, PROFILE } from '../src/data/profile';
 import { t } from '../src/i18n';
+import { isoStatus } from '../src/scripts/iso-status';
 import { withChrome } from './fixtures/cdp';
 import { buildSite } from './fixtures/build';
 import { CHROME, hasChrome } from './fixtures/probe';
@@ -220,10 +221,10 @@ describe.skipIf(!hasChrome())('topology on a touchscreen', () => {
         expect(point).toBeDefined();
         await send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: point.x, y: point.y }] });
         await send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-        expect(await evaluate("document.querySelector('#iso-trace-status').textContent")).toBe(words.status.expanded.replace('{node}', point.node));
+        expect(await evaluate("document.querySelector('#iso-trace-status').textContent")).toBe(isoStatus[lang].expanded.replace('{node}', point.node));
         await evaluate("document.querySelector('#btn-iso-fault').click()");
         await Bun.sleep(120);
-        expect(await evaluate("document.querySelector('#iso-trace-status').textContent")).toStartWith(words.status.stage1.split('{node}')[0]);
+        expect(await evaluate("document.querySelector('#iso-trace-status').textContent")).toStartWith(isoStatus[lang].stage1.split('{node}')[0]);
       });
     });
   }

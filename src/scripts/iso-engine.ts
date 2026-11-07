@@ -1,4 +1,4 @@
-import type { Dict } from '../i18n';
+import { isoStatus } from './iso-status';
 import { ISO_DOMAINS, type TopologyNode } from '../data/topology';
 import { settleResidual, shouldKeepAnimating } from './iso-loop';
 
@@ -82,14 +82,15 @@ export function initIsoArchitectureEngine(): IsoApi | null {
   if (!ctx) return null;
 
   const statusEl = document.getElementById('iso-trace-status');
-  type Status = keyof Dict['topology']['status'];
+  type Status = keyof typeof isoStatus.en;
   let status: Status | undefined;
   let statusNode = '';
   function showStatus(key: Status, node = '') {
     status = key;
     statusNode = node;
     if (!statusEl) return;
-    const text = statusEl.dataset[key]?.replace('{node}', node) ?? '';
+    const lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
+    const text = isoStatus[lang][key].replace('{node}', node);
     if (text !== statusEl.textContent) statusEl.textContent = text;
   }
   document.addEventListener('site:lang', () => {
