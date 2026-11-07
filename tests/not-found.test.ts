@@ -150,7 +150,17 @@ describe.skipIf(!hasChrome())('the monogram on a missing page', () => {
           setTimeout(() => {
             const result = document.createElement('pre');
             result.id = '__probe';
-            result.textContent = JSON.stringify({ label, notice: document.querySelector('.nca-notice').textContent });
+            const luminance = color => {
+              const linear = color.match(/\\d+/g).slice(0, 3).map(Number).map(n => n / 255).map(n => n <= 0.04045 ? n / 12.92 : ((n + 0.055) / 1.055) ** 2.4);
+              return linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722;
+            };
+            const contrast = ['light', 'dark'].map(theme => {
+              document.documentElement.dataset.theme = theme;
+              const a = luminance(getComputedStyle(document.querySelector('.nf-fail')).color);
+              const b = luminance(getComputedStyle(document.querySelector('.nf-run')).backgroundColor);
+              return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+            });
+            result.textContent = JSON.stringify({ label, notice: document.querySelector('.nca-notice').textContent, contrast });
             document.body.append(result);
           }, 100);
         }
@@ -160,7 +170,9 @@ describe.skipIf(!hasChrome())('the monogram on a missing page', () => {
   afterAll(() => srv?.stop());
   for (const lang of ['en', 'ru'] as const) {
     test(`the accessible name and first repair announcement use ${lang}`, async () => {
-      expect(await srv.run('/404.html', lang)).toEqual({ label: t(lang).notFound.healLabel, notice: t(lang).nca.regrowing });
+      const result = await srv.run('/404.html', lang);
+      expect(result).toMatchObject({ label: t(lang).notFound.healLabel, notice: t(lang).nca.regrowing });
+      for (const ratio of result.contrast) expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
   }
 });

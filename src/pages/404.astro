@@ -137,8 +137,12 @@ import { LOCALES, localePath, t } from '../i18n';
   }
 
   .nf-fail {
-    color: var(--pink);
+    color: #bf195b;
     font-weight: 700;
+  }
+
+  html[data-theme='dark'] .nf-fail {
+    color: var(--pink);
   }
 
   .nf-ok {
