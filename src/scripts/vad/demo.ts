@@ -21,10 +21,14 @@ const MIN_RATE = 16_000;
 
 let styled = false;
 
-async function download(url: string, onProgress: (loaded: number) => void): Promise<ArrayBuffer> {
-  const res = await fetch(url);
+async function download(url: string, signal: AbortSignal, onProgress: (loaded: number) => void): Promise<ArrayBuffer> {
+  const res = await fetch(url, { signal });
   if (!res.ok) throw new Error(`${url}: ${res.status}`);
-  if (!res.body) return res.arrayBuffer();
+  if (!res.body) {
+    const bytes = await res.arrayBuffer();
+    if (bytes.byteLength !== WEIGHTS_BYTES) throw new Error('Incomplete VAD weights');
+    return bytes;
+  }
   // Content-Length is the compressed size on the wire, so count decoded bytes against the known total.
   const out = new Uint8Array(WEIGHTS_BYTES);
   const reader = res.body.getReader();
@@ -37,23 +41,26 @@ async function download(url: string, onProgress: (loaded: number) => void): Prom
     loaded += value.length;
     onProgress(loaded);
   }
+  if (loaded !== WEIGHTS_BYTES) throw new Error('Incomplete VAD weights');
   return out.buffer;
 }
 
-export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Promise<Mic>, dispatch: (e: VadEvent) => State) {
+export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Mic, dispatch: (e: VadEvent) => State) {
   if (!styled) {
     document.head.appendChild(document.createElement('style')).textContent = css;
     styled = true;
   }
-  const { stream, error } = await mic;
+  const { stream, error } = mic;
   let worker: Worker | null = null;
   let source: MediaStreamAudioSourceNode | null = null;
   let tap: AudioWorkletNode | null = null;
   let timer = 0;
   let stopped = false;
+  const transfer = new AbortController();
   const stop = () => {
     if (stopped) return;
     stopped = true;
+    transfer.abort();
     clearTimeout(timer);
     stream?.getTracks().forEach((t) => t.stop());
     tap?.port.postMessage(null);
@@ -70,6 +77,7 @@ export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Prom
   };
   window.addEventListener('pagehide', leave);
   const fail = () => {
+    if (stopped) return;
     stop();
     dispatch({ type: 'fail' });
   };
@@ -84,14 +92,18 @@ export async function runVadDemo(root: HTMLElement, ctx: AudioContext, mic: Prom
   arm(SETUP_MS, fail);
   try {
     if (ctx.sampleRate < MIN_RATE) throw new Error(`sample rate ${ctx.sampleRate}`);
-    const weights = await download(WEIGHTS_URL, (loaded) => dispatch({ type: 'progress', loaded, total: WEIGHTS_BYTES }));
+    const weights = await download(WEIGHTS_URL, transfer.signal, (loaded) => {
+      if (!stopped) dispatch({ type: 'progress', loaded, total: WEIGHTS_BYTES });
+    });
     if (stopped) return;
     worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
     worker.onerror = fail;
 
     // The tap worklet (public/vad/tap-worklet.js) copies the mic to the worker's port.
     await ctx.audioWorklet.addModule('/vad/tap-worklet.js');
+    if (stopped) return;
     if (ctx.state === 'suspended') await ctx.resume();
+    if (stopped) return;
     source = ctx.createMediaStreamSource(stream!);
     tap = new AudioWorkletNode(ctx, 'vad-tap');
     // Wired to the output so the graph runs; the tap writes nothing, so nothing is played.
