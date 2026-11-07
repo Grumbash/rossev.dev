@@ -11,7 +11,17 @@ function toast(text: string | undefined) {
 }
 
 export function initOffline() {
-  if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', (e) => {
+      if (e.data !== 'first-post-assets' || !e.ports[0]) return;
+      const assets = performance.getEntriesByType('resource').map((entry) => new URL(entry.name, location.href))
+        .filter((u) => u.origin === location.origin && u.pathname.startsWith('/_astro/') && !u.search);
+      e.ports[0].postMessage(assets.map((u) => u.pathname));
+    });
+    const register = () => navigator.serviceWorker.register('/sw.js').catch(() => {});
+    if (document.readyState === 'complete') register();
+    else addEventListener('load', register, { once: true });
+  }
   addEventListener('offline', () => toast(document.getElementById('brutal-toast')?.dataset.offline));
 }
 

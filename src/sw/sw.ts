@@ -27,10 +27,40 @@ self.addEventListener('install', (e) => {
   );
 });
 
+// A first visit navigates before this worker controls the tab. Recover that public article and
+// the build assets the tab actually loaded, before handing off control for offline navigation.
+async function keepFirstPost(client: WindowClient) {
+  const url = new URL(client.url);
+  if (url.origin !== self.location.origin || !/^\/(?:ru\/)?writing\/[a-z0-9-]+\/$/.test(url.pathname)) return;
+  const [pages, assets] = await Promise.all([caches.open(PAGES), caches.open(ASSETS)]);
+  const clean = { redirect: 'error', referrerPolicy: 'no-referrer', signal: AbortSignal.timeout(SLOW_MS) } as const;
+  const page = await fetch(url.pathname, clean);
+  if (page.status !== 200 || page.type !== 'basic' || !page.headers.get('content-type')?.includes('text/html')) return;
+  await pages.put(url.pathname, page);
+  const channel = new MessageChannel();
+  const refs = await new Promise<string[]>((resolve) => {
+    // A tab from an older build, or one closed during installation, may never answer.
+    const timeout = setTimeout(() => resolve([]), 1000);
+    channel.port1.onmessage = ({ data }) => {
+      clearTimeout(timeout);
+      resolve(Array.isArray(data) ? data : []);
+    };
+    client.postMessage('first-post-assets', [channel.port2]);
+  });
+  channel.port1.close();
+  await Promise.allSettled([...new Set(refs)].map(async (path) => {
+    if (typeof path !== 'string' || !/^\/_astro\/[\w.-]+$/.test(path) || await assets.match(path)) return;
+    const response = await fetch(path, clean);
+    if (response.status === 200 && response.type === 'basic') await assets.put(path, response);
+  }));
+}
+
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     (async () => {
       for (const name of await caches.keys()) if (name.startsWith('rossev-assets-') && name !== ASSETS) await caches.delete(name);
+      const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      await Promise.allSettled(windows.map(keepFirstPost));
       await self.clients.claim();
     })(),
   );

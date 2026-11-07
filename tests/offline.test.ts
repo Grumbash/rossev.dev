@@ -97,6 +97,32 @@ describe('the offline page', () => {
 });
 
 describe.skipIf(!hasChrome())('in the browser', () => {
+  for (const prefix of ['', '/ru']) {
+    test(`first visit directly to ${prefix}/writing/ keeps the post and its script offline`, async () => {
+      const post = prefix + '/writing/self-healing-monogram/';
+      await withChrome(async ({ origin, send, evaluate, stopServer }) => {
+        await send('Page.enable');
+        await send('Page.navigate', { url: origin + post + '?from=first' });
+        const deadline = Date.now() + 15_000;
+        let state = null;
+        do {
+          await Bun.sleep(150);
+          state = await evaluate(`({ path: location.pathname, ready: document.readyState, controlled: !!navigator.serviceWorker?.controller })`);
+        } while (Date.now() < deadline && !(state?.path === post && state.ready === 'complete' && state.controlled));
+        expect(state).toEqual({ path: post, ready: 'complete', controlled: true });
+        const title = await evaluate('document.title');
+        expect(await evaluate(`caches.match(location.href).then(Boolean)`)).toBe(false);
+        expect(await evaluate(`caches.match(location.pathname).then(Boolean)`)).toBe(true);
+        stopServer();
+        await send('Network.setCacheDisabled', { cacheDisabled: true });
+        await send('Page.navigate', { url: origin + post });
+        await Bun.sleep(800);
+        expect(await evaluate('document.title')).toBe(title);
+        expect(await evaluate("!!document.querySelector('[data-quote-bar]')")).toBe(true);
+      });
+    });
+  }
+
   test('read a post, lose the network: it still opens, home still opens, an unread post gets the offline page listing it', async () => {
     const r = await withChrome(async ({ origin, send, evaluate, stopServer }) => {
       await send('Page.enable');
