@@ -433,16 +433,21 @@ describe.skipIf(!hasChrome())('home filters after a network failure', () => {
       await withChrome(async ({ origin, send, evaluate }) => {
         await send('Page.enable');
         await send('Network.enable');
-        await send('Network.setBlockedURLs', { urls: ['*/partials/posts-ai/*'] });
+        await send('Network.setBlockedURLs', { urls: ['*/partials/posts-ai/*', 'https://*'] });
+        await send('Page.addScriptToEvaluateOnNewDocument', {
+          source: "document.addEventListener('htmx:load', () => { window.filtersReady = true; }, { once: true });",
+        });
         await send('Page.navigate', { url: origin + prefix + '/' });
-        await Bun.sleep(900);
+        const readyDeadline = Date.now() + 15_000;
+        while (!(await evaluate('window.filtersReady')) && Date.now() < readyDeadline) await Bun.sleep(50);
+        expect(await evaluate('window.filtersReady')).toBe(true);
         const state = () => evaluate(`[document.querySelector('.filter-tab[aria-pressed="true"]').dataset.trackFilter, document.querySelector('#blog-posts-container').innerHTML]`);
         const before = await state();
         expect(before[0]).toBe('all');
         expect(await evaluate(`new Promise(r => {
           document.body.addEventListener('htmx:sendError', () => r(true), { once: true });
           document.querySelector('[data-track-filter="ai"]').click();
-          setTimeout(() => r(false), 2500);
+          setTimeout(() => r(false), 10_000);
         })`)).toBe(true);
         expect(await state()).toEqual(before);
         await evaluate(`['leadership', 'systems'].forEach(f => document.querySelector('[data-track-filter="'+f+'"]').click())`);
