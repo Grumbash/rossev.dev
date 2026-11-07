@@ -5,6 +5,7 @@
 import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { createHealer } from '../src/scripts/replay/heal';
+import { mulberry32 } from '../src/scripts/replay/frames';
 
 // A guard against a hang, not a speed check: a slow runner is not a failure (CI: nca.yml).
 setDefaultTimeout(300_000);
@@ -42,6 +43,23 @@ describe('the live GR cut (heal.ts)', () => {
     expect(r!.mse).toBeLessThan(0.01);
     expect(frames).toBeGreaterThan(0);
   });
+
+  // The GR the cut is judged against is grown once, by the same random cell updates as any grow, and
+  // some grows come out crooked (see GROWN_MAX_DISTANCE in src/scripts/nca/healer.ts). Judged
+  // against a crooked reference, a cut the model healed into a clean GR reads as unhealed. With
+  // these Math.random seeds the first grow is crooked and the vertical cut scored 0.012-0.015.
+  for (const seed of [10, 170, 203, 247]) {
+    test(`a crooked first grow is grown again before a cut is judged (seed ${seed})`, async () => {
+      const random = Math.random;
+      Math.random = mulberry32(seed);
+      try {
+        const r = await createHealer('/nca/gr.bin').cut(VERTICAL, () => {});
+        expect(r!.mse).toBeLessThan(0.01);
+      } finally {
+        Math.random = random;
+      }
+    });
+  }
 
   test('a newer cut supersedes an older one still loading', async () => {
     const h = createHealer('/nca/gr.bin');

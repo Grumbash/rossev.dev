@@ -1,10 +1,12 @@
 // The visitor's own cut on the replay's mini GR, run on the real, shipped model (public/nca/gr.bin,
-// the GR monogram's weights) right here in the replay chunk. Grows the monogram once, then for each
+// the GR monogram's weights) right here in the replay chunk. Grows the monogram once (again if it
+// came out crooked, as the GR monogram does: ../nca/healer.ts grow()), then for each
 // cut: the same brush the recorded frames used (./frames.ts cut), HEAL_STEPS steps in small batches
 // that each stop after BATCH_MS so the page never stalls, a palette frame after every batch, and the
 // error against the uncut monogram at the end.
 import { NeuralCA } from '../nca/model';
 import { decodeWeights } from '../nca/weights';
+import { grownCleanly, measureShape, SILENT_GROW_RETRIES } from '../nca/healer';
 import { cut, quantize } from './frames';
 
 const GROW_STEPS = 300;
@@ -53,9 +55,13 @@ export function createHealer(weightsUrl: string) {
         })
         .then(async (buf) => {
           const ca = new NeuralCA(decodeWeights(buf));
-          ca.seed();
-          await stepFor(ca, GROW_STEPS);
-          return { ca, grown: ca.rgba() };
+          // Every cut is judged against this frame: a crooked one would score a clean heal as unhealed.
+          for (let tries = 0; ; tries++) {
+            ca.seed();
+            await stepFor(ca, GROW_STEPS);
+            const grown = ca.rgba();
+            if (tries >= SILENT_GROW_RETRIES || grownCleanly(measureShape(grown, ca.size, ca.aliveThreshold))) return { ca, grown };
+          }
         });
       const { ca, grown } = await ready;
       if (stale()) return null;

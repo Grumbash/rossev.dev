@@ -139,12 +139,13 @@ describe('analytics contract', () => {
 });
 
 describe.skipIf(!hasChrome())('microphone requests', () => {
+  // The site's scripts arrive a second late, as on a busy CI runner: the clicks must still reach a
+  // page whose loader is listening.
+  const slowScripts = { delay: (p: string) => (p.startsWith('/_astro/') && p.endsWith('.js') ? 1000 : 0) };
   for (const prefix of ['', '/ru']) {
     test(`a late permission from a previous visit and truncated model release the mic on ${prefix}/cases/sully/`, async () => {
-      const result = await withChrome(async ({ origin, send, evaluate }) => {
-        await send('Page.enable');
-        await send('Page.navigate', { url: origin + prefix + '/cases/sully/' });
-        await Bun.sleep(500);
+      const result = await withChrome(async ({ origin, navigate, evaluate }) => {
+        await navigate(origin + prefix + '/cases/sully/');
         return evaluate(`(async () => {
           let closed = 0, stopped = 0, answer = [];
           window.AudioContext = class {
@@ -164,7 +165,7 @@ describe.skipIf(!hasChrome())('microphone requests', () => {
           await new Promise(r => setTimeout(r, 100));
           const old = { closed, stopped, phase: root.dataset.vadPhase };
           answer[1](stream());
-          for (let i = 0; i < 100 && root.dataset.vadPhase !== 'error'; i++) await new Promise(r => setTimeout(r, 30));
+          for (let i = 0; i < 300 && root.dataset.vadPhase !== 'error'; i++) await new Promise(r => setTimeout(r, 30));
           const final = { closed, stopped, phase: root.dataset.vadPhase };
           let downloadSignal;
           window.fetch = (url, opts) => {
@@ -173,20 +174,18 @@ describe.skipIf(!hasChrome())('microphone requests', () => {
             return new Promise((_, reject) => opts.signal.addEventListener('abort', () => reject(opts.signal.reason)));
           };
           start.click(); answer[2](stream());
-          for (let i = 0; i < 100 && !downloadSignal; i++) await new Promise(r => setTimeout(r, 20));
+          for (let i = 0; i < 500 && !downloadSignal; i++) await new Promise(r => setTimeout(r, 20));
           dispatchEvent(new Event('pagehide')); start.click();
           await new Promise(r => setTimeout(r, 30));
           return { left, old, final, aborted: downloadSignal?.aborted, retry: root.dataset.vadPhase };
         })()`);
-      });
+      }, slowScripts);
       expect(result).toEqual({ left: 'idle', old: { closed: 1, stopped: 1, phase: 'asking' }, final: { closed: 2, stopped: 2, phase: 'error' }, aborted: true, retry: 'asking' });
     });
 
     test(`a second press while waiting for permission on ${prefix}/cases/sully/ is ignored; a denial can be retried`, async () => {
-      const result = await withChrome(async ({ origin, send, evaluate }) => {
-        await send('Page.enable');
-        await send('Page.navigate', { url: origin + prefix + '/cases/sully/' });
-        await Bun.sleep(750);
+      const result = await withChrome(async ({ origin, navigate, evaluate }) => {
+        await navigate(origin + prefix + '/cases/sully/');
         return evaluate(`(async () => {
           let requests = 0, contexts = 0, deny;
           window.AudioContext = class {
@@ -206,7 +205,7 @@ describe.skipIf(!hasChrome())('microphone requests', () => {
           start.click();
           return { pending, ended, retry: { requests, contexts, state: phase() } };
         })()`);
-      });
+      }, slowScripts);
       expect(result).toEqual({ pending: { requests: 1, contexts: 1, state: 'asking', disabled: 'true' }, ended: 'denied', retry: { requests: 2, contexts: 2, state: 'asking' } });
     });
   }
