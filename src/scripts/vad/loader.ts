@@ -23,7 +23,7 @@ export function initVadLoader(): void {
 
   document.addEventListener('click', (e) => {
     const root = (e.target as Element | null)?.closest?.('[data-vad-start]')?.closest<HTMLElement>('[data-vad]');
-    if (!root) return;
+    if (!root || isBusy((states.get(root) ?? initial).phase)) return;
     const env = envOf(window);
     const dispatch = (ev: VadEvent): State => {
       const prev = states.get(root) ?? initial;
