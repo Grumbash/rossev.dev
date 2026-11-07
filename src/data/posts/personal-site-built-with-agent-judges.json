@@ -1,0 +1,48 @@
+{
+  "id": "post-48",
+  "slug": "personal-site-built-with-agent-judges",
+  "published": "2026-11-07",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7524817187434610688/",
+  "title": {
+    "en": "A Personal Site Built by Agents That Judge Each Other",
+    "ru": "Личный сайт, который собрали агенты и судьи"
+  },
+  "takeaway": {
+    "en": "Write a failing test first, let one agent build, and let separate agents try to break the result before every merge, with a performance budget as a hard gate.",
+    "ru": "Сначала пишите падающий тест, пусть один агент делает работу, а отдельные агенты пытаются её сломать до мержа, и держите бюджет производительности как жёсткий гейт."
+  },
+  "tags": [
+    "Agents",
+    "Personal Site",
+    "Process"
+  ],
+  "brief": {
+    "quote": {
+      "en": "What I was really testing is the process.",
+      "ru": "На самом деле я проверял процесс."
+    },
+    "bullets": {
+      "en": [
+        "Gleb built a personal site in four days, with 89 pull requests, and most of them were features nobody asked for.",
+        "His profile is now often read by an LLM before a person, so he publishes one version for people and one at /llms.txt for models, both generated from one file.",
+        "Every PR starts with a red test, a writer agent does the work, separate judge agents try to break it, and a performance budget is checked before merge."
+      ],
+      "ru": [
+        "Глеб за четыре дня сделал личный сайт: 89 пул-реквестов, и большинство фич никто не просил.",
+        "Его профиль часто читает LLM раньше человека, поэтому он публикует две версии: для людей и /llms.txt для моделей, и обе собираются из одного файла.",
+        "Каждый PR начинается с красного теста, работу делает агент-райтер, отдельные агенты-судьи пытаются её сломать, а бюджет производительности проверяется до мержа."
+      ]
+    }
+  },
+  "body": {
+    "en": "Four days ago I started a personal site. It's at 89 pull requests now, and most of them are things nobody asked for.\n\nHalf the reason for it is that my profile now often gets read by an LLM before a person. So there are two versions: one for people, with a 3D map of how I build agent systems that you can break, and /llms.txt for models. Both, the PDF CV and the Russian version come from one file.\n\nThe first version took two evenings. The rest went into the site paying attention: it works offline, remembers what you read (in your browser only), tells you what changed since your last visit and shows in the footer how long the page took to load for you. Every post grows its own pixel creature, the shadows fall away from your cursor, and Ctrl+P on a post prints a newspaper page.\n\nNone of it is hard on its own. What I was really testing is the process: every PR starts with a red test, a writer agent does the work, separate judge agents try to break it, and a performance budget is checked before merge. With all of the above, the site's own JavaScript a page loads up front is still under 8 KB.\n\nEvery merged PR, with the test that was red first, what got caught and what I decided, is here: https://rossev.dev/how-its-built/?utm_source=linkedin&utm_medium=social&utm_campaign=site-launch&utm_content=body\n\nTwo things that broke on day one get their own posts over the next two days: a logo that regrew its G as an R, and an animation that ran twice as fast on a 120 Hz screen.",
+    "ru": "Четыре дня назад я начал личный сайт. Сейчас в нём 89 пул-реквестов, и большинство из них никто не просил.\n\nОтчасти поэтому. Мой профиль всё чаще сначала читает LLM, и только потом человек. Поэтому есть две версии: одна для людей, с 3D-картой того, как я строю агентные системы, которую можно сломать, и /llms.txt для моделей. Обе, а также PDF-резюме и русская версия, собираются из одного файла.\n\nПервая версия заняла два вечера. Остальное ушло на детали: сайт работает офлайн, помнит, что вы читали (только в вашем браузере), показывает, что изменилось с вашего последнего визита, и в футере пишет, сколько страница грузилась у вас. Каждый пост обрастает своим пиксельным существом, тени убегают от курсора, а Ctrl+P на посте печатает газетную страницу.\n\nПо отдельности ничего сложного нет. Я на самом деле проверял процесс: каждый PR начинается с красного теста, работу делает агент-райтер, отдельные агенты-судьи пытаются её сломать, а бюджет производительности проверяется перед мержем. Несмотря на всё перечисленное, JavaScript сайта, который загружается сразу, весит меньше 8 КБ.\n\nКаждый смерженный PR, с тестом, который сначала был красным, тем, что поймали, и тем, что я решил, лежит здесь: https://rossev.dev/how-its-built/?utm_source=linkedin&utm_medium=social&utm_campaign=site-launch&utm_content=body\n\nДве вещи, которые сломались в первый день, получат отдельные посты в ближайшие два дня: логотип, у которого G превратилась обратно в R, и анимация, которая шла в два раза быстрее на экране 120 Гц."
+  },
+  "color": "var(--orange)"
+}
