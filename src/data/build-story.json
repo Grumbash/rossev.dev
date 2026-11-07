@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-07T13:21:58.505Z",
-  "throughSha": "d04b824fe929baff157465fb20ce59beff68d571",
+  "generatedAt": "2026-11-07T17:15:38.269Z",
+  "throughSha": "975648203737f131c0c4bfa65f9ad984e4c6f4f1",
   "prs": [
     {
       "number": 1,
@@ -3293,6 +3293,54 @@
           "subject": "Wait for writing filters to initialize in the browser test",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/f713134d292c182a138b16672414b845eb74fc4e"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 94,
+      "title": "Ignore the deleted site-launch post in the Publora sync",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/94",
+      "mergedAt": "2026-11-07T16:36:54Z",
+      "additions": 5,
+      "deletions": 2,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "3951a180c6ff61caf29c9a4ade05f6dcc3e52f85",
+          "subject": "Ignore the deleted site-launch post in the Publora sync",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/3951a180c6ff61caf29c9a4ade05f6dcc3e52f85"
+        },
+        {
+          "sha": "10439f6033917811579b183f71151fd26db7db87",
+          "subject": "Publora sync test: the ignore list holds LinkedIn ids, not necessarily none",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/10439f6033917811579b183f71151fd26db7db87"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 95,
+      "title": "Remove unrecognized browsing-topics directive from Permissions-Policy",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/95",
+      "mergedAt": "2026-11-07T16:37:03Z",
+      "additions": 1,
+      "deletions": 1,
+      "changedFiles": 1,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "ecb2091e5b4b1cd5f3de889ad387c15bd372d6af",
+          "subject": "Remove the unrecognized browsing-topics header directive",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ecb2091e5b4b1cd5f3de889ad387c15bd372d6af"
         }
       ],
       "findings": [],
