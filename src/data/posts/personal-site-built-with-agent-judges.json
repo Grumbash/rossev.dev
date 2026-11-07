@@ -1,0 +1,48 @@
+{
+  "id": "post-48",
+  "slug": "personal-site-built-with-agent-judges",
+  "published": "2026-11-07",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7524829528578322433/",
+  "title": {
+    "en": "A Personal Site Built by Agents, Judged Before Every Merge",
+    "ru": "Личный сайт, который собирают агенты и проверяют перед каждым мержем"
+  },
+  "takeaway": {
+    "en": "Write a red test first, let a writer agent build the change, and have separate judge agents try to break it before anything merges.",
+    "ru": "Сначала пишите красный тест, пусть агент-писатель делает изменение, а отдельные агенты-судьи пытаются его сломать до мержа."
+  },
+  "tags": [
+    "Agents",
+    "Personal Site",
+    "Process"
+  ],
+  "brief": {
+    "quote": {
+      "en": "every PR starts with a red test, a writer agent does the work, separate judge agents try to break it, and a performance budget is checked before merge",
+      "ru": "каждый PR начинается с красного теста, агент-писатель делает работу, отдельные агенты-судьи пытаются её сломать, а бюджет производительности проверяется до мержа"
+    },
+    "bullets": {
+      "en": [
+        "The site has two versions: one for people with an interactive 3D map of how Gleb builds agent systems, and /llms.txt for models, both generated from one file together with the PDF CV and the Russian version.",
+        "Every PR starts with a red test, then a writer agent implements the change, and separate judge agents try to break it before merge.",
+        "A performance budget is checked before every merge, and the site's own JavaScript loaded up front stays under 8 KB."
+      ],
+      "ru": [
+        "У сайта две версии: для людей, с интерактивной 3D-картой того, как Глеб строит агентные системы, и /llms.txt для моделей, а оба варианта, PDF-резюме и русская версия собираются из одного файла.",
+        "Каждый PR начинается с красного теста, затем агент-писатель реализует изменение, а отдельные агенты-судьи пытаются его сломать до мержа.",
+        "Бюджет производительности проверяется перед каждым мержем, а собственный JavaScript сайта, который грузится сразу, остаётся меньше 8 КБ."
+      ]
+    }
+  },
+  "body": {
+    "en": "Four days ago I started a personal site. It's at 89 pull requests now, and most of them are things nobody asked for.\n\nHalf the reason for it is that my profile now often gets read by an LLM before a person. So there are two versions: one for people, with a 3D map of how I build agent systems that you can break, and /llms.txt for models. Both, the PDF CV and the Russian version come from one file.\n\nThe first version took two evenings. The rest went into the site paying attention: it works offline, remembers what you read (in your browser only), tells you what changed since your last visit and shows in the footer how long the page took to load for you. Every post grows its own pixel creature, the shadows fall away from your cursor, and Ctrl+P on a post prints a newspaper page.\n\nNone of it is hard on its own. What I was really testing is the process: every PR starts with a red test, a writer agent does the work, separate judge agents try to break it, and a performance budget is checked before merge. With all of the above, the site's own JavaScript a page loads up front is still under 8 KB.\n\nEvery merged PR, with the test that was red first, what got caught and what I decided, is here: https://rossev.dev/how-its-built/?utm_source=linkedin&utm_medium=social&utm_campaign=site-launch&utm_content=body\n\nTwo things that broke on day one get their own posts over the next two days: a logo that regrew its G as an R, and an animation that ran twice as fast on a 120 Hz screen.",
+    "ru": "Четыре дня назад я начал личный сайт. Сейчас в нём 89 пул-реквестов, и большинство из них никто не просил.\n\nОтчасти это потому, что мой профиль теперь часто сначала читает LLM, и только потом человек. Поэтому есть две версии: для людей, с 3D-картой того, как я строю агентные системы, которую можно сломать, и /llms.txt для моделей. Обе версии, PDF-резюме и русская версия собираются из одного файла.\n\nПервая версия заняла два вечера. Остальное ушло на детали: сайт работает офлайн, запоминает, что вы читали (только в вашем браузере), показывает, что изменилось с вашего последнего визита, а в футере выводит, сколько страница грузилась именно у вас. Каждый пост обзаводится своим пиксельным существом, тени убегают от курсора, а Ctrl+P на посте печатает газетную полосу.\n\nПо отдельности ничего сложного нет. Я проверял процесс: каждый PR начинается с красного теста, агент-писатель делает работу, отдельные агенты-судьи пытаются её сломать, а бюджет производительности проверяется до мержа. При всём этом собственный JavaScript, который грузится сразу, всё ещё меньше 8 КБ.\n\nКаждый смерженный PR, с тестом, который сначала был красным, тем, что поймали, и тем, что я решил, описан здесь: https://rossev.dev/how-its-built/?utm_source=linkedin&utm_medium=social&utm_campaign=site-launch&utm_content=body\n\nДве вещи, которые сломались в первый день, получат свои посты в ближайшие два дня: логотип, у которого буква G превратилась обратно в R, и анимация, которая шла вдвое быстрее на экране 120 Гц."
+  },
+  "color": "var(--orange)"
+}
