@@ -27,38 +27,75 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// A first visit navigates before this worker controls the tab. Recover that public article and
-// the build assets the tab actually loaded, before handing off control for offline navigation.
+const postPath = /^\/(?:ru\/)?writing\/[a-z0-9-]+\/$/;
+
+// Astro emits fingerprinted assets in one directory. Resolve both the /_astro/ URLs in
+// a document and relative imports inside its modules. Each asset is visited at most once.
+async function keepPostAssets(page: Response, assets: Cache, fetchMissing: boolean, signal?: AbortSignal, seen = new Set<string>()) {
+  const walk = async (content: string, module: boolean): Promise<void> => {
+    // Fetch only eager entry points and static imports. During migration, also follow dynamic
+    // imports and CSS font URLs if their files already exist in an older cache.
+    let pattern = /(?:["'`(](?:\.\/|(?:\/)?_astro\/))([\w.-]+\.(?:js|css|woff2))(?=["'`)])/g;
+    if (fetchMissing) {
+      pattern = module
+        ? /(?:\bfrom|\bimport|@import)\s*["'](?:\.\/|\/_astro\/)([\w.-]+\.(?:js|css))["']/g
+        : /\b(?:src|href)=["']\/_astro\/([\w.-]+\.(?:js|css|woff2))["']/g;
+    }
+    const refs = content.matchAll(pattern);
+    await Promise.all([...refs].map(async ([, file]) => {
+      const path = '/_astro/' + file;
+      if (seen.has(path)) return;
+      seen.add(path);
+      let response = await assets.match(path);
+      if (!response) {
+        response = await caches.match(path);
+        if (!response && fetchMissing) {
+          response = await fetch(path, { redirect: 'error', referrerPolicy: 'no-referrer', signal });
+          if (response.status !== 200 || response.type !== 'basic') throw new Error('Unavailable article asset');
+        }
+        if (!response) return; // An earlier build may never have downloaded an optional chunk.
+        await assets.put(path, response.clone());
+      }
+      if (/\.(?:css|js)$/.test(file)) await walk(await response.text(), true);
+    }));
+  };
+  await walk(await page.text(), false);
+}
+
+// Commit article HTML only with the assets it actually references. On deployment the live tab
+// can still be displaying the previous build, so its resource timings cannot describe this HTML.
+async function storePost(path: string, page: Response, signal: AbortSignal) {
+  const [pages, assets] = await Promise.all([caches.open(PAGES), caches.open(ASSETS)]);
+  await keepPostAssets(page.clone(), assets, true, signal);
+  await pages.put(path, page);
+}
+
 async function keepFirstPost(client: WindowClient) {
   const url = new URL(client.url);
-  if (url.origin !== self.location.origin || !/^\/(?:ru\/)?writing\/[a-z0-9-]+\/$/.test(url.pathname)) return;
-  const [pages, assets] = await Promise.all([caches.open(PAGES), caches.open(ASSETS)]);
-  const clean = { redirect: 'error', referrerPolicy: 'no-referrer', signal: AbortSignal.timeout(SLOW_MS) } as const;
-  const page = await fetch(url.pathname, clean);
-  if (page.status !== 200 || page.type !== 'basic' || !page.headers.get('content-type')?.includes('text/html')) return;
-  await pages.put(url.pathname, page);
-  const channel = new MessageChannel();
-  const refs = await new Promise<string[]>((resolve) => {
-    // A tab from an older build, or one closed during installation, may never answer.
-    const timeout = setTimeout(() => resolve([]), 1000);
-    channel.port1.onmessage = ({ data }) => {
-      clearTimeout(timeout);
-      resolve(Array.isArray(data) ? data : []);
-    };
-    client.postMessage('first-post-assets', [channel.port2]);
-  });
-  channel.port1.close();
-  await Promise.allSettled([...new Set(refs)].map(async (path) => {
-    if (typeof path !== 'string' || !/^\/_astro\/[\w.-]+$/.test(path) || await assets.match(path)) return;
-    const response = await fetch(path, clean);
-    if (response.status === 200 && response.type === 'basic') await assets.put(path, response);
-  }));
+  if (url.origin !== self.location.origin || !postPath.test(url.pathname)) return;
+  const signal = AbortSignal.timeout(SLOW_MS);
+  const page = await fetch(url.pathname, { redirect: 'error', referrerPolicy: 'no-referrer', signal });
+  if (page.status === 200 && page.type === 'basic' && page.headers.get('content-type')?.includes('text/html')) {
+    await storePost(url.pathname, page, signal);
+  }
 }
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     (async () => {
-      for (const name of await caches.keys()) if (name.startsWith('rossev-assets-') && name !== ASSETS) await caches.delete(name);
+      const retired = (await caches.keys()).filter((name) => name.startsWith('rossev-assets-') && name !== ASSETS);
+      if (retired.length) {
+        // Unopened saved articles may still reference older hashes. Copy their existing asset
+        // graphs into this cache before retiring the previous cache, without fetching old URLs.
+        const [pages, assets] = await Promise.all([caches.open(PAGES), caches.open(ASSETS)]);
+        const posts = (await pages.keys()).filter((r) => postPath.test(new URL(r.url).pathname));
+        const copied = new Set<string>();
+        for (const post of posts) {
+          const page = await pages.match(post);
+          if (page) await keepPostAssets(page, assets, false, undefined, copied);
+        }
+        await Promise.all(retired.map((name) => caches.delete(name)));
+      }
       const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
       await Promise.allSettled(windows.map(keepFirstPost));
       await self.clients.claim();
@@ -80,7 +117,12 @@ async function fromNetworkFirst(e: FetchEvent, url: URL) {
   const key = cacheKey(url);
   const network = fetch(e.request).then((res) => {
     // Only a whole, own, successful page is kept: no redirects, no errors, nothing opaque.
-    if (res.ok && res.type === 'basic' && !res.redirected) e.waitUntil(cache.put(key, res.clone()));
+    if (res.ok && res.type === 'basic' && !res.redirected) {
+      const saving = postPath.test(url.pathname) && res.headers.get('content-type')?.includes('text/html')
+        ? storePost(key, res.clone(), AbortSignal.timeout(SLOW_MS))
+        : cache.put(key, res.clone());
+      e.waitUntil(saving.catch(() => {}));
+    }
     return res;
   });
   const stored = () => cache.match(key);
