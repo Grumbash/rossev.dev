@@ -176,7 +176,7 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
                 data-lang-switch
                 data-track="lang_switch"
                 data-track-to={l}
-                aria-label={t(l).nav.readIn}
+                aria-label={`${l.toUpperCase()} — ${t(l).nav.readIn}`}
               >
                 {l.toUpperCase()}
               </a>

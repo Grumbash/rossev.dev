@@ -174,6 +174,13 @@ describe('the language control is a link to the same page in the other language'
     }
   });
 
+  test('the accessible name starts with the visible language code and describes the destination', () => {
+    for (const [path, name] of [['/', ruDict.nav.readIn], ['/ru/', enDict.nav.readIn]]) {
+      const link = read(fileOf(path)).match(/<a\b([^>]*data-lang-switch[^>]*)>\s*(EN|RU)\s*<\/a>/)!;
+      expect(link[1]).toContain(`aria-label="${link[2]} — ${name}"`);
+    }
+  });
+
   test('switching keeps the query and the anchor', async () => {
     const { langSwitchHref } = await import('../src/scripts/site');
     expect(langSwitchHref('/ru/', '?case=yagni', '#case-yagni')).toBe('/ru/?case=yagni#case-yagni');
