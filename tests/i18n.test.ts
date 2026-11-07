@@ -150,7 +150,7 @@ describe('crawlers find the other language', () => {
   test('RU fragments exist and RU home loads them, not the EN ones', () => {
     expect(existsSync('dist/ru/partials/posts-all/index.html')).toBe(true);
     expect(existsSync('dist/ru/partials/case-yagni/index.html')).toBe(true);
-    expect(ru).toContain('hx-get="/ru/partials/posts-all"');
+    expect(ru).toContain('hx-get="/ru/partials/posts-all/"');
     expect(ru).toContain('data-case-src="/ru/partials/case-yagni"');
     expect(ru).not.toMatch(/(hx-get|data-case-src)="\/partials\//);
     const cfg = JSON.parse(read('vercel.json'));
@@ -171,6 +171,13 @@ describe('the language control is a link to the same page in the other language'
       expect(switches(read(fileOf(p))), p).toEqual([{ href: ruPath(p), to: 'ru' }]);
       const ruFile = fileOf(ruPath(p));
       expect(switches(existsSync(ruFile) ? read(ruFile) : ''), ruPath(p)).toEqual([{ href: p, to: 'en' }]);
+    }
+  });
+
+  test('the accessible name starts with the visible language code and describes the destination', () => {
+    for (const [path, name] of [['/', ruDict.nav.readIn], ['/ru/', enDict.nav.readIn]]) {
+      const link = read(fileOf(path)).match(/<a\b([^>]*data-lang-switch[^>]*)>\s*(EN|RU)\s*<\/a>/)!;
+      expect(link[1]).toContain(`aria-label="${link[2]} — ${name}"`);
     }
   });
 

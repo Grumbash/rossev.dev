@@ -9,6 +9,7 @@ import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from '
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { buildSite } from './fixtures/build';
+import { withChrome } from './fixtures/cdp';
 import { hasChrome, probeServer } from './fixtures/probe';
 
 setDefaultTimeout(120_000);
@@ -169,4 +170,41 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.navigated).toBe(true);
     expect(r.after).toMatchObject({ path: '/ru/hire/', lang: 'ru', title: titleOf(ru), marker: false });
   });
+});
+
+describe.skipIf(!hasChrome())('rapid history navigation', () => {
+  for (const start of ['en', 'ru']) {
+    test(`a delayed Back cannot replace the content after Forward from ${start}`, async () => {
+      const initial = (start === 'en' ? '' : '/ru') + '/hire/';
+      const final = start === 'en' ? '/ru/hire/' : '/hire/';
+      const result = await withChrome(async ({ origin, send, evaluate }) => {
+        await send('Page.enable');
+        await send('Page.navigate', { url: origin + initial });
+        await Bun.sleep(750);
+        return evaluate(`(async () => {
+          const wait = ms => new Promise(r => setTimeout(r, ms));
+          const until = async fn => { for (let i = 0; i < 100 && !fn(); i++) await wait(30); return fn(); };
+          document.querySelector('[data-lang-switch]').click();
+          if (!await until(() => location.pathname === '${final}')) return 'switch failed';
+          let release;
+          const pending = new Promise(r => release = r);
+          const fetchPage = window.fetch;
+          let started = false;
+          window.fetch = async (...args) => {
+            if (args[0] === '${initial}') { started = true; await pending; }
+            return fetchPage(...args);
+          };
+          history.back();
+          if (!await until(() => started)) return 'Back did not fetch the page';
+          history.forward();
+          if (!await until(() => location.pathname === '${final}')) return 'Forward did not restore the URL';
+          release();
+          await wait(700);
+          return [location.pathname, document.documentElement.lang, document.title, document.querySelector('h1').textContent.replace(/\\s+/g, ' ').trim()];
+        })()`);
+      });
+      const html = readFileSync('dist' + final + 'index.html', 'utf8');
+      expect(result).toEqual([final, start === 'en' ? 'ru' : 'en', titleOf(html), h1Of(html)]);
+    });
+  }
 });

@@ -23,7 +23,7 @@ export function initVadLoader(): void {
 
   document.addEventListener('click', (e) => {
     const root = (e.target as Element | null)?.closest?.('[data-vad-start]')?.closest<HTMLElement>('[data-vad]');
-    if (!root) return;
+    if (!root || isBusy((states.get(root) ?? initial).phase)) return;
     const env = envOf(window);
     const dispatch = (ev: VadEvent): State => {
       const prev = states.get(root) ?? initial;
@@ -51,12 +51,32 @@ export function initVadLoader(): void {
       dispatch({ type: 'mic', error: (err as { name?: string })?.name ?? 'Error' });
       return;
     }
-    loadVadDemo().then(
-      (m) => m.runVadDemo(root, ctx!, mic, dispatch),
+    // The permission prompt can outlive this page, including a trip through bfcache.
+    // Own both resources until the loaded demo takes over the same pagehide lifecycle.
+    let cancelled = false;
+    const cancel = () => {
+      cancelled = true;
+      mic.then(({ stream }) => stream?.getTracks().forEach((t) => t.stop()));
+      ctx!.close().catch(() => {});
+    };
+    const leave = () => {
+      cancel();
+      dispatch({ type: 'stop' });
+    };
+    window.addEventListener('pagehide', leave, { once: true });
+    Promise.all([loadVadDemo(), mic]).then(
+      ([demo, permission]) => {
+        window.removeEventListener('pagehide', leave);
+        if (cancelled) return;
+        if (!root.isConnected) return leave();
+        return demo.runVadDemo(root, ctx!, permission, dispatch);
+      },
       () => {
-        mic.then((m) => m.stream?.getTracks().forEach((t) => t.stop()));
-        ctx!.close().catch(() => {});
-        dispatch({ type: 'fail' });
+        window.removeEventListener('pagehide', leave);
+        if (!cancelled) {
+          cancel();
+          dispatch({ type: 'fail' });
+        }
       },
     );
   });

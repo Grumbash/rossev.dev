@@ -58,25 +58,40 @@ describe('the build', () => {
 
 describe.skipIf(!hasChrome())('in the browser', () => {
   const [one, two] = BLOG_POSTS.slice(0, 2);
-  const PROBE = () => `<script>
+  const PROBE = (mode: string) => `<script>
+    ${mode === 'malformed' ? "history.replaceState(null, '', location.pathname + location.search + '#%');" : ''}
     if (!sessionStorage.getItem('seeded')) {
       sessionStorage.setItem('seeded', '1');
       localStorage.setItem('rosev_reading', JSON.stringify({ '${one.slug}': { f: 1, t: 2, d: 1 }, '${two.slug}': { f: 0.4, t: 1 } }));
     }
     (async () => { try {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-    document.querySelector('.hire-jump a[href="#audit"]').click();
-    await wait(1500);
     const a = document.querySelector('[data-letter]');
     const p = document.querySelector('[data-letter-line]');
+    await wait(1500);
+    const initial = { body: new URL(a.href).searchParams.get('body'), preview: p.hidden ? null : p.textContent };
+    document.querySelector('.hire-jump a[href="#audit"]').click();
+    await wait(1500);
     const pre = document.createElement('pre'); pre.id = '__probe';
-    pre.textContent = JSON.stringify({ href: a.href, preview: p.hidden ? null : p.textContent });
+    pre.textContent = JSON.stringify({ initial, href: a.href, preview: p.hidden ? null : p.textContent });
     document.body.appendChild(pre);
   } catch (e) { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify({ error: String(e && e.stack || e) }); document.body.appendChild(pre); } })();</script>`;
 
   let srv: ReturnType<typeof probeServer>;
   beforeAll(() => (srv = probeServer(PROBE)));
   afterAll(() => srv?.stop());
+
+  test('a malformed initial fragment preserves the reading context and later offer selection', async () => {
+    const r = await srv.run('/hire/', 'malformed');
+    expect(r.error).toBeUndefined();
+    const read = en.letter.readMany.replace('{posts}', [one, two].map((p) => en.letter.open + p.title.en + en.letter.close).join(en.letter.and));
+    const audit = en.letter.offer.replace('{offer}', 'AI agent reliability audit');
+    expect(r.initial.body).toContain(read);
+    expect(r.initial.preview).toContain(read);
+    expect(r.initial.body).not.toContain(audit);
+    expect(new URL(r.href).searchParams.get('body')).toContain(read + ' ' + audit);
+    expect(r.preview).toContain(audit);
+  });
 
   test('read two posts and jumped to the audit: the letter starts with them, and the line says so', async () => {
     const r = await srv.run('/ru/hire/', 'letter');

@@ -37,7 +37,12 @@ export function initLetter() {
     try {
       store = JSON.parse(localStorage.getItem('rosev_reading') || '{}') ?? {};
     } catch {}
-    const id = decodeURIComponent(location.hash.slice(1));
+    let id = '';
+    try {
+      id = decodeURIComponent(location.hash.slice(1));
+    } catch {
+      // A malformed fragment names no offer. The reading context still belongs in the letter.
+    }
     const offer = (id && document.querySelector(`.hire-card[id="${CSS.escape(id)}"] h2`)?.textContent?.trim()) || null;
     const w = { hello: d.letterHello, readOne: d.letterReadOne, readMany: d.letterReadMany, and: d.letterAnd, open: d.letterOpen, close: d.letterClose, offer: d.letterOffer } as Words;
     const l = letter({ store, titles: Object.fromEntries(posts.map((p) => [p.slug, p.title[lang]])), offer, w });

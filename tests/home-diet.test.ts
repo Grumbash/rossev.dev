@@ -198,6 +198,32 @@ describe('case loader (src/scripts/case-loader.ts)', () => {
     expect(d.body.innerHTML).toContain('blueprint-inspector');
   });
 
+  for (const [before, after] of [['', '/ru'], ['/ru', '']]) {
+    test(`an open case keeps the latest language when the ${before || 'English'} response arrives last`, async () => {
+      let release!: () => void;
+      const delayed = new Promise<void>((r) => { release = r; });
+      const old = before + '/partials/case-yagni', current = after + '/partials/case-yagni';
+      const { all, fetchFn, fetched, docListeners } = setup('', async (url) => {
+        if (url === old) await delayed;
+        return ok(url)();
+      });
+      const { initCaseLoader } = await import('../src/scripts/case-loader');
+      initCaseLoader(fetchFn);
+      const d = all['case-yagni'];
+      d.open = true;
+      d.dataset.caseSrc = old;
+      docListeners.toggle.forEach((toggle) => toggle({ target: d }));
+      d.dataset.caseSrc = current;
+      docListeners['site:lang'].forEach((change) => change({}));
+      await flush();
+      expect(d.body.innerHTML).toBe(current);
+      release();
+      await flush();
+      expect(d.body.innerHTML).toBe(current);
+      expect(fetched).toEqual([old, current]);
+    });
+  }
+
   test('a failed load keeps the link to the case page', async () => {
     const { all, fetchFn } = setup('?case=battlepro', async () => ({ ok: false, text: async () => '' }));
     const mod = await import(`../src/scripts/case-loader.ts?t=${Math.random()}`);

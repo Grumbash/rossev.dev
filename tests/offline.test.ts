@@ -97,6 +97,32 @@ describe('the offline page', () => {
 });
 
 describe.skipIf(!hasChrome())('in the browser', () => {
+  for (const prefix of ['', '/ru']) {
+    test(`first visit directly to ${prefix}/writing/ keeps the post and its script offline`, async () => {
+      const post = prefix + '/writing/self-healing-monogram/';
+      await withChrome(async ({ origin, send, evaluate, stopServer }) => {
+        await send('Page.enable');
+        await send('Page.navigate', { url: origin + post + '?from=first' });
+        const deadline = Date.now() + 15_000;
+        let state = null;
+        do {
+          await Bun.sleep(150);
+          state = await evaluate(`({ path: location.pathname, ready: document.readyState, controlled: !!navigator.serviceWorker?.controller })`);
+        } while (Date.now() < deadline && !(state?.path === post && state.ready === 'complete' && state.controlled));
+        expect(state).toEqual({ path: post, ready: 'complete', controlled: true });
+        const title = await evaluate('document.title');
+        expect(await evaluate(`caches.match(location.href).then(Boolean)`)).toBe(false);
+        expect(await evaluate(`caches.match(location.pathname).then(Boolean)`)).toBe(true);
+        stopServer();
+        await send('Network.setCacheDisabled', { cacheDisabled: true });
+        await send('Page.navigate', { url: origin + post });
+        await Bun.sleep(800);
+        expect(await evaluate('document.title')).toBe(title);
+        expect(await evaluate("!!document.querySelector('[data-quote-bar]')")).toBe(true);
+      });
+    });
+  }
+
   test('read a post, lose the network: it still opens, home still opens, an unread post gets the offline page listing it', async () => {
     const r = await withChrome(async ({ origin, send, evaluate, stopServer }) => {
       await send('Page.enable');
@@ -130,4 +156,64 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.unreadRu.title).toContain(ru.offline.title);
     expect(r.toast).toBe(ru.offline.toast);
   });
+});
+
+describe.skipIf(!hasChrome())('an update with a reading tab still open', () => {
+  for (const lang of ['en', 'ru']) {
+    test(`updated and previously visited ${lang} articles retain their own scripts offline`, async () => {
+      await withChrome(async ({ send, evaluate }) => {
+        const prefix = lang === 'en' ? '' : '/ru';
+        const opened = prefix + '/writing/self-healing-monogram/';
+        const previous = prefix + '/writing/no-threejs-topology/';
+        let build = 'A';
+        const optionalFetches: string[] = [];
+        // Two deployments with different article entry points and transitive module URLs.
+        const server = Bun.serve({ port: 0, async fetch(req) {
+          let path = new URL(req.url).pathname;
+          const response = (text: string, type: string) => new Response(text, { headers: { 'Content-Type': type, 'Cache-Control': 'no-store' } });
+          if (path === '/sw.js') return response(readFileSync('dist/sw.js', 'utf8').replace(/const VERSION = "[^"]+"/, `const VERSION = "test-${build}"`), 'text/javascript');
+          if (path === '/_astro/entry.' + build + '.js') return response(`import "./child.${build}.js"; export const optional = () => import("./lazy.${build}.js");`, 'text/javascript');
+          if (path.startsWith('/_astro/lazy.')) {
+            optionalFetches.push(path);
+            return response('export default true;', 'text/javascript');
+          }
+          if (path === '/_astro/child.' + build + '.js') return response(`document.documentElement.dataset.articleBuild = "${build}";`, 'text/javascript');
+          if (path === opened || path === previous) {
+            const html = readFileSync('dist' + path + 'index.html', 'utf8').replace('</head>', `<script type="module" src="/_astro/entry.${build}.js"></script></head>`);
+            return response(html, 'text/html');
+          }
+          if (path.endsWith('/')) path += 'index.html';
+          const file = Bun.file('dist' + path);
+          return await file.exists() ? new Response(file) : new Response('Missing', { status: 404 });
+        } });
+        const waitFor = async (expression: string) => {
+          for (let i = 0; i < 150; i++) {
+            if (await evaluate(expression)) return;
+            await Bun.sleep(80);
+          }
+          throw Error('Timed out waiting for ' + expression);
+        };
+        const go = (path: string) => send('Page.navigate', { url: server.url.origin + path });
+        try {
+          await send('Page.enable');
+          await send('Network.enable');
+          await send('Network.setCacheDisabled', { cacheDisabled: true });
+          await go(previous);
+          await waitFor("!!navigator.serviceWorker.controller && document.documentElement.dataset.articleBuild === 'A'");
+          await go(opened);
+          await waitFor(`location.pathname === '${opened}' && caches.match(location.pathname).then(Boolean)`);
+          await evaluate("window.updates = 0; navigator.serviceWorker.addEventListener('controllerchange', () => window.updates++); true");
+          build = 'B';
+          await evaluate('navigator.serviceWorker.getRegistration().then(r => r.update()).then(() => true)');
+          await waitFor("window.updates > 0 && navigator.serviceWorker.getRegistration().then(r => r.active?.state === 'activated')");
+          expect(optionalFetches).toEqual([]);
+          server.stop(true);
+          for (const [path, expected] of [[opened, 'B'], [previous, 'A']]) {
+            await go(path);
+            await waitFor(`location.pathname === '${path}' && document.documentElement.dataset.articleBuild === '${expected}' && !!document.querySelector('[data-quote-bar]')`);
+          }
+        } finally { server.stop(true); }
+      });
+    });
+  }
 });

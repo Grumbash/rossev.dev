@@ -94,14 +94,12 @@ function follow(anchor: Element) {
   };
 }
 
-let busy = false;
-
 /**
  * Apply `changes` as one melt: the changed blocks on screen dissolve into their new text in a
  * top-to-bottom wave, and the block being read stays where it was. `extra` runs inside the same
  * update, before the reader is put back (the head, history, the site:lang event).
  */
-export async function melt(changes: Change[], extra?: () => void) {
+export async function melt(changes: Change[], extra?: () => void, isCurrent?: () => boolean) {
   const anchor = readingAnchor();
   const before = anchor?.getBoundingClientRect().top ?? 0;
   const after = anchor ? follow(anchor) : null;
@@ -120,6 +118,7 @@ export async function melt(changes: Change[], extra?: () => void) {
   const regions = changes.filter((c) => c.swap).map((c) => ({ el: c.el, names: new Map<number, string>() }));
 
   const apply = () => {
+    if (isCurrent && !isCurrent()) return;
     for (const c of changes) c.apply();
     extra?.();
     for (const r of regions) [...r.el.children].forEach((c, i) => r.names.has(i) && ((c as HTMLElement).style.viewTransitionName = r.names.get(i)!));
@@ -178,30 +177,27 @@ export async function melt(changes: Change[], extra?: () => void) {
 export const meltRegion = (el: Element, html: string) => melt([{ el, swap: true, apply: () => (el.innerHTML = html) }]);
 
 /** Morph into `url`'s page; `push` adds a history entry (false when answering Back/Forward). */
-export async function morphTo(url: string, push = true) {
-  if (busy) return;
-  busy = true;
-  const fallback = () => (push ? location.assign(url) : location.reload());
-  try {
-    const doc = new DOMParser().parseFromString(await prefetch(url), 'text/html');
-    const changes = plan(document.body, doc.body);
-    if (!changes) return fallback();
-    await melt(changes, () => {
-      document.title = doc.title;
-      document.documentElement.lang = doc.documentElement.lang;
-      for (const sel of ['meta[name="description"]', 'link[rel="canonical"]']) {
-        const from = doc.head.querySelector(sel);
-        const to = document.head.querySelector(sel);
-        if (from && to) for (const attr of ['content', 'href']) if (from.hasAttribute(attr)) to.setAttribute(attr, from.getAttribute(attr)!);
-      }
-      if (push) history.pushState({ langMorph: true }, '', url);
-      // Islands that hold language state follow here, inside the same update (the depth dial
-      // puts the plain version back, the replay relabels its canvas).
-      document.dispatchEvent(new CustomEvent('site:lang', { detail: { lang: doc.documentElement.lang } }));
-    });
-  } catch {
-    fallback();
-  } finally {
-    busy = false;
+export async function morphTo(url: string, push: boolean, isCurrent: () => boolean) {
+  const html = await prefetch(url);
+  if (!isCurrent()) return;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const changes = plan(document.body, doc.body);
+  if (!changes) {
+    if (push) location.assign(url);
+    else location.reload();
+    return;
   }
+  await melt(changes, () => {
+    document.title = doc.title;
+    document.documentElement.lang = doc.documentElement.lang;
+    for (const sel of ['meta[name="description"]', 'link[rel="canonical"]']) {
+      const from = doc.head.querySelector(sel);
+      const to = document.head.querySelector(sel);
+      if (from && to) for (const attr of ['content', 'href']) if (from.hasAttribute(attr)) to.setAttribute(attr, from.getAttribute(attr)!);
+    }
+    if (push) history.pushState({ langMorph: true }, '', url);
+    // Islands that hold language state follow here, inside the same update (the depth dial
+    // puts the plain version back, the replay relabels its canvas).
+    document.dispatchEvent(new CustomEvent('site:lang', { detail: { lang: doc.documentElement.lang } }));
+  }, isCurrent);
 }

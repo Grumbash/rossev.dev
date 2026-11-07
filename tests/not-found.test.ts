@@ -3,11 +3,12 @@
 // /404.html for every locale, so it carries both languages and a script shows the visitor's one.
 // The script also fixes the commonest miss: a path typed in the Russian keyboard layout (/с for /c,
 // /ршку/ for /hire/) is sent to the path those same keys spell in the Latin layout.
-import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
+import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { latinLayoutPath, suggestPath } from '../src/scripts/not-found';
+import { latinLayoutPath, layoutRedirect, suggestPath } from '../src/scripts/not-found';
 import { t } from '../src/i18n';
+import { hasChrome, probeServer } from './fixtures/probe';
 import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
@@ -27,6 +28,14 @@ describe('Russian keyboard layout', () => {
     expect(latinLayoutPath('/ршку/')).toBe('/hire/');
     expect(latinLayoutPath('/ru/ршку/')).toBe('/ru/hire/');
     expect(latinLayoutPath('/цкшештп/')).toBe('/writing/');
+  });
+
+  test('repairs a local address with its search and hash, and rejects external destinations', () => {
+    const site = 'https://rossev.dev';
+    expect(layoutRedirect(new URL('/ru/ршку/?from=cv#contact', site))?.href).toBe(site + '/ru/hire/?from=cv#contact');
+    for (const path of ['/%2Fexample.org/%D1%81', '/%5Cexample.org/%D1%81', '/%09%2Fexample.org/с', '/%FF/с']) {
+      expect(layoutRedirect(new URL(path, site))).toBeNull();
+    }
   });
 
   test('a path with nothing to fix is left alone, so the 404 can never redirect in a loop', () => {
@@ -76,6 +85,20 @@ describe('suggested page', () => {
     expect(suggestPath('/writing/the-new-ai-botleneck', ROUTES)).toBe('/writing/the-new-ai-bottleneck/');
   });
 
+  test('a very long missed path is dismissed without spending a frame per route', () => {
+    const routes: string[] = JSON.parse(readFileSync('dist/routes.json', 'utf8'));
+    const path = '/' + 'x'.repeat(32_768);
+    const started = performance.now();
+    expect(suggestPath(path, routes)).toBeNull();
+    expect(performance.now() - started).toBeLessThan(250);
+  });
+
+  test('the longest acceptable typo still matches, and the closest route still decides eligibility', () => {
+    expect(suggestPath('/writingxx', ['/writing/'])).toBe('/writing/');
+    expect(suggestPath('/abcdefg', ['/abcde/', '/xbcdefgzz/'])).toBeNull();
+    expect(suggestPath('/abcd', ['/abcdxx/', '/axyd/'])).toBeNull();
+  });
+
   test('stays in the language of the missed path', () => {
     expect(suggestPath('/ru/hier/', ROUTES)).toBe('/ru/hire/');
     expect(suggestPath('/ru/writng', ROUTES)).toBe('/ru/writing/');
@@ -110,4 +133,46 @@ describe('healing monogram', () => {
     expect(html).toMatch(/<svg[^>]*class="[^"]*nca-fallback/);
     for (const l of ['en', 'ru'] as const) expect(html).toContain(t(l).notFound.healCaption);
   });
+});
+
+describe.skipIf(!hasChrome())('the monogram on a missing page', () => {
+  let srv: ReturnType<typeof probeServer>;
+  beforeAll(() => {
+    srv = probeServer((lang) => `<script>
+      history.replaceState(null, '', '${lang === 'ru' ? '/ru' : ''}/missing');
+      Object.defineProperty(navigator, 'language', { value: 'en' });
+      // Deliver a repair notification immediately, before the first animation frame.
+      window.Worker = class {
+        postMessage(message) {
+          if (message.type !== 'init') return;
+          const label = document.getElementById('nca-canvas').getAttribute('aria-label');
+          this.onmessage({ data: { type: 'notice' } });
+          setTimeout(() => {
+            const result = document.createElement('pre');
+            result.id = '__probe';
+            const luminance = color => {
+              const linear = color.match(/\\d+/g).slice(0, 3).map(Number).map(n => n / 255).map(n => n <= 0.04045 ? n / 12.92 : ((n + 0.055) / 1.055) ** 2.4);
+              return linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722;
+            };
+            const contrast = ['light', 'dark'].map(theme => {
+              document.documentElement.dataset.theme = theme;
+              const a = luminance(getComputedStyle(document.querySelector('.nf-fail')).color);
+              const b = luminance(getComputedStyle(document.querySelector('.nf-run')).backgroundColor);
+              return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+            });
+            result.textContent = JSON.stringify({ label, notice: document.querySelector('.nca-notice').textContent, contrast });
+            document.body.append(result);
+          }, 100);
+        }
+      };
+    </script>`);
+  });
+  afterAll(() => srv?.stop());
+  for (const lang of ['en', 'ru'] as const) {
+    test(`the accessible name and first repair announcement use ${lang}`, async () => {
+      const result = await srv.run('/404.html', lang);
+      expect(result).toMatchObject({ label: t(lang).notFound.healLabel, notice: t(lang).nca.regrowing });
+      for (const ratio of result.contrast) expect(ratio).toBeGreaterThanOrEqual(4.5);
+    });
+  }
 });

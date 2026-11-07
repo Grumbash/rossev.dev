@@ -61,6 +61,7 @@ export const en = {
   },
   toast: {
     copied: 'Copied: ',
+    copyFailed: 'Could not copy to clipboard.',
     copiedDefault: 'COPIED TO CLIPBOARD'
   },
   hero: {
@@ -75,6 +76,8 @@ export const en = {
   },
   topology: {
     title: 'How agents built this site',
+    controlsHint: 'DRAG · CTRL/⌘+SCROLL · CLICK A NODE',
+    canvasLabel: 'Interactive 3D System Architecture Topology. Use Left and Right arrow keys to cycle nodes, Enter to explode node layers, F to simulate fault.',
     scenario: 'Try your own scenario',
     replayBadge: 'REPLAY · PR #11',
     yourRun: 'YOUR RUN',

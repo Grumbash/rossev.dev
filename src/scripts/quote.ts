@@ -4,6 +4,7 @@
 // scrolls to and highlights. Copying a passage pastes it with the post title and that link.
 // The words, the title and the url are data-quote-* on the post's <article>, rendered in the page's
 // language; the language morph updates them like any attribute, so nothing here tracks the language.
+import { copyText } from './clipboard';
 import { track } from './analytics';
 import { SIDE, creature } from '../data/creature';
 
@@ -44,26 +45,61 @@ export function attribution(text: string, title: string, pageUrl: string, plain 
 
 /** The quote's lines and size on the card: as large as fits, cut at a word with an ellipsis past it. */
 export function fitQuote(text: string, measure: (s: string, px: number) => number) {
-  let w = words(text);
-  const cut = (n: number) => [...w.slice(0, n - 1), `${w[n - 1]}…`];
-  while (w.join(' ').length > CARD.maxChars && w.length > 1) w = cut(w.length - 1);
-  const wrap = (ws: string[], px: number) => {
+  const graphemes = (word: string) => typeof Intl.Segmenter === 'function'
+    ? Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(word), (s) => s.segment)
+    : Array.from(word);
+  const w: string[] = [];
+  let length = 0;
+  for (const word of words(text)) {
+    const next = length + (w.length ? 1 : 0) + word.length;
+    if (next > CARD.maxChars) {
+      if (w.length) w[w.length - 1] += '…';
+      else w.push(graphemes(word).slice(0, CARD.maxChars - 1).join('') + '…');
+      break;
+    }
+    w.push(word);
+    length = next;
+  }
+  const wrap = (px: number, splitLongWords = false) => {
     const lines: string[] = [];
-    for (const word of ws) {
+    for (const word of w) {
       const last = lines.at(-1);
-      if (last !== undefined && measure(`${last} ${word}`, px) <= CARD.textWidth) lines[lines.length - 1] = `${last} ${word}`;
-      else lines.push(word);
+      if (last && measure(last + ' ' + word, px) <= CARD.textWidth) {
+        lines[lines.length - 1] = last + ' ' + word;
+      } else if (splitLongWords && measure(word, px) > CARD.textWidth) {
+        let chunk = '';
+        for (const glyph of graphemes(word)) {
+          if (chunk && measure(chunk + glyph, px) > CARD.textWidth) {
+            lines.push(chunk);
+            chunk = '';
+          }
+          chunk += glyph;
+        }
+        lines.push(chunk);
+      } else lines.push(word);
     }
     return lines;
   };
-  const fits = (lines: string[], px: number) => lines.length * px * CARD.lineHeight <= CARD.textHeight;
   for (let px = CARD.maxPx; px >= CARD.minPx; px -= 2) {
-    const lines = wrap(w, px);
-    if (fits(lines, px)) return { px, lines };
+    const lines = wrap(px);
+    if (lines.length * px * CARD.lineHeight <= CARD.textHeight && lines.every((l) => measure(l, px) <= CARD.textWidth)) return { px, lines };
   }
-  let lines = wrap(w, CARD.minPx);
-  while (!fits(lines, CARD.minPx) && w.length > 1) lines = wrap((w = cut(w.length - 1)), CARD.minPx);
-  return { px: CARD.minPx, lines };
+
+  const px = CARD.minPx;
+  const maxLines = Math.floor(CARD.textHeight / (px * CARD.lineHeight));
+  let lines = wrap(px, true);
+  while (lines.length > maxLines && w.length > 1) {
+    w.pop();
+    w[w.length - 1] += '…';
+    lines = wrap(px, true);
+  }
+  if (lines.length > maxLines) {
+    lines.length = maxLines;
+    const last = graphemes(lines[maxLines - 1]);
+    while (last.length && measure(last.join('') + '…', px) > CARD.textWidth) last.pop();
+    lines[maxLines - 1] = last.join('') + '…';
+  }
+  return { px, lines };
 }
 
 const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -140,14 +176,6 @@ async function drawCard(text: string, title: string, url: string, slug: string, 
   return new Promise((done) => c.toBlob(done, 'image/png'));
 }
 
-function toast(message: string) {
-  const el = document.getElementById('brutal-toast');
-  if (!el) return;
-  el.textContent = message;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2400);
-}
-
 export function initQuote() {
   const article = document.querySelector<HTMLElement>('article[data-quote-title]');
   if (!article) return;
@@ -210,33 +238,40 @@ export function initQuote() {
     if (getSelection()?.isCollapsed) bar.hidden = true;
   });
 
-  linkBtn.addEventListener('click', () => {
+  linkBtn.addEventListener('click', async () => {
     if (!current) return;
-    navigator.clipboard?.writeText(quoteLink(data().quoteUrl, current.text, plain())).catch(() => {});
-    toast(data().quoteCopied);
-    track('quote_share', { kind: 'link' });
+    const copied = await copyText(quoteLink(data().quoteUrl, current.text, plain()), data().quoteCopied);
+    if (copied) track('quote_share', { kind: 'link' });
   });
 
   cardBtn.addEventListener('click', async () => {
     if (!current) return;
+    const { text } = current;
     const { quoteTitle: title, quoteUrl: url, quoteSlug: slug } = data();
+    const link = quoteLink(url, text, plain());
     // The post's colour, from its var(--…), as the canvas needs it.
     const probe = document.body.appendChild(document.createElement('span'));
     probe.style.color = article.dataset.quoteColor ?? 'var(--lime)';
     const color = getComputedStyle(probe).color;
     probe.remove();
-    const blob = await drawCard(current.text, title, url, slug, color);
+    const blob = await drawCard(text, title, url, slug, color);
     if (!blob) return;
-    track('quote_share', { kind: 'card' });
     const file = new File([blob], `rossev-${slug}-quote.png`, { type: 'image/png' });
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      navigator.share({ files: [file], title, url: quoteLink(url, current.text, plain()) }).catch(() => {});
-      return;
+      try {
+        await navigator.share({ files: [file], title, url: link });
+        track('quote_share', { kind: 'card' });
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        // Sharing was refused. Offer the card through the normal download path.
+      }
     }
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = file.name;
     a.click();
+    track('quote_share', { kind: 'card' });
     setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
   });
 

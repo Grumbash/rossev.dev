@@ -17,7 +17,6 @@ export const ACTIONS: Record<string, Action> = {
     if (slot) slot.innerHTML = '';
     window.setUrlParam?.('post', null);
   },
-  activateFilterBtn: (el) => window.activateFilterBtn?.(el),
   copyToolbox: () => window.copyToolbox?.(),
   selectSkill: (el) => window.selectSkill?.(el),
   setIsoDomain: (el, _e, arg) => {

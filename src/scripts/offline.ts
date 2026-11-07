@@ -11,7 +11,11 @@ function toast(text: string | undefined) {
 }
 
 export function initOffline() {
-  if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  if ('serviceWorker' in navigator) {
+    const register = () => navigator.serviceWorker.register('/sw.js').catch(() => {});
+    if (document.readyState === 'complete') register();
+    else addEventListener('load', register, { once: true });
+  }
   addEventListener('offline', () => toast(document.getElementById('brutal-toast')?.dataset.offline));
 }
 

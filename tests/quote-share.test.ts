@@ -69,6 +69,19 @@ describe('the card layout', () => {
     expect(long.lines.join(' ')).toContain('restarts it honestly.');
   });
 
+  test('long words and URLs stay inside the card at the largest fitting size or wrap at minimum size', () => {
+    for (const token of ['github.com/Grumbash/rossev.dev.', 'документо-ориентированные', 'https://example.org/' + 'x'.repeat(120)]) {
+      const layout = fitQuote('Read ' + token + ' today', measure);
+      expect(layout.lines.join('').replaceAll(' ', '')).toBe('Read' + token + 'today');
+      expect(layout.lines.every(l => measure(l, layout.px) <= CARD.textWidth)).toBe(true);
+      expect(layout.lines.length * layout.px * CARD.lineHeight).toBeLessThanOrEqual(CARD.textHeight);
+    }
+    const giant = fitQuote('Ж'.repeat(800), (s, px) => s.length * px * 1.5);
+    expect(giant.lines.at(-1)).toEndWith('…');
+    expect(giant.lines.every(l => l.length * giant.px * 1.5 <= CARD.textWidth)).toBe(true);
+    expect(giant.lines.length * giant.px * CARD.lineHeight).toBeLessThanOrEqual(CARD.textHeight);
+  });
+
   test('past the card a quote is cut at a word with an ellipsis, never mid-word', () => {
     const f = fitQuote('word '.repeat(200).trim(), measure);
     const text = f.lines.join(' ');
@@ -114,11 +127,11 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const report = (o) => { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(o); document.body.appendChild(pre); };
     const out = {};
     // What the page would hand to the clipboard and to the download, captured instead.
-    let clip = null, saved = null;
+    let clip = null, saved = null, downloads = 0;
     Object.defineProperty(navigator, 'clipboard', { value: { writeText: async (t) => { clip = t; } }, configurable: true });
     Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
     const click = HTMLAnchorElement.prototype.click;
-    HTMLAnchorElement.prototype.click = function () { if (this.download) saved = { href: this.href, name: this.download }; else click.call(this); };
+    HTMLAnchorElement.prototype.click = function () { if (this.download) { downloads++; saved = { href: this.href, name: this.download }; } else click.call(this); };
     await until(() => document.readyState === 'complete');
     // Select the first sentence of the second paragraph of the post.
     const select = () => {
@@ -133,9 +146,16 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     out.selected = select();
     await until(() => bar() && !bar().hidden);
     out.bar = { shown: !!bar() && !bar().hidden, words: [...bar().querySelectorAll('button')].map((b) => b.textContent.trim()), ignored: bar().hasAttribute('data-morph-ignore') };
+    out.shares = [];
+    window.umami = { track: (name, props) => { if (name === 'quote_share') out.shares.push(props.kind); } };
     bar().querySelector('[data-quote-do="link"]').click();
     await until(() => clip);
     out.link = clip;
+    out.linkSuccess = document.getElementById('brutal-toast').textContent;
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: async () => { throw new DOMException('Denied', 'NotAllowedError'); } }, configurable: true });
+    bar().querySelector('[data-quote-do="link"]').click();
+    await wait(0);
+    out.linkDenied = document.getElementById('brutal-toast').textContent;
     const dt = new DataTransfer();
     document.querySelector('.post-body').dispatchEvent(new ClipboardEvent('copy', { bubbles: true, cancelable: true, clipboardData: dt }));
     out.copied = { text: dt.getData('text/plain'), html: dt.getData('text/html') };
@@ -155,6 +175,22 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     await until(() => document.documentElement.lang === 'ru' && !document.querySelector('[style*="view-transition"]'));
     select(); await until(() => bar() && !bar().hidden);
     out.ru = [...bar().querySelectorAll('button')].map((b) => b.textContent.trim());
+    Object.defineProperty(navigator, 'canShare', { value: () => true, configurable: true });
+    let attempts = 0;
+    out.native = [];
+    for (const failure of ['NotAllowedError', 'AbortError', null]) {
+      Object.defineProperty(navigator, 'share', { value: async () => {
+        attempts++; if (failure) throw new DOMException(failure, failure);
+      }, configurable: true });
+      const before = attempts;
+      bar().querySelector('[data-quote-do="card"]').click();
+      await until(() => attempts > before); await wait(0);
+      out.native.push({ downloads, cardEvents: out.shares.filter(k => k === 'card').length });
+    }
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+    document.querySelector('[data-action="copy"]').click();
+    await wait(0);
+    out.clipboardMissing = document.getElementById('brutal-toast').textContent;
     report(out);
     } catch (e) {
       const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify({ error: String(e && e.stack || e) }); document.body.appendChild(pre);
@@ -170,6 +206,11 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const host = /^http:\/\/localhost:\d+/;
     expect(r.bar).toEqual({ shown: true, words: [en.quote.card, en.quote.link], ignored: true });
     expect(r.link.replace(host, 'https://rossev.dev')).toBe(quoteLink(`https://rossev.dev/writing/${POST}/`, r.selected));
+    expect(r.linkSuccess).toBe(en.quote.copied);
+    expect(r.linkDenied).toBe(en.toast.copyFailed);
+    expect(r.shares).toEqual(['link', 'card', 'card', 'card']);
+    expect(r.native).toEqual([{ downloads: 2, cardEvents: 2 }, { downloads: 2, cardEvents: 2 }, { downloads: 2, cardEvents: 3 }]);
+    expect(r.clipboardMissing).toBe(ru.toast.copyFailed);
     expect(r.copied.text).toContain(`${r.selected}\n\n— ${BLOG_POSTS.find((p) => p.slug === POST)!.title.en}\n`);
     expect(r.copied.text).toContain(textFragment(r.selected));
     expect(r.copied.html).toContain('<a href=');

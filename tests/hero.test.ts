@@ -5,6 +5,9 @@ import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from '
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CASE_STUDIES, PROFILE } from '../src/data/profile';
+import { t } from '../src/i18n';
+import { isoStatus } from '../src/scripts/iso-status';
+import { withChrome } from './fixtures/cdp';
 import { buildSite } from './fixtures/build';
 import { CHROME, hasChrome } from './fixtures/probe';
 
@@ -184,6 +187,45 @@ describe.skipIf(!hasChrome())('layout at 375×812', () => {
       expect(r.stats).toBeLessThanOrEqual(812);
       expect(r.cta).toBeLessThanOrEqual(812);
       expect(r.sw).toBeLessThanOrEqual(375);
+    });
+  }
+});
+
+describe.skipIf(!hasChrome())('topology on a touchscreen', () => {
+  for (const lang of ['en', 'ru'] as const) {
+    test(`a tap without prior hover selects the node and fault feedback uses ${lang}`, async () => {
+      const words = t(lang).topology;
+      await withChrome(async ({ send, evaluate, origin }) => {
+        await send('Page.enable');
+        await send('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+        await send('Emulation.setTouchEmulationEnabled', { enabled: true });
+        await send('Page.navigate', { url: origin + (lang === 'en' ? '/' : '/ru/') });
+        await Bun.sleep(500);
+        await evaluate(`document.querySelector('[data-story-play]').click(); document.querySelector('.scenario-controls').open = true; document.querySelector('[data-story-explore]').click(); document.querySelector('#iso-arch-canvas').scrollIntoView({block:'center', behavior:'instant'})`);
+        await Bun.sleep(600);
+        expect(await evaluate("document.querySelector('#iso-arch-canvas').getAttribute('aria-label')")).toBe(words.canvasLabel);
+        expect(await evaluate("document.querySelector('.iso-hint-fine').textContent")).toBe(words.controlsHint);
+        const point = await evaluate(`(() => {
+          const c = document.querySelector('#iso-arch-canvas'), r = c.getBoundingClientRect();
+          for (let y = Math.max(1, r.top + 5); y < Math.min(innerHeight, r.bottom) - 4; y += 6) {
+            for (let x = r.left + 6; x < r.right - 5; x += 6) {
+              c.dispatchEvent(new PointerEvent('pointermove', {clientX:x, clientY:y, pointerType:'mouse'}));
+              if (c.style.cursor === 'pointer') {
+                const node = document.querySelector('#iso-hud-badge').textContent;
+                c.dispatchEvent(new PointerEvent('pointerleave'));
+                return { x, y, node };
+              }
+            }
+          }
+        })()`);
+        expect(point).toBeDefined();
+        await send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: point.x, y: point.y }] });
+        await send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        expect(await evaluate("document.querySelector('#iso-trace-status').textContent")).toBe(isoStatus[lang].expanded.replace('{node}', point.node));
+        await evaluate("document.querySelector('#btn-iso-fault').click()");
+        await Bun.sleep(120);
+        expect(await evaluate("document.querySelector('#iso-trace-status').textContent")).toStartWith(isoStatus[lang].stage1.split('{node}')[0]);
+      });
     });
   }
 });

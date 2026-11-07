@@ -1,3 +1,4 @@
+import { copyText } from './clipboard';
 import { initOffline } from './offline';
 import { initTheme } from './theme';
 
@@ -34,6 +35,17 @@ export function initSite() {
   // A plain click morphs this page into the other language in place (scripts/lang-morph.ts, loaded
   // when the visitor first reaches for the switch); a modifier click still opens the link as is.
   const morph = () => import('./lang-morph');
+  let navigation = 0;
+  const changeLanguage = (url: string, push: boolean) => {
+    const id = ++navigation;
+    const isCurrent = () => id === navigation;
+    const fallback = () => {
+      if (!isCurrent()) return;
+      if (push) window.location.assign(url);
+      else window.location.reload();
+    };
+    morph().then((m) => m.morphTo(url, push, isCurrent)).catch(fallback);
+  };
   const reach = (e: Event) => {
     const a = (e.target as Element | null)?.closest?.('a[data-lang-switch]') as HTMLAnchorElement | null;
     if (a) void morph().then((m) => m.prefetch(a.href)).catch(() => {});
@@ -44,9 +56,7 @@ export function initSite() {
     const a = (e.target as Element | null)?.closest?.('a[data-lang-switch]') as HTMLAnchorElement | null;
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    morph()
-      .then((m) => m.morphTo(a.href))
-      .catch(() => window.location.assign(a.href));
+    changeLanguage(a.href, true);
   });
   // Leaving /writing/ through a card: only that card's title takes its name (--vt), so it alone flies
   // into the post heading; naming all 47 would make the browser snapshot every one of them.
@@ -63,10 +73,12 @@ export function initSite() {
   // Back/Forward across a morph: the URL's language no longer matches the page, so morph again.
   window.addEventListener('popstate', () => {
     const lang = /^\/ru(\/|$)/.test(window.location.pathname) ? 'ru' : 'en';
-    if (lang === root.lang) return;
-    morph()
-      .then((m) => m.morphTo(window.location.href, false))
-      .catch(() => window.location.reload());
+    if (lang === root.lang) {
+      // Forward can return to the language still on screen while a slower Back is pending.
+      navigation++;
+      return;
+    }
+    changeLanguage(window.location.href, false);
   });
 
   initTheme();
@@ -97,12 +109,5 @@ export function initSite() {
     } catch {}
   };
 
-  window.copyToClipboard = (text, label) => {
-    navigator.clipboard?.writeText(text).catch(() => {});
-    const toast = document.getElementById('brutal-toast');
-    if (!toast) return;
-    toast.textContent = (toast.dataset.copied ?? 'Copied: ') + (label || text);
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2400);
-  };
+  window.copyToClipboard = (text, label) => { void copyText(text, undefined, label); };
 }

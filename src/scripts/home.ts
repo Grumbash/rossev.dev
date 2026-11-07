@@ -4,7 +4,6 @@ declare global {
   interface Window {
     htmx?: { process: (el: Element) => void; trigger: (el: Element, name: string) => void };
     openBrief: (link: HTMLAnchorElement, e: MouseEvent) => void;
-    activateFilterBtn: (btn: HTMLElement) => void;
     copyToolbox: () => void;
     clearSkill: () => void;
     selectSkill: (btn: HTMLElement) => void;
@@ -43,19 +42,20 @@ export function initHome() {
   // Every htmx swap into the reader slot comes from openBrief (a card or the reader's "Next",
   // which the swap just removed), so hand keyboard focus to the new brief's heading.
   document.addEventListener('htmx:afterSwap', (e) => {
-    const target = (e as CustomEvent).detail?.target as HTMLElement | undefined;
-    if (target?.id !== 'post-reader-slot') return;
-    target.querySelector<HTMLElement>('.post-reader-heading')?.focus({ preventScroll: true });
+    const { target, requestConfig } = (e as CustomEvent).detail;
+    if (target?.id === 'post-reader-slot') {
+      (target as HTMLElement).querySelector<HTMLElement>('.post-reader-heading')?.focus({ preventScroll: true });
+    }
+    if (target?.id === 'blog-posts-container') {
+      const filter = requestConfig?.elt as HTMLElement | undefined;
+      if (!filter?.matches('.filter-tab')) return;
+      for (const button of filter.parentElement!.querySelectorAll('.filter-tab')) {
+        const active = button === filter;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      }
+    }
   });
-
-  window.activateFilterBtn = (btn) => {
-    btn.parentElement?.querySelectorAll('.filter-tab').forEach((b) => {
-      b.classList.remove('active');
-      b.setAttribute('aria-pressed', 'false');
-    });
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
-  };
 
   window.copyToolbox = () => {
     const lines = ['Gleb Rosev — toolbox (' + location.origin + ')'];

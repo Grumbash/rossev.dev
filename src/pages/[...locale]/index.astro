@@ -95,7 +95,7 @@ const jsonLd = {
     {/* Without JS the GR monogram is a static picture: drop the copy and Reset button that invite damage. */}
     <noscript><style>[data-nca-live]{display:none!important}</style></noscript>
   </Fragment>
-      <!-- HERO: who, what, how to reach me. Topology stays on the right. -->
+      {/* HERO: who, what, how to reach me. Topology stays on the right. */}
       <section class="hero-section container">
         <div class="hero-grid">
           <div class="brutal-box hero-card">
@@ -194,7 +194,7 @@ const jsonLd = {
             </div>
           </div>
 
-          <!-- Right: Deep Interactive 3D System Topology & Architecture Engine -->
+          {/* Right: Deep Interactive 3D System Topology & Architecture Engine */}
           <div class="brutal-box stage-iso-card">
             <div class="stage-header">
               <span>
@@ -317,7 +317,7 @@ const jsonLd = {
                   {d.topology.trace}
                 </button>
               </div>
-              <span class="iso-hint-fine">DRAG · CTRL/⌘+SCROLL · CLICK A NODE</span>
+              <span class="iso-hint-fine">{d.topology.controlsHint}</span>
             </div>
 
             {/* Deep 3D Spatial Canvas (3 Vertical Strata + Exploded Node Inspector) */}
@@ -326,7 +326,7 @@ const jsonLd = {
                 id="iso-arch-canvas"
                 tabindex="0"
                 role="application"
-                aria-label="Interactive 3D System Architecture Topology. Use Left and Right arrow keys to cycle nodes, Enter to explode node layers, F to simulate fault."
+                aria-label={d.topology.canvasLabel}
               ></canvas>
 
               {/* Offered when the visitor has left the film alone for a while. Over the canvas, so it
@@ -459,7 +459,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- EXPERIENCE: one chronology. Each job carries its story, numbers, stack and architecture. -->
+      {/* EXPERIENCE: one chronology. Each job carries its story, numbers, stack and architecture. */}
       <section id="experience" class="section-block">
         <div class="container">
           <div class="section-head">
@@ -612,7 +612,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- BEYOND THE CV: essays live in their own visual zone -->
+      {/* BEYOND THE CV: essays live in their own visual zone */}
       <div class="zone-beyond">
         <div class="container">
           <div class="zone-divider">
@@ -692,17 +692,16 @@ const jsonLd = {
               </a>
             </div>
 
-            <div class="filter-bar" role="group" aria-label={d.writing.filterLabel}>
+            <div class="filter-bar" hx-sync="#blog-posts-container:replace" role="group" aria-label={d.writing.filterLabel}>
               <button
                 type="button"
                 class="filter-tab active"
                 aria-pressed="true"
-                hx-get={localePath(lang, "/partials/posts-all")}
+                hx-get={localePath(lang, "/partials/posts-all/")}
                 data-track="post_filter"
                 data-track-filter="all"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
-                data-action="activateFilterBtn"
               >
                 {d.writing.filterAll}
               </button>
@@ -710,12 +709,11 @@ const jsonLd = {
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get={localePath(lang, "/partials/posts-ai")}
+                hx-get={localePath(lang, "/partials/posts-ai/")}
                 data-track="post_filter"
                 data-track-filter="ai"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
-                data-action="activateFilterBtn"
               >
                 {d.writing.filterAi}
               </button>
@@ -723,12 +721,11 @@ const jsonLd = {
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get={localePath(lang, "/partials/posts-leadership")}
+                hx-get={localePath(lang, "/partials/posts-leadership/")}
                 data-track="post_filter"
                 data-track-filter="leadership"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
-                data-action="activateFilterBtn"
               >
                 {d.writing.filterLeadership}
               </button>
@@ -736,12 +733,11 @@ const jsonLd = {
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get={localePath(lang, "/partials/posts-systems")}
+                hx-get={localePath(lang, "/partials/posts-systems/")}
                 data-track="post_filter"
                 data-track-filter="systems"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
-                data-action="activateFilterBtn"
               >
                 {d.writing.filterSystems}
               </button>
@@ -749,18 +745,17 @@ const jsonLd = {
                 type="button"
                 class="filter-tab"
                 aria-pressed="false"
-                hx-get={localePath(lang, "/partials/posts-delivery")}
+                hx-get={localePath(lang, "/partials/posts-delivery/")}
                 data-track="post_filter"
                 data-track-filter="delivery"
                 hx-target="#blog-posts-container"
                 hx-swap="innerHTML transition:true"
-                data-action="activateFilterBtn"
               >
                 {d.writing.filterDelivery}
               </button>
             </div>
 
-            <!-- HTMX On-Site Post Reader Slot -->
+            {/* HTMX On-Site Post Reader Slot */}
             <div id="post-reader-slot" aria-live="polite"></div>
 
             <div id="blog-posts-container" aria-live="polite">
@@ -775,7 +770,7 @@ const jsonLd = {
       </div>
 
   <Fragment slot="scripts">
-    <!-- Bundled page code: the topology's loader (engine and replay are lazy), case loader, post reader, toolbox -->
+    {/* Bundled page code: the topology's loader (engine and replay are lazy), case loader, post reader, toolbox */}
     <script>
       import { initTopologyReplay } from '../../scripts/topology-replay';
       import { initCaseLoader } from '../../scripts/case-loader';

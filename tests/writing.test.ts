@@ -2,6 +2,8 @@
 // that a crawler can index and a reader can share; the home grid links to those pages with real
 // hrefs; the brief, inline or on its page, offers a next step; HTMX fragments stay out of the
 // index. Checks the built output and the deploy config, not the source.
+import { withChrome } from './fixtures/cdp';
+import { hasChrome } from './fixtures/probe';
 import { beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { BLOG_POSTS } from '../src/data/posts';
@@ -423,4 +425,41 @@ describe('filter tabs', () => {
       expect(decode(ru ?? '').trim().toLocaleUpperCase('ru'), `${c} ru`).toBe(label.ru);
     }
   });
+});
+
+describe.skipIf(!hasChrome())('home filters after a network failure', () => {
+  for (const prefix of ['', '/ru']) {
+    test(`the ${prefix || 'English'} selection follows the displayed posts`, async () => {
+      await withChrome(async ({ origin, send, evaluate }) => {
+        await send('Page.enable');
+        await send('Network.enable');
+        await send('Network.setBlockedURLs', { urls: ['*/partials/posts-ai/*', 'https://*'] });
+        await send('Page.addScriptToEvaluateOnNewDocument', {
+          source: "document.addEventListener('htmx:load', () => { window.filtersReady = true; }, { once: true });",
+        });
+        await send('Page.navigate', { url: origin + prefix + '/' });
+        const readyDeadline = Date.now() + 15_000;
+        while (!(await evaluate('window.filtersReady')) && Date.now() < readyDeadline) await Bun.sleep(50);
+        expect(await evaluate('window.filtersReady')).toBe(true);
+        const state = () => evaluate(`[document.querySelector('.filter-tab[aria-pressed="true"]').dataset.trackFilter, document.querySelector('#blog-posts-container').innerHTML]`);
+        const before = await state();
+        expect(before[0]).toBe('all');
+        expect(await evaluate(`new Promise(r => {
+          document.body.addEventListener('htmx:sendError', () => r(true), { once: true });
+          document.querySelector('[data-track-filter="ai"]').click();
+          setTimeout(() => r(false), 10_000);
+        })`)).toBe(true);
+        expect(await state()).toEqual(before);
+        await evaluate(`['leadership', 'systems'].forEach(f => document.querySelector('[data-track-filter="'+f+'"]').click())`);
+        const deadline = Date.now() + 5000;
+        let after = await state();
+        while (after[0] !== 'systems' && Date.now() < deadline) {
+          await Bun.sleep(100);
+          after = await state();
+        }
+        expect(after[0]).toBe('systems');
+        expect(after[1]).not.toBe(before[1]);
+      });
+    });
+  }
 });

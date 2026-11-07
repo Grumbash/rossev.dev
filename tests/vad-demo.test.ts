@@ -7,6 +7,8 @@ import { join } from 'node:path';
 import { EVENTS } from '../src/scripts/analytics';
 import { t } from '../src/i18n';
 import { WEIGHTS_BYTES } from '../src/scripts/vad/model';
+import { withChrome } from './fixtures/cdp';
+import { hasChrome } from './fixtures/probe';
 import { buildSite } from './fixtures/build';
 
 setDefaultTimeout(120_000);
@@ -134,4 +136,78 @@ describe('analytics contract', () => {
     expect(row).toBeDefined();
     for (const word of ['start', 'denied', 'detected', 'error', 'ms']) expect(row).toContain(word);
   });
+});
+
+describe.skipIf(!hasChrome())('microphone requests', () => {
+  for (const prefix of ['', '/ru']) {
+    test(`a late permission from a previous visit and truncated model release the mic on ${prefix}/cases/sully/`, async () => {
+      const result = await withChrome(async ({ origin, send, evaluate }) => {
+        await send('Page.enable');
+        await send('Page.navigate', { url: origin + prefix + '/cases/sully/' });
+        await Bun.sleep(500);
+        return evaluate(`(async () => {
+          let closed = 0, stopped = 0, answer = [];
+          window.AudioContext = class {
+            sampleRate = 48000;
+            async resume() {} async close() { closed++; }
+          };
+          Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { value: () => new Promise(r => answer.push(r)) });
+          const nativeFetch = window.fetch;
+          window.fetch = (...args) => String(args[0]).endsWith('.bin') ? Promise.resolve(new Response(new Uint8Array(5))) : nativeFetch(...args);
+          const stream = () => ({ getTracks: () => [{ stop: () => stopped++ }] });
+          const start = document.querySelector('[data-vad-start]'), root = start.closest('[data-vad]');
+          start.click();
+          dispatchEvent(new Event('pagehide'));
+          const left = root.dataset.vadPhase;
+          start.click();
+          answer[0](stream());
+          await new Promise(r => setTimeout(r, 100));
+          const old = { closed, stopped, phase: root.dataset.vadPhase };
+          answer[1](stream());
+          for (let i = 0; i < 100 && root.dataset.vadPhase !== 'error'; i++) await new Promise(r => setTimeout(r, 30));
+          const final = { closed, stopped, phase: root.dataset.vadPhase };
+          let downloadSignal;
+          window.fetch = (url, opts) => {
+            if (!String(url).endsWith('.bin')) return nativeFetch(url, opts);
+            downloadSignal = opts.signal;
+            return new Promise((_, reject) => opts.signal.addEventListener('abort', () => reject(opts.signal.reason)));
+          };
+          start.click(); answer[2](stream());
+          for (let i = 0; i < 100 && !downloadSignal; i++) await new Promise(r => setTimeout(r, 20));
+          dispatchEvent(new Event('pagehide')); start.click();
+          await new Promise(r => setTimeout(r, 30));
+          return { left, old, final, aborted: downloadSignal?.aborted, retry: root.dataset.vadPhase };
+        })()`);
+      });
+      expect(result).toEqual({ left: 'idle', old: { closed: 1, stopped: 1, phase: 'asking' }, final: { closed: 2, stopped: 2, phase: 'error' }, aborted: true, retry: 'asking' });
+    });
+
+    test(`a second press while waiting for permission on ${prefix}/cases/sully/ is ignored; a denial can be retried`, async () => {
+      const result = await withChrome(async ({ origin, send, evaluate }) => {
+        await send('Page.enable');
+        await send('Page.navigate', { url: origin + prefix + '/cases/sully/' });
+        await Bun.sleep(750);
+        return evaluate(`(async () => {
+          let requests = 0, contexts = 0, deny;
+          window.AudioContext = class {
+            constructor() { contexts++; }
+            async resume() {} async close() {}
+          };
+          Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {value: () => {
+            requests++; return new Promise((_, reject) => { deny = reject; });
+          }});
+          const start = document.querySelector('[data-vad-start]');
+          const phase = () => start.closest('[data-vad]').dataset.vadPhase;
+          start.click(); start.click();
+          const pending = { requests, contexts, state: phase(), disabled: start.getAttribute('aria-disabled') };
+          deny(new DOMException('Denied', 'NotAllowedError'));
+          for (let i = 0; i < 100 && phase() !== 'denied'; i++) await new Promise(r => setTimeout(r, 30));
+          const ended = phase();
+          start.click();
+          return { pending, ended, retry: { requests, contexts, state: phase() } };
+        })()`);
+      });
+      expect(result).toEqual({ pending: { requests: 1, contexts: 1, state: 'asking', disabled: 'true' }, ended: 'denied', retry: { requests: 2, contexts: 2, state: 'asking' } });
+    });
+  }
 });

@@ -9,6 +9,7 @@ import '@fontsource-variable/space-grotesk/wght.css';
 import '@fontsource-variable/syne/wght.css';
 import '../styles/fonts-cyrillic.css';
 import '../styles/brutalism.css';
+import ThemeBootstrap from '../components/ThemeBootstrap.astro';
 import GrFallback from '../components/GrFallback.astro';
 import { LOCALES, localePath, t } from '../i18n';
 ---
@@ -18,6 +19,7 @@ import { LOCALES, localePath, t } from '../i18n';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <ThemeBootstrap />
     <title>{t('en').notFound.pageTitle}</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -28,7 +30,7 @@ import { LOCALES, localePath, t } from '../i18n';
         {LOCALES.map((l) => {
           const n = t(l).notFound;
           return (
-            <section data-lang={l} data-title={n.pageTitle} hidden={l !== 'en'} lang={l}>
+            <section data-lang={l} data-title={n.pageTitle} data-heal-label={n.healLabel} data-regrowing={t(l).nca.regrowing} hidden={l !== 'en'} lang={l}>
               <span class="section-kicker">{n.kicker}</span>
               <h1 class="section-title nf-title">{n.title}</h1>
               {/* Lines appear one by one, like a test run; the fix line only when a close page exists. */}
@@ -56,13 +58,12 @@ import { LOCALES, localePath, t } from '../i18n';
       {/* The home page's self-healing monogram (src/scripts/nca), cut by the script as soon as it has grown. */}
       <section class="nca-section nf-nca">
         <div class="nca-block">
-          <canvas id="nca-canvas" class="nca-canvas" width="56" height="56" tabindex="0" role="button" aria-labelledby="nf-nca-label" hidden></canvas>
+          <canvas id="nca-canvas" class="nca-canvas" width="56" height="56" tabindex="0" role="button" hidden></canvas>
           <GrFallback />
-          <p class="nca-notice" aria-live="polite" data-regrowing={t('en').nca.regrowing} hidden></p>
+          <p class="nca-notice" aria-live="polite" hidden></p>
           {LOCALES.map((l) => (
             <p class="nf-caption" data-lang={l} hidden={l !== 'en'} lang={l}>{t(l).notFound.healCaption}</p>
           ))}
-          <span id="nf-nca-label" class="visually-hidden">{t('en').notFound.healLabel}</span>
         </div>
       </section>
     </main>
@@ -136,8 +137,12 @@ import { LOCALES, localePath, t } from '../i18n';
   }
 
   .nf-fail {
-    color: var(--pink);
+    color: #bf195b;
     font-weight: 700;
+  }
+
+  html[data-theme='dark'] .nf-fail {
+    color: var(--pink);
   }
 
   .nf-ok {

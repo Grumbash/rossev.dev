@@ -11,6 +11,7 @@ import '../styles/brutalism.css';
 import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import groteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
 import syneLatin from '@fontsource-variable/syne/files/syne-latin-wght-normal.woff2?url';
+import ThemeBootstrap from '../components/ThemeBootstrap.astro';
 import { existsSync } from 'node:fs';
 import { PROFILE } from '../data/profile';
 import { commitUrl, lastCommit } from '../data/now';
@@ -95,14 +96,14 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
     {LOCALES.map((l) => <link rel="alternate" hreflang={l} href={urlIn(l)} />)}
     <link rel="alternate" hreflang="x-default" href={urlIn(DEFAULT_LOCALE)} />
 
-    <!-- Favicon, Manifest & AI Crawler Discovery -->
+    {/* Favicon, Manifest & AI Crawler Discovery */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {/* Print only (tests/print.test.ts): a one-page CV on /hire, a newspaper page for a post. */}
     <link rel="stylesheet" href="/print.css" media="print" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Agent & LLM Context (/llms.txt)" />
 
-    <!-- Open Graph / Telegram / Slack / LinkedIn / X Cards (Raster PNG 1200x630) -->
+    {/* Open Graph / Telegram / Slack / LinkedIn / X Cards (Raster PNG 1200x630) */}
     <meta property="og:type" content={ogType} />
     <meta property="og:locale" content={d.meta.ogLocale} />
     {others.map((l) => <meta property="og:locale:alternate" content={t(l).meta.ogLocale} />)}
@@ -118,21 +119,20 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
     <meta name="twitter:description" content={twitterDescription} />
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <!-- Self-hosted fonts (no third-party round trip before first paint) -->
+    {/* Self-hosted fonts (no third-party round trip before first paint) */}
     <link rel="preload" href={monoLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={groteskLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={syneLatin} as="font" type="font/woff2" crossorigin />
 
-    <!-- Structured Data (JSON-LD) -->
+    {/* Structured Data (JSON-LD) */}
     {/* \u003c keeps model-written text (post titles) from closing the script. */}
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
 
-    <!-- Synchronous anti-FOUC theme before first paint: a saved pick, else the system's (scripts/theme.ts) -->
-    <script is:inline>var r=document.documentElement,m=null;try{m=localStorage.getItem('rosev_theme')}catch(e){}if(m!='light'&&m!='dark')m='system';r.setAttribute('data-theme-mode',m);r.setAttribute('data-theme',m=='dark'||m=='system'&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')</script>
+    <ThemeBootstrap />
 
     {htmx && <script src="/htmx.min.js" defer></script>}
 
-    <!-- Umami Cloud: custom funnel events (see README "Analytics") -->
+    {/* Umami Cloud: custom funnel events (see README "Analytics") */}
     {import.meta.env.PUBLIC_UMAMI_WEBSITE_ID && (
       <script
         is:inline
@@ -146,7 +146,7 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
     <slot name="head" />
   </head>
   <body>
-    <!-- TOP NAV: text links scroll, buttons act -->
+    {/* TOP NAV: text links scroll, buttons act */}
     <header class="top-nav">
       <div class="nav-inner">
         <a href={home ? '#top' : homePath} class="brand-logo">
@@ -176,7 +176,7 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
                 data-lang-switch
                 data-track="lang_switch"
                 data-track-to={l}
-                aria-label={t(l).nav.readIn}
+                aria-label={`${l.toUpperCase()} — ${t(l).nav.readIn}`}
               >
                 {l.toUpperCase()}
               </a>
@@ -214,7 +214,7 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
     <main id="top">
       <slot />
 
-      <!-- CONTACT & FOOTER -->
+      {/* CONTACT & FOOTER */}
       <footer id="contact" class="section-block site-footer">
         <div class="container">
           <div class="contact-grid">
@@ -290,8 +290,9 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
       </footer>
     </main>
 
-    <!-- Toast Notification -->
+    {/* Toast Notification */}
     <div id="brutal-toast" class="toast-notification" role="status" aria-live="polite" data-copied={d.toast.copied}
+      data-copy-failed={d.toast.copyFailed}
       data-offline={d.offline.toast}
       data-tab-wait={d.tab.wait}
       {...Object.fromEntries(Object.entries(d.keys).map(([k, v]) => [`data-keys-${k}`, v]))}
@@ -312,7 +313,7 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
       {d.toast.copiedDefault}
     </div>
 
-    <!-- Before page scripts: the data-action click handlers and the analytics toggle listener exist first. Global helpers (theme, language links, URL params, clipboard) and funnel analytics (Umami custom events) -->
+    {/* Before page scripts: the data-action click handlers and the analytics toggle listener exist first. Global helpers (theme, language links, URL params, clipboard) and funnel analytics (Umami custom events) */}
     <script>
       import { initActions } from '../scripts/actions';
       import { initSite } from '../scripts/site';
@@ -325,8 +326,8 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
     </script>
     <slot name="scripts" />
 
-    <!-- Vercel Web Analytics & Speed Insights: their plain script tags (same origin, served by Vercel);
-         the Astro components would inline a loader the CSP has no hash for. -->
+    {/* Vercel Web Analytics & Speed Insights: their plain script tags (same origin, served by Vercel);
+         the Astro components would inline a loader the CSP has no hash for. */}
     <script is:inline defer src="/_vercel/insights/script.js"></script>
     <script is:inline defer src="/_vercel/speed-insights/script.js"></script>
   </body>

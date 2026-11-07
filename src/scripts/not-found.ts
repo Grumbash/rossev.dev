@@ -2,6 +2,7 @@
 // here, shows the missed path in its fake test run, and first of all rescues the commonest miss: a
 // path typed with the Russian layout on (/с for /c, /ршку/ for /hire/). Then it suggests the closest
 // real page and takes a bite out of the GR monogram, which heals while the visitor reads.
+import { initTheme } from './theme';
 import type { NcaMonogram } from './nca/monogram';
 
 // Not imported from ./nca/loader on purpose: a module shared with the home page's script would be
@@ -53,6 +54,10 @@ function splitRoute(path: string): [string, string] {
 export function suggestPath(path: string, routes: readonly string[]): string | null {
   const [prefix, key] = splitRoute(path);
   if (!key) return null;
+  // A route key is at most as long as its full path. Even the longest possible match
+  // would need one deletion per extra character, beyond the most typos we accept.
+  const longest = routes.reduce((length, route) => Math.max(length, route.length), 0);
+  if (key.length > longest + Math.max(1, Math.floor(longest / 3))) return null;
   let best: string | null = null;
   let bestKey = '';
   let bestD = Infinity;
@@ -98,28 +103,42 @@ function healMonogram(): void {
   }, () => {});
 }
 
+// Only repair a path on this site. Decoding the path can expose a leading // or backslash.
+export function layoutRedirect(url: URL): URL | null {
+  try {
+    const fixed = latinLayoutPath(decodeURIComponent(url.pathname));
+    if (!fixed) return null;
+    const dest = new URL(fixed, url);
+    if (dest.origin !== url.origin) return null;
+    dest.search = url.search;
+    dest.hash = url.hash;
+    return dest;
+  } catch {
+    return null;
+  }
+}
+
 export function initNotFound() {
+  const fixed = layoutRedirect(new URL(location.href));
+  if (fixed) {
+    location.replace(fixed.href);
+    return;
+  }
   let path = location.pathname;
   try {
     path = decodeURIComponent(path);
   } catch {}
-  const fixed = latinLayoutPath(path);
-  if (fixed) {
-    location.replace(fixed + location.search + location.hash);
-    return;
-  }
 
-  try {
-    const theme = localStorage.getItem('rosev_theme');
-    if (theme) document.documentElement.setAttribute('data-theme', theme);
-  } catch {}
+  initTheme();
 
   const ru = path.startsWith('/ru/') || (!path.startsWith('/ru') && navigator.language.toLowerCase().startsWith('ru'));
-  if (ru) {
-    document.documentElement.lang = 'ru';
-    document.title = document.querySelector<HTMLElement>('[data-lang="ru"]')?.dataset.title ?? document.title;
-  }
-  for (const el of document.querySelectorAll<HTMLElement>('[data-lang]')) el.hidden = el.dataset.lang !== (ru ? 'ru' : 'en');
+  const lang = ru ? 'ru' : 'en';
+  document.documentElement.lang = lang;
+  const copy = document.querySelector<HTMLElement>(`[data-title][data-lang="${lang}"]`)!.dataset;
+  document.title = copy.title!;
+  document.getElementById('nca-canvas')!.setAttribute('aria-label', copy.healLabel!);
+  document.querySelector<HTMLElement>('.nca-notice')!.dataset.regrowing = copy.regrowing;
+  for (const el of document.querySelectorAll<HTMLElement>('[data-lang]')) el.hidden = el.dataset.lang !== lang;
   for (const el of document.querySelectorAll('[data-path]')) el.textContent = path;
   suggest(path);
   healMonogram();

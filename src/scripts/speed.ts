@@ -19,13 +19,12 @@ export function speedLine(t: Timing, lang: string, w: Words) {
   };
 }
 
-function measure(): Timing {
+function measure(lcp: number): Timing {
   const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
   const paint = performance.getEntriesByName('first-contentful-paint')[0];
-  const lcp = performance.getEntriesByType('largest-contentful-paint').at(-1);
   const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
   return {
-    lcp: lcp?.startTime ?? 0,
+    lcp,
     // No paint entry (a hidden tab never paints): the load event stands in.
     fcp: paint?.startTime ?? nav?.loadEventStart ?? 0,
     ttfb: nav ? nav.responseStart - nav.startTime : 0,
@@ -52,7 +51,22 @@ export function initSpeed() {
     if (!span.isConnected) p.append(span);
     p.hidden = false;
   };
-  const done = () => setTimeout(() => ((timing = measure()), render()), 0);
+  let lcp = 0;
+  if (window.PerformanceObserver?.supportedEntryTypes?.includes('largest-contentful-paint')) {
+    const observer = new PerformanceObserver((entries) => {
+      const latest = entries.getEntries().at(-1);
+      if (!latest) return;
+      lcp = latest.startTime;
+      // A larger element can finish painting after load and after the footer first appears.
+      if (timing) {
+        timing = measure(lcp);
+        render();
+      }
+    });
+    observer.observe({ type: 'largest-contentful-paint', buffered: true });
+    addEventListener('pagehide', () => observer.disconnect(), { once: true });
+  }
+  const done = () => setTimeout(() => ((timing = measure(lcp)), render()), 0);
   if (document.readyState === 'complete') done();
   else addEventListener('load', done, { once: true });
   addEventListener('pageshow', (e) => e.persisted && ((restored = true), render()));
