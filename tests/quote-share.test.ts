@@ -114,11 +114,11 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const report = (o) => { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify(o); document.body.appendChild(pre); };
     const out = {};
     // What the page would hand to the clipboard and to the download, captured instead.
-    let clip = null, saved = null;
+    let clip = null, saved = null, downloads = 0;
     Object.defineProperty(navigator, 'clipboard', { value: { writeText: async (t) => { clip = t; } }, configurable: true });
     Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
     const click = HTMLAnchorElement.prototype.click;
-    HTMLAnchorElement.prototype.click = function () { if (this.download) saved = { href: this.href, name: this.download }; else click.call(this); };
+    HTMLAnchorElement.prototype.click = function () { if (this.download) { downloads++; saved = { href: this.href, name: this.download }; } else click.call(this); };
     await until(() => document.readyState === 'complete');
     // Select the first sentence of the second paragraph of the post.
     const select = () => {
@@ -162,6 +162,18 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     await until(() => document.documentElement.lang === 'ru' && !document.querySelector('[style*="view-transition"]'));
     select(); await until(() => bar() && !bar().hidden);
     out.ru = [...bar().querySelectorAll('button')].map((b) => b.textContent.trim());
+    Object.defineProperty(navigator, 'canShare', { value: () => true, configurable: true });
+    let attempts = 0;
+    out.native = [];
+    for (const failure of ['NotAllowedError', 'AbortError', null]) {
+      Object.defineProperty(navigator, 'share', { value: async () => {
+        attempts++; if (failure) throw new DOMException(failure, failure);
+      }, configurable: true });
+      const before = attempts;
+      bar().querySelector('[data-quote-do="card"]').click();
+      await until(() => attempts > before); await wait(0);
+      out.native.push({ downloads, cardEvents: out.shares.filter(k => k === 'card').length });
+    }
     Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
     document.querySelector('[data-action="copy"]').click();
     await wait(0);
@@ -183,7 +195,8 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.link.replace(host, 'https://rossev.dev')).toBe(quoteLink(`https://rossev.dev/writing/${POST}/`, r.selected));
     expect(r.linkSuccess).toBe(en.quote.copied);
     expect(r.linkDenied).toBe(en.toast.copyFailed);
-    expect(r.shares).toEqual(['link', 'card']);
+    expect(r.shares).toEqual(['link', 'card', 'card', 'card']);
+    expect(r.native).toEqual([{ downloads: 2, cardEvents: 2 }, { downloads: 2, cardEvents: 2 }, { downloads: 2, cardEvents: 3 }]);
     expect(r.clipboardMissing).toBe(ru.toast.copyFailed);
     expect(r.copied.text).toContain(`${r.selected}\n\n— ${BLOG_POSTS.find((p) => p.slug === POST)!.title.en}\n`);
     expect(r.copied.text).toContain(textFragment(r.selected));

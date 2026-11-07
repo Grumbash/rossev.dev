@@ -211,24 +211,32 @@ export function initQuote() {
 
   cardBtn.addEventListener('click', async () => {
     if (!current) return;
+    const { text } = current;
     const { quoteTitle: title, quoteUrl: url, quoteSlug: slug } = data();
+    const link = quoteLink(url, text, plain());
     // The post's colour, from its var(--…), as the canvas needs it.
     const probe = document.body.appendChild(document.createElement('span'));
     probe.style.color = article.dataset.quoteColor ?? 'var(--lime)';
     const color = getComputedStyle(probe).color;
     probe.remove();
-    const blob = await drawCard(current.text, title, url, slug, color);
+    const blob = await drawCard(text, title, url, slug, color);
     if (!blob) return;
-    track('quote_share', { kind: 'card' });
     const file = new File([blob], `rossev-${slug}-quote.png`, { type: 'image/png' });
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      navigator.share({ files: [file], title, url: quoteLink(url, current.text, plain()) }).catch(() => {});
-      return;
+      try {
+        await navigator.share({ files: [file], title, url: link });
+        track('quote_share', { kind: 'card' });
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        // Sharing was refused. Offer the card through the normal download path.
+      }
     }
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = file.name;
     a.click();
+    track('quote_share', { kind: 'card' });
     setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
   });
 
