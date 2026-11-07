@@ -139,6 +139,9 @@ describe('analytics contract', () => {
 });
 
 describe.skipIf(!hasChrome())('microphone requests', () => {
+  // The site's scripts arrive a second late, as on a busy CI runner: the clicks must still reach a
+  // page whose loader is listening.
+  const slowScripts = { delay: (p: string) => (p.startsWith('/_astro/') && p.endsWith('.js') ? 1000 : 0) };
   for (const prefix of ['', '/ru']) {
     test(`a late permission from a previous visit and truncated model release the mic on ${prefix}/cases/sully/`, async () => {
       const result = await withChrome(async ({ origin, send, evaluate }) => {
@@ -178,7 +181,7 @@ describe.skipIf(!hasChrome())('microphone requests', () => {
           await new Promise(r => setTimeout(r, 30));
           return { left, old, final, aborted: downloadSignal?.aborted, retry: root.dataset.vadPhase };
         })()`);
-      });
+      }, slowScripts);
       expect(result).toEqual({ left: 'idle', old: { closed: 1, stopped: 1, phase: 'asking' }, final: { closed: 2, stopped: 2, phase: 'error' }, aborted: true, retry: 'asking' });
     });
 
@@ -206,7 +209,7 @@ describe.skipIf(!hasChrome())('microphone requests', () => {
           start.click();
           return { pending, ended, retry: { requests, contexts, state: phase() } };
         })()`);
-      });
+      }, slowScripts);
       expect(result).toEqual({ pending: { requests: 1, contexts: 1, state: 'asking', disabled: 'true' }, ended: 'denied', retry: { requests: 2, contexts: 2, state: 'asking' } });
     });
   }
