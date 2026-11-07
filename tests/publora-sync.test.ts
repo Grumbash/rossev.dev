@@ -692,7 +692,8 @@ describe('one bad post never blocks the others', () => {
 
 describe('a post Gleb rejected stays rejected', () => {
   test('ids in src/data/publora-ignore.json are never imported, and the PR body says how to add one', async () => {
-    expect(readJson('src/data/publora-ignore.json')).toEqual([]);
+    const listed = readJson('src/data/publora-ignore.json');
+    expect(Array.isArray(listed) && listed.every((id: unknown) => typeof id === 'string' && /^\d+$/.test(id))).toBe(true);
     const h = harness();
     (h.deps as any).readIgnored = () => [NEW_ID];
     await run(h.env, h.deps);
