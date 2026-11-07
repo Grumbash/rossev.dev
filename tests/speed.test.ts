@@ -10,6 +10,7 @@ import { EVENTS } from '../src/scripts/analytics';
 import { en } from '../src/i18n/en';
 import { ru } from '../src/i18n/ru';
 import { buildSite } from './fixtures/build';
+import { withChrome } from './fixtures/cdp';
 import { hasChrome, probeServer } from './fixtures/probe';
 
 setDefaultTimeout(120_000);
@@ -73,4 +74,38 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.text).toMatch(/^Эта страница открылась у вас за \d+,\d\d с/);
     expect(r.text).toMatch(/сервер \d+ мс · первая отрисовка \d+,\d\d с · /);
   });
+});
+
+
+describe.skipIf(!hasChrome())('a later largest paint', () => {
+  for (const lang of ['en', 'ru'] as const) {
+    test(`the footer follows the actual largest paint on ${lang} /hire/`, async () => {
+      const result = await withChrome(async ({ origin, send, evaluate }) => {
+        await send('Page.enable');
+        await send('Page.navigate', { url: origin + (lang === 'ru' ? '/ru' : '') + '/hire/' });
+        await Bun.sleep(450);
+        return evaluate(`(async () => {
+          const footer = document.querySelector('[data-speed]');
+          const late = document.createElement('div');
+          late.style.cssText = 'position:absolute;inset:0;z-index:99999;background:white;color:black;overflow:hidden;font:80px/1 Arial,sans-serif';
+          late.textContent = 'Largest visible text '.repeat(120);
+          const paint = new Promise(resolve => {
+            const observer = new PerformanceObserver(entries => {
+              const entry = entries.getEntries().find(e => e.element === late);
+              if (entry) { observer.disconnect(); resolve(entry.startTime); }
+            });
+            observer.observe({type: 'largest-contentful-paint', buffered: true});
+            setTimeout(() => { observer.disconnect(); resolve(0); }, 3000);
+          });
+          document.body.append(late);
+          const lcp = await paint;
+          await new Promise(r => requestAnimationFrame(r));
+          return { lcp, fcp: performance.getEntriesByName('first-contentful-paint')[0].startTime, text: footer.textContent };
+        })()`);
+      });
+      expect(result.lcp).toBeGreaterThan(result.fcp);
+      const expected = speedLine({ lcp: result.lcp, fcp: result.fcp, ttfb: 0, bytes: 0 }, lang, { en, ru }[lang].speed);
+      expect(result.text).toContain(expected.main);
+    });
+  }
 });
