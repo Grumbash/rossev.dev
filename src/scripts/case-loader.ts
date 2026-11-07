@@ -4,26 +4,31 @@
 type FetchLike = (url: string) => Promise<{ ok: boolean; text: () => Promise<string> }>;
 
 export function initCaseLoader(fetchFn: FetchLike = (url) => fetch(url)) {
-  const loads = new Map<HTMLDetailsElement, Promise<void>>();
+  const loads = new WeakMap<HTMLDetailsElement, { src: string; promise: Promise<void> }>();
 
   // One request per case; a failed one keeps the link and is retried on the next open.
   const load = (d: HTMLDetailsElement): Promise<void> => {
-    const pending = loads.get(d);
-    if (pending) return pending;
     const src = d.dataset.caseSrc;
+    const pending = loads.get(d);
+    if (pending && pending.src === src) return pending.promise;
     const body = d.querySelector<HTMLElement>('[data-case-body]');
     if (!src || !body) return Promise.resolve();
     const p = fetchFn(src)
       .then((r) => (r.ok ? r.text() : Promise.reject()))
       .then((html) => {
-        body.innerHTML = html;
+        if (loads.get(d)?.promise === p && d.dataset.caseSrc === src) body.innerHTML = html;
       })
       .catch(() => {
-        loads.delete(d);
+        if (loads.get(d)?.promise === p) loads.delete(d);
       });
-    loads.set(d, p);
+    loads.set(d, { src, promise: p });
     return p;
   };
+
+  // A language change updates data-case-src while an earlier response may still be in flight.
+  document.addEventListener('site:lang', () => {
+    for (const d of document.querySelectorAll<HTMLDetailsElement>('.job-case')) if (d.open) load(d);
+  });
 
   // Scroll once the breakdown is in, so the layout it adds does not push the case off screen.
   window.openCaseBreakdown = (caseId: string) => {
