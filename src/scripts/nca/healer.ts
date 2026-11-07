@@ -95,6 +95,30 @@ const GROWN_MAX_DISTANCE = 0.04;
  * (or broken weights that never grow) stops instead of regrowing forever. */
 const MAX_AUTO_REGROWS = 3;
 
+/** L1 distance of the block signatures, as a fraction of the target's totals. Cell
+ * counts and green mass add up on one scale: a lime cell has green ≈ 1 and a black one
+ * ≈ 0, so the green term is a count of lime cells. A G turned into a lime-backed R moves
+ * the green term; a letter changing shape or place moves the counts. */
+function shapeDistance(a: Shape, b: Shape, target: Shape): number {
+  let d = 0;
+  let total = 0;
+  for (let k = 0; k < GRID * GRID; k++) {
+    d += Math.abs(a.occ[k] - b.occ[k]) + Math.abs(a.green[k] - b.green[k]);
+    total += target.occ[k] + target.green[k];
+  }
+  return total > 0 ? d / total : 1;
+}
+
+/** Whether a frame looks like the grown target, within `maxDistance`. */
+function looksLike(s: Shape, target: Shape, maxDistance: number): boolean {
+  return Math.abs(s.alive - target.alive) <= ALIVE_TOLERANCE * target.alive && shapeDistance(s, target, target) <= maxDistance;
+}
+
+/** The check a silent grow must pass, or it is grown again (at most SILENT_GROW_RETRIES times):
+ * shared with the replay's mini GR (../replay/heal.ts), which judges cuts against its grow. */
+export const grownCleanly = (s: Shape, target: Shape = GR_BASELINE): boolean => looksLike(s, target, GROWN_MAX_DISTANCE);
+export { SILENT_GROW_RETRIES };
+
 export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
   const aliveThreshold = ca.aliveThreshold;
   const grownSteps = opts.grownSteps ?? 300;
@@ -132,24 +156,8 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
     }
   }
 
-  /** L1 distance of the block signatures, as a fraction of the target's totals. Cell
-   * counts and green mass add up on one scale: a lime cell has green ≈ 1 and a black one
-   * ≈ 0, so the green term is a count of lime cells. A G turned into a lime-backed R moves
-   * the green term; a letter changing shape or place moves the counts. */
-  function distance(a: Shape, b: Shape): number {
-    let d = 0;
-    let total = 0;
-    for (let k = 0; k < GRID * GRID; k++) {
-      d += Math.abs(a.occ[k] - b.occ[k]) + Math.abs(a.green[k] - b.green[k]);
-      total += target.occ[k] + target.green[k];
-    }
-    return total > 0 ? d / total : 1;
-  }
-
-  /** Whether a frame looks like the grown GR. */
-  function looksGrown(s: Shape, maxDistance = MAX_SHAPE_DISTANCE): boolean {
-    return Math.abs(s.alive - target.alive) <= ALIVE_TOLERANCE * target.alive && distance(s, target) <= maxDistance;
-  }
+  const distance = (a: Shape, b: Shape) => shapeDistance(a, b, target);
+  const looksGrown = (s: Shape, maxDistance = MAX_SHAPE_DISTANCE) => looksLike(s, target, maxDistance);
 
   function isStill(s: Shape): boolean {
     return Math.abs(s.alive - anchor.alive) <= STILL_ALIVE * target.alive && distance(s, anchor) <= STILL_SHAPE;
@@ -204,7 +212,7 @@ export function createHealer(ca: NeuralCA, opts: HealerOptions = {}) {
         ca.step(grownSteps);
         measure(now);
         healer.growTries = tries;
-        if (looksGrown(now, GROWN_MAX_DISTANCE) || tries > SILENT_GROW_RETRIES) break;
+        if (grownCleanly(now, target) || tries > SILENT_GROW_RETRIES) break;
       }
       autoRegrows = 0;
       settle();
