@@ -150,7 +150,7 @@ describe('crawlers find the other language', () => {
   test('RU fragments exist and RU home loads them, not the EN ones', () => {
     expect(existsSync('dist/ru/partials/posts-all/index.html')).toBe(true);
     expect(existsSync('dist/ru/partials/case-yagni/index.html')).toBe(true);
-    expect(ru).toContain('hx-get="/ru/partials/posts-all"');
+    expect(ru).toContain('hx-get="/ru/partials/posts-all/"');
     expect(ru).toContain('data-case-src="/ru/partials/case-yagni"');
     expect(ru).not.toMatch(/(hx-get|data-case-src)="\/partials\//);
     const cfg = JSON.parse(read('vercel.json'));
