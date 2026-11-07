@@ -12,6 +12,8 @@ export type Cdp = {
   stopServer: () => void;
   send: (method: string, params?: object) => Promise<any>;
   evaluate: (expression: string) => Promise<any>;
+  /** Page.navigate, resolved once the page's load event fired: its module scripts have run. */
+  navigate: (url: string) => Promise<void>;
   /** Protocol events, as they arrive. */
   on: (handler: (method: string, params: any) => void) => void;
 };
@@ -37,11 +39,17 @@ export async function withChrome<T>(run: (cdp: Cdp) => Promise<T>, { delay }: Ch
   const chrome = Bun.spawn([CHROME, '--headless=new', ...AUTOMATION_FLAGS, '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--window-size=1280,900', 'about:blank'], { stdout: 'ignore', stderr: 'ignore' });
   let ws: WebSocket | undefined;
   try {
-    // With port 0 Chrome picks a free port and writes it to DevToolsActivePort.
+    // With port 0 Chrome picks a free port and writes it to DevToolsActivePort. With every core
+    // running a test file, a cold Chrome can take well over 10 s to get there: wait for the file
+    // itself, and give up only if Chrome dies or a minute passes.
     let port = '';
-    for (let i = 0; i < 100 && !port; i++) {
-      await Bun.sleep(100);
-      port = existsSync(join(profile, 'DevToolsActivePort')) ? readFileSync(join(profile, 'DevToolsActivePort'), 'utf8').split('\n')[0] : '';
+    let exited = false;
+    chrome.exited.then(() => (exited = true));
+    for (const deadline = Date.now() + 60_000; !port; await Bun.sleep(100)) {
+      const file = join(profile, 'DevToolsActivePort');
+      port = existsSync(file) ? readFileSync(file, 'utf8').split('\n')[0] : '';
+      if (!port && exited) throw new Error(`Chrome exited (${chrome.exitCode}) before opening its debugging port`);
+      if (!port && Date.now() > deadline) throw new Error('Chrome did not open its debugging port within 60 s');
     }
     const page = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find((t: { type: string }) => t.type === 'page');
     const socket = (ws = new WebSocket(page.webSocketDebuggerUrl));
@@ -61,10 +69,18 @@ export async function withChrome<T>(run: (cdp: Cdp) => Promise<T>, { delay }: Ch
       if (r.exceptionDetails) throw new Error(`in the page: ${r.exceptionDetails.exception?.description ?? r.exceptionDetails.text}`);
       return r.result?.value;
     };
-    return await run({ origin: `http://localhost:${server.port}`, stopServer: () => server.stop(true), send, evaluate, on: (h) => handlers.push(h) });
+    const navigate = async (url: string) => {
+      await send('Page.enable');
+      const loaded = new Promise<void>((r) => handlers.push((method) => method === 'Page.loadEventFired' && r()));
+      await send('Page.navigate', { url });
+      await loaded;
+    };
+    return await run({ origin: `http://localhost:${server.port}`, stopServer: () => server.stop(true), send, evaluate, navigate, on: (h) => handlers.push(h) });
   } finally {
     ws?.close();
     chrome.kill();
+    // Gone before the next test's Chrome starts, and before its profile is removed.
+    await chrome.exited;
     server.stop(true);
     rmSync(profile, { recursive: true, force: true });
   }
