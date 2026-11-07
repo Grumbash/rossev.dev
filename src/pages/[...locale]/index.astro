@@ -201,7 +201,7 @@ const jsonLd = {
                 <a href={localePath(lang, '/how-its-built/')}>{d.topology.title}</a>
               </span>
               <span class="replay-badge" data-replay-badge>{d.topology.replayBadge}</span>
-              <span id="iso-trace-status"></span>
+              <span id="iso-trace-status" {...Object.fromEntries(Object.entries(d.topology.status).map(([key, value]) => [`data-${key}`, value]))}></span>
             </div>
 
             {/* The card plays a replay of a real agent run on this site (src/scripts/replay/player.ts,
@@ -317,7 +317,7 @@ const jsonLd = {
                   {d.topology.trace}
                 </button>
               </div>
-              <span class="iso-hint-fine">DRAG · CTRL/⌘+SCROLL · CLICK A NODE</span>
+              <span class="iso-hint-fine">{d.topology.controlsHint}</span>
             </div>
 
             {/* Deep 3D Spatial Canvas (3 Vertical Strata + Exploded Node Inspector) */}
@@ -326,7 +326,7 @@ const jsonLd = {
                 id="iso-arch-canvas"
                 tabindex="0"
                 role="application"
-                aria-label="Interactive 3D System Architecture Topology. Use Left and Right arrow keys to cycle nodes, Enter to explode node layers, F to simulate fault."
+                aria-label={d.topology.canvasLabel}
               ></canvas>
 
               {/* Offered when the visitor has left the film alone for a while. Over the canvas, so it

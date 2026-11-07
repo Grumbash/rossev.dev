@@ -1,3 +1,4 @@
+import type { Dict } from '../i18n';
 import { ISO_DOMAINS, type TopologyNode } from '../data/topology';
 import { settleResidual, shouldKeepAnimating } from './iso-loop';
 
@@ -79,6 +80,22 @@ export function initIsoArchitectureEngine(): IsoApi | null {
   if (!canvas) return null;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
+
+  const statusEl = document.getElementById('iso-trace-status');
+  type Status = keyof Dict['topology']['status'];
+  let status: Status | undefined;
+  let statusNode = '';
+  function showStatus(key: Status, node = '') {
+    status = key;
+    statusNode = node;
+    if (!statusEl) return;
+    const text = statusEl.dataset[key]?.replace('{node}', node) ?? '';
+    if (text !== statusEl.textContent) statusEl.textContent = text;
+  }
+  document.addEventListener('site:lang', () => {
+    if (status) showStatus(status, statusNode);
+    window.updateIsoHudText();
+  });
 
   let guide: IsoGuide | null = null;
   let guideGesture = false; // the guide claimed the current pointer gesture
@@ -272,8 +289,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     targetFocusY = n.baseY + n.h * 0.6;
     targetFocusZ = n.z * 0.62;
     targetZoom = 1.24;
-    const statusEl = document.getElementById('iso-trace-status');
-    if (statusEl) statusEl.textContent = '3D EXPLODED // ' + n.code;
+    showStatus('expanded', n.code);
     window.updateIsoHudText();
     ensureLoopRunning();
   };
@@ -332,8 +348,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     targetZoom = 0.86;
     targetYaw = 0.64;
     targetPitch = 0.54;
-    const statusEl = document.getElementById('iso-trace-status');
-    if (statusEl) statusEl.textContent = '3 DECKS · CLICK ANY 3D NODE TO EXPLODE';
+    showStatus('overview');
     window.updateIsoHudText();
     ensureLoopRunning();
   };
@@ -341,10 +356,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
   window.toggleIsoXray = function (btn?: HTMLElement | null) {
     isXray = !isXray;
     if (btn) btn.classList.toggle('active', isXray);
-    const statusEl = document.getElementById('iso-trace-status');
-    if (statusEl) {
-      statusEl.textContent = isXray ? 'CAD X-RAY WIREFRAME ACTIVE' : '3 DECKS · CLICK ANY 3D NODE TO EXPLODE';
-    }
+    showStatus(isXray ? 'xray' : 'overview');
     ensureLoopRunning();
   };
 
@@ -408,8 +420,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     traceWave.active = true;
     traceWave.progress = 0;
     playing = true;
-    const statusEl = document.getElementById('iso-trace-status');
-    if (statusEl) statusEl.textContent = 'TRACING 3-DECK TOPOLOGY...';
+    showStatus('tracing');
     ensureLoopRunning();
   };
 
@@ -444,6 +455,26 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     const r = canvas.getBoundingClientRect();
     return [e.clientX - r.left, e.clientY - r.top] as const;
   };
+  function nodeAt(mx: number, my: number) {
+    let bestIdx = -1;
+    let bestDepth = Infinity;
+    for (let i = 0; i < nodeScreenCache.length; i++) {
+      const sc = nodeScreenCache[i];
+      if (!sc) continue;
+      if (
+        mx >= sc.minX - 10 &&
+        mx <= sc.maxX + 10 &&
+        my >= sc.minY - 26 &&
+        my <= sc.maxY + 8
+      ) {
+        if (sc.depth < bestDepth) {
+          bestDepth = sc.depth;
+          bestIdx = i;
+        }
+      }
+    }
+    return bestIdx;
+  }
   canvas.addEventListener('pointerdown', (e) => {
     guideGesture = !!guide?.pointer('down', ...local(e));
     if (guideGesture) {
@@ -467,10 +498,6 @@ export function initIsoArchitectureEngine(): IsoApi | null {
       guide?.pointer('move', ...local(e));
       return;
     }
-    const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-
     if (isDragging) {
       const dx = e.clientX - dragStartX;
       const dy = e.clientY - dragStartY;
@@ -497,24 +524,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
       return;
     }
 
-    let bestIdx = -1;
-    let bestDepth = Infinity;
-    for (let i = 0; i < nodeScreenCache.length; i++) {
-      const sc = nodeScreenCache[i];
-      if (!sc) continue;
-      if (
-        mx >= sc.minX - 10 &&
-        mx <= sc.maxX + 10 &&
-        my >= sc.minY - 26 &&
-        my <= sc.maxY + 8
-      ) {
-        if (sc.depth < bestDepth) {
-          bestDepth = sc.depth;
-          bestIdx = i;
-        }
-      }
-    }
-
+    const bestIdx = nodeAt(...local(e));
     if (bestIdx !== hoveredNode) {
       hoveredNode = bestIdx;
       canvas.style.cursor = bestIdx >= 0 ? 'pointer' : 'grab';
@@ -533,11 +543,12 @@ export function initIsoArchitectureEngine(): IsoApi | null {
   canvas.addEventListener('pointerup', (e) => {
     if (endGuideGesture(e)) return;
     if (!dragMoved && isDragging) {
-      if (hoveredNode >= 0) {
-        if (lockedNode === hoveredNode) {
+      const hit = nodeAt(...local(e));
+      if (hit >= 0) {
+        if (lockedNode === hit) {
           window.resetIsoCamera();
         } else {
-          window.focusIsoNode(hoveredNode);
+          window.focusIsoNode(hit);
         }
       } else if (lockedNode >= 0) {
         window.resetIsoCamera();
@@ -1370,32 +1381,31 @@ export function initIsoArchitectureEngine(): IsoApi | null {
     if (faultSim.active) {
       faultSim.progress += 0.0042 * frames;
       const p = faultSim.progress;
-      const statusEl = document.getElementById('iso-trace-status');
       if (p < 0.22) {
         faultSim.stage = 1;
-        if (statusEl) statusEl.textContent = 'STAGE 1/5 · FAULT INJECTED ON ' + nodes[faultSim.targetIdx].short;
+        showStatus('stage1', nodes[faultSim.targetIdx].short);
       } else if (p < 0.45) {
         faultSim.stage = 2;
         nodeFlash[7] = 0.8;
-        if (statusEl) statusEl.textContent = 'STAGE 2/5 · ORBITAL RADAR (08) LOCKED STALLED RUN';
+        showStatus('stage2');
       } else if (p < 0.68) {
         faultSim.stage = 3;
         nodeFlash[4] = 0.8;
         nodeFlash[5] = 0.8;
-        if (statusEl) statusEl.textContent = 'STAGE 3/5 · SUB-VAULT (05/06) BLAST RADIUS ISOLATED';
+        showStatus('stage3');
       } else if (p < 0.88) {
         faultSim.stage = 4;
         nodeFlash[6] = 0.9;
         nodeFlash[3] = 0.9;
-        if (statusEl) statusEl.textContent = 'STAGE 4/5 · SELF-FIX (07) + JUDGE (04) ROOT-CAUSE PATCH';
+        showStatus('stage4');
       } else if (p < 1.0) {
         faultSim.stage = 5;
         nodeFlash[faultSim.targetIdx] = 1.0;
-        if (statusEl) statusEl.textContent = 'STAGE 5/5 · RECOVERED & VERIFIED ACROSS ALL 3 DECKS';
+        showStatus('stage5');
       } else {
         faultSim.active = false;
         document.getElementById('btn-iso-fault')?.classList.remove('active');
-        if (statusEl) statusEl.textContent = 'INCIDENT RESOLVED · ZERO CUSTOMER IMPACT';
+        showStatus('resolved');
         window.dispatchEvent(new CustomEvent('iso:healed'));
       }
     }
@@ -1409,8 +1419,7 @@ export function initIsoArchitectureEngine(): IsoApi | null {
 
       if (traceWave.progress >= 1.0) {
         traceWave.active = false;
-        const statusEl = document.getElementById('iso-trace-status');
-        if (statusEl) statusEl.textContent = 'TRACE COMPLETE · ALL 3 DECKS HEALTHY';
+        showStatus('complete');
       }
     }
 
