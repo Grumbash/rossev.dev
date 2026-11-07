@@ -119,12 +119,15 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     report(out);
   } catch (e) { const pre = document.createElement('pre'); pre.id = '__probe'; pre.textContent = JSON.stringify({ error: String(e && e.stack || e) }); document.body.appendChild(pre); } })();</script>`;
 
+  // Four presses, each waiting for its view transition to settle, then the language morph: more
+  // virtual time than the default 30 s on a busy CI runner (#88 ran out once).
+  const BUDGET = '--virtual-time-budget=60000';
   let srv: ReturnType<typeof probeServer>;
   beforeAll(() => (srv = probeServer(PROBE)));
   afterAll(() => srv?.stop());
 
   test('on a dark system: AUTO is dark, then light, dark, AUTO; each change spreads from the press; the label follows the language', async () => {
-    const r = await srv.run('/writing/', 'theme', ['--force-dark-mode']);
+    const r = await srv.run('/writing/', 'theme', ['--force-dark-mode', BUDGET]);
     expect(r.error).toBeUndefined();
     expect(r.load).toEqual({ theme: 'dark', mode: 'system', label: en.nav.themeAuto, stored: null });
     expect(r.one).toMatchObject({ theme: 'light', mode: 'light', label: en.nav.themeLight, stored: 'light' });

@@ -89,6 +89,10 @@ export function initSite() {
   void import('./changes').then((m) => m.initChanges()).catch(() => {});
   // Shadows from real light (scripts/light.ts): the cursor, or a phone's tilt, moves them.
   addEventListener('pointermove', (e) => void import('./light').then((m) => m.initLight(e)).catch(() => {}), { once: true });
+  // The insiders' layer (scripts/insiders.ts): console greeting, ?, j/k, Alt+click to the source.
+  setTimeout(() => void import('./insiders').then((m) => m.initInsiders()).catch(() => {}), 300);
+  // How fast this page opened, in the footer (scripts/speed.ts): real numbers, kept on the page.
+  void import('./speed').then((m) => m.initSpeed()).catch(() => {});
   // "Gleb now" in the footer (scripts/now.ts): his clock and the last commit.
   void import('./now').then((m) => m.initNow()).catch(() => {});
   // How the visitor came (scripts/arrival.ts): loaded only when there is a hint to read.
