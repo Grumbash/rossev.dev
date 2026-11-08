@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="970" viewBox="0 0 760 970" role="img" aria-labelledby="title desc">
+<title id="title">One model. Five ways to remember.</title><desc id="desc">Five methods share ten training tasks. Seven held-out tasks stay outside training. All methods solve zero of seven in a single-seed pilot.</desc>
+<rect width="760" height="970" fill="#F4F0EA"/>
+<text x="30" y="48" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#0a0a0a">SLEEP AGENT / 01</text>
+<text x="30" y="90" font-family="Arial,sans-serif" font-size="29" font-weight="700" fill="#0a0a0a">One model. Five ways to remember.</text>
+<text x="30" y="123" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">Preliminary comparison · seed 42</text>
+<rect x="30" y="153" width="700" height="72" fill="#00e5ff" stroke="#0a0a0a" stroke-width="3"/>
+<text x="50" y="184" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#0a0a0a">Qwen3.5-4B</text>
+<text x="50" y="209" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">10 training tasks · fixed experience banks</text>
+<rect x="30" y="248" width="700" height="76" fill="white" stroke="#0a0a0a" stroke-width="2"/>
+<text x="48" y="279" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#0a0a0a">01</text>
+<text x="103" y="277" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#0a0a0a">No memory</text>
+<text x="103" y="304" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">Original weights</text>
+<rect x="30" y="339" width="700" height="76" fill="white" stroke="#0a0a0a" stroke-width="2"/>
+<text x="48" y="370" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#0a0a0a">02</text>
+<text x="103" y="368" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#0a0a0a">References / SFT</text>
+<text x="103" y="395" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">Reference corrections → weights</text>
+<rect x="30" y="430" width="700" height="76" fill="white" stroke="#0a0a0a" stroke-width="2"/>
+<text x="48" y="461" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#0a0a0a">03</text>
+<text x="103" y="459" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#0a0a0a">Own experience</text>
+<text x="103" y="486" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">Own attempt + feedback → weights</text>
+<rect x="30" y="521" width="700" height="76" fill="white" stroke="#0a0a0a" stroke-width="2"/>
+<text x="48" y="552" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#0a0a0a">04</text>
+<text x="103" y="550" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#0a0a0a">Other experience</text>
+<text x="103" y="577" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">Other attempt + feedback → weights</text>
+<rect x="30" y="612" width="700" height="76" fill="white" stroke="#0a0a0a" stroke-width="2"/>
+<text x="48" y="643" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#0a0a0a">05</text>
+<text x="103" y="641" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#0a0a0a">External memory / RAG</text>
+<text x="103" y="668" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">Permitted experience → context</text>
+<path d="M30 724 H730" stroke="#ff5500" stroke-width="3" stroke-dasharray="9 7"/>
+<text x="30" y="750" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#b33b00">TRAINING / EVALUATION BOUNDARY</text>
+<text x="30" y="786" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#0a0a0a">7 held-out tasks + 40 control questions</text>
+<text x="30" y="816" font-family="Arial,sans-serif" font-size="20" font-weight="400" fill="#0a0a0a">47 fresh responses × 5 methods = 235</text>
+<rect x="30" y="841" width="700" height="96" fill="#c8ff00" stroke="#0a0a0a" stroke-width="3"/>
+<text x="50" y="879" font-family="Arial,sans-serif" font-size="32" font-weight="700" fill="#0a0a0a">0 / 7</text>
+<text x="174" y="875" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#0a0a0a">tasks solved by every method</text>
+<text x="50" y="914" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#0a0a0a">A shared zero does not establish method equivalence.</text>
+</svg>

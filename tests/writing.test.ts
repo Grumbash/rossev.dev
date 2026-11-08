@@ -184,6 +184,17 @@ describe('post data', () => {
     expect(read('src/layouts/Base.astro')).toMatch(/JSON\.stringify\(jsonLd\)\.replace\(\/<\/g, '\\\\u003c'\)/);
   });
 
+  test('article figures allow local assets, escape captions and reject remote or traversing paths', () => {
+    const good = bodyHtml('![A "quote" <script>](/articles/sleep-agent/01-outcomes.svg)');
+    expect(good).toContain('<figure><img src="/articles/sleep-agent/01-outcomes.svg"');
+    expect(good).toContain('A &quot;quote&quot; &lt;script&gt;');
+    expect(good).toContain('loading="lazy"');
+    for (const src of ['https://tracker.example/a.svg', '//tracker.example/a.svg', '/articles/x/../a.svg', 'javascript:alert(1)']) {
+      expect(bodyHtml(`![caption](${src})`)).not.toContain('<img');
+    }
+    expect(bodyHtml('```\n![caption](/articles/x/a.svg)\n```')).not.toContain('<img');
+  });
+
   test('the templates take those labels and the JSON-LD from the shared helpers', () => {
     expect(read('src/components/BlogGrid.astro')).toContain('cardReadTime(post)');
     expect(read('src/components/BlogGrid.astro')).not.toMatch(/MIN ORIGINAL/);

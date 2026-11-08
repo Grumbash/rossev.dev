@@ -1,0 +1,66 @@
+{
+  "study": "Sleep Agent preliminary overnight comparison",
+  "date": "2026-11-08",
+  "model": "Qwen3.5-4B",
+  "seed": 42,
+  "decoding": "greedy",
+  "patch_output_budget": 4096,
+  "control_output_budget": 384,
+  "primary_tasks": 3,
+  "within_repository_transfer_tasks": 4,
+  "control_questions": 40,
+  "fresh_responses": 235,
+  "methods": [
+    {
+      "method": "baseline",
+      "primary_solved": 0,
+      "transfer_solved": 0,
+      "accepted_edits": 6,
+      "control_correct": 17,
+      "gained_vs_baseline": 0,
+      "lost_vs_baseline": 0
+    },
+    {
+      "method": "reference_sft",
+      "primary_solved": 0,
+      "transfer_solved": 0,
+      "accepted_edits": 2,
+      "control_correct": 21,
+      "gained_vs_baseline": 4,
+      "lost_vs_baseline": 0
+    },
+    {
+      "method": "own_experience",
+      "primary_solved": 0,
+      "transfer_solved": 0,
+      "accepted_edits": 1,
+      "control_correct": 24,
+      "gained_vs_baseline": 9,
+      "lost_vs_baseline": 2
+    },
+    {
+      "method": "other_experience",
+      "primary_solved": 0,
+      "transfer_solved": 0,
+      "accepted_edits": 0,
+      "control_correct": 24,
+      "gained_vs_baseline": 8,
+      "lost_vs_baseline": 1
+    },
+    {
+      "method": "rag",
+      "primary_solved": 0,
+      "transfer_solved": 0,
+      "accepted_edits": 0,
+      "control_correct": 18,
+      "gained_vs_baseline": 5,
+      "lost_vs_baseline": 4
+    }
+  ],
+  "limitations": [
+    "One seed, one repository, seven coding tasks.",
+    "Control questions came from prior development material.",
+    "The reduced output budget was chosen after observing earlier runs.",
+    "This summary is not a self-contained reproduction package."
+  ]
+}
