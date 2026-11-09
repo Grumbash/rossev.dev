@@ -5,7 +5,21 @@
 // *italic*, `code`. Bodies come from the Publora sync too, so everything is escaped first and only
 // http(s) links become links.
 
+import { readFileSync } from 'node:fs';
+
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+// Build-time SVG dimensions reserve space before a lazy image arrives.
+function dimensions(src: string): string {
+  if (!src.endsWith('.svg')) return '';
+  try {
+    const header = readFileSync(`public${src}`, 'utf8').match(/<svg\b[^>]*>/)?.[0] ?? '';
+    const box = header.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
+    if (box && Number(box[1]) > 0 && Number(box[2]) > 0)
+      return ` width="${Math.round(Number(box[1]) * 100)}" height="${Math.round(Number(box[2]) * 100)}"`;
+  } catch { /* A missing draft asset remains visible as a broken image. */ }
+  return '';
+}
 
 function inline(raw: string): string {
   // Code spans first, so nothing inside them is formatted; they come back after the rest.
@@ -36,6 +50,9 @@ export function bodyHtml(s: string): string {
   return bodyBlocks(s)
     .map((b) => {
       if (b.startsWith('```')) return `<pre><code>${esc(b.replace(/^```[\w-]*\n/, '').replace(/\n```$/, ''))}</code></pre>`;
+      // Only local article assets: remote images and arbitrary HTML stay escaped.
+      const image = b.match(/^!\[([^\]\n]+)\]\((\/articles\/[a-z0-9-]+\/[a-z0-9-]+\.(?:svg|png|webp))\)$/);
+      if (image) return `<figure><img src="${image[2]}" alt="${esc(image[1])}"${dimensions(image[2])} loading="lazy" decoding="async" style="display:block;width:100%;height:auto;background:#fff"><figcaption>${esc(image[1])}</figcaption></figure>`;
       if (b.startsWith('## ')) return `<h2>${inline(b.slice(3).trim())}</h2>`;
       const lines = b.split('\n').map((l) => l.trim());
       if (lines.every((l) => l.startsWith('- '))) return `<ul>${lines.map((l) => `<li>${inline(l.slice(2))}</li>`).join('')}</ul>`;
