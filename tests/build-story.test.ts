@@ -9,6 +9,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import * as analytics from '../src/scripts/analytics';
 import { buildSite } from './fixtures/build';
+import { BUILD_PAGE_SIZE, buildPageCount, buildPagePath, buildPagePaths, newestFirst } from '../src/data/build-pages';
 
 // Bun 1.3 rejects a per-hook timeout; the build in beforeAll needs more than the 5s default.
 setDefaultTimeout(120_000);
@@ -337,17 +338,23 @@ describe('committed data (src/data/build-story.json)', () => {
 describe(`built ${PATH}`, () => {
   const story = existsSync('src/data/build-story.json') ? json('src/data/build-story.json') : { prs: [] };
   let html = '';
+  // Every page of the PR list together (src/data/build-pages.ts): page 1 is PATH itself.
+  let all = '';
+  let allRu = '';
   const meta = (key: string) =>
     html.match(new RegExp(`<meta[^>]*(?:name|property)="${key}"[^>]*content="([^"]*)"`))?.[1] ??
     html.match(new RegExp(`<meta[^>]*content="([^"]*)"[^>]*(?:name|property)="${key}"`))?.[1];
   const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
   const text = (h: string) => decode(h.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ');
   const hrefs = (h: string) => [...h.matchAll(/<a\b[^>]*href="([^"]*)"/g)].map((m) => decode(m[1]));
-  const card = (n: number) => html.match(new RegExp(`<[a-z]+[^>]*data-pr="${n}"[^>]*>[\\s\\S]*?<!-- /pr-${n} -->`))?.[0] ?? '';
+  const card = (n: number) => all.match(new RegExp(`<[a-z]+[^>]*data-pr="${n}"[^>]*>[\\s\\S]*?<!-- /pr-${n} -->`))?.[0] ?? '';
 
   beforeAll(() => {
     buildSite();
     html = existsSync(`dist${PATH}index.html`) ? read(`dist${PATH}index.html`) : '';
+    const pages = (prefix: string) => buildPagePaths(story.prs).map((p) => `dist${prefix}${p}index.html`).filter(existsSync).map(read);
+    all = pages('').join('\n');
+    allRu = pages('/ru').join('\n');
   });
 
   test('is built with its own canonical, title, description and OG', () => {
@@ -371,7 +378,7 @@ describe(`built ${PATH}`, () => {
 
   test('one card per PR in the data, each linking to its real PR and its red test', () => {
     expect(story.prs.length).toBeGreaterThan(0);
-    expect([...html.matchAll(/data-pr="(\d+)"/g)].map((m) => Number(m[1])).sort((a, b) => a - b)).toEqual(
+    expect([...all.matchAll(/data-pr="(\d+)"/g)].map((m) => Number(m[1])).sort((a, b) => a - b)).toEqual(
       story.prs.map((p: any) => p.number).sort((a: number, b: number) => a - b),
     );
     for (const p of story.prs) {
@@ -396,16 +403,41 @@ describe(`built ${PATH}`, () => {
     }
   });
 
+  test('the PRs come newest first, 10 a page, with Show more and a pager; the loop and stats only on page 1', () => {
+    const pages = buildPageCount(story.prs);
+    expect(pages).toBeGreaterThan(1);
+    const order = newestFirst(story.prs as { number: number; mergedAt: string }[]).map((p) => p.number);
+    const seen: number[] = [];
+    for (let n = 1; n <= pages; n++) {
+      for (const prefix of ['', '/ru']) {
+        const h = read(`dist${prefix}${buildPagePath(n)}index.html`);
+        const nums = [...h.matchAll(/data-pr="(\d+)"/g)].map((m) => Number(m[1]));
+        if (!prefix) seen.push(...nums);
+        expect(nums).toEqual(order.slice((n - 1) * BUILD_PAGE_SIZE, n * BUILD_PAGE_SIZE));
+        expect(h).toMatch(new RegExp(`<link[^>]*rel="canonical"[^>]*href="${SITE}${prefix}${buildPagePath(n)}"`));
+        const more = h.match(/<a\b[^>]*data-more="\.bs-timeline"[^>]*>/)?.[0];
+        if (n < pages) expect(more).toContain(`href="${prefix}${buildPagePath(n + 1)}"`);
+        else expect(more).toBeUndefined();
+        for (let m = 1; m <= pages; m++) if (m !== n) expect(hrefs(h)).toContain(`${prefix}${buildPagePath(m)}`);
+        // The loop, the stats and the JSON-LD article belong to the story page only.
+        expect(/data-stat="prs"/.test(h)).toBe(n === 1);
+        expect(/application\/ld\+json/.test(h)).toBe(n === 1);
+      }
+    }
+    expect(seen).toEqual(order);
+    expect(existsSync(`dist${buildPagePath(pages + 1)}index.html`)).toBe(false);
+  });
+
   // The committed data may have no pending PR at a given moment, so the page's pending branch is
   // pinned in its source: a bot PR must render, in both languages, without copy.
   test('the page renders a pending card in both languages', () => {
-    const src = read('src/pages/[...locale]/how-its-built.astro');
+    const src = read('src/components/BuildStoryPage.astro');
     expect(src).toMatch(/data-pending/);
     expect(src).toMatch(/pending/);
   });
 
   test('the RU page carries the same cards in Russian', () => {
-    const ru = text(read(`dist/ru${PATH}index.html`));
+    const ru = text(allRu);
     for (const p of story.prs) {
       if (p.pending) continue;
       // text() folds every whitespace run, no-break spaces in «35 758» included; fold the copy the same way.
@@ -422,7 +454,7 @@ describe(`built ${PATH}`, () => {
       for (const c of p.commits) known.add(c.url);
     }
     // The footer's "Gleb now" links the site's latest commit, which is newer than the story (tests/now.test.ts).
-    const story_ = html.replace(/<div[^>]*data-now[\s\S]*?<\/div>/, '');
+    const story_ = all.replace(/<div[^>]*data-now[\s\S]*?<\/div>/g, '');
     const gh = hrefs(story_).filter((h) => h.startsWith(`${GH}/pull/`) || h.startsWith(`${GH}/commit/`));
     expect(gh.length).toBeGreaterThan(0);
     for (const h of gh) expect(known.has(h), h).toBe(true);

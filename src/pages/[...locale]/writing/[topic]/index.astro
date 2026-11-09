@@ -1,0 +1,12 @@
+---
+// /writing/<topic>/: page 1 of one topic. It shares /writing/<x>/ with the post pages, so a post
+// slug never equals a topic (tests/writing.test.ts).
+import WritingList from '../../../../components/WritingList.astro';
+import { topicPaths, type Topic } from '../../../../data/writing-pages';
+import { localeOf } from '../../../../i18n';
+
+export const getStaticPaths = topicPaths;
+const lang = localeOf(Astro.params.locale);
+---
+
+<WritingList lang={lang} topic={Astro.params.topic as Topic} page={1} />

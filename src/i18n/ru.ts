@@ -236,7 +236,15 @@ export const ru: Dict = {
     allPosts: (n: number) => `ВСЕ ПОСТЫ (${n}) →`,
     readBrief: 'ЧИТАТЬ КОНСПЕКТ',
     readBriefLink: 'Читать конспект →',
-    allWriting: '← Все заметки'
+    allWriting: '← Все заметки',
+    topicsLabel: 'Темы',
+    more: 'Показать ещё',
+    pagerLabel: 'Страницы',
+    page: (n: number) => `Страница ${n}`,
+    pageTitle: (topic: string | null, n: number) =>
+      `${topic ? `${topic} — ` : ''}Блог${n > 1 ? `, страница ${n}` : ''} — Глеб Росев`,
+    topicDescription: (topic: string, count: number) =>
+      `Заметки Глеба Росева, тема «${topic}», ${count}: о том, как строить AI-агентов и руководить инженерными командами.`
   },
   tab: {
     wait: 'Я подожду…'
@@ -420,7 +428,14 @@ export const ru: Dict = {
     statRedFirst: 'Сначала красный тест',
     statFindings: 'Находок в карточках',
     statCommits: 'Коммитов без мержей',
-    prsTitle: 'Все PR, от первого',
+    prsTitle: 'Все PR, сначала новые',
+    pageTitle: (n: number) => `Все PR, страница ${n} — Как собран этот сайт — Глеб Росев`,
+    pageHeading: (n: number) => `Все PR · страница ${n}`,
+    pageDescription: (n: number, total: number) => `Страница ${n} из ${total} смерженных PR сайта rossev.dev: красный тест, что поймало ревью и что я решил по каждому.`,
+    backToStory: '← Как собран этот сайт',
+    more: 'Показать ещё PR',
+    pagerLabel: 'Страницы',
+    page: (n: number) => `Страница ${n}`,
     merged: 'смержен',
     forVisitors: 'Для посетителей',
     redGreen: 'Красный → зелёный',

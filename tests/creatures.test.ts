@@ -6,6 +6,7 @@
 import { beforeAll, describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { BLOG_POSTS } from '../src/data/posts';
+import { writingPagePaths } from '../src/data/writing-pages';
 import { SIDE, creature } from '../src/data/creature';
 import { buildSite } from './fixtures/build';
 
@@ -58,7 +59,9 @@ describe('where it lives', () => {
 
   test('on every card on /writing/ and home, in both languages', () => {
     for (const prefix of ['', 'ru/']) {
-      expect(marks(html(`${prefix}writing/index.html`)).sort()).toEqual(BLOG_POSTS.map((p) => p.slug).sort());
+      // /writing/ comes in pages (src/data/writing-pages.ts): together they hold every post.
+      const pages = writingPagePaths('all').flatMap((p) => marks(html(`${prefix}${p.slice(1)}index.html`)));
+      expect(pages.sort()).toEqual(BLOG_POSTS.map((p) => p.slug).sort());
       const home = marks(html(`${prefix}index.html`));
       expect(home.length).toBeGreaterThan(0);
       for (const s of home) expect(BLOG_POSTS.some((p) => p.slug === s)).toBe(true);

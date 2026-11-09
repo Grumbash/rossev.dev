@@ -320,10 +320,13 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
       import { initSite } from '../scripts/site';
       import { initAnalytics } from '../scripts/analytics';
       import { initVadLoader } from '../scripts/vad/loader';
+      import { initShowMore } from '../scripts/show-more';
       initActions();
       initSite();
       initAnalytics();
       initVadLoader();
+      // Paged lists (/writing/, /how-its-built/): one delegated click listener, idle where there is no [data-more].
+      initShowMore();
     </script>
     <slot name="scripts" />
 

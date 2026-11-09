@@ -7,10 +7,11 @@
 // personal data), and pages are stored without their query.
 import { describe, expect, setDefaultTimeout, test, beforeAll } from 'bun:test';
 import { readFileSync } from 'node:fs';
-import { cacheKey, offlinePath, route } from '../src/sw/policy';
+import { cacheKey, isPostPath, offlinePath, route } from '../src/sw/policy';
 import { en } from '../src/i18n/en';
 import { ru } from '../src/i18n/ru';
 import { buildSite } from './fixtures/build';
+import { TOPICS, writingPath } from '../src/data/writing-pages';
 import { withChrome } from './fixtures/cdp';
 import { hasChrome } from './fixtures/probe';
 
@@ -49,6 +50,25 @@ describe('what the worker does with a request', () => {
     expect(offlinePath(at('/ru/writing/x/'))).toBe('/ru/offline/');
     expect(offlinePath(at('/ru'))).toBe('/ru/offline/');
     expect(offlinePath(at('/rubric/'))).toBe('/offline/');
+  });
+});
+
+describe('which pages are posts', () => {
+  // Saved as read articles and listed offline; the topic and paging pages beside them are not.
+  test('a post is /writing/<slug>/, never a topic page or /writing/page/<n>/', () => {
+    expect(isPostPath('/writing/self-healing-monogram/')).toBe(true);
+    expect(isPostPath('/ru/writing/self-healing-monogram/')).toBe(true);
+    for (const p of ['/writing/', '/writing/ai/', '/ru/writing/leadership/', '/writing/page/2/', '/writing/ai/page/2/', '/writing/systems/', '/writing/delivery/'])
+      expect(isPostPath(p), p).toBe(false);
+    // Every topic the site has, not just the ones above: policy.ts spells them out.
+    for (const t of TOPICS) expect(isPostPath(writingPath(t)), t).toBe(false);
+  });
+
+  test('narrowed to a language, it matches only that language', () => {
+    expect(isPostPath('/writing/self-healing-monogram/', 'en')).toBe(true);
+    expect(isPostPath('/writing/self-healing-monogram/', 'ru')).toBe(false);
+    expect(isPostPath('/ru/writing/self-healing-monogram/', 'ru')).toBe(true);
+    expect(isPostPath('/ru/writing/self-healing-monogram/', 'en')).toBe(false);
   });
 });
 
@@ -186,12 +206,20 @@ describe.skipIf(!hasChrome())('an update with a reading tab still open', () => {
           const file = Bun.file('dist' + path);
           return await file.exists() ? new Response(file) : new Response('Missing', { status: 404 });
         } });
+        // Polled right after Page.navigate, an expression can run while the next document has no
+        // <html> yet (documentElement is null). That is a moment to wait out, not a failure: keep
+        // polling, and report the last in-page error only if the condition never comes true.
         const waitFor = async (expression: string) => {
+          let last: unknown;
           for (let i = 0; i < 150; i++) {
-            if (await evaluate(expression)) return;
+            try {
+              if (await evaluate(expression)) return;
+            } catch (e) {
+              last = e;
+            }
             await Bun.sleep(80);
           }
-          throw Error('Timed out waiting for ' + expression);
+          throw Error(`Timed out waiting for ${expression}${last ? ` (last error: ${(last as Error).message})` : ''}`);
         };
         const go = (path: string) => send('Page.navigate', { url: server.url.origin + path });
         try {

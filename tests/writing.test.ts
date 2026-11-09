@@ -9,6 +9,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { BLOG_POSTS } from '../src/data/posts';
 import { PROFILE, blogPostingLd, cardReadTime, fullPostLink, linkedinLabel, readTimeLabel } from '../src/data/profile';
 import { bodyBlocks, bodyHtml } from '../src/data/post-body';
+import { TOPICS, WRITING_PAGE_SIZE, pageCount, topicPosts, writingPath, type TopicOrAll } from '../src/data/writing-pages';
 import budgets from '../perf-budgets.json';
 import { evaluateBytes, type Check } from '../scripts/perf-check';
 import { buildSite } from './fixtures/build';
@@ -314,11 +315,54 @@ describe('every post has an indexable page', () => {
 });
 
 describe('writing index', () => {
-  test('/writing/ lists every post page and is canonical', () => {
-    const html = read('dist/writing/index.html');
-    expect(canonical(html)).toBe(`${SITE}/writing/`);
-    const hrefs = controls(html).map((t) => t.attrs.href);
-    for (const p of BLOG_POSTS) expect(hrefs).toContain(pagePath(p.slug));
+  // The post titles a /writing/ page shows as cards, in order.
+  const cardSlugs = (html: string) => [...html.matchAll(/<article class="brutal-box post-card" data-slug="([^"]+)"/g)].map((m) => m[1]);
+  const file = (topic: TopicOrAll, n: number, lang = '') => `dist${lang}${writingPath(topic, n)}index.html`;
+
+  for (const topic of ['all', ...TOPICS] as TopicOrAll[]) {
+    test(`${topic}: the pages hold every post once, newest first, 12 to a page, each canonical`, () => {
+      const pages = pageCount(topic);
+      const seen: string[] = [];
+      for (let n = 1; n <= pages; n++) {
+        const html = read(file(topic, n));
+        expect(canonical(html)).toBe(`${SITE}${writingPath(topic, n)}`);
+        const slugs = cardSlugs(html);
+        expect(slugs.length).toBe(n < pages ? WRITING_PAGE_SIZE : topicPosts(topic).length - WRITING_PAGE_SIZE * (pages - 1));
+        seen.push(...slugs);
+        // "Show more" is a real link to the next page, absent on the last one; the pager links every other page.
+        const more = controls(html).find((t) => t.attrs['data-more'] !== undefined);
+        expect(more?.attrs.href).toBe(n < pages ? writingPath(topic, n + 1) : undefined);
+        const hrefs = controls(html).map((t) => t.attrs.href);
+        for (let m = 1; m <= pages; m++) if (m !== n) expect(hrefs).toContain(writingPath(topic, m));
+        // The same page in Russian lists the same posts.
+        expect(cardSlugs(read(file(topic, n, '/ru')))).toEqual(slugs);
+      }
+      expect(seen).toEqual(topicPosts(topic).map((p) => p.slug));
+      expect(existsSync(file(topic, pages + 1))).toBe(false);
+      expect(existsSync(`dist${writingPath(topic)}page/1/index.html`)).toBe(false);
+    });
+  }
+
+  test('every topic is one link away from every /writing/ page, marked current on its own', () => {
+    for (const topic of ['all', ...TOPICS] as TopicOrAll[]) {
+      const tags = controls(read(file(topic, 1)));
+      for (const x of ['all', ...TOPICS] as TopicOrAll[]) {
+        const link = tags.find((t) => t.tag === 'a' && t.attrs.href === writingPath(x) && t.attrs['data-track-filter'] === x);
+        expect(link, `${topic} → ${x}`).toBeDefined();
+        expect(link!.attrs['aria-current']).toBe(x === topic ? 'page' : undefined);
+      }
+    }
+  });
+
+  test('no post slug can shadow a topic page or /writing/page/', () => {
+    for (const p of BLOG_POSTS) expect([...TOPICS, 'page']).not.toContain(p.slug);
+  });
+
+  test('page titles name the topic and the page number', () => {
+    const title = (html: string) => html.match(/<title>([^<]*)<\/title>/)?.[1];
+    expect(title(read(file('all', 1)))).toBe('Writing — Gleb Rosev');
+    expect(title(read(file('all', 2)))).toBe('Writing, page 2 — Gleb Rosev');
+    expect(title(read(file('ai', 1)))).toBe('AI systems — Writing — Gleb Rosev');
   });
 
   // Home shows only the latest posts, so the nav's Writing goes to the full list, in each language.

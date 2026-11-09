@@ -240,7 +240,16 @@ export const en = {
     allPosts: (n: number) => `ALL ${n} POSTS →`,
     readBrief: 'READ BRIEF',
     readBriefLink: 'Read brief →',
-    allWriting: '← All writing'
+    allWriting: '← All writing',
+    // /writing/ in pages (src/data/writing-pages.ts)
+    topicsLabel: 'Topics',
+    more: 'Show more',
+    pagerLabel: 'Pages',
+    page: (n: number) => `Page ${n}`,
+    pageTitle: (topic: string | null, n: number) =>
+      `${topic ? `${topic} — ` : ''}Writing${n > 1 ? `, page ${n}` : ''} — Gleb Rosev`,
+    topicDescription: (topic: string, count: number) =>
+      `${count} posts by Gleb Rosev on ${topic.toLowerCase()}: field notes from building AI agents and running engineering teams.`
   },
   // The tab title while the page is hidden; the favicon wilts meanwhile (scripts/tab.ts).
   tab: {
@@ -438,7 +447,15 @@ export const en = {
     statRedFirst: 'Red test first',
     statFindings: 'Findings highlighted',
     statCommits: 'Commits, no merges',
-    prsTitle: 'Every PR, oldest first',
+    prsTitle: 'Every PR, newest first',
+    // Pages 2+ of the PR list (src/data/build-pages.ts).
+    pageTitle: (n: number) => `Every PR, page ${n} — How this site was built — Gleb Rosev`,
+    pageHeading: (n: number) => `Every PR · page ${n}`,
+    pageDescription: (n: number, total: number) => `Page ${n} of the ${total} merged pull requests behind rossev.dev: the red test, what review caught and what I decided for each.`,
+    backToStory: '← How this site was built',
+    more: 'Show more PRs',
+    pagerLabel: 'Pages',
+    page: (n: number) => `Page ${n}`,
     merged: 'merged',
     forVisitors: 'For visitors',
     redGreen: 'Red → green',
