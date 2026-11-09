@@ -1035,6 +1035,24 @@ a {
   margin-top: 24px;
 }
 
+/* /writing/ pages: topic links reuse the filter tabs; the pager reuses the language buttons. */
+a.filter-tab {
+  text-decoration: none;
+}
+
+.writing-pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.writing-pager .ctrl-btn {
+  min-width: 36px;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -236,7 +236,15 @@ export const ru: Dict = {
     allPosts: (n: number) => `ВСЕ ПОСТЫ (${n}) →`,
     readBrief: 'ЧИТАТЬ КОНСПЕКТ',
     readBriefLink: 'Читать конспект →',
-    allWriting: '← Все заметки'
+    allWriting: '← Все заметки',
+    topicsLabel: 'Темы',
+    more: 'Показать ещё',
+    pagerLabel: 'Страницы',
+    page: (n: number) => `Страница ${n}`,
+    pageTitle: (topic: string | null, n: number) =>
+      `${topic ? `${topic} — ` : ''}Блог${n > 1 ? `, страница ${n}` : ''} — Глеб Росев`,
+    topicDescription: (topic: string, count: number) =>
+      `Заметки Глеба Росева, тема «${topic}», ${count}: о том, как строить AI-агентов и руководить инженерными командами.`
   },
   tab: {
     wait: 'Я подожду…'

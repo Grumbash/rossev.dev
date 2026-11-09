@@ -1,0 +1,11 @@
+---
+// /writing/page/<n>/: page n (2 and up) of every post.
+import WritingList from '../../../../components/WritingList.astro';
+import { allPagePaths } from '../../../../data/writing-pages';
+import { localeOf } from '../../../../i18n';
+
+export const getStaticPaths = allPagePaths;
+const lang = localeOf(Astro.params.locale);
+---
+
+<WritingList lang={lang} topic="all" page={Number(Astro.params.n)} />

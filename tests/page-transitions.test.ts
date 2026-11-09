@@ -8,6 +8,7 @@ import { beforeAll, describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { BLOG_POSTS } from '../src/data/posts';
+import { writingPagePaths } from '../src/data/writing-pages';
 import { buildSite } from './fixtures/build';
 import { withChrome } from './fixtures/cdp';
 import { hasChrome } from './fixtures/probe';
@@ -41,8 +42,10 @@ describe('the title that flies', () => {
     expect(css()).not.toMatch(/\.vt-card ?\{/);
     expect(readFileSync('src/scripts/site.ts', 'utf8')).toMatch(/closest\('\.post-card'\)\?\.querySelector<HTMLElement>\('\.vt-card'\)/);
     for (const prefix of ['', 'ru/']) {
-      expect(names(html(`${prefix}writing/index.html`))).toEqual([]);
-      const n = names(html(`${prefix}writing/index.html`), 'vt-card');
+      // /writing/ comes in pages (src/data/writing-pages.ts): together they hold every post.
+      const pages = writingPagePaths('all').map((p) => html(`${prefix}${p.slice(1)}index.html`));
+      for (const h of pages) expect(names(h)).toEqual([]);
+      const n = pages.flatMap((h) => names(h, 'vt-card'));
       expect(n.sort()).toEqual(BLOG_POSTS.map((p) => name(p.slug)).sort());
     }
   });

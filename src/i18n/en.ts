@@ -240,7 +240,16 @@ export const en = {
     allPosts: (n: number) => `ALL ${n} POSTS →`,
     readBrief: 'READ BRIEF',
     readBriefLink: 'Read brief →',
-    allWriting: '← All writing'
+    allWriting: '← All writing',
+    // /writing/ in pages (src/data/writing-pages.ts)
+    topicsLabel: 'Topics',
+    more: 'Show more',
+    pagerLabel: 'Pages',
+    page: (n: number) => `Page ${n}`,
+    pageTitle: (topic: string | null, n: number) =>
+      `${topic ? `${topic} — ` : ''}Writing${n > 1 ? `, page ${n}` : ''} — Gleb Rosev`,
+    topicDescription: (topic: string, count: number) =>
+      `${count} posts by Gleb Rosev on ${topic.toLowerCase()}: field notes from building AI agents and running engineering teams.`
   },
   // The tab title while the page is hidden; the favicon wilts meanwhile (scripts/tab.ts).
   tab: {
