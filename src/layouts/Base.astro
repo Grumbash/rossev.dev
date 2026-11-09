@@ -27,7 +27,8 @@ interface Props {
   twitterTitle?: string;
   twitterDescription?: string;
   jsonLd?: object;
-  // Home links its sections as #anchors; every other page as /#anchors.
+  // Home links its sections as #anchors; every other page as /#anchors. Writing is the exception:
+  // the nav sends it to /writing/, the full list, since home shows only the latest posts.
   home?: boolean;
   // Nav and footer "book a call" buttons. Post pages turn them off: the reader footer has the one CTA.
   cta?: boolean;
@@ -156,7 +157,7 @@ const source = [`src/pages${Astro.routePattern}.astro`, `src/pages${Astro.routeP
 
         <nav class="nav-links" aria-label={d.nav.sections}>
           <a class="nav-link" href={anchor('experience')}>{d.nav.experience}</a>
-          <a class="nav-link" href={anchor('writing')}>{d.nav.writing}</a>
+          <a class="nav-link" href={localePath(lang, '/writing/')} aria-current={path.startsWith('/writing/') ? 'page' : undefined}>{d.nav.writing}</a>
           <a class="nav-link" href={localePath(lang, '/hire/')} aria-current={path === '/hire/' ? 'page' : undefined}>{d.nav.hire}</a>
           <a class="nav-link" href={anchor('contact')}>{d.nav.contact}</a>
         </nav>
