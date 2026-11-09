@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-07T17:15:38.269Z",
-  "throughSha": "975648203737f131c0c4bfa65f9ad984e4c6f4f1",
+  "generatedAt": "2026-11-09T12:20:53.504Z",
+  "throughSha": "9374ba12367b538cbacaa30fc88ab69bcc5f18bd",
   "prs": [
     {
       "number": 1,
@@ -3341,6 +3341,204 @@
           "subject": "Remove the unrecognized browsing-topics header directive",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/ecb2091e5b4b1cd5f3de889ad387c15bd372d6af"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 98,
+      "title": "Fix three flaky tests: page-load and Chrome-start races, and a crooked reference grow in the replay heal",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/98",
+      "mergedAt": "2026-11-07T18:41:21Z",
+      "additions": 101,
+      "deletions": 42,
+      "changedFiles": 5,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "8286440d3a8cba8eec4f742d90b201570d2ac847",
+          "subject": "Red: the mic tests click before the page's loader is listening when scripts arrive late",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8286440d3a8cba8eec4f742d90b201570d2ac847"
+        },
+        {
+          "sha": "64356992aefd1241263c7fa2951301cc3c3a82b5",
+          "subject": "Browser tests wait for the page to load, and for Chrome to start, instead of fixed sleeps",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/64356992aefd1241263c7fa2951301cc3c3a82b5"
+        },
+        {
+          "sha": "62db8cb2e5a16324f3ffc6345b5a1930ba329263",
+          "subject": "Red: a crooked first grow makes a healed cut read as unhealed",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/62db8cb2e5a16324f3ffc6345b5a1930ba329263"
+        },
+        {
+          "sha": "4c1ec4a6f58b5c79a230c438226db9f882c6cfac",
+          "subject": "The replay's mini GR grows again when its first grow comes out crooked",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4c1ec4a6f58b5c79a230c438226db9f882c6cfac"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 99,
+      "title": "Add Sleep Agent pilot article with bilingual research visuals",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/99",
+      "mergedAt": "2026-11-09T11:00:57Z",
+      "additions": 2530,
+      "deletions": 0,
+      "changedFiles": 17,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "2ea472aaa2bfa92b9371d6f9e9f3e6c0122a7268",
+          "subject": "Add bilingual Sleep Agent pilot article and study visuals",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2ea472aaa2bfa92b9371d6f9e9f3e6c0122a7268"
+        },
+        {
+          "sha": "ec03e0d994a540e8ad3dcd6a9469f216c9ab14a8",
+          "subject": "Sleep Agent article: publish date is the merge day, and llms.txt lists it",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ec03e0d994a540e8ad3dcd6a9469f216c9ab14a8"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 101,
+      "title": "Nav: Writing links to the full /writing/ list",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/101",
+      "mergedAt": "2026-11-09T11:24:47Z",
+      "additions": 12,
+      "deletions": 2,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "26aef665414b59fdcbec54261d13ae798130b53c",
+          "subject": "Nav: Writing goes to /writing/, the full list, instead of home's latest six",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/26aef665414b59fdcbec54261d13ae798130b53c"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 103,
+      "title": "How it's built in pages: newest 10 PRs first, Show more, pager",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/103",
+      "mergedAt": "2026-11-09T11:46:13Z",
+      "additions": 601,
+      "deletions": 463,
+      "changedFiles": 12,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "c2836221c5fd529a84ddd284f82e54d6ec472d5c",
+          "subject": "How it's built in pages: latest 10 PRs first, Show more, a pager; Show more is one shared script",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c2836221c5fd529a84ddd284f82e54d6ec472d5c"
+        },
+        {
+          "sha": "ee0e1824bfc0775bedeff94896da33d21e51d6bf",
+          "subject": "Merge branch 'writing-pages' into build-story-pages",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/ee0e1824bfc0775bedeff94896da33d21e51d6bf"
+        },
+        {
+          "sha": "b1ba86edee2498c0cde37e2b57aadf578a52b4d3",
+          "subject": "Merge branch 'writing-pages' into build-story-pages",
+          "role": "merge",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/b1ba86edee2498c0cde37e2b57aadf578a52b4d3"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 102,
+      "title": "/writing/ in pages: 12 posts a page, a page per topic, Show more",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/102",
+      "mergedAt": "2026-11-09T11:50:21Z",
+      "additions": 933,
+      "deletions": 499,
+      "changedFiles": 24,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "4f8d3ecedeee534662b78abd5a414f2e94e9529d",
+          "subject": "Writing in pages: 12 posts a page, topic pages, and Show more",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4f8d3ecedeee534662b78abd5a414f2e94e9529d"
+        },
+        {
+          "sha": "fbdddd53817c9088cce893d34efffe12b4c3f7e9",
+          "subject": "Offline: topic and paging pages under /writing/ are not posts",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/fbdddd53817c9088cce893d34efffe12b4c3f7e9"
+        },
+        {
+          "sha": "4db87b17850b6f9575f5b87dddbcf0c247ea183f",
+          "subject": "Offline test: wait out the moment a navigating page has no <html>",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/4db87b17850b6f9575f5b87dddbcf0c247ea183f"
+        },
+        {
+          "sha": "32f0e95b369434f1acc47bcc7ad51743caf567a1",
+          "subject": "How it's built in pages: newest 10 PRs first, Show more, pager (#103)",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/32f0e95b369434f1acc47bcc7ad51743caf567a1"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 106,
+      "title": "Article: what one pull request costs us",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/106",
+      "mergedAt": "2026-11-09T12:19:47Z",
+      "additions": 124,
+      "deletions": 0,
+      "changedFiles": 6,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "c9f7b62067606a7e3e664eee7c208d63f8c2d781",
+          "subject": "Article: what one pull request costs us, against Apple's new AI budget",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c9f7b62067606a7e3e664eee7c208d63f8c2d781"
+        },
+        {
+          "sha": "0f3ddf26f251a146da2c69670115c102fa39f85b",
+          "subject": "Article: plain bullets in 'What we do about it'",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/0f3ddf26f251a146da2c69670115c102fa39f85b"
+        },
+        {
+          "sha": "2d1979444ab6b45e1ba4a13a64a66a1b8d3b2a1a",
+          "subject": "Article: reword the CSS pair so the RU text passes the style check",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2d1979444ab6b45e1ba4a13a64a66a1b8d3b2a1a"
+        },
+        {
+          "sha": "d4ba8c405a990322affc54a85c0116d98f9a2504",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d4ba8c405a990322affc54a85c0116d98f9a2504"
         }
       ],
       "findings": [],
