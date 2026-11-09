@@ -1,0 +1,12 @@
+---
+// /how-its-built/page/<n>/: the next 10 PRs, newest first.
+import BuildStoryPage from '../../../../components/BuildStoryPage.astro';
+import story from '../../../../data/build-story.json';
+import { buildPageStaticPaths } from '../../../../data/build-pages';
+import { localeOf } from '../../../../i18n';
+
+export const getStaticPaths = () => buildPageStaticPaths(story.prs);
+const lang = localeOf(Astro.params.locale);
+---
+
+<BuildStoryPage lang={lang} page={Number(Astro.params.n)} />
