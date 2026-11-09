@@ -206,12 +206,20 @@ describe.skipIf(!hasChrome())('an update with a reading tab still open', () => {
           const file = Bun.file('dist' + path);
           return await file.exists() ? new Response(file) : new Response('Missing', { status: 404 });
         } });
+        // Polled right after Page.navigate, an expression can run while the next document has no
+        // <html> yet (documentElement is null). That is a moment to wait out, not a failure: keep
+        // polling, and report the last in-page error only if the condition never comes true.
         const waitFor = async (expression: string) => {
+          let last: unknown;
           for (let i = 0; i < 150; i++) {
-            if (await evaluate(expression)) return;
+            try {
+              if (await evaluate(expression)) return;
+            } catch (e) {
+              last = e;
+            }
             await Bun.sleep(80);
           }
-          throw Error('Timed out waiting for ' + expression);
+          throw Error(`Timed out waiting for ${expression}${last ? ` (last error: ${(last as Error).message})` : ''}`);
         };
         const go = (path: string) => send('Page.navigate', { url: server.url.origin + path });
         try {
