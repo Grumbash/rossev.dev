@@ -67,10 +67,10 @@ These pairs aren't identical tickets, the open-weight runs used an older version
 
 ## What we do about it
 
-- **Every pull request is counted:** tokens, dollars and attempts. That is the only reason we found the cache bug.
-- **Each task goes to the cheapest model that passes our checks.** Customers don't pick a model; they get the result and what it cost.
-- **Cheap is only good if it's checked.** A failing test comes before the code, and a separate agent tries to break the result. I wrote about benchmarking the reviewer on our own pull requests [here](https://rossev.dev/writing/benchmarking-review-models-on-our-own-prs/).
-- **A run that loops gets stopped**, and people decide what ships: merges, feature flags and messages to customers.
+- We count every pull request in tokens, dollars and attempts. That is the only reason we found the cache bug.
+- Each task goes to the cheapest model that passes our checks. Customers don't pick a model; they get the result and what it cost.
+- Cheap is only good if it's checked. A failing test comes before the code, and a separate agent tries to break the result. I wrote about benchmarking the reviewer on our own pull requests [here](https://rossev.dev/writing/benchmarking-review-models-on-our-own-prs/).
+- A run that loops gets stopped, and people decide what ships: merges, feature flags and messages to customers.
 
 When the next budget meeting comes, "we use AI" won't be an answer. "A pull request costs us $0.61 at the median, here is our worst one, and here is why" is.
 
