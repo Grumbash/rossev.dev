@@ -1,6 +1,6 @@
 ---
 // One page of /writing/: the topic links, 12 post cards and the pager (src/data/writing-pages.ts).
-// "Show more" is a plain link to the next page; scripts/writing-more.ts appends that page's cards in place.
+// "Show more" is a plain link to the next page; scripts/show-more.ts appends that page's cards in place.
 import { postPath } from '../data/profile';
 import { TOPICS, pageCount, pagePosts, topicPosts, writingPath, type TopicOrAll } from '../data/writing-pages';
 import Base from '../layouts/Base.astro';
@@ -74,8 +74,8 @@ const description = topic === 'all' ? d.meta.writingDescription : d.writing.topi
       </div>
 
       {page < pages && (
-        <div class="writing-more">
-          <a class="brutal-btn" href={href(page + 1)} data-more>{d.writing.more} ↓</a>
+        <div class="writing-more" data-more-wrap>
+          <a class="brutal-btn" href={href(page + 1)} data-more=".posts-grid">{d.writing.more} ↓</a>
         </div>
       )}
 
@@ -99,9 +99,7 @@ const description = topic === 'all' ? d.meta.writingDescription : d.writing.topi
   <Fragment slot="scripts">
     <script>
       import { initReadingList } from '../scripts/reading';
-      import { initWritingMore } from '../scripts/writing-more';
       initReadingList();
-      initWritingMore();
     </script>
   </Fragment>
 </Base>

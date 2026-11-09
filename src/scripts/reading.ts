@@ -155,7 +155,7 @@ export function initReadingList() {
   // The inline brief and the filters on home swap cards in; the language morph renames the tags.
   document.addEventListener('site:lang', paint);
   document.body.addEventListener('htmx:afterSwap', paint);
-  // "Show more" on /writing/ appends the next page's cards (scripts/writing-more.ts).
+  // "Show more" on /writing/ appends the next page's cards (scripts/show-more.ts).
   document.addEventListener('site:more', paint);
   paint();
 }
