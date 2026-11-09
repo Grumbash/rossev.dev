@@ -320,6 +320,15 @@ describe('writing index', () => {
     const hrefs = controls(html).map((t) => t.attrs.href);
     for (const p of BLOG_POSTS) expect(hrefs).toContain(pagePath(p.slug));
   });
+
+  // Home shows only the latest posts, so the nav's Writing goes to the full list, in each language.
+  test('the nav links Writing to /writing/, marked current there', () => {
+    const navWriting = (html: string) => html.match(/<a class="nav-link"[^>]*href="(\/(?:ru\/)?writing\/)"[^>]*>/);
+    expect(navWriting(home)?.[1]).toBe('/writing/');
+    expect(navWriting(read('dist/ru/index.html'))?.[1]).toBe('/ru/writing/');
+    expect(navWriting(read('dist/writing/index.html'))?.[0]).toContain('aria-current="page"');
+    expect(navWriting(home)?.[0]).not.toContain('aria-current');
+  });
 });
 
 describe('inline reader', () => {
