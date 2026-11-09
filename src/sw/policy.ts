@@ -19,3 +19,15 @@ export const cacheKey = (url: URL) => url.origin + url.pathname;
 
 /** The offline page in the language of the page asked for. */
 export const offlinePath = (url: URL) => (/^\/ru(\/|$)/.test(url.pathname) ? '/ru/offline/' : '/offline/');
+
+// A post page: /writing/<slug>/ or /ru/writing/<slug>/. The topic pages (/writing/ai/) and
+// /writing/page/<n>/ share the first shape, so they are not posts: they are never saved as read
+// articles or listed on the offline page. lang narrows it to one language. The worker is built with
+// no bundler (astro.config.mjs), so the topics are spelled out here; tests/offline.test.ts keeps them
+// equal to TOPICS in src/data/writing-pages.ts.
+const NOT_POSTS = new Set(['ai', 'leadership', 'systems', 'delivery', 'page']);
+export function isPostPath(path: string, lang?: 'en' | 'ru'): boolean {
+  const m = path.match(/^(\/ru)?\/writing\/([a-z0-9-]+)\/$/);
+  if (!m || NOT_POSTS.has(m[2])) return false;
+  return lang === undefined || (lang === 'ru') === Boolean(m[1]);
+}

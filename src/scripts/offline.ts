@@ -1,5 +1,7 @@
 // Offline (src/sw/sw.ts): register the service worker, say when the network goes away, and on the
 // offline page list the posts this browser has stored, in the page's language.
+import { isPostPath } from '../sw/policy';
+
 const PAGES = 'rossev-pages';
 
 function toast(text: string | undefined) {
@@ -24,9 +26,9 @@ export async function initOfflinePage() {
   const list = document.querySelector('[data-offline-list]');
   const empty = document.querySelector<HTMLElement>('[data-offline-empty]');
   if (!list || !('caches' in window)) return;
-  const post = document.documentElement.lang === 'ru' ? /^\/ru\/writing\/[^/]+\/$/ : /^\/writing\/[^/]+\/$/;
+  const lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
   const cache = await caches.open(PAGES);
-  const paths = (await cache.keys()).map((r) => new URL(r.url).pathname).filter((p) => post.test(p)).sort();
+  const paths = (await cache.keys()).map((r) => new URL(r.url).pathname).filter((p) => isPostPath(p, lang)).sort();
   for (const path of paths) {
     const res = await cache.match(path);
     const doc = res && new DOMParser().parseFromString(await res.text(), 'text/html');

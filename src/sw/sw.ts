@@ -4,7 +4,7 @@
 // Pages: network first, so the newest text always wins online; a slow network falls back to the
 // stored copy after a few seconds and updates it in the background. Assets: cache first, they are
 // hashed. Offline, a page never stored gets the offline page in its language.
-import { cacheKey, offlinePath, route } from './policy';
+import { cacheKey, isPostPath, offlinePath, route } from './policy';
 
 declare const PRECACHE: string[];
 declare const VERSION: string;
@@ -26,8 +26,6 @@ self.addEventListener('install', (e) => {
     })(),
   );
 });
-
-const postPath = /^\/(?:ru\/)?writing\/[a-z0-9-]+\/$/;
 
 // Astro emits fingerprinted assets in one directory. Resolve both the /_astro/ URLs in
 // a document and relative imports inside its modules. Each asset is visited at most once.
@@ -72,7 +70,7 @@ async function storePost(path: string, page: Response, signal: AbortSignal) {
 
 async function keepFirstPost(client: WindowClient) {
   const url = new URL(client.url);
-  if (url.origin !== self.location.origin || !postPath.test(url.pathname)) return;
+  if (url.origin !== self.location.origin || !isPostPath(url.pathname)) return;
   const signal = AbortSignal.timeout(SLOW_MS);
   const page = await fetch(url.pathname, { redirect: 'error', referrerPolicy: 'no-referrer', signal });
   if (page.status === 200 && page.type === 'basic' && page.headers.get('content-type')?.includes('text/html')) {
@@ -88,7 +86,7 @@ self.addEventListener('activate', (e) => {
         // Unopened saved articles may still reference older hashes. Copy their existing asset
         // graphs into this cache before retiring the previous cache, without fetching old URLs.
         const [pages, assets] = await Promise.all([caches.open(PAGES), caches.open(ASSETS)]);
-        const posts = (await pages.keys()).filter((r) => postPath.test(new URL(r.url).pathname));
+        const posts = (await pages.keys()).filter((r) => isPostPath(new URL(r.url).pathname));
         const copied = new Set<string>();
         for (const post of posts) {
           const page = await pages.match(post);
@@ -118,7 +116,7 @@ async function fromNetworkFirst(e: FetchEvent, url: URL) {
   const network = fetch(e.request).then((res) => {
     // Only a whole, own, successful page is kept: no redirects, no errors, nothing opaque.
     if (res.ok && res.type === 'basic' && !res.redirected) {
-      const saving = postPath.test(url.pathname) && res.headers.get('content-type')?.includes('text/html')
+      const saving = isPostPath(url.pathname) && res.headers.get('content-type')?.includes('text/html')
         ? storePost(key, res.clone(), AbortSignal.timeout(SLOW_MS))
         : cache.put(key, res.clone());
       e.waitUntil(saving.catch(() => {}));
