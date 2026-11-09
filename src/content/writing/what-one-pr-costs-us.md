@@ -58,7 +58,7 @@ The $82 was a calculation, not a measurement: average tokens per PR, times the 1
 The bigger problem is the ratio. Comparing $82 with $13 assumes both models spend the same number of tokens, and they don't. On staging we have three pairs of similar tickets, each done once on Opus and once on open-weight models a week earlier:
 
 - An `/api/version` endpoint: $2.11 on Opus in one attempt, $34.63 on open-weight models over 12 attempts.
-- A CSS guard: $5.85 on Opus, $5.37 on open-weight models.
+- A check on the colour shades in our CSS: $5.85 on Opus, $5.37 on open-weight models.
 - Required environment variables: $44.68 on Opus, $36.27 on open-weight models.
 
 Open-weight runs can run away too. One ticket made 1,648 tool calls and cost $32.89 before it failed.
