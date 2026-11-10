@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-09T12:20:53.504Z",
-  "throughSha": "9374ba12367b538cbacaa30fc88ab69bcc5f18bd",
+  "generatedAt": "2026-11-10T13:07:10.603Z",
+  "throughSha": "cf72b3a0a0db90519e3947935d23cc1c50c6846c",
   "prs": [
     {
       "number": 1,
@@ -3539,6 +3539,69 @@
           "subject": "Fill in the site entries for src/content/writing",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/d4ba8c405a990322affc54a85c0116d98f9a2504"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 107,
+      "title": "Post bodies: render lists from LinkedIn imports, fix four imported posts",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/107",
+      "mergedAt": "2026-11-10T12:52:59Z",
+      "additions": 63,
+      "deletions": 13,
+      "changedFiles": 7,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "baf894e4705b3f179a01e88e865b9067478f3995",
+          "subject": "Post bodies: lists under a lead-in line, numbered lists, fixed imports",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/baf894e4705b3f179a01e88e865b9067478f3995"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 104,
+      "title": "Ignore the Airbnb repost in the Publora sync",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/104",
+      "mergedAt": "2026-11-10T12:53:07Z",
+      "additions": 2,
+      "deletions": 1,
+      "changedFiles": 1,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "aec9786660b15d087aa7306e77068ad9e16e5ef9",
+          "subject": "Ignore the Airbnb repost in the Publora sync",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/aec9786660b15d087aa7306e77068ad9e16e5ef9"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 108,
+      "title": "/hire: all in on YAGNI, retired offers shown as a diff",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/108",
+      "mergedAt": "2026-11-10T12:58:28Z",
+      "additions": 275,
+      "deletions": 119,
+      "changedFiles": 9,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "dbaa1916154f9d67cbe6a389e5253a52ada1f31c",
+          "subject": "/hire: all in on YAGNI, retired offers shown as a diff",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/dbaa1916154f9d67cbe6a389e5253a52ada1f31c"
         }
       ],
       "findings": [],
