@@ -186,6 +186,8 @@ describe('post data', () => {
         '<ul><li>раз</li><li>два</li></ul>',
       ].join('\n')
     );
+    // A tab after the marker, as LinkedIn exports it, counts like a space.
+    expect(bodyHtml('1.\tone\n2.\ttwo\n-\tthree\n-\tfour')).toBe('<ol><li>one</li><li>two</li></ol>\n<ul><li>three</li><li>four</li></ul>');
     // A fence keeps its blank lines and its text verbatim, escaped, with no inline formatting.
     expect(bodyHtml('Before\n\n```ts\nconst a = 1 * 2 * 3;\n\nif (a < 2) **x**\n```\n\nAfter')).toBe(
       '<p>Before</p>\n<pre><code>const a = 1 * 2 * 3;\n\nif (a &lt; 2) **x**</code></pre>\n<p>After</p>'
