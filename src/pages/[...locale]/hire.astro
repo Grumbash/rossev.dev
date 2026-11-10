@@ -1,11 +1,12 @@
 ---
 // Ways to work together (src/data/profile.ts OFFERS), each with the proof already on this site and
-// one booking link. No prices: the first step is a call. The JSON-LD lists the offers on the Person
-// (makesOffer), so search and answer engines can say what he can be brought in for.
+// one booking link. No prices: the first step is a call. Gleb is all in on YAGNI, so the offers he
+// retired (RETIRED_OFFERS) come first as a diff: struck out, each saying where it went. The JSON-LD
+// puts each offer on its provider (YAGNI or Gleb), so search and answer engines say it right.
 import Base from '../../layouts/Base.astro';
 import CaseQr from '../../components/CaseQr.astro';
 import PrintCv from '../../components/PrintCv.astro';
-import { OFFERS, PROFILE } from '../../data/profile';
+import { OFFERS, PROFILE, RETIRED_OFFERS, type Offer } from '../../data/profile';
 import { calUrl } from '../../scripts/analytics';
 import { localeOf, localePath, localeStaticPaths, t } from '../../i18n';
 
@@ -16,9 +17,25 @@ const h = d.hire;
 
 const SITE = 'https://rossev.dev/';
 const PERSON_ID = `${SITE}#person`;
+// The same id as on the home page's worksFor, so the graph joins Gleb to the company.
+const YAGNI_ID = 'https://yagni.app/#organization';
 const url = new URL(localePath(lang, '/hire/'), SITE).toString();
 // Site files (the CV) have one URL for every locale; pages are prefixed.
-const proofHref = (href: string) => (/\.[a-z]+$/.test(href) ? href : localePath(lang, href));
+const proofHref = (href: string) => (/^https?:|\.[a-z]+$/.test(href) ? href : localePath(lang, href));
+const external = (href: string) => /^https?:/.test(href);
+const offersOf = (by: Offer['by'], provider: string) =>
+  OFFERS.filter((o) => o.by === by).map((o) => ({
+    '@type': 'Offer',
+    url: `${url}#${o.id}`,
+    itemOffered: {
+      '@type': 'Service',
+      name: o.name[lang],
+      description: o.forWho[lang],
+      provider: { '@id': provider },
+      areaServed: 'Worldwide'
+    }
+  }));
+const nameOf = (id: string) => OFFERS.find((o) => o.id === id)?.name[lang] ?? id;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -33,24 +50,23 @@ const jsonLd = {
       isPartOf: { '@id': `${SITE}#website` },
       about: { '@id': PERSON_ID }
     },
-    // The full Person node lives on home; here it carries what he can be brought in for.
+    // The full Person node lives on home; here it carries what he offers himself (talks) and who he
+    // works for. The pilot is YAGNI's offer, so it sits on the company.
     {
       '@type': 'Person',
       '@id': PERSON_ID,
       name: 'Gleb Rosev',
       url: SITE,
       sameAs: ['https://www.linkedin.com/in/rossev/', 'https://github.com/Grumbash'],
-      makesOffer: OFFERS.map((o) => ({
-        '@type': 'Offer',
-        url: `${url}#${o.id}`,
-        itemOffered: {
-          '@type': 'Service',
-          name: o.name[lang],
-          description: o.forWho[lang],
-          provider: { '@id': PERSON_ID },
-          areaServed: 'Worldwide'
-        }
-      }))
+      worksFor: { '@id': YAGNI_ID },
+      makesOffer: offersOf('gleb', PERSON_ID)
+    },
+    {
+      '@type': 'Organization',
+      '@id': YAGNI_ID,
+      name: 'YAGNI',
+      url: 'https://yagni.app',
+      makesOffer: offersOf('yagni', YAGNI_ID)
     }
   ]
 };
@@ -64,6 +80,35 @@ const jsonLd = {
       <span class="section-kicker">{h.kicker}</span>
       <h1 class="section-title">{h.title}</h1>
       <p class="hire-lead">{h.lead}</p>
+
+      {/* The retired offers as a diff. Each row keeps its old id, so /hire/#audit still lands here. */}
+      <section class="hire-diff" aria-labelledby="hire-diff-title">
+        <h2 class="hire-diff-title" id="hire-diff-title">{h.diffTitle}</h2>
+        <ul class="hire-diff-rows">
+          {RETIRED_OFFERS.map((r) => (
+            <li class="hire-diff-row" id={r.id}>
+              <p class="hire-diff-del">
+                <span class="hire-diff-sign" aria-hidden="true">−</span>
+                <span class="visually-hidden">{h.removed}</span>
+                <del>{r.was[lang]}</del>
+              </p>
+              <p class="hire-diff-add">
+                <span class="hire-diff-sign" aria-hidden="true">+</span>
+                <span class="visually-hidden">{h.added}</span>
+                {r.to ? <a class="text-link" href={`#${r.to}`}>{r.now[lang]} →</a> : <span>{r.now[lang]}</span>}
+              </p>
+            </li>
+          ))}
+          {OFFERS.filter((o) => o.by === 'gleb').map((o) => (
+            <li class="hire-diff-row">
+              <p class="hire-diff-ctx">
+                <span class="hire-diff-sign" aria-hidden="true"> </span>
+                <span><a class="text-link" href={`#${o.id}`}>{o.name[lang]}</a> <span class="hire-diff-note">({h.unchanged})</span></span>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <nav class="hire-jump" aria-label={h.kicker}>
         {OFFERS.map((o) => <a class="text-link" href={`#${o.id}`}>{o.name[lang]}</a>)}
@@ -89,7 +134,13 @@ const jsonLd = {
               <div>
                 <dt class="label">{h.proof}</dt>
                 <dd class="hire-proof">
-                  {o.proof.map((p) => <a class="text-link" href={proofHref(p.href)}>{p.label[lang]} →</a>)}
+                  {o.proof.map((p) =>
+                    external(p.href) ? (
+                      <a class="text-link" href={p.href} target="_blank" rel="noopener noreferrer">{p.label[lang]} ↗</a>
+                    ) : (
+                      <a class="text-link" href={proofHref(p.href)}>{p.label[lang]} →</a>
+                    )
+                  )}
                 </dd>
               </div>
             </dl>
@@ -162,6 +213,66 @@ const jsonLd = {
     line-height: 1.5;
     max-width: 62ch;
     margin: 14px 0 8px;
+  }
+  /* The retired offers, read like a diff: red removed lines, green added ones, mono like the PR pages. */
+  .hire-diff {
+    margin: 22px 0 6px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .hire-diff-title {
+    margin: 0;
+    padding: 8px 14px;
+    border-bottom: 2px solid var(--border);
+    background: var(--surface-alt);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .hire-diff-rows {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+  }
+  .hire-diff-row {
+    scroll-margin-top: 90px;
+  }
+  .hire-diff-row:target {
+    outline: 3px solid var(--lime);
+    outline-offset: -3px;
+  }
+  .hire-diff-row p {
+    display: grid;
+    grid-template-columns: 1.6ch 1fr;
+    gap: 0 8px;
+    margin: 0;
+    padding: 3px 14px;
+    overflow-wrap: anywhere;
+  }
+  .hire-diff-row p > :not(.hire-diff-sign):not(.visually-hidden) {
+    grid-column: 2;
+  }
+  .hire-diff-del {
+    background: color-mix(in srgb, var(--pink) 14%, transparent);
+  }
+  .hire-diff-del del {
+    text-decoration-thickness: 2px;
+    color: var(--ink-muted);
+  }
+  .hire-diff-add {
+    background: color-mix(in srgb, var(--lime) 22%, transparent);
+  }
+  .hire-diff-sign {
+    font-weight: 700;
+    user-select: none;
+  }
+  .hire-diff-note {
+    color: var(--ink-muted);
   }
   .hire-jump {
     display: flex;

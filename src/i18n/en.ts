@@ -22,9 +22,9 @@ export const en = {
     buildDescription:
       'Every merged PR of rossev.dev with its receipts: the test committed red first (all but the first PR), what was caught before merge, what Gleb decided, and links to the commits.',
     buildHeadline: 'How this site was built',
-    hireTitle: 'Work with Gleb Rosev — AI agent reliability audit, advisory, talks',
+    hireTitle: 'Work with Gleb Rosev — a YAGNI pilot on your repo, talks',
     hireDescription:
-      'Bring in Gleb Rosev on AI agents in production: a reliability audit of your agents, advisory for engineering leaders, talks and workshops, or a full-time role. Every offer links its proof.',
+      'Gleb Rosev is all in on YAGNI: run a YAGNI pilot, where an agent team takes your tickets to merged PRs, or invite him to give a talk or workshop. The audit, advisory and full-time offers are retired.',
     caseDescription: (company: string, period: string, summary: string) => `Architecture breakdown, ${company} (${period}): ${summary}`
   },
   nav: {
@@ -381,18 +381,23 @@ export const en = {
     title: 'Booked — talk soon.',
     lead: 'A calendar invite from cal.com is on its way. Before we talk:',
     yagni: 'How I build AI agent teams at YAGNI →',
-    reply: 'Reply to the invite with what you’re hiring for — I’ll come prepared.'
+    reply: 'Reply to the invite with what your team is working on — I’ll come prepared.'
   },
   hire: {
     home: '← Home',
     kicker: 'Work with me',
-    title: 'AI agents that hold up in production',
-    lead: 'Four ways to work together. Each one links the proof already on this site. The first step is always a 30-minute call: no price list, because every team starts from a different place.',
+    title: 'I’m all in on YAGNI',
+    lead: 'Since November 2026 I take no side work. What I did one on one now runs as a YAGNI pilot: an agent team and me, on your repo. Talks stay mine. The first step is always a 30-minute call: no price list, because every team starts from a different place.',
+    // The retired offers as a diff (src/data/profile.ts RETIRED_OFFERS).
+    diffTitle: 'What changed on this page',
+    removed: 'Removed:',
+    added: 'Now:',
+    unchanged: 'unchanged',
     forWho: 'Who it is for',
     youGet: 'What you get',
     proof: 'Proof',
     cta: 'BOOK A 30-MIN CALL ↗',
-    ctaLead: 'Tell me the problem on a call. I reply within 24h.',
+    ctaLead: 'Tell me what your team ships, or what your event is about. I reply within 24h.',
     qrCaption: 'On a laptop? Scan with your phone to save my contact or book from there.',
     qrLabel: 'QR code: rossev.dev/c, my contact card'
   },
