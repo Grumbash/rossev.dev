@@ -103,6 +103,8 @@ The open question is the middle of the table. Five PRs, all from our own repo, c
 
 The lesson I'd keep from this round has nothing to do with Kimi. Before comparing models on your own pipeline, check that the pipeline can actually hear each of them. Two of my eight models were losing reviews to our parser and prompt, and one of those two wasn't even being called at first.
 
+If you're picking a code review tool for a team rather than a model for your own pipeline, the questions to ask first are in [our guide on yagni.app](https://yagni.app/blog/ai-code-review-tools/).
+
 ## Update: what the low precision means
 
 A reader asked how many of the unmatched findings were real bugs that my gold list didn't have. I hadn't checked, so I did.
