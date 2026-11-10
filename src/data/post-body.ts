@@ -1,8 +1,8 @@
 // The full text of a post (BlogPost.body) as HTML: a small Markdown subset, enough for a long-form
 // post and nothing a LinkedIn text can trip over. A ``` fence is a code block, kept verbatim. The
 // rest splits on blank lines: "## " is a heading; inside a block, two or more lines in a row that
-// start with "- ", "* " or "— " are a list, "1. " or "1) " a numbered list, and the other lines a
-// paragraph (inner newlines become spaces). Inline: [text](https://…), **bold**,
+// start with "- ", "* " or "— " are a list, "1. " or "1) " a numbered list (a tab after the marker
+// counts too), and the other lines a paragraph (inner newlines become spaces). Inline: [text](https://…), **bold**,
 // *italic*, `code`. Bodies come from the Publora sync too, so everything is escaped first and only
 // http(s) links become links.
 
@@ -64,8 +64,9 @@ export function bodyHtml(s: string): string {
 // ("The result:\n- one\n- two"). So a block is read line by line: a run of list lines is a list,
 // the prose around it a paragraph. One marker line inside prose stays prose; a block that is
 // nothing but marker lines is a list even when it is one line long.
-const BULLET = /^[-*—] +/;
-const NUMBER = /^(\d+)[.)] +/;
+// LinkedIn exports often put a tab after the marker ("1.\tThe office effect.").
+const BULLET = /^[-*—][ \t]+/;
+const NUMBER = /^(\d+)[.)][ \t]+/;
 
 function lineRuns(lines: string[]): string {
   const kind = (l: string) => (BULLET.test(l) ? 'ul' : NUMBER.test(l) ? 'ol' : 'p');
