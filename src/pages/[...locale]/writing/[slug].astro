@@ -224,7 +224,8 @@ const jsonLd = {
     line-height: 1.65;
   }
   .post-reader-drawer :global(.post-body p),
-  .post-reader-drawer :global(.post-body ul) {
+  .post-reader-drawer :global(.post-body ul),
+  .post-reader-drawer :global(.post-body ol) {
     margin-bottom: 12px;
   }
   .post-reader-drawer :global(.post-body figure) {
@@ -246,6 +247,10 @@ const jsonLd = {
   .post-reader-drawer :global(.post-body ul) {
     padding-left: 1.2em;
     list-style: square;
+  }
+  .post-reader-drawer :global(.post-body ol) {
+    padding-left: 1.6em;
+    list-style: decimal;
   }
   .post-reader-drawer :global(.post-body li) {
     margin-bottom: 6px;

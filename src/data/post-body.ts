@@ -1,7 +1,8 @@
 // The full text of a post (BlogPost.body) as HTML: a small Markdown subset, enough for a long-form
 // post and nothing a LinkedIn text can trip over. A ``` fence is a code block, kept verbatim. The
-// rest splits on blank lines: "## " is a heading, lines that all start with "- " are a list,
-// anything else is a paragraph (inner newlines become spaces). Inline: [text](https://…), **bold**,
+// rest splits on blank lines: "## " is a heading; inside a block, two or more lines in a row that
+// start with "- ", "* " or "— " are a list, "1. " or "1) " a numbered list, and the other lines a
+// paragraph (inner newlines become spaces). Inline: [text](https://…), **bold**,
 // *italic*, `code`. Bodies come from the Publora sync too, so everything is escaped first and only
 // http(s) links become links.
 
@@ -54,9 +55,42 @@ export function bodyHtml(s: string): string {
       const image = b.match(/^!\[([^\]\n]+)\]\((\/articles\/[a-z0-9-]+\/[a-z0-9-]+\.(?:svg|png|webp))\)$/);
       if (image) return `<figure><img src="${image[2]}" alt="${esc(image[1])}"${dimensions(image[2])} loading="lazy" decoding="async" style="display:block;width:100%;height:auto;background:#fff"><figcaption>${esc(image[1])}</figcaption></figure>`;
       if (b.startsWith('## ')) return `<h2>${inline(b.slice(3).trim())}</h2>`;
-      const lines = b.split('\n').map((l) => l.trim());
-      if (lines.every((l) => l.startsWith('- '))) return `<ul>${lines.map((l) => `<li>${inline(l.slice(2))}</li>`).join('')}</ul>`;
-      return `<p>${inline(lines.join(' '))}</p>`;
+      return lineRuns(b.split('\n').map((l) => l.trim()).filter(Boolean));
+    })
+    .join('\n');
+}
+
+// LinkedIn posts put a list right under its lead-in line, with no blank line between them
+// ("The result:\n- one\n- two"). So a block is read line by line: a run of list lines is a list,
+// the prose around it a paragraph. One marker line inside prose stays prose; a block that is
+// nothing but marker lines is a list even when it is one line long.
+const BULLET = /^[-*—] +/;
+const NUMBER = /^(\d+)[.)] +/;
+
+function lineRuns(lines: string[]): string {
+  const kind = (l: string) => (BULLET.test(l) ? 'ul' : NUMBER.test(l) ? 'ol' : 'p');
+  const runs: { kind: string; lines: string[] }[] = [];
+  for (const l of lines) {
+    const k = kind(l);
+    const last = runs[runs.length - 1];
+    if (last && last.kind === k) last.lines.push(l);
+    else runs.push({ kind: k, lines: [l] });
+  }
+  // A lone marker line among prose ("- a" followed by "not a list") joins the prose around it.
+  const merged: { kind: string; lines: string[] }[] = [];
+  for (const r of runs) {
+    const k = r.kind !== 'p' && r.lines.length < 2 && runs.length > 1 ? 'p' : r.kind;
+    const last = merged[merged.length - 1];
+    if (last && last.kind === 'p' && k === 'p') last.lines.push(...r.lines);
+    else merged.push({ kind: k, lines: [...r.lines] });
+  }
+  return merged
+    .map((r) => {
+      if (r.kind === 'p') return `<p>${inline(r.lines.join(' '))}</p>`;
+      const marker = r.kind === 'ul' ? BULLET : NUMBER;
+      const start = r.kind === 'ol' ? Number(r.lines[0].match(NUMBER)![1]) : 1;
+      const open = r.kind === 'ol' && start !== 1 ? `<ol start="${start}">` : `<${r.kind}>`;
+      return `${open}${r.lines.map((l) => `<li>${inline(l.replace(marker, ''))}</li>`).join('')}</${r.kind}>`;
     })
     .join('\n');
 }
