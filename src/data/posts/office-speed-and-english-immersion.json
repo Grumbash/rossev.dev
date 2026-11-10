@@ -1,0 +1,48 @@
+{
+  "id": "post-49",
+  "slug": "office-speed-and-english-immersion",
+  "published": "2025-08-19",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/posts/rossev_two-insights-i-brought-back-from-my-trip-share-7363589373998579712-4pMF",
+  "title": {
+    "en": "In-Person Work Is Fast, but It Leaves Remote Teammates Behind",
+    "ru": "Работа вживую быстрая, но удалённые коллеги от неё отстают"
+  },
+  "takeaway": {
+    "en": "When the whole team sits in one room, decisions move fast, so check that remote teammates stay in sync before you celebrate the speed.",
+    "ru": "Когда вся команда сидит в одной комнате, решения принимаются быстро, поэтому проверяйте, что удалённые коллеги не отстают, прежде чем радоваться скорости."
+  },
+  "tags": [
+    "Remote Work",
+    "In-Person Collaboration",
+    "Immersion"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The productivity felt amazing.",
+      "ru": "Продуктивность ощущалась потрясающе."
+    },
+    "bullets": {
+      "en": [
+        "In one room, communication was effortless and big topics were solved in just a few hours.",
+        "The downside was obvious: remote teammates fell out of sync, which created a decoupling effect.",
+        "The same kind of environment shapes your mindset, as the author noticed when even his inner dialogue switched to English after a few days."
+      ],
+      "ru": [
+        "В одной комнате общение давалось легко, и большие темы решались за несколько часов.",
+        "Минус был очевиден: удалённые коллеги выпадали из синхронизации, и возник эффект разъединения.",
+        "Среда формирует мышление: через несколько дней почти только английского автор поймал себя на том, что даже внутренний диалог перешёл на английский."
+      ]
+    }
+  },
+  "body": {
+    "en": "Two insights I brought back from my trip to Dubai\n\nAfter a week working there, I noticed two things that really stuck with me:\n\n1.\tThe office effect.\nWhen we were all in one room, communication was effortless. Big topics were solved in just a few hours. The productivity felt amazing.\nBut the downside was obvious: remote teammates were out of sync, and it created a “decoupling effect.” It showed me how powerful in-person collaboration can be, but also how hard it is to scale in a distributed setup.\n\n2.\tThinking in English.\nAfter a few days of speaking almost only English, I caught myself walking around and thinking in English too, even my inner dialogue switched. That immersion made me realize how much faster you grow in a language when you’re fully surrounded by it.\n\nBoth experiences gave me energy. One showed me the speed of co-located work, the other showed me how environment shapes your mindset.\n\n👉 I’m curious: what’s the biggest shift you noticed when switching between remote and in-person work (or between different languages)?",
+    "ru": "Два наблюдения, которые я привёз из поездки в Дубай.\n\nПосле недели работы там я заметил две вещи, которые меня по-настоящему зацепили.\n\n1. Эффект офиса. Когда мы были все в одной комнате, общаться было легко. Большие темы решались за несколько часов. Продуктивность ощущалась потрясающе.\n\nНо минус был очевиден: удалённые коллеги выпадали из синхронизации, и возник «эффект разъединения». Это показало мне, насколько сильной может быть совместная работа вживую, но и насколько её трудно масштабировать в распределённой команде.\n\n2. Мышление на английском. Через несколько дней почти только английского я поймал себя на том, что хожу и думаю по-английски. Даже внутренний диалог переключился. Это погружение показало мне, насколько быстрее вы растёте в языке, когда он вас полностью окружает.\n\nОба опыта дали мне энергии. Один показал скорость работы в одном месте, другой показал, как среда формирует мышление.\n\nМне интересно: какой самый заметный сдвиг вы замечали при переключении между удалённой и очной работой (или между языками)?"
+  },
+  "color": "var(--lime)"
+}

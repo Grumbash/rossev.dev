@@ -127,6 +127,7 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - [Four CrewAI Agents Turn a One-Line Prompt Into a D&D Monster](https://rossev.dev/writing/crewai-agents-generate-dnd-monsters/) (2025-09-02): Split a complex generation task across specialized agents with clear roles instead of cramming everything into one prompt.
 - [Stop Chatting With AI and Build Repeatable Workflows](https://rossev.dev/writing/ai-workflow-human-validator/) (2025-08-30): Build AI workflows with a fixed source, clear requirements, and a human validator before anything is published.
 - [AI Operator or Architect: Which Side Will You Take?](https://rossev.dev/writing/ai-operator-vs-architect-frontend/) (2025-08-25): Use AI for small tasks but keep the system picture yourself, especially in frontend where UX judgment stays human.
+- [In-Person Work Is Fast, but It Leaves Remote Teammates Behind](https://rossev.dev/writing/office-speed-and-english-immersion/) (2025-08-19): When the whole team sits in one room, decisions move fast, so check that remote teammates stay in sync before you celebrate the speed.
 
 ## Education & Languages
 - **Education**: Belarusian State University — Medicine (2015 — 2019)
