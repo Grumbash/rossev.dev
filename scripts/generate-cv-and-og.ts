@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { deflateSync } from 'node:zlib';
-import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, OFFERS, postPath } from '../src/data/profile';
+import { PROFILE, EXPERIENCE, CAPABILITIES, CASE_STUDIES, OFFERS, RETIRED_OFFERS, postPath } from '../src/data/profile';
 import { BLOG_POSTS } from '../src/data/posts';
 import { SIDE, creature } from '../src/data/creature';
 
@@ -54,7 +54,9 @@ function generateLlmsTxt(): void {
     '',
     // What he can be brought in for, same source as /hire. No prices: the first step is a call.
     '## Work with me (https://rossev.dev/hire/)',
+    'Since November 2026 Gleb is all in on YAGNI and takes no side work: what he offers runs through YAGNI, and talks stay his own.',
     ...OFFERS.map((o) => `- **${o.name.en}** (https://rossev.dev/hire/#${o.id}): ${o.forWho.en} ${o.youGet.en.join(' ')}`),
+    `- No longer offered: ${RETIRED_OFFERS.map((r) => `${r.was.en} (${r.now.en.replace(/\.$/, '')})`).join('; ')}.`,
     `- First step for any of them: a 30-minute call, ${PROFILE.calendar}`,
     '',
     '## Career Experience (Synchronized with src/data/profile.ts)',

@@ -70,7 +70,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const p = document.querySelector('[data-letter-line]');
     await wait(1500);
     const initial = { body: new URL(a.href).searchParams.get('body'), preview: p.hidden ? null : p.textContent };
-    document.querySelector('.hire-jump a[href="#audit"]').click();
+    document.querySelector('.hire-jump a[href="#pilot"]').click();
     await wait(1500);
     const pre = document.createElement('pre'); pre.id = '__probe';
     pre.textContent = JSON.stringify({ initial, href: a.href, preview: p.hidden ? null : p.textContent });
@@ -85,7 +85,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     const r = await srv.run('/hire/', 'malformed');
     expect(r.error).toBeUndefined();
     const read = en.letter.readMany.replace('{posts}', [one, two].map((p) => en.letter.open + p.title.en + en.letter.close).join(en.letter.and));
-    const audit = en.letter.offer.replace('{offer}', 'AI agent reliability audit');
+    const audit = en.letter.offer.replace('{offer}', 'YAGNI pilot on your repo');
     expect(r.initial.body).toContain(read);
     expect(r.initial.preview).toContain(read);
     expect(r.initial.body).not.toContain(audit);
@@ -93,12 +93,12 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     expect(r.preview).toContain(audit);
   });
 
-  test('read two posts and jumped to the audit: the letter starts with them, and the line says so', async () => {
+  test('read two posts and jumped to the pilot: the letter starts with them, and the line says so', async () => {
     const r = await srv.run('/ru/hire/', 'letter');
     expect(r.error).toBeUndefined();
     const body = decodeURIComponent(new URL(r.href).searchParams.get('body') ?? '');
     expect(body).toContain(`«${one.title.ru}» и «${two.title.ru}»`);
-    expect(body).toContain('Интересует: аудит надёжности AI-агентов.');
+    expect(body).toContain('Интересует: пилот YAGNI на вашем репозитории.');
     expect(new URL(r.href).searchParams.get('subject')).toBe(ru.letter.subject);
     expect(r.preview).toContain(one.title.ru);
     expect(r.preview).toContain(ru.letter.note);
