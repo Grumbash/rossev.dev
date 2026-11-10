@@ -175,6 +175,17 @@ describe('post data', () => {
         '<p>- a not a list</p>',
       ].join('\n')
     );
+    // LinkedIn puts a list right under its lead-in line: the list is still a list.
+    expect(bodyHtml('The result:\n- one\n* two\nAfter\n\n3) three\n4. four\n\nИтог:\n— раз\n— два')).toBe(
+      [
+        '<p>The result:</p>',
+        '<ul><li>one</li><li>two</li></ul>',
+        '<p>After</p>',
+        '<ol start="3"><li>three</li><li>four</li></ol>',
+        '<p>Итог:</p>',
+        '<ul><li>раз</li><li>два</li></ul>',
+      ].join('\n')
+    );
     // A fence keeps its blank lines and its text verbatim, escaped, with no inline formatting.
     expect(bodyHtml('Before\n\n```ts\nconst a = 1 * 2 * 3;\n\nif (a < 2) **x**\n```\n\nAfter')).toBe(
       '<p>Before</p>\n<pre><code>const a = 1 * 2 * 3;\n\nif (a &lt; 2) **x**</code></pre>\n<p>After</p>'

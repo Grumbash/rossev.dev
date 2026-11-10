@@ -40,7 +40,7 @@
     }
   },
   "body": {
-    "en": "The most expensive phrase in an engineering architecture review isn't just \"I disagree\"; it's not what worries me in an architecture review. What worries me is 45 minutes of polite silence followed by \"LGTM, let’s ship it.\"\n\n\nWhen seniors stop arguing in design docs, they haven't reached alignment — they've just checked out because pushing back feels pointless.\n\nI'd rather spend an hour refereeing a heated debate on Tuesday than spend three months rewriting a polite compromise in production.\n\nWhen was the last time someone on your team actually killed a bad feature in a design review?",
+    "en": "The most expensive phrase in an architecture review isn't \"I disagree.\" What worries me is 45 minutes of polite silence followed by \"LGTM, let’s ship it.\"\n\nWhen seniors stop arguing in design docs, they haven't reached alignment — they've just checked out because pushing back feels pointless.\n\nI'd rather spend an hour refereeing a heated debate on Tuesday than spend three months rewriting a polite compromise in production.\n\nWhen was the last time someone on your team actually killed a bad feature in a design review?",
     "ru": "Самое дорогое в архитектурном ревью — не «я не согласен». Меня тревожат 45 минут вежливого молчания, после которых звучит «LGTM, катим в прод».\n\nКогда сеньоры перестают спорить в дизайн-доках, это не согласие. Они просто не видят смысла возражать.\n\nЛучше потратить час на жаркий спор во вторник, чем три месяца переписывать вежливый компромисс на проде.\n\nКогда в последний раз кто-то в вашей команде реально завернул плохую фичу на дизайн-ревью?"
   },
   "color": "var(--orange)"
