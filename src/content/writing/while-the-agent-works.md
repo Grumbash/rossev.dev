@@ -53,7 +53,7 @@ Looking back through my notes, I'd written this requirement down a week earlier,
 
 ## What I'm changing
 
-I went back through two weeks of my own sessions and counted. About ten of my messages per merged pull request, and roughly one in five of those was pure coordination: "how's it going?", "what are we waiting for?", "remind me what you're doing".
+I went back through two weeks of my own sessions and counted. About ten of my messages per merged pull request, and roughly one in five of those was pure coordination: "how's it going?", "what are we waiting for?", "where are we with this?".
 
 So now I check on running agents at fixed times instead of whenever I feel uneasy, which is close to what the Berkeley researchers suggest: batch the non-urgent updates and protect focus time. And each time I check, I write down whether the agent actually needed a decision from me or I just lost track. That way the next count tells me if it helped.
 
