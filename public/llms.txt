@@ -77,6 +77,7 @@ Sports tournament platform, full-stack cloud architectures & technical mentorshi
 - **LEADERSHIP**: Teams of 5–12 Engineers, Customer Pilots & Demos, Technical Hiring, System Architecture, Mentoring (150+ Lectures), Product Strategy
 
 ## Writing (full posts on rossev.dev, each with a 30-second brief; most also on LinkedIn)
+- [While the agent works, I start another task](https://rossev.dev/writing/while-the-agent-works/) (2026-11-14): Check running agents at fixed times and write down whether each check needed a decision from you, so you can tell real work from lost track.
 - [Apple put its engineers on an AI budget. Here's what one pull request costs us.](https://rossev.dev/writing/what-one-pr-costs-us/) (2026-11-09): Count the cost per pull request, not per token, because cache misses and retries can multiply the bill several times over.
 - [I trained a model on its own mistakes. Overnight, it solved none of the new tasks.](https://rossev.dev/writing/sleep-agent-learning-from-experience/) (2026-11-09): Five methods, 235 fresh responses, and zero solved held-out tasks. A small negative result with a training-data audit.
 - [A Personal Site Built by Agents, Judged Before Every Merge](https://rossev.dev/writing/personal-site-built-with-agent-judges/) (2026-11-07): Write a red test first, let a writer agent build the change, and have separate judge agents try to break it before anything merges.
