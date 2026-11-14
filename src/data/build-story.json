@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-10T13:07:10.603Z",
-  "throughSha": "cf72b3a0a0db90519e3947935d23cc1c50c6846c",
+  "generatedAt": "2026-11-14T14:21:39.213Z",
+  "throughSha": "79eaa22c5b4a0eb02593ca8510ec3fa54d06fc7c",
   "prs": [
     {
       "number": 1,
@@ -3602,6 +3602,81 @@
           "subject": "/hire: all in on YAGNI, retired offers shown as a diff",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/dbaa1916154f9d67cbe6a389e5253a52ada1f31c"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 110,
+      "title": "Post bodies: tab after a list marker, Dubai post items",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/110",
+      "mergedAt": "2026-11-10T13:11:47Z",
+      "additions": 9,
+      "deletions": 6,
+      "changedFiles": 3,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "af8256409bd4fd8afb578d44d892920729980344",
+          "subject": "Post bodies: a tab after a list marker counts; Dubai post items read as items",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/af8256409bd4fd8afb578d44d892920729980344"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 114,
+      "title": "Post: While the agent works, I start another task",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/114",
+      "mergedAt": "2026-11-14T14:09:07Z",
+      "additions": 107,
+      "deletions": 0,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "16112803febbe0f18864e966d7ef7e6e96e1fb7a",
+          "subject": "Add the post: While the agent works, I start another task",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/16112803febbe0f18864e966d7ef7e6e96e1fb7a"
+        },
+        {
+          "sha": "7a90bb1d083139658f7ab77bed086509c1f6b7ea",
+          "subject": "Reword a quote so the Russian version keeps «вы»",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/7a90bb1d083139658f7ab77bed086509c1f6b7ea"
+        },
+        {
+          "sha": "d26d452e03d571e48e01605753bd73619a63b171",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d26d452e03d571e48e01605753bd73619a63b171"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 115,
+      "title": "Agents post, Russian: original quotes",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/115",
+      "mergedAt": "2026-11-14T14:20:28Z",
+      "additions": 2,
+      "deletions": 1,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "302673c6aee1e35e267fb8b0eaacf0a5fe25ea24",
+          "subject": "Russian version of the agents post: my original quotes instead of back-translations",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/302673c6aee1e35e267fb8b0eaacf0a5fe25ea24"
         }
       ],
       "findings": [],
