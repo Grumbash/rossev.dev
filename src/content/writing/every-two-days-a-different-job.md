@@ -1,7 +1,7 @@
 ---
 title: "Every two days I get a different job"
 category: leadership
-distribute: []
+distribute: [linkedin]
 ---
 I joined YAGNI three weeks ago. In that time I've set up a cold email campaign, made a promo video, worked on how our agents set up a customer's environment, and merged over 100 pull requests.
 
