@@ -3,7 +3,7 @@ title: "Every two days I get a different job"
 category: leadership
 distribute: []
 ---
-I joined YAGNI three weeks ago. In that time I've set up a cold email campaign, made a promo video, worked on how our agents set up a customer's environment, and merged 28 pull requests in the last week alone.
+I joined YAGNI three weeks ago. In that time I've set up a cold email campaign, made a promo video, worked on how our agents set up a customer's environment, and merged over 100 pull requests.
 
 There are three of us, we meet every other day, and each call decides what I own until the next one. Some cycles that's engineering. The next one can be sales, or a video, or whatever is blocking the business that week.
 
