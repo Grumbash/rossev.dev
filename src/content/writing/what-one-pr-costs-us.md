@@ -74,4 +74,6 @@ These pairs aren't identical tickets, the open-weight runs used an older version
 
 When the next budget meeting comes, "we use AI" won't be an answer. "A pull request costs us $0.61 at the median, here is our worst one, and here is why" is.
 
+What the tools themselves cost a 30-person org, with Claude Code, Cursor, Copilot and Codex side by side, is in [our cost model on yagni.app](https://yagni.app/blog/ai-coding-tools-cost/).
+
 If you want to see how this works on your own repositories, that's what we do at [YAGNI](https://yagni.app).
