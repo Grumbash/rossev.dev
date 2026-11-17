@@ -29,7 +29,7 @@ That's what makes a two-day cycle possible for me. If the work stopped every tim
 
 Attention. I counted it once: over two weeks of my Claude Code sessions, I typed about ten messages for every pull request that got merged. About one in five of those was coordination: telling an agent what another one did, restating context, moving work along. Almost half were decisions.
 
-Switching jobs every two days adds to that. The first hours of a new cycle go to catching up on what changed while I was away, and on a sales day the engineering messages still arrive. [HOW I HANDLE IT: e.g. when I check pull requests on a non-engineering day]
+Switching jobs every two days adds to that. The first hours of a new cycle go to catching up on what changed while I was away, and on a sales day the engineering messages still arrive. On those cycles I usually start one agent, hand it the engineering tasks, let it work on its own, and review its pull requests when I get to them.
 
 ## What I had to unlearn
 
@@ -37,4 +37,4 @@ For most of my career a good day meant code that shipped. Here some of my most u
 
 I also had to get used to dropping things. When a call decides that what I started two days ago doesn't matter anymore, I close it and move on. With agents doing much of the building, an abandoned direction costs two days, and two days is cheap enough to try things.
 
-I don't know yet how this holds up past three people. For now, every two days I get a new job. [ONE LINE: how it feels to you]
+I don't know yet how this holds up past three people. For now, every two days I get a new job. It feels efficient. When I measure it, it's mostly just hard, and my output comes out about the same as when I stay on one job. But I'm comparing very different work: cycles where I can merge 20 pull requests one after another, and marketing cycles where several things run at once and none of them moves in a straight line.
