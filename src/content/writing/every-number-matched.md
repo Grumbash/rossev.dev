@@ -29,7 +29,7 @@ The second agent was also asked a different question: not "are these numbers rig
 
 **A status that wasn't a status.** To find where each ticket is stuck, the query took the latest event that carried a `status` field. Calls to GitHub carry one too: an HTTP status like 200 or 403. Two live tickets had just ended on exactly such an event, so the next readout would have filed them under "unknown". The first fix excluded GitHub calls. The recheck found a second event type with a `status` field (a rate-limit response, 429), so the final version lists the eight event types that carry a real ticket status instead of excluding the ones we happen to know about.
 
-**A median of two.** One customer's "median time to first pull request" was 2,491 minutes. It had two tickets: one took 37 minutes, the other 4,945, about three and a half days. 2,491 is their average, and it describes neither ticket. With so few tickets, the readout now prints the raw durations.
+**A median of two.** One customer's "median time to first pull request" was 2491 minutes. It had two tickets: one took 37 minutes, the other 4945, about three and a half days. 2491 is their average, and it describes neither ticket. With so few tickets, the readout now prints the raw durations.
 
 The fixed query runs in 19 milliseconds.
 
