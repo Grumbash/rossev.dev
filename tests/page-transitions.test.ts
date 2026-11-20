@@ -8,6 +8,7 @@ import { beforeAll, describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { BLOG_POSTS } from '../src/data/posts';
+import { WRITING_PAGE_SIZE, topicPosts, writingPath } from '../src/data/writing-pages';
 import { writingPagePaths } from '../src/data/writing-pages';
 import { buildSite } from './fixtures/build';
 import { withChrome } from './fixtures/cdp';
@@ -113,7 +114,9 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       await send('Page.addScriptToEvaluateOnNewDocument', {
         source: `addEventListener('pagereveal', (e) => { window.__vt = !!e.viewTransition; e.viewTransition?.ready.then(() => (window.__groups = [...new Set(document.getAnimations().map((a) => a.effect?.pseudoElement).filter((p) => p?.startsWith('::view-transition-group')))])); });`,
       });
-      await send('Page.navigate', { url: `${origin}/writing/` });
+      // The /writing/ page that lists the post: every new post pushes older ones down, so it is computed, not fixed.
+      const list = writingPath('all', Math.floor(topicPosts('all').findIndex((p) => p.slug === 'self-healing-monogram') / WRITING_PAGE_SIZE) + 1);
+      await send('Page.navigate', { url: `${origin}${list}` });
       await Bun.sleep(1500);
       const at = await evaluate(`(() => { const a = document.querySelector('.post-card a[href="/writing/self-healing-monogram/"]'); a.scrollIntoView({ block: 'center', behavior: 'instant' }); const r = a.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
       await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 5, y: 5 });
