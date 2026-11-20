@@ -1,0 +1,48 @@
+{
+  "id": "post-57",
+  "slug": "ai-reviewers-right-but-not-actionable",
+  "published": "2026-11-12",
+  "category": "ai",
+  "categoryLabel": {
+    "en": "AI SYSTEMS",
+    "ru": "AI-СИСТЕМЫ"
+  },
+  "originalMinutes": 2,
+  "url": "https://www.linkedin.com/feed/update/urn:li:share:7526614820939554816/",
+  "title": {
+    "en": "AI Code Reviewers Were Right, Just Not About What Mattered",
+    "ru": "AI-ревьюеры были правы, но не в том, что важно"
+  },
+  "takeaway": {
+    "en": "Measure an AI reviewer by how many of its comments your team acts on, not by how many of them are correct.",
+    "ru": "Оценивайте AI-ревьюера по тому, сколько его комментариев команда реально берёт в работу, а не по тому, сколько из них верны."
+  },
+  "tags": [
+    "AI Code Review",
+    "Precision",
+    "Evaluation"
+  ],
+  "brief": {
+    "quote": {
+      "en": "The reviewers weren't mostly wrong. They were mostly right about things nobody needed to act on.",
+      "ru": "Ревьюеры не были в основном неправы. Они были в основном правы в том, что никому не нужно было исправлять."
+    },
+    "bullets": {
+      "en": [
+        "Eight models reviewed already merged pull requests at YAGNI, and their precision looked poor against an answer key that missed many real but minor issues.",
+        "A second model checked all 447 flagged findings and found no missed defects, but 338 of them were correct minor points like naming, drifted comments, and unreachable edge cases.",
+        "Counting correct but minor comments as valid lifts precision to 0.73–0.92, which measures a different question, so the team should count the comments it actually acts on instead."
+      ],
+      "ru": [
+        "Восемь моделей ревьюили уже смерженные PR в YAGNI, и по эталонному ключу их точность выглядела низкой, потому что ключ пропускал много реальных, но мелких проблем.",
+        "Вторая модель проверила все 447 замечаний и не нашла ни одного пропущенного дефекта, но 338 из них оказались верными мелочами: именами, устаревшими комментариями и краевыми случаями, до которых PR не доходит.",
+        "Если считать верные мелочи правильными, точность вырастает до 0,73–0,92, но это уже другой вопрос, поэтому считайте комментарии, которые команда реально берёт в работу."
+      ]
+    }
+  },
+  "body": {
+    "en": "On paper, the AI code reviewers I benchmarked had a precision of 0.11 to 0.28. After one question from a reader, the same reviews scored 0.73 to 0.92.\n\nAt YAGNI I ran eight models as reviewers on pull requests we had already merged and scored their findings against an answer key. Most findings didn't match it, so precision looked poor. A reader asked how many of those \"wrong\" findings were real bugs my key had missed. I hadn't checked, so I had a second model check all 447 of them against the code.\n\nIt flagged none as a missed defect. About three quarters, 338, were correct but minor: naming, comments that drifted from the code, edge cases the PR never reaches. Count those as valid and you get 0.73–0.92. That isn't a better reviewer. It's a different question: is the comment true, rather than does it match my list.\n\nThe reviewers weren't mostly wrong. They were mostly right about things nobody needed to act on.\n\nTo be fair, that's five PRs from one repo, and I verified only a few of the second model's verdicts by hand. I'd read it as a strong hint, not a verdict.\n\nA model that leaves twenty correct comments on a small PR isn't wrong, but someone still has to read all twenty and decide which one matters for this change. As agents write more of the code, there are more of those decisions to make, and I think that's the step the tools are now competing for. Last week OpenAI announced it will acquire Pierre, the team behind the Trees and Diffs libraries in the Codex app, and described the deal as expanding Codex's tools for building, understanding and reviewing code.\n\nIf you're adding an AI reviewer, count how many of its comments your team acts on, not how many are correct.",
+    "ru": "На бумаге точность AI-ревьюеров, которых я сравнивал, была 0,11–0,28. После одного вопроса от читателя те же ревью набрали 0,73–0,92.\n\nВ YAGNI я запустил восемь моделей как ревьюеров на PR, которые уже были смержены, и сверил их находки с эталонным ключом. Большинство находок в ключ не попали, поэтому точность выглядела плохо. Читатель спросил, сколько из этих «неверных» находок были реальными багами, которые мой ключ пропустил. Я не проверял, поэтому попросил вторую модель проверить все 447 по коду.\n\nОна не отметила ни одного пропущенного дефекта. Около трёх четвертей, 338, были верными, но мелкими: нейминг, комментарии, которые разошлись с кодом, краевые случаи, до которых PR не доходит. Если считать их верными, получаем 0,73–0,92. Это не значит, что ревьюер стал лучше. Это другой вопрос: правдив ли комментарий, а не совпадает ли он с моим списком.\n\nРевьюеры не были в основном неправы. Они были в основном правы в том, что никому не нужно было исправлять.\n\nЧестно говоря, это пять PR из одного репозитория, и я проверил вручную только часть вердиктов второй модели. Я бы воспринимал это как сильный намёк, а не как вывод.\n\nМодель, которая оставляет двадцать верных комментариев на маленьком PR, не ошибается, но кто-то всё равно должен прочитать все двадцать и решить, какой из них важен для этого изменения. Чем больше кода пишут агенты, тем больше таких решений, и, по-моему, именно на этом шаге инструменты сейчас и конкурируют. На прошлой неделе OpenAI объявила о покупке Pierre, команды, которая стоит за библиотеками Trees и Diffs в приложении Codex, и описала сделку как расширение инструментов Codex для написания, понимания и ревью кода.\n\nЕсли вы добавляете AI-ревьюера, считайте, сколько его комментариев ваша команда реально берёт в работу, а не сколько из них верны."
+  },
+  "color": "var(--pink)"
+}
