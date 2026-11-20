@@ -1,0 +1,48 @@
+{
+  "id": "post-56",
+  "slug": "one-offer-not-four-options",
+  "published": "2026-11-11",
+  "category": "leadership",
+  "categoryLabel": {
+    "en": "LEADERSHIP",
+    "ru": "ЛИДЕРСТВО"
+  },
+  "originalMinutes": 1,
+  "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7526252426723475457/",
+  "title": {
+    "en": "Four Offers on My Site Said I Was Halfway Out the Door",
+    "ru": "Четыре предложения на моём сайте говорили, что я одной ногой за дверью"
+  },
+  "takeaway": {
+    "en": "Cut your public offers down to the one you actually want to do, because a page with several open doors tells customers you are not fully committed.",
+    "ru": "Оставьте в публичных предложениях только то, чем вы действительно хотите заниматься, потому что страница с несколькими открытыми дверями говорит клиентам, что вы не полностью в деле."
+  },
+  "tags": [
+    "Focus",
+    "Positioning",
+    "Founders"
+  ],
+  "brief": {
+    "quote": {
+      "en": "Together they said something I didn't mean: a founding engineer with one foot out of the door.",
+      "ru": "Вместе они говорили то, чего я не имел в виду: основатель-инженер, одной ногой за дверью."
+    },
+    "bullets": {
+      "en": [
+        "The \"Work with me\" page listed four offers, and each one made sense alone, but together they signaled that the author was only partly committed.",
+        "The audit and the advisory were merged into one YAGNI pilot, where agents take real backlog tickets to merged pull requests.",
+        "Full-time roles now say \"Not looking\", and talks stay, so a customer can see the focus without asking."
+      ],
+      "ru": [
+        "На странице «Work with me» было четыре предложения: каждое по отдельности казалось разумным, но вместе они показывали, что автор вовлечён лишь частично.",
+        "Аудит и консультацию объединили в один пилот YAGNI, где агенты берут реальные задачи из бэклога и доводят их до смерженных PR.",
+        "Фуллтайм теперь помечен как «Not looking», а доклады остались, так что клиент видит фокус без лишних вопросов."
+      ]
+    }
+  },
+  "body": {
+    "en": "Last week my personal site listed four ways to hire me. Today three of them are struck out.\n\nI started rossev.dev in early November and, like most engineers, gave it a \"Work with me\" page: a reliability audit for AI agents, advisory for engineering leaders, talks, full-time roles. Each offer made sense on its own. Together they said something I didn't mean: a founding engineer with one foot out of the door.\n\nSo I changed it the way everything on that site changes, as a pull request that starts with a red test. The page now opens with a diff. The audit and the advisory folded into one offer: a YAGNI pilot, where agents take real tickets from your backlog to merged pull requests. \"Full-time roles\" became \"Not looking.\" Talks stayed mine.\n\nThere's a fair case for keeping options open, and I don't think people who do it are wrong. My reason is simple: I want all of my focus on one thing, and a customer reading my site should be able to see that without asking. If you want to talk about agents on your own repo, the door is still open. It just has one name on it now.\n\nThe company is named after the principle I should have applied to my own page first: you aren't gonna need it. That goes for side doors too.",
+    "ru": "Неделю назад на моём личном сайте было четыре способа меня нанять. Сегодня три из них зачёркнуты.\n\nRossev.dev я запустил в начале ноября и, как большинство инженеров, сделал страницу «Work with me»: аудит надёжности AI-агентов, консультации для инженерных лидеров, доклады, фуллтайм-роли. Каждое предложение по отдельности было логичным. Вместе они говорили то, чего я не имел в виду: основатель-инженер, одной ногой за дверью.\n\nПоэтому я поменял страницу так же, как меняю всё на этом сайте: через PR, который начинается с красного теста. Теперь страница открывается диффом. Аудит и консультация слились в одно предложение: пилот YAGNI, где агенты берут реальные задачи из вашего бэклога и доводят их до смерженных PR. «Фуллтайм-роли» стали «Not looking». Доклады остались моими.\n\nУ есть разумный аргумент за то, чтобы держать варианты открытыми, и я не считаю людей, которые так делают, неправыми. Моя причина простая: я хочу весь свой фокус отдать одной вещи, и клиент, читая мой сайт, должен это видеть без вопросов. Если вы хотите поговорить об агентах на своём репозитории, дверь открыта. Просто теперь у неё одно имя.\n\nКомпания названа в честь принципа, который я должен был сначала применить к своей странице: you aren't gonna need it. Это относится и к боковым дверям."
+  },
+  "color": "var(--cyan)"
+}
