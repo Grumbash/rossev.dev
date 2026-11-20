@@ -7,6 +7,7 @@
 import { afterAll, beforeAll, describe, expect, setDefaultTimeout, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { BLOG_POSTS } from '../src/data/posts';
+import { WRITING_PAGE_SIZE, topicPosts, writingPath } from '../src/data/writing-pages';
 import { EVENTS } from '../src/scripts/analytics';
 import { CAP, DONE, MIN, badge, offer, record } from '../src/scripts/reading';
 import { en } from '../src/i18n/en';
@@ -94,6 +95,8 @@ describe('the pages', () => {
 
 describe.skipIf(!hasChrome())('in the browser', () => {
   const POST = 'self-healing-monogram';
+  // The /writing/ page that lists POST: every new post pushes older ones down, so it is computed, not fixed.
+  const LIST = writingPath('all', Math.floor(topicPosts('all').findIndex((p) => p.slug === POST) / WRITING_PAGE_SIZE) + 1);
   // Phases across page loads in sessionStorage: read half of a post, come back, then the list.
   const PROBE = () => `<script>(async () => { try {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -118,7 +121,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
     }
     if (phase === 'glance') {
       out.glance = { scroll: scrollY, pill: pill()?.textContent.trim() };
-      return go('glance-list', '/writing/?probe=reading');
+      return go('glance-list', '${LIST}?probe=reading');
     }
     if (phase === 'glance-list') {
       out.afterGlance = JSON.parse(localStorage.getItem('rosev_reading') || '{}')['${POST}'];
@@ -135,7 +138,7 @@ describe.skipIf(!hasChrome())('in the browser', () => {
       out.markedIndex = ps.indexOf(marked);
       out.markedTop = marked ? Math.round(marked.getBoundingClientRect().top - innerHeight * 0.25) : null;
       out.pillAfter = !!pill() && !pill().hidden;
-      return go('list', '/writing/?probe=reading');
+      return go('list', '${LIST}?probe=reading');
     }
     if (phase === 'list') {
       sessionStorage.clear();
