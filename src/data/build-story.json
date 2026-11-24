@@ -1,7 +1,7 @@
 {
   "repo": "Grumbash/rossev.dev",
-  "generatedAt": "2026-11-17T11:52:20.971Z",
-  "throughSha": "e4bb9c8d5e49df8c2ffc1ebccfdf335219a9ccce",
+  "generatedAt": "2026-11-24T13:42:14.656Z",
+  "throughSha": "ff14d981dd41b6104ea5e01063729c8cee974f40",
   "prs": [
     {
       "number": 1,
@@ -3698,6 +3698,204 @@
           "subject": "Add Cheap software, expensive promises article for November 17",
           "role": "impl",
           "url": "https://github.com/Grumbash/rossev.dev/commit/b7ba1a12ef75193c2ba23ed4667542a50f8b1f4c"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 117,
+      "title": "Post: Every two days I get a different job",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/117",
+      "mergedAt": "2026-11-17T17:43:02Z",
+      "additions": 87,
+      "deletions": 0,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "fa26f68d79a8a611b7f18a88c8cda648ba0f98f2",
+          "subject": "Post: Every two days I get a different job",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/fa26f68d79a8a611b7f18a88c8cda648ba0f98f2"
+        },
+        {
+          "sha": "d26e769368352c14ab5aa67375836bcb9fb34d60",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d26e769368352c14ab5aa67375836bcb9fb34d60"
+        },
+        {
+          "sha": "520aa67a14858efdb2567d1f0fdfc07ba7e64c6a",
+          "subject": "Post: over 100 merged PRs, not 28",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/520aa67a14858efdb2567d1f0fdfc07ba7e64c6a"
+        },
+        {
+          "sha": "e56b29029a3b9091593d90a1b874a523ccb00fe3",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/e56b29029a3b9091593d90a1b874a523ccb00fe3"
+        },
+        {
+          "sha": "2397d343aadcda670de9307a03e957fdd849d0ca",
+          "subject": "Post: fill in how I handle switching and how it feels",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2397d343aadcda670de9307a03e957fdd849d0ca"
+        },
+        {
+          "sha": "c944f4d2adb36cdb4258b97d38c2e170bbb6a163",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c944f4d2adb36cdb4258b97d38c2e170bbb6a163"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 112,
+      "title": "Articles: link the YAGNI guides they overlap",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/112",
+      "mergedAt": "2026-11-17T17:44:00Z",
+      "additions": 28,
+      "deletions": 4,
+      "changedFiles": 5,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "8e1a9a324d291635cb98b40c29bcc4afb4ce8c34",
+          "subject": "Articles: link the YAGNI guides they overlap",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8e1a9a324d291635cb98b40c29bcc4afb4ce8c34"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 119,
+      "title": "Post: Every two days I get a different job to LinkedIn",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/119",
+      "mergedAt": "2026-11-17T21:58:43Z",
+      "additions": 4,
+      "deletions": 3,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "caa5d1dd1f461609ca88846e1e21d9b47435923d",
+          "subject": "Post: send Every two days I get a different job to LinkedIn",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/caa5d1dd1f461609ca88846e1e21d9b47435923d"
+        },
+        {
+          "sha": "5c558ec4bb4fcd1fa72a3d80615321a6aea481f3",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/5c558ec4bb4fcd1fa72a3d80615321a6aea481f3"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 120,
+      "title": "while-the-agent-works: replace an invented quote with a real one",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/120",
+      "mergedAt": "2026-11-19T12:25:46Z",
+      "additions": 2,
+      "deletions": 2,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "02446306a1fe68a26e37addc900633d970be0d4a",
+          "subject": "while-the-agent-works: the third quote is one Gleb actually wrote",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/02446306a1fe68a26e37addc900633d970be0d4a"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 121,
+      "title": "A post written on the site: every number in my agent's report was right, the report was still wrong",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/121",
+      "mergedAt": "2026-11-20T13:20:18Z",
+      "additions": 97,
+      "deletions": 3,
+      "changedFiles": 4,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "c3a3983f54c4b079bf46808141c335583020ceb2",
+          "subject": "A post written on the site: every number in the agent's report was right, the report was still wrong",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/c3a3983f54c4b079bf46808141c335583020ceb2"
+        },
+        {
+          "sha": "8a6d00050d1e83f5f5d2e3f5ee9efb8ec9a2c43f",
+          "subject": "Reading test finds the /writing/ page its post is on",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/8a6d00050d1e83f5f5d2e3f5ee9efb8ec9a2c43f"
+        },
+        {
+          "sha": "33864e2586ca8cc28cb1062fc51414d39ddd76e7",
+          "subject": "Page-transition test finds the /writing/ page its post is on",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/33864e2586ca8cc28cb1062fc51414d39ddd76e7"
+        },
+        {
+          "sha": "9a5d0cc5053c7f4058fd64e00e67fd3ba2cca13c",
+          "subject": "every-number-matched: write 2491 and 4945 without a thousands comma",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/9a5d0cc5053c7f4058fd64e00e67fd3ba2cca13c"
+        },
+        {
+          "sha": "d7ea55ae52679bdb76aea4f5c8b915a9ae006247",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/d7ea55ae52679bdb76aea4f5c8b915a9ae006247"
+        },
+        {
+          "sha": "664366669157aa7b648f84a92f5e15d0ea1c8fd5",
+          "subject": "every-number-matched (ru): three phrasing fixes after the bot draft",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/664366669157aa7b648f84a92f5e15d0ea1c8fd5"
+        }
+      ],
+      "findings": [],
+      "ciVerdicts": [],
+      "pending": true
+    },
+    {
+      "number": 123,
+      "title": "Post: What's between a customer and Monday",
+      "url": "https://github.com/Grumbash/rossev.dev/pull/123",
+      "mergedAt": "2026-11-24T13:40:57Z",
+      "additions": 91,
+      "deletions": 0,
+      "changedFiles": 2,
+      "redTest": null,
+      "commits": [
+        {
+          "sha": "1997a8287801bc26a3b11cdc4a6be9fc309b72fb",
+          "subject": "Post: What's between a customer and Monday",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/1997a8287801bc26a3b11cdc4a6be9fc309b72fb"
+        },
+        {
+          "sha": "2cfa8474c5cea975482101fc2f29b7d280c14a17",
+          "subject": "Fill in the site entries for src/content/writing",
+          "role": "impl",
+          "url": "https://github.com/Grumbash/rossev.dev/commit/2cfa8474c5cea975482101fc2f29b7d280c14a17"
         }
       ],
       "findings": [],
